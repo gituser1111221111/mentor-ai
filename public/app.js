@@ -274,6 +274,8 @@ async function handleCheckoutReturn() {
   const q = new URLSearchParams(location.search), status = q.get('checkout');
   if (!status) return;
   history.replaceState(null, '', location.pathname);
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  window.scrollTo(0, 0);
   if (status === 'cancel') return banner('Checkout canceled. You are still on the free plan.', true);
   try { await api('/api/checkout/confirm', {method: 'POST', body: {checkoutId: q.get('cs')}}); await setPlus('Welcome to Plus. Every mentor and coach is unlocked as it launches. (Stripe test mode, no real charge.)'); }
   catch (e) { banner(`We could not confirm that checkout: ${e.message}`, true); }

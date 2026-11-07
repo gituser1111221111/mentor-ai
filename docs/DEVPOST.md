@@ -27,7 +27,7 @@ Jordan is 22, works part-time and drives DoorDash. Take-home pay swings from $1,
 5. **Your mentor directs it.** The mentor (Debt-Free, Hustle or Conscious Spender, each built from public teachings and labeled "not affiliated") **picks one option by id** and explains it in its voice, with citation chips to its source notes.
 6. **Switch mentors mid-chat.** Same options, same numbers, different pick. For Jordan, the Debt-Free Mentor says "build the $1,000 starter fund first." The Hustle Mentor says "your lowest month is $175 short; expand your income." On Debt Coaching, the Conscious Spender says "kill the 24.90% card first and automate it."
 
-Free: 3 mentors and 3 coaches. Plus, $4.99/month: all 10 of each (the unlock is mocked in this prototype).
+Free: 3 mentors and 3 coaches. Plus, $4.99/month: all 10 of each (a real Stripe Checkout subscription, running in test mode; try card 4242 4242 4242 4242).
 
 ## How we built it
 - **Backend:** the RedHawk Node 22 starter kit. Its `lib/finance.js` (BigInt cents) powers every calculation: snapshot, emergency-fund gap, snowball/avalanche payoff simulation, income gap, 50/30/20 split, cut list, sinking funds, portfolio summary.
@@ -63,7 +63,7 @@ Free: 3 mentors and 3 coaches. Plus, $4.99/month: all 10 of each (the unlock is 
 - A beta with 10 young adults who have variable income
 - Fuller mentors built from larger, cited source sets, plus a fidelity eval
 - ElevenLabs voice
-- Real Stripe checkout
+- Stripe live mode (checkout already runs end to end in test mode)
 - A Plaid Investments connection instead of CSV upload
 - Accounts and persistent memory
 - The other 7 coaches (Tax education, Credit, Investing, Retirement…)
@@ -89,7 +89,7 @@ Free: 3 mentors and 3 coaches. Plus, $4.99/month: all 10 of each (the unlock is 
    - Mentors are short hand-written summaries; we're not affiliated with or endorsed by anyone named, and there are no cloned voices.
    - The coaches share one calculation library, and taxes and returns aren't forecast.
    - The store is anonymous and in-memory, and it resets on restart.
-   - No real bank or brokerage connection; payments are mocked.
+   - No real bank or brokerage connection; payments run in Stripe test mode, so no real money moves.
    - The number check matches exact values: it can't catch wrong reasoning that uses correct numbers.
    - Voice isn't built.
 

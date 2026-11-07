@@ -39,7 +39,7 @@ Switch mentor ──► step ③ only: same options, same numbers, different pic
 - **Coaching** = a specialist bot (Budget, Debt, Savings & Emergency Fund) that does the work and the math.
 - **Mentor** = a money philosophy that directs the coach by choosing among its verified options. Mentors are built from summaries of public teachings and labeled *"inspired by; not affiliated or endorsed."* No mentor claims to be a real person, and there are no cloned voices.
 
-**Free tier:** 3 mentors (Debt-Free, from Dave Ramsey's public work; Hustle, from Grant Cardone's; Conscious Spender, from Ramit Sethi's) and 3 coaches (Budget, Debt, Savings). **Plus ($4.99/month, mocked in this prototype):** all 10 mentors and 10 coaches.
+**Free tier:** 3 mentors (Debt-Free, from Dave Ramsey's public work; Hustle, from Grant Cardone's; Conscious Spender, from Ramit Sethi's) and 3 coaches (Budget, Debt, Savings). **Plus ($4.99/month, Stripe test mode):** all 10 mentors and 10 coaches.
 
 ## What actually works (and what doesn't)
 
@@ -51,8 +51,8 @@ Switch mentor ──► step ③ only: same options, same numbers, different pic
 | Persona switch on the same options (`repick`) | Works |
 | Number check visible in the UI ("proposed N, kept K, dropped D: reason") | Works |
 | Offline fallback: if Claude fails, a rule-based engine answers, labeled "offline fallback" | Works |
-| Other 7 mentors / 7 coaches | Shown, locked |
-| $4.99 unlock (Stripe) | **Mocked**: no real payment |
+| $4.99/month Plus (Stripe Checkout) | Works in **Stripe test mode**: a real hosted checkout and subscription, verified on the server before Plus unlocks. Use card 4242 4242 4242 4242. Live keys are refused in code |
+| Plus mentors and coaches beyond the free 3 + 3 | Unlock with Plus; each shows "Soon" until its files are added |
 | "Connect brokerage" (Plaid) | **Not built**: shown as sandbox-only text |
 | Voice (ElevenLabs) | **Not built yet** |
 
