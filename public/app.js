@@ -1,3 +1,4 @@
+import {VoicePlayback} from './voice-playback.js';
 // Mentor Labs SPA: free starter chat, short intake, specialist catalog, and coaching chat.
 // Vanilla JS, no build step. All money shown here comes from the server's exact-cents math.
 const $ = s => document.querySelector(s);
@@ -141,10 +142,12 @@ function showFeature(x) {
 }
 function blocked(x) { if (!x) return true; if (!x.built) { showFeature(x); return true; } if (!allowed(x) && !starterCoach(x)) { openUnlock(); return true; } return false; }
 function pickAgent(id) {
+  ++voice.epoch;stopPlayback('coach-change');
   const a = agent(id); if (id === state.agentId || blocked(a)) return;
   state.agentId = id; state.lastTurn = null; renderChatChrome(); note(`Switched to ${a.name}. Ask your next question.`);
 }
 async function pickPersona(id) {
+  ++voice.epoch;stopPlayback('mentor-change');
   const p = persona(id); if (id === state.personaId || blocked(p)) return;
   state.personaId = id; renderChatChrome();
   if (!state.lastTurn) return note(`${p.name} is now directing your coach.`);
@@ -187,7 +190,7 @@ function botMessage(r) {
     ${r.turnId ? '<div class="meta"><button class="btn text" type="button" data-compare>Compare mentors</button></div>' : ''}
     ${r.conversational ? '' : `<p class="disclose">${esc(r.disclosure || '')}</p>`}`;
   el.querySelector('[data-listen]')?.addEventListener('click', () => speakReply(el, r));
-  el.querySelector('[data-stop]')?.addEventListener('click', stopPlayback);
+  el.querySelector('[data-stop]')?.addEventListener('click', () => {++voice.epoch;stopPlayback();});
   el.querySelector('[data-compare]')?.addEventListener('click', () => openCompare(r));
   $('#log').append(el); el.scrollIntoView({behavior: 'smooth', block: 'start'});
   return el;
@@ -225,6 +228,8 @@ async function openCompare(r) {
 
 async function send(text, {spoken = false} = {}) {
   text = text.trim(); if (!text) return;
+  stopPlayback('new-question');
+  const speechEpoch = ++voice.epoch;
   const u = document.createElement('div'); u.className = 'msg user'; u.textContent = text; $('#log').append(u);
   if (spoken) u.insertAdjacentHTML('afterbegin', '<span class="via">You said</span>');
   $('#msg').value = ''; const btn = $('#composer button[type="submit"]'); btn.disabled = true;
@@ -232,7 +237,7 @@ async function send(text, {spoken = false} = {}) {
   try {
     const r = await api('/api/chat', {method: 'POST', body: {message: text, personaId: state.personaId, agentId: state.agentId}}); state.lastTurn = r.turnId;
     const el = botMessage(r); refreshMemory();
-    if (canSpeak(r)) speakReply(el, r);
+    if (canSpeak(r) && speechEpoch === voice.epoch) speakReply(el, r);
     else if (spoken) note('Voice is unavailable right now. The written answer is above.');
   }
   catch (e) { handleError(e); }
@@ -346,7 +351,7 @@ const DEMO = {
 // Push-to-talk -> /api/voice/transcribe (ElevenLabs STT) -> the normal /api/chat pipeline.
 // "Listen" -> /api/voice/speak, which reads the server's stored copy of that verified answer
 // (ElevenLabs TTS). The browser never sends text to be spoken and never sees the ElevenLabs key.
-const voice = {rec: null, stream: null, chunks: [], started: 0, pressAt: 0, timer: null, starting: false, busy: false, audio: null};
+const voice = {rec: null, stream: null, chunks: [], started: 0, pressAt: 0, timer: null, starting: false, busy: false, epoch: 0};
 const canSpeak = r => Boolean(r?.turnId && state.config?.voice && state.config.voicePersonas?.includes(r.personaId));
 // The status row keeps its height while voice is on, so the mic button never moves under the user's finger.
 function voiceStatus(text, kind = '') { const s = $('#voice-status'); s.textContent = text; s.className = 'voice-status ' + kind; }
@@ -354,6 +359,7 @@ function micUI(on) { const m = $('#mic'); m.classList.toggle('rec', on); m.setAt
 const pickMime = () => ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/ogg;codecs=opus', 'audio/ogg'].find(t => window.MediaRecorder?.isTypeSupported?.(t)) || '';
 
 async function startRecording() {
+  ++voice.epoch;stopPlayback('recording');
   if (voice.busy || voice.rec || voice.starting) return;
   if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) return voiceStatus('This browser cannot record audio here. Type your question instead.', 'warn');
   stopPlayback(); voice.starting = true;
@@ -393,29 +399,27 @@ async function finishRecording() {
   finally { voice.busy = false; $('#mic').disabled = false; }
 }
 
-function stopPlayback() {
-  if (!voice.audio) return;
-  voice.audio.pause(); voice.audio.currentTime = 0;
-  voice.audio.closest('.msg')?.classList.remove('speaking'); voice.audio = null;
-}
+const playback = new VoicePlayback();
+function stopPlayback(reason = 'user') { playback.stop(typeof reason === 'string' ? reason : 'user'); }
 async function speakReply(el, r) {
-  const box = el.querySelector('.voice-player'), btn = el.querySelector('[data-listen]'), a = box?.querySelector('audio');
+  const box = el.querySelector('.voice-player'), btn = el.querySelector('[data-listen]'), audio = box?.querySelector('audio');
   if (!box) return;
-  stopPlayback();
-  if (!a.src) {
-    btn.disabled = true; btn.textContent = 'Preparing audio...';
-    try {
-      const res = await fetch('/api/voice/speak', {method: 'POST', headers: {'Content-Type': 'application/json', 'X-Session-Id': sid}, body: JSON.stringify({turnId: r.turnId, personaId: r.personaId})});
-      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || 'Audio is unavailable right now. The written answer is above.');
-      a.src = URL.createObjectURL(await res.blob());
-    } catch (e) { btn.disabled = false; btn.textContent = 'Listen'; return note(e.message); }
-  }
-  btn.hidden = true; box.hidden = false; el.classList.add('speaking'); voice.audio = a;
-  a.onended = () => { el.classList.remove('speaking'); if (voice.audio === a) voice.audio = null; };
-  a.onplay = () => { if (voice.audio && voice.audio !== a) stopPlayback(); voice.audio = a; el.classList.add('speaking'); };
-  box.scrollIntoView({behavior: 'smooth', block: 'nearest'});
-  try { await a.play(); } catch { box.querySelector('.fine').textContent = 'Press play to listen. The disclosure below applies.'; }
+  await playback.start(audio, async (signal, requestId) => {
+    const res = await fetch('/api/voice/speak', {method:'POST', signal,
+      headers:{'Content-Type':'application/json','X-Session-Id':sid,'X-Voice-Request-Id':requestId},
+      body:JSON.stringify({turnId:r.turnId,personaId:r.personaId,voiceReplyId:r.voiceReplyId})});
+    if (!res.ok) throw Error((await res.json().catch(()=>({}))).error || 'Audio is unavailable. Your written answer is above.');
+    return res.blob();
+  }, (status,error) => {
+    box.hidden = false;
+    btn.disabled = status === 'loading'; btn.hidden = ['playing','ended','blocked'].includes(status);
+    btn.textContent = status === 'loading' ? 'Preparing audio…' : 'Listen';
+    el.classList.toggle('speaking',status === 'playing');
+    if (status === 'blocked') box.querySelector('.fine').textContent = 'Press play to listen. AI-generated voice, not the real person.';
+    if (error) note(error.message);
+  });
 }
+window.addEventListener('pagehide', () => {++voice.epoch;stopPlayback('navigation');});
 
 function setupVoice() {
   const mic = $('#mic');
