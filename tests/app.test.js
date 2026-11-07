@@ -1,4 +1,4 @@
-// Section B acceptance checks: valid input, missing/invalid input, money reconciliation, pick integrity.
+﻿// Section B acceptance checks: valid input, missing/invalid input, money reconciliation, pick integrity.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 process.env.NODE_ENV = 'test';
@@ -61,7 +61,7 @@ test('pick integrity: persona picks an existing candidate; repick keeps the same
   assert.equal(new Set(ids).size, ids.length);
   assert.ok(ids.includes(r.pick.pickId));
   assert.equal(r.pick.pickId, 'starter-ef'); // savings < $1,000
-  const h = await repick({turnId: r.turnId, personaId: 'hustle-coach'});
+  const h = await repick({turnId: r.turnId, personaId: 'conscious-spender'});
   assert.deepEqual(h.candidates, r.candidates);
   assert.notEqual(h.pick.pickId, r.pick.pickId);
   assert.match(r.disclosure, /not advice from a licensed/);
@@ -96,7 +96,7 @@ test('API: quiz -> chat -> repick, static UI, and traversal blocked', async () =
     assert.equal(bad.status, 422);
     const c = await (await fetch(base + '/api/chat', {method: 'POST', headers: h, body: JSON.stringify({message: 'How do I budget?'})})).json();
     assert.ok(c.turnId);
-    const r = await (await fetch(base + '/api/repick', {method: 'POST', headers: h, body: JSON.stringify({turnId: c.turnId, personaId: 'hustle-coach'})})).json();
+    const r = await (await fetch(base + '/api/repick', {method: 'POST', headers: h, body: JSON.stringify({turnId: c.turnId, personaId: 'conscious-spender'})})).json();
     assert.equal(r.candidates.length, c.candidates.length);
     assert.equal((await fetch(base + '/api/profile')).status, 400); // no session header
   } finally { await new Promise(r => server.close(r)); }
@@ -110,12 +110,12 @@ test('Plus gating: locked mentor -> 402, demo unlock without Stripe, unbuilt -> 
   const post = (p, b) => fetch(base + p, {method: 'POST', headers: h, body: JSON.stringify(b || {})});
   try {
     await post('/api/profile', {answers});
-    assert.equal((await post('/api/chat', {message: 'hi', personaId: 'index-investor'})).status, 402);
+    assert.equal((await post('/api/chat', {message: 'hi', personaId: 'value-investor'})).status, 402);
     assert.equal((await post('/api/chat', {message: 'hi', agentId: 'tax'})).status, 402);
     assert.equal((await (await post('/api/checkout')).json()).mode, 'demo');
     assert.equal((await (await post('/api/checkout/demo')).json()).tier, 'plus');
     assert.equal((await (await fetch(base + '/api/me', {headers: h})).json()).tier, 'plus');
-    const soon = await post('/api/chat', {message: 'hi', personaId: 'index-investor'});
+    const soon = await post('/api/chat', {message: 'hi', personaId: 'value-investor'});
     assert.equal(soon.status, 409);
     assert.match((await soon.json()).error, /coming soon/);
     await fetch(base + '/api/session', {method: 'DELETE', headers: h});

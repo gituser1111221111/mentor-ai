@@ -1,0 +1,448 @@
+{
+  "persona": "debt-free-coach",
+  "summary": {
+    "total_sources": 32,
+    "by_type": {
+      "article": 18,
+      "column": 10,
+      "interview": 1,
+      "critique": 3
+    },
+    "by_tier": {
+      "1": 18,
+      "2": 10,
+      "3": 1,
+      "4": 3
+    },
+    "note_count": 59,
+    "ramsey_view_sources": 29,
+    "critique_sources_used_only_for_contested": 3,
+    "books": 0,
+    "episodes": 0,
+    "accessed": "2026-11-07",
+    "notice": "Built from Dave Ramsey's public teachings. Not affiliated with or endorsed by him."
+  },
+  "sources": [
+    {
+      "id": "S01",
+      "url": "https://www.ramseysolutions.com/budgeting/how-to-budget-an-irregular-income",
+      "title": "How to Budget With Irregular Income: 6 Steps for Success",
+      "date": "2025-03-21",
+      "tier": 1,
+      "type": "article",
+      "byline": "Ramsey Solutions",
+      "note_ids": [
+        "001",
+        "002",
+        "003",
+        "004",
+        "005",
+        "006"
+      ]
+    },
+    {
+      "id": "S02",
+      "url": "https://www.ramseysolutions.com/dave-ramsey-7-baby-steps-b25070",
+      "title": "Dave Ramsey's 7 Baby Steps",
+      "date": "undated (accessed 2026-11-07)",
+      "tier": 1,
+      "type": "article",
+      "byline": "Ramsey Solutions (no byline shown)",
+      "note_ids": [
+        "025",
+        "029",
+        "030",
+        "036",
+        "038",
+        "040",
+        "041",
+        "048",
+        "059"
+      ]
+    },
+    {
+      "id": "S03",
+      "url": "https://www.ramseysolutions.com/debt/get-out-of-debt-with-the-debt-snowball-plan",
+      "title": "How to Get Out of Debt With the Debt Snowball Plan",
+      "date": "2023-05-23 (updated 2024-05-31)",
+      "tier": 1,
+      "type": "article",
+      "byline": "Ramsey Solutions",
+      "note_ids": [
+        "021",
+        "022",
+        "023",
+        "037"
+      ]
+    },
+    {
+      "id": "S04",
+      "url": "https://www.ramseysolutions.com/debt/debt-snowball-vs-debt-avalanche",
+      "title": "Debt Avalanche vs. Debt Snowball: What's the Difference?",
+      "date": "2025-01-22",
+      "tier": 1,
+      "type": "article",
+      "byline": "Ramsey Solutions",
+      "note_ids": [
+        "024"
+      ]
+    },
+    {
+      "id": "S05",
+      "url": "https://www.ramseysolutions.com/budgeting/how-to-budget-using-multiple-bank-accounts",
+      "title": "How to Budget Using Multiple Bank Accounts",
+      "date": "2026-06-01",
+      "tier": 1,
+      "type": "article",
+      "byline": "Ramsey Solutions",
+      "note_ids": [
+        "016"
+      ]
+    },
+    {
+      "id": "S06",
+      "url": "https://www.ramseysolutions.com/budgeting/what-to-do-when-you-go-over-budget",
+      "title": "What to Do When You Go Over Budget",
+      "date": "2026-06-12",
+      "tier": 1,
+      "type": "article",
+      "byline": "Ramsey Solutions",
+      "note_ids": [
+        "014",
+        "015"
+      ]
+    },
+    {
+      "id": "S07",
+      "url": "https://www.ramseysolutions.com/budgeting/how-to-budget-on-commission-income",
+      "title": "How to Budget on Commission Income",
+      "date": "2026-04-16",
+      "tier": 1,
+      "type": "article",
+      "byline": "Ramsey Solutions",
+      "note_ids": [
+        "007",
+        "008",
+        "009",
+        "034"
+      ]
+    },
+    {
+      "id": "S08",
+      "url": "https://www.ramseysolutions.com/debt/is-starter-emergency-fund-enough",
+      "title": "Is a $1,000 Emergency Fund Enough?",
+      "date": "2022-05-11 (updated 2025-04-15)",
+      "tier": 1,
+      "type": "article",
+      "byline": "Ramsey Solutions",
+      "note_ids": [
+        "031",
+        "032",
+        "033"
+      ]
+    },
+    {
+      "id": "S09",
+      "url": "https://www.ramseysolutions.com/debt/how-many-credit-cards-should-you-have",
+      "title": "How Many Credit Cards Should You Have?",
+      "date": "2023-03-15 (updated 2026-08-28)",
+      "tier": 1,
+      "type": "article",
+      "byline": "Ramsey Solutions",
+      "note_ids": [
+        "049"
+      ]
+    },
+    {
+      "id": "S10",
+      "url": "https://www.ramseysolutions.com/debt/living-without-credit-score",
+      "title": "Living Without a Credit Score",
+      "date": "2022-01-19 (updated 2025-04-15)",
+      "tier": 1,
+      "type": "article",
+      "byline": "Ramsey Solutions",
+      "note_ids": [
+        "050"
+      ]
+    },
+    {
+      "id": "S12",
+      "url": "https://www.ramseysolutions.com/saving/how-much-car-can-i-afford",
+      "title": "How Much Car Can I Afford?",
+      "date": "2025-09-08 (updated 2026-02-19)",
+      "tier": 1,
+      "type": "article",
+      "byline": "Ramsey Solutions",
+      "note_ids": [
+        "054"
+      ]
+    },
+    {
+      "id": "S14",
+      "url": "https://www.ramseysolutions.com/debt/student-loan-forgiveness",
+      "title": "Should I Apply for Student Loan Forgiveness?",
+      "date": "2022-07-21 (updated 2025-09-03)",
+      "tier": 1,
+      "type": "article",
+      "byline": "Ramsey Solutions",
+      "note_ids": [
+        "056"
+      ]
+    },
+    {
+      "id": "S15",
+      "url": "https://www.ramseysolutions.com/real-estate/what-is-a-15-year-fixed-rate-mortgage",
+      "title": "What Is a 15-Year Fixed-Rate Mortgage?",
+      "date": "2018-08-29 (updated 2025-02-27)",
+      "tier": 1,
+      "type": "article",
+      "byline": "Ramsey Solutions",
+      "note_ids": [
+        "058"
+      ]
+    },
+    {
+      "id": "S16",
+      "url": "https://www.ramseysolutions.com/retirement/daves-investing-philosophy",
+      "title": "Ramsey's Investing Philosophy",
+      "date": "2023-12-06 (updated 2026-04-09)",
+      "tier": 1,
+      "type": "article",
+      "byline": "Ramsey Solutions",
+      "note_ids": [
+        "039",
+        "042",
+        "043"
+      ]
+    },
+    {
+      "id": "S17",
+      "url": "https://www.ramseysolutions.com/retirement/the-12-reality",
+      "title": "Can You Really Get a 12% Return on Your Investments?",
+      "date": "2024-02-22 (updated 2026-02-05)",
+      "tier": 1,
+      "type": "article",
+      "byline": "Ramsey Solutions",
+      "note_ids": [
+        "045"
+      ]
+    },
+    {
+      "id": "S18",
+      "url": "https://www.ramseysolutions.com/retirement/sp-500-index-funds",
+      "title": "Understanding S&P 500 Index Funds",
+      "date": "2022-07-22 (updated 2026-10-07)",
+      "tier": 1,
+      "type": "article",
+      "byline": "Ramsey Solutions",
+      "note_ids": [
+        "044"
+      ]
+    },
+    {
+      "id": "S20",
+      "url": "https://www.ramseysolutions.com/taxes/file-taxes-for-freelance-work",
+      "title": "How to File Taxes for Freelance Work",
+      "date": "2023-05-11 (updated 2026-07-07)",
+      "tier": 1,
+      "type": "article",
+      "byline": "Ramsey Solutions",
+      "note_ids": [
+        "017"
+      ]
+    },
+    {
+      "id": "S21",
+      "url": "https://www.ramseysolutions.com/saving/pay-for-college-without-student-loans",
+      "title": "How to Pay for College Without Student Loans",
+      "date": "2025-01-30 (updated 2025-08-13)",
+      "tier": 1,
+      "type": "article",
+      "byline": "Ramsey Solutions",
+      "note_ids": [
+        "057"
+      ]
+    },
+    {
+      "id": "S22",
+      "url": "https://cbn.com/article/finances/dave-says-how-do-you-make-budget-irregular-income",
+      "title": "Dave Says: How Do You Make a Budget With an Irregular Income?",
+      "date": "page date 2022-12-10 (original column date not shown)",
+      "tier": 2,
+      "type": "column",
+      "byline": "Dave Ramsey",
+      "note_ids": [
+        "012"
+      ]
+    },
+    {
+      "id": "S23",
+      "url": "https://www.madillrecord.net/node/10303",
+      "title": "DAVE SAYS (Madill Record)",
+      "date": "2023-08-10",
+      "tier": 2,
+      "type": "column",
+      "byline": "Dave Ramsey",
+      "note_ids": [
+        "010",
+        "047"
+      ]
+    },
+    {
+      "id": "S24",
+      "url": "https://www.ramseysolutions.com/company/newsroom/ramsey-syndication/Dave-Says--Wait-and-Save-Up",
+      "title": "Dave Says: Wait and Save Up",
+      "date": "2024-09-24",
+      "tier": 2,
+      "type": "column",
+      "byline": "Dave Ramsey",
+      "note_ids": [
+        "011"
+      ]
+    },
+    {
+      "id": "S25",
+      "url": "https://www.ramseysolutions.com/company/newsroom/ramsey-syndication/Dave-Says--Your-Talent-Can-Be-Your-Side-Hustle",
+      "title": "Dave Says: Your Talent Can Be Your Side Hustle",
+      "date": "2026-04-27",
+      "tier": 2,
+      "type": "column",
+      "byline": "Dave Ramsey",
+      "note_ids": [
+        "018"
+      ]
+    },
+    {
+      "id": "S26",
+      "url": "https://www.ramseysolutions.com/company/newsroom/ramsey-syndication/Dave-Says-Eating-Out--You-re-Spending-More-Than-You-Think",
+      "title": "Dave Says: Eating Out? You're Spending More Than You Think",
+      "date": "2025-10-07",
+      "tier": 2,
+      "type": "column",
+      "byline": "Dave Ramsey",
+      "note_ids": [
+        "019"
+      ]
+    },
+    {
+      "id": "S27",
+      "url": "https://www.ramseysolutions.com/company/newsroom/ramsey-syndication/Dave-Says-A-Corporate-Con-Game",
+      "title": "Dave Says: A Corporate Con Game",
+      "date": "2023-06-26",
+      "tier": 2,
+      "type": "column",
+      "byline": "Dave Ramsey",
+      "note_ids": [
+        "052"
+      ]
+    },
+    {
+      "id": "S28",
+      "url": "https://www.ramseysolutions.com/company/newsroom/ramsey-syndication/Dave-Says--Debt-is-Like-a-Ball-and-Chain",
+      "title": "Dave Says: Debt is Like a Ball and Chain",
+      "date": "2026-07-08",
+      "tier": 2,
+      "type": "column",
+      "byline": "Dave Ramsey",
+      "note_ids": [
+        "026"
+      ]
+    },
+    {
+      "id": "S31",
+      "url": "https://www.postbulletin.com/lifestyle/every-dollar-is-accounted-for-in-zero-based-budget",
+      "title": "Every dollar is accounted for in zero-based budget (Post Bulletin)",
+      "date": "2021-09-27",
+      "tier": 2,
+      "type": "column",
+      "byline": "Dave Ramsey",
+      "note_ids": [
+        "013"
+      ]
+    },
+    {
+      "id": "S32",
+      "url": "https://cbn.com/article/not-selected/dave-says-credit-card-points",
+      "title": "Dave Says: Credit Card Points?",
+      "date": "page date 2022-12-10 (original column date not shown)",
+      "tier": 2,
+      "type": "column",
+      "byline": "Dave Ramsey",
+      "note_ids": [
+        "046",
+        "051"
+      ]
+    },
+    {
+      "id": "S34",
+      "url": "https://cbn.com/article/not-selected/dave-says-should-we-sell-our-new-car",
+      "title": "Dave Says: Should We Sell Our New Car?",
+      "date": "page date 2022-12-10 (original column date not shown)",
+      "tier": 2,
+      "type": "column",
+      "byline": "Dave Ramsey",
+      "note_ids": [
+        "055"
+      ]
+    },
+    {
+      "id": "S35",
+      "url": "https://www.pew.org/-/media/assets/2018/09/atf-transcript_episode-38.pdf",
+      "title": "After the Fact, Episode 38: Dave Ramsey Talks American Debt (Pew Charitable Trusts transcript)",
+      "date": "2018-09-28",
+      "tier": 3,
+      "type": "interview",
+      "byline": "Dave Ramsey (interviewed by Dan LeDuc)",
+      "note_ids": [
+        "020",
+        "027",
+        "028",
+        "035",
+        "060"
+      ]
+    },
+    {
+      "id": "S36",
+      "url": "https://www.kitces.com/blog/dave-ramsey-show-financial-peace-university-behavioral-finance-criticism-debt-snowball-bengen-12-percent-return-withdrawl/",
+      "title": "Dave Ramsey's Behavioral Advice Ingenuity To Help People Make Better Financial Decisions (Kitces.com, Derek Tharp)",
+      "date": "2021-01-27",
+      "tier": 4,
+      "type": "critique",
+      "byline": "Derek Tharp",
+      "note_ids": [
+        "022",
+        "024",
+        "045",
+        "057"
+      ]
+    },
+    {
+      "id": "S37",
+      "url": "https://www.fool.com/investing/2020/09/15/4-things-dave-ramsey-gets-wrong-about-investing/",
+      "title": "4 Things Dave Ramsey Gets Wrong About Investing (The Motley Fool, Robin Hartill)",
+      "date": "2020-09-15",
+      "tier": 4,
+      "type": "critique",
+      "byline": "Robin Hartill",
+      "note_ids": [
+        "038",
+        "039",
+        "044",
+        "045"
+      ]
+    },
+    {
+      "id": "S38",
+      "url": "https://en.wikipedia.org/wiki/Debt_snowball_method",
+      "title": "Debt snowball method (Wikipedia)",
+      "date": "revision dated 2026-03-06",
+      "tier": 4,
+      "type": "critique",
+      "byline": "Wikipedia contributors",
+      "note_ids": [
+        "022",
+        "024"
+      ]
+    }
+  ]
+}

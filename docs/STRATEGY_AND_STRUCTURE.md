@@ -1,5 +1,7 @@
 # Strategy & Structure (v0.4, Sat Nov 7)
 
+> **v0.6 (Sat Nov 7, evening):** Persona roster replaced (§6). Hustle Mentor (Grant Cardone) removed from the catalog, loader, mock and tests. Free tier is now **2 mentors** (Debt-Free Mentor, Conscious Spender) + 3 coaches. Conscious Spender is the second persona for the live switch. Bogle, Mr. Money Mustache, Suze Orman and Ray Dalio are out. Buffett, Kiyosaki and Housel stay. Cathie Wood, Vivian Tu, Graham Stephan, Humphrey Yang and The Money Guy Show are new. Lines below that still mention Hustle Coach are superseded by this note.
+
 > **v0.5 (Sat Nov 7, afternoon):** Free tier = **3 mentors + 3 coaches**, all working: mentors Debt-Free Mentor, Hustle Mentor, Conscious Spender; coaching Budget, Debt, Savings & Emergency Fund. $4.99 unlocks all 10 + 10. Vocabulary: **Coaching** = the professional bot that does the work and the math; **Mentor** = the philosophy that directs it by picking among verified options. Persona display names dropped "Coach" to avoid confusion (ids unchanged).
 
 > This file decides **what we build and how it fits together**. It supersedes any conflicting detail in BUILD_PLAN.md. Design and naming are out of scope for now.
@@ -80,16 +82,16 @@ Personas only **pick and explain**. Each is built from a named public body of wo
 
 | # | Persona (working name) | Built from the public work of | Philosophy in one line | Status |
 |---|---|---|---|---|
-| 1 | **Debt-Free Coach** | Dave Ramsey | Debt is the enemy; baby steps; cash only | **LIVE** (teammate) |
-| 2 | **Hustle Coach** | Grant Cardone | Raise income; don't over-save; 10X | thin, live for the switch |
-| 3 | Conscious Spender | Ramit Sethi | Spend big on what you love, cut the rest | locked |
-| 4 | Index Investor | John Bogle | Low-cost index funds; stay the course | locked |
-| 5 | Money Psychology | Morgan Housel | Behavior over spreadsheets; room for error | locked |
-| 6 | Frugal FIRE | Mr. Money Mustache | Cut spending hard, retire early | locked |
-| 7 | Asset Builder | Robert Kiyosaki | Buy assets, not liabilities | locked |
-| 8 | Protect First | Suze Orman | Emergency fund and protection before anything | locked |
-| 9 | Value Investor | Warren Buffett | Patience, margin of safety | locked |
-| 10 | Principles | Ray Dalio | Diversify across uncorrelated bets | locked |
+| 1 | **Debt-Free Mentor** | Dave Ramsey | Debt is the enemy; baby steps; cash only | **LIVE**, free |
+| 2 | Value Investor | Warren Buffett | Long-term investing in good businesses, low-cost index funds for most people | locked |
+| 3 | Asset Builder | Robert Kiyosaki | Buy assets, not liabilities. Real estate, entrepreneurship and cash flow | locked (leverage claims need contested fields) |
+| 4 | Disruptive Growth | Cathie Wood | Concentrated long-term bets on emerging technologies like AI | locked (must not steer to individual stocks or funds) |
+| 5 | Credit-Smart Starter | Vivian Tu | Use credit on purpose, negotiate your pay, start investing early | locked |
+| 6 | **Conscious Spender** | Ramit Sethi | Spend big on what you love, cut the rest | **LIVE**, free, second persona for the switch |
+| 7 | Money Psychology | Morgan Housel | Behavior over spreadsheets; room for error | locked |
+| 8 | Real Estate Saver | Graham Stephan | Save hard, invest early, build toward real estate and financial independence | locked |
+| 9 | Money Basics | Humphrey Yang | Plain-language investing, taxes and compound interest | locked |
+| 10 | Step-by-Step Planner | Brian Preston and Bo Hanson (The Money Guy Show) | Financial steps in a set order, from employer match to retirement | locked |
 
 The locked list lives in `config/catalog.json`, so the UI renders the cards from data.
 

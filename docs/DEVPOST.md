@@ -24,8 +24,8 @@ Jordan is 22, works part-time and drives DoorDash. Take-home pay swings from $1,
 2. **Money snapshot**, computed in code: lowest month, average, swing, essentials, and how short you'd be in your lowest month.
 3. **Coaching does the work.** Pick a coach (Budget, Debt, or Savings & Emergency Fund) and ask anything. The coach proposes up to 12 distinct options, and **every number comes from exact-cents code**, not the model.
 4. **Code checks every option.** Any option with a number that isn't backed by a calculation is thrown out. The "See all options" drawer shows what was proposed, kept and dropped, and why.
-5. **Your mentor directs it.** The mentor (Debt-Free, Hustle or Conscious Spender, each built from public teachings and labeled "not affiliated") **picks one option by id** and explains it in its voice, with citation chips to its source notes.
-6. **Switch mentors mid-chat.** Same options, same numbers, different pick. For Jordan, the Debt-Free Mentor says "build the $1,000 starter fund first." The Hustle Mentor says "your lowest month is $175 short; expand your income." On Debt Coaching, the Conscious Spender says "kill the 24.90% card first and automate it."
+5. **Your mentor directs it.** The mentor (Debt-Free or Conscious Spender, each built from public teachings and labeled "not affiliated") **picks one option by id** and explains it in its voice, with citation chips to its source notes.
+6. **Switch mentors mid-chat.** Same options, same numbers, different pick. For Jordan, the Debt-Free Mentor says "build the $1,000 starter fund first." On Debt Coaching, the Conscious Spender says "kill the 24.90% card first and automate it."
 
 Free: 3 mentors and 3 coaches. Plus, $4.99/month: all 10 of each (a real Stripe Checkout subscription, running in test mode; try card 4242 4242 4242 4242).
 
@@ -81,7 +81,7 @@ Free: 3 mentors and 3 coaches. Plus, $4.99/month: all 10 of each (a real Stripe 
    - RedHawk Builds starter kit v1.1 (finance library, CSV parser, synthetic portfolio data, server skeleton, tests)
    - Anthropic Claude API
    - Render
-   - Mentor notes are short summaries of public works: *The Total Money Makeover* (Dave Ramsey), *The 10X Rule* (Grant Cardone), *I Will Teach You to Be Rich* (Ramit Sethi)
+   - Mentor notes are short summaries of public works: *The Total Money Makeover* (Dave Ramsey), *I Will Teach You to Be Rich* (Ramit Sethi)
    - All user data is fictional
 5. **Limitations:**
    - Educational opinion, not licensed financial, tax or legal advice.
@@ -105,7 +105,7 @@ Free: 3 mentors and 3 coaches. Plus, $4.99/month: all 10 of each (a real Stripe 
 2. Ask: "My hours got cut. Pay off my card or save first?"
 3. Read the Debt-Free answer, and point at the calc card and a citation chip.
 4. Open "See all options" and point at the number check line (proposed, kept, dropped).
-5. Switch to Hustle Mentor: "Same options, same numbers, different advice, in 2 seconds."
+5. Switch to Conscious Spender: "Same options, same numbers, different advice, in 2 seconds."
 
 **1:25–1:45, trust.** "30 tests: payoff math reconciles to the cent, and when a model invents a number, the code drops it. If Claude goes down, the app still answers and says so."
 
@@ -124,6 +124,6 @@ Free: 3 mentors and 3 coaches. Plus, $4.99/month: all 10 of each (a real Stripe 
 3. Snapshot card
 4. Ask the hours-cut question → answer + calc card + citation chip
 5. "See all options" drawer with the number check
-6. Switch to Hustle Mentor, then to Conscious Spender
+6. Switch to Conscious Spender
 7. Switch the coach to Debt Coaching and ask "How fast can I get rid of my debt?"
 8. Terminal: `npm test` → 30 pass
