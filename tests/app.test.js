@@ -8,6 +8,7 @@ const {summarizePortfolioCSV} = await import('../lib/portfolio.js');
 const {chat, repick, payoff, generateCandidates} = await import('../lib/mentor/chat.mock.js');
 const {minor} = await import('../lib/finance.js');
 const {createServer} = await import('../server.js');
+const store = await import('../lib/store.js');
 
 const answers = {
   incomeHistory: [{month: '2026-08', amount: '2950'}, {month: '2026-09', amount: '1,780.00'}, {month: '2026-10', amount: '$2410.00'}],
@@ -98,6 +99,17 @@ test('API: quiz -> chat -> repick, static UI, and traversal blocked', async () =
     assert.ok(c.turnId);
     const r = await (await fetch(base + '/api/repick', {method: 'POST', headers: h, body: JSON.stringify({turnId: c.turnId, personaId: 'conscious-spender'})})).json();
     assert.equal(r.candidates.length, c.candidates.length);
+    const history = await (await fetch(base + '/api/history', {headers: h})).json();
+    assert.deepEqual(history.history.map(x => x.role), ['user', 'assistant', 'assistant']);
+    assert.equal(history.history[1].response.turnId, c.turnId);
+    assert.equal(history.history[2].response.personaId, 'conscious-spender');
+    const other = {'X-Session-Id': 'test-session-0000000002', 'Content-Type': 'application/json'};
+    assert.equal((await fetch(base + '/api/repick', {method: 'POST', headers: other, body: JSON.stringify({turnId: c.turnId, personaId: 'conscious-spender'})})).status, 404);
+    assert.deepEqual((await (await fetch(base + '/api/history', {headers: other})).json()).history, []);
+    store.addMemory('test-session-0000000001', [{fact: 'Prefers a cash buffer'}]);
+    assert.equal((await (await fetch(base + '/api/memory', {headers: h})).json()).memory.length, 1);
+    await fetch(base + '/api/memory', {method: 'DELETE', headers: h, body: JSON.stringify({fact: 'Prefers a cash buffer'})});
+    assert.deepEqual((await (await fetch(base + '/api/memory', {headers: h})).json()).memory, []);
     assert.equal((await fetch(base + '/api/profile')).status, 400); // no session header
   } finally { await new Promise(r => server.close(r)); }
 });

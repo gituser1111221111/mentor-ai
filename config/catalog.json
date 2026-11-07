@@ -76,7 +76,7 @@
   "personas": [
     {
       "id": "debt-free-coach",
-      "name": "Debt-Free Mentor",
+      "name": "Dave Ramsey–inspired",
       "inspiredBy": "Dave Ramsey",
       "philosophy": "Debt is the enemy; baby steps; cash only",
       "risk": "conservative",
@@ -90,7 +90,7 @@
     },
     {
       "id": "value-investor",
-      "name": "Value Investor",
+      "name": "Warren Buffett–inspired",
       "inspiredBy": "Warren Buffett",
       "philosophy": "Long-term investing in good businesses, low-cost index funds for most people",
       "risk": "moderate",
@@ -104,7 +104,7 @@
     },
     {
       "id": "asset-builder",
-      "name": "Wealth Builder",
+      "name": "Robert Kiyosaki–inspired",
       "inspiredBy": "Robert Kiyosaki",
       "philosophy": "Buy assets, not liabilities. Real estate, entrepreneurship and cash flow",
       "risk": "aggressive",
@@ -118,7 +118,7 @@
     },
     {
       "id": "disruptive-growth",
-      "name": "Innovation Investor",
+      "name": "Cathie Wood–inspired",
       "inspiredBy": "Cathie Wood",
       "philosophy": "Concentrated long-term bets on emerging technologies like AI",
       "risk": "very aggressive",
@@ -132,7 +132,7 @@
     },
     {
       "id": "credit-smart",
-      "name": "Money Bestie",
+      "name": "Vivian Tu–inspired",
       "inspiredBy": "Vivian Tu",
       "philosophy": "Use credit on purpose, negotiate your pay, and start investing early",
       "risk": "moderate",
@@ -146,7 +146,7 @@
     },
     {
       "id": "conscious-spender",
-      "name": "Conscious Spender",
+      "name": "Ramit Sethi–inspired",
       "inspiredBy": "Ramit Sethi",
       "philosophy": "Spend big on what you love, cut the rest",
       "risk": "moderate",
@@ -160,7 +160,7 @@
     },
     {
       "id": "money-psychology",
-      "name": "Financial Thinker",
+      "name": "Morgan Housel–inspired",
       "inspiredBy": "Morgan Housel",
       "philosophy": "Behavior over spreadsheets; room for error",
       "risk": "moderate",
@@ -174,7 +174,7 @@
     },
     {
       "id": "real-estate-saver",
-      "name": "Money Optimizer",
+      "name": "Graham Stephan–inspired",
       "inspiredBy": "Graham Stephan",
       "philosophy": "Save hard, invest early, and build toward real estate and financial independence",
       "risk": "moderate to aggressive",
@@ -188,7 +188,7 @@
     },
     {
       "id": "money-basics",
-      "name": "Finance Explainer",
+      "name": "Humphrey Yang–inspired",
       "inspiredBy": "Humphrey Yang",
       "philosophy": "Plain-language investing, taxes and compound interest for beginners",
       "risk": "moderate",
@@ -202,7 +202,7 @@
     },
     {
       "id": "step-by-step-planner",
-      "name": "Financial Planner",
+      "name": "Money Guy–inspired",
       "inspiredBy": "Brian Preston and Bo Hanson (The Money Guy Show)",
       "philosophy": "Take financial steps in a set order, from employer match to retirement",
       "risk": "moderate",
