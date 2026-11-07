@@ -4,6 +4,12 @@ November 7, 2026. The founder's direct request supersedes historical flagship, a
 
 ## This branch
 
+Latest clarification: one chatbot guided by the selected teacher, optional learning modules, and a personal Budget/Portfolio workspace. Specialist tools are internal implementation details, not a bot catalog to navigate. Pricing remains one free month, then $2.99/month for everything.
+
+The workspace now includes an exact-cent monthly budget builder and cash-cushion goal, holdings import, personal single-security/sector/top-five/count metrics, an earnings review window, and explanation pop-ups for each metric. Values are drafted and explicitly approved before taking effect. Changing guidelines invalidates prior cached analysis. Missing sector data remains unknown. What-if scenarios recheck supported constraints and disclose unsatisfied/unknown conditions.
+
+Market context supports on-demand and optional five-minute foreground refresh using the existing configured adapters or dated fallback. Imported portfolio values are not repriced from quotes. Earnings cards prepare a question for the same teacher, with no recommendation to buy or sell and no invented transcript. The source shortlist and implementation sequence are in [Connection research](CONNECTION_RESEARCH.md).
+
 - Preserves the current visual system and imagery; puts process, source directory, specialist groups and learning content behind accessible disclosures.
 - Gives everyday money and future money equal prominence, with an explicit teacher choice and optional intake.
 - Offers implemented demo capabilities without legacy Plus gates. Planned capabilities remain previews.

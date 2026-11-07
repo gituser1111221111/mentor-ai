@@ -3,13 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Mentor Labs · Advice with a point of view</title>
+  <title>Mentor Labs · Learn, plan, understand</title>
   <meta name="description" content="Explore everyday money, investing, and retirement through researched mentor perspectives and specialist AI tools.">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2317191c'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-family='Arial' font-size='38' font-weight='bold' fill='white'%3EM%3C/text%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,500;1,6..72,500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/styles.css?v=mentor-pivot-24">
+  <link rel="stylesheet" href="/workspace.css?v=1">
 </head>
 <body>
   <header class="site">
@@ -17,11 +18,11 @@
     <nav class="links" id="nav">
       <a href="#mentors">Teachers</a><a href="#learn">Learn</a>
       <a href="#method">Our process</a>
-      <a href="#specialists">Agents</a>
-      <a href="#live-data">Data sources</a>
+      <a href="#workspace" data-open-workspace>My workspace</a>
+
       <a href="#pricing">Pricing</a>
     </nav>
-    <div class="head-right">
+    <div class="head-right"><button type="button" class="btn" data-open-workspace>My workspace</button>
       <span id="tier" class="tag" hidden>Demo</span>
       <span id="engine" class="tag quiet" title="Which engine is answering"></span>
       <button id="restart" class="btn text" hidden>Start over</button>
@@ -58,8 +59,8 @@
       <section id="entry-choices" class="band money-paths" aria-labelledby="entry-title">
         <div class="band-head"><div><p class="section-eyebrow">YOUR NEXT FINANCIAL STEP</p><h2 id="entry-title">What’s on your mind?</h2></div><p>One shared picture of your money. Start with what matters today.</p></div>
         <div class="money-path-grid">
-          <article><h3>Everyday money</h3><p>Make pay last, understand debt, and build room to breathe.</p><button type="button" class="btn" data-start-need="everyday">Explore everyday money <span aria-hidden="true">↗</span></button></article>
-          <article><h3>Future money</h3><p>Understand your portfolio, retirement questions, and the tradeoffs ahead.</p><button type="button" class="btn" data-start-need="future">Explore investing &amp; retirement <span aria-hidden="true">↗</span></button></article>
+          <article><h3>Everyday money</h3><p>Make pay last, understand debt, and build room to breathe.</p><button type="button" class="btn" data-open-workspace="budget">Build my budget <span aria-hidden="true">↗</span></button></article>
+          <article><h3>Future money</h3><p>Understand your portfolio, retirement questions, and the tradeoffs ahead.</p><button type="button" class="btn" data-open-workspace="portfolio">Understand my portfolio <span aria-hidden="true">↗</span></button></article>
         </div>
       </section>
 
@@ -71,23 +72,23 @@
 
       <section id="method" class="band compact-section"><details class="section-disclosure"><summary><span><strong>How we research each perspective</strong><small>Public teachings become traceable principles, not a claim to speak for the person.</small></span></summary><div class="method-band"><div class="method-intro"><p class="section-eyebrow">HOW WE BUILD MENTORS</p><h2>Public teachings. A distinct perspective.</h2></div><div class="method-list"><div><strong>Research the source</strong><p>Books, interviews, podcasts, and articles become curated research notes.</p></div><div><strong>Map the philosophy</strong><p>We organize principles, priorities, and tradeoffs into a mentor’s instructions.</p></div><div><strong>Test the perspective</strong><p>We check how the mentor explains options across different financial situations.</p></div></div></div></details></section>
 
-      <section id="specialists" class="band">
+      <section id="specialists" class="band" hidden>
         <div class="band-head"><div><p class="section-eyebrow">THE SPECIALIST LIBRARY</p><h2>Specialist help, one step at a time.</h2></div><p>Explore everyday money and future money tools. Additional specialties are grouped below; availability varies.</p></div>
         <div id="agents" class="agent-groups"></div>
       </section>
 
-      <section id="agent-method" class="band compact-section"><details class="section-disclosure"><summary><span><strong>How specialist agents work</strong><small>Your context, defined tools, and calculations you can inspect.</small></span></summary><div class="method-band"><div class="method-intro"><p class="section-eyebrow">HOW WE BUILD AGENTS</p><h2>A focused job. Tools to do it.</h2></div><div class="method-list"><div><strong>Define the task</strong><p>Each specialist focuses on a money decision, from budgeting to company research.</p></div><div><strong>Connect the context</strong><p>Your numbers, documents, holdings, and available data feed the agent’s tools.</p></div><div><strong>Check the options</strong><p>Code calculates and validates. The mentor selects an option and explains why.</p></div></div></div></details></section>
+      <section id="agent-method" class="band compact-section" hidden><details class="section-disclosure"><summary><span><strong>How specialist agents work</strong><small>Your context, defined tools, and calculations you can inspect.</small></span></summary><div class="method-band"><div class="method-intro"><p class="section-eyebrow">HOW WE BUILD AGENTS</p><h2>A focused job. Tools to do it.</h2></div><div class="method-list"><div><strong>Define the task</strong><p>Each specialist focuses on a money decision, from budgeting to company research.</p></div><div><strong>Connect the context</strong><p>Your numbers, documents, holdings, and available data feed the agent’s tools.</p></div><div><strong>Check the options</strong><p>Code calculates and validates. The mentor selects an option and explains why.</p></div></div></div></details></section>
 
       <section id="live-data" class="band compact-data">
-        <div class="api-heading"><div><p class="section-eyebrow">DATA INTEGRATIONS</p><h2>Data for your agents.</h2></div><p>Market prices, filings, and economic context.</p></div>
+        <div class="api-heading"><div><p class="section-eyebrow">DATA INTEGRATIONS</p><h2>Sources behind your workspace.</h2></div><p>Market prices, filings, and economic context.</p></div>
         <details class="section-disclosure"><summary><span><strong>Explore sources &amp; availability</strong><small>Available integrations and planned connections, clearly separated.</small></span></summary><div id="data-sources"></div></details>
-        
+
       </section>
 
       <section id="pricing" class="band">
         <div class="band-head"><div><p class="section-eyebrow">ONE SIMPLE OFFER</p><h2>Every perspective. One membership.</h2></div><p>Everyday support and future planning belong together.</p></div>
         <div class="plans single-offer"><div class="plan plus">
-          <div><span class="tag plus">Planned membership</span><h3>One month free</h3><p class="price">Then $2.99<span>/month</span></p><p>All mentor perspectives and features included as they become available. No separate mentor or specialist tiers.</p></div>
+          <div><span class="tag plus">Planned membership</span><h3>One month free</h3><p class="price">Then $2.99<span>/month</span></p><p>All mentor perspectives and features included as they become available. No separate teacher or tool tiers.</p></div>
           <div><p class="fine">Explore the working demo now. Paid subscriptions and trial enrollment are not active; preview features are still in development.</p><div class="row plan-links"><button class="btn primary" data-unlock>Explore the demo</button><button id="start" class="btn">Add my money snapshot</button><button id="demo" class="btn text">See a sample plan</button></div></div>
         </div></div>
       </section>
@@ -98,7 +99,7 @@
 
       <section class="band faq" aria-labelledby="faq-title">
         <h2 id="faq-title">Common questions.</h2>
-<details><summary>What does the agent do, and what does the mentor do?</summary><p>The agent builds options using tools and your context. The mentor applies a financial philosophy to select an option and explain it.</p></details>
+<details><summary>How do chat, lessons and my workspace fit together?</summary><p>Your selected AI teacher explains ideas in one conversation. Lessons let you learn independently. Your budget and portfolio workspace uses the same saved inputs and your own review metrics. Calculation and research tools work behind the scenes.</p></details>
 <details><summary>Can I talk instead of type?</summary><p>Voice is available when the service is configured. You can also type your questions and follow-ups in the same conversation.</p></details>
 <details><summary>What can I try for free?</summary><p>The demo includes available mentor conversations and specialist tools without payment. The intended membership includes all perspectives and features: one month free, then $2.99/month. Trial enrollment is not active.</p></details>
 <details><summary>How are the numbers checked?</summary><p>Budget calculations run in code. Proposed options are checked against those calculations before the mentor selects one.</p></details>
@@ -128,19 +129,20 @@
       </form>
     </section>
 
+    <section id="v-workspace" class="view" hidden><div class="workspace-nav"><button type="button" class="btn" data-return-chat>Talk to my teacher</button><button type="button" class="btn" data-open-learning>Learning modules</button></div><div id="workspace-content"></div></section>
+
     <!-- CHAT -->
     <section id="v-chat" class="view chat" hidden>
       <aside class="rail" id="chat-sidebar">
         <h4>Perspective <span>choose another mentor</span></h4>
         <div id="persona-switch" class="rail-list"></div>
-        <h4>Agents <span>choose a specialty</span></h4>
-        <div id="agent-list" class="rail-list"></div>
+        <div id="agent-list" class="rail-list" hidden></div>
         <button class="btn context-rail" data-context>Add context or portfolio</button>
         <h4>What I remember</h4>
         <ul id="memory" class="memory"></ul>
       </aside>
       <div class="chat-main">
-        <div class="chat-toolbar"><button id="toggle-chat-sidebar" class="btn text" type="button" aria-controls="chat-sidebar" aria-expanded="true">Mentors &amp; agents</button></div><div id="chat-head" class="chat-head"></div>
+        <div class="chat-toolbar"><button id="toggle-chat-sidebar" class="btn text" type="button" aria-controls="chat-sidebar" aria-expanded="true">Teachers &amp; context</button></div><div id="chat-head" class="chat-head"></div>
         <div id="log" aria-live="polite"></div>
         <details class="chat-extras"><summary>Tools &amp; suggested questions</summary>
         <div class="chat-actions"><button type="button" id="chat-plan" class="btn text">Update my answers</button><button type="button" id="chat-connect-portfolio" class="btn text">Add portfolio reference</button><button type="button" id="chat-upload-portfolio" class="btn text">Upload portfolio CSV</button><button type="button" id="chat-upload-document" class="btn text">Upload document</button></div>
@@ -192,5 +194,6 @@
   </footer>
   <script type="module" src="/app.js?v=mentor-pivot-24"></script>
   <script type="module" src="/portfolio-guidelines.js"></script><script type="module" src="/learning.js"></script>
+  <script type="module" src="/metric-help.js"></script><script type="module" src="/workspace.js"></script>
 </body>
 </html>

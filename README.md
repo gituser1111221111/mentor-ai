@@ -4,11 +4,12 @@ AI teachers grounded in researched public perspectives help users learn while wo
 
 ## Current experience
 
-- Explicit teacher choice, equal everyday-money and future-money entry points, optional intake.
+- One teacher chatbot, optional learning modules, and a shared Budget/Portfolio workspace. Specialist tools stay behind the scenes.
 - Compact expandable sections using the existing visual design.
 - Thirteen optional Barone Investment Group learning modules: reading, outcomes, practice checklists, browser-local progress and a teacher-discussion handoff.
 - Implemented conversation paths and specialist tools are available in the demo; unbuilt capabilities remain previews.
-- Portfolio imports, user-approved concentration guideline versions, deterministic review and isolated exact-cent what-if comparisons.
+- Monthly budget builder, cash-cushion goal, portfolio imports, user-approved review metrics, explanation pop-ups and isolated exact-cent what-if comparisons.
+- Dated holdings quotes and upcoming earnings cards, on-demand or optional foreground refresh, and a direct handoff to the same teacher for explanation. See [connection research](docs/CONNECTION_RESEARCH.md) for the read-only provider roadmap.
 - Documents remain conversational context until their facts are confirmed through structured input. Voice remains available where configured and supported.
 
 Intended offer: **one month free, then $2.99/month, all perspectives and features included**. Checkout is disabled pending trial, consent and cancellation terms. Using this demo does not start a trial or charge a customer.

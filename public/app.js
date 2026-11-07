@@ -18,7 +18,7 @@ async function api(path, {method = 'GET', body} = {}) {
 }
 
 const state = {config: null, tier: 'free', answers: {}, i: 0, profile: null, snapshot: null, personaId: null, agentId: 'budget', need: 'question', lastTurn: null};
-const views = ['v-landing', 'v-quiz', 'v-chat'];
+const views = ['v-landing', 'v-quiz', 'v-chat', 'v-workspace'];
 function show(id) {
   if (id !== 'v-chat' && voice.active) endConversation();
   views.forEach(v => { $('#' + v).hidden = v !== id; });
@@ -198,7 +198,7 @@ function connectPortfolio() { uploadNote('Direct brokerage connections are not a
 // ---------- chat ----------
 function renderChatChrome() {
   const p = persona(state.personaId), a = agent(state.agentId), s = state.snapshot;
-  $('#chat-head').innerHTML = `${thumb(p)}<div><strong>${esc(p.name)}</strong><small>${['investing','equity'].includes(a.id) ? esc(a.name) : p.textOnly ? 'Text mentorship · Research perspectives' : state.profile?.incomeHistory?.length ? `With ${esc(a.name)}` : 'Start with any money question'} · AI-inspired, not affiliated</small></div>${s?.status === 'ok' ? `<div class="snap-mini">lowest ${usd(s.lowestMonth)}<br>essentials ${usd(s.essentialsTotal)}</div>` : ''}`;
+  $('#chat-head').innerHTML = `${thumb(p)}<div><strong>${esc(p.name)}</strong><small>${p.textOnly ? 'Text conversation · Your AI teacher' : 'Your AI teacher · Learn along the way'} · AI-inspired, not affiliated</small></div>${s?.status === 'ok' ? `<div class="snap-mini">lowest ${usd(s.lowestMonth)}<br>essentials ${usd(s.essentialsTotal)}</div>` : ''}`;
   $('#persona-switch').innerHTML = personas().map(x => `<button type="button" class="rail-item ${x.id === state.personaId ? 'on' : ''}" data-p="${esc(x.id)}">${thumb(x)}<span>${esc(displayName(x.name))}</span>${badge(x)}</button>`).join('');
   $('#agent-list').innerHTML = agents().map((x,i) => `<button type="button" class="rail-item coach-item tone-${i%4} ${x.id === state.agentId ? 'on' : ''}" data-a="${esc(x.id)}">${agentSymbol(x.id)}<span>${esc(displayName(x.name))}</span>${badge(x)}</button>`).join('');
   document.querySelectorAll('#persona-switch [data-p]').forEach(b => b.onclick = () => pickPersona(b.dataset.p));
@@ -365,10 +365,12 @@ function startChat() {
   if (!usable(persona(state.personaId))) return openStartChoice();
   if (!usable(agent(state.agentId))) state.agentId = 'budget';
   rememberChoice();
-  $('#log').innerHTML = ''; state.lastTurn = null; renderChatChrome(); refreshMemory(); show('v-chat');
+  state.lastTurn = null; renderChatChrome(); refreshMemory(); show('v-chat');
+  if ($('#log .msg.user')) { $('#msg').focus(); return; }
+  $('#log').innerHTML = '';
   const p = persona(state.personaId), a = agent(state.agentId);
   if (['investing','equity'].includes(a.id)) {
-    note(state.profile?.portfolio ? `${a.name} is ready with your saved holdings and ${p.name}'s perspective.` : `${a.name} works from your holdings. Upload a CSV to get started.`);
+    note(state.profile?.portfolio ? `Your teacher can explore your saved holdings through ${p.name}'s researched perspective.` : 'Import your holdings to explore your portfolio with your teacher.');
     if (!state.profile?.portfolio) { const el = document.createElement('div'); el.className = 'portfolio-start'; el.innerHTML = '<button class="btn primary" type="button" data-holdings>Upload holdings CSV</button><button class="btn text" type="button" data-context-open>Open context hub</button>'; el.querySelector('[data-holdings]').onclick = () => $('#portfolio-file').click(); el.querySelector('[data-context-open]').onclick = () => $('#context-dialog').showModal(); $('#log').append(el); }
   } else note(p.textOnly ? `${p.name} is ready for text chat. Explore a perspective or bring a research question.` : state.profile?.incomeHistory?.length ? `${p.name} is ready to talk through your plan. Ask anything below.` : `Say hello, ask a question, or choose Talk live for a voice conversation. Add your numbers anytime for a personal plan.`);
   if (state.need === 'retirement') note('Explore retirement questions here. A dedicated retirement scenario tool is still planned.');
@@ -401,7 +403,7 @@ function renderSavedDocuments() {
 function setupContextHub() {
   const dialog = $('#context-dialog');
   document.querySelectorAll('[data-context]').forEach(b => b.onclick = async () => { dialog.showModal(); renderSavedDocuments(); try { const r = await api('/api/profile'); state.profile=r.profile; state.snapshot=r.snapshot; renderSavedDocuments(); } catch {} });
-  $('#context-done').onclick = () => { dialog.close(); if ($('#v-chat').hidden) startChat(); };
+  $('#context-done').onclick = () => { dialog.close(); if ($('#v-chat').hidden && $('#v-workspace').hidden) startChat(); };
   $('#context-close').onclick = () => dialog.close();
   $('#feature-close').onclick = () => $('#feature-preview').close();
   $('#feature-plus').onclick = () => { $('#feature-preview').close(); openUnlock(); };
@@ -671,3 +673,16 @@ document.addEventListener('mentor:learn', e => {
 document.querySelector('#start-choice')?.addEventListener('submit', () => {
   if (learningQuestion && !document.querySelector('#start-choice').open) {document.querySelector('#msg').value=learningQuestion;document.querySelector('#msg').focus();learningQuestion='';}
 });
+
+// One teacher conversation, shared with the learning and planning workspace.
+function openWorkspace(tab) {show('v-workspace');document.dispatchEvent(new CustomEvent('mentor:workspace-open'));if(tab)document.querySelector('[data-workspace-tab="'+tab+'"]')?.click();}
+function openLearning() {show('v-landing');document.querySelector('#learn > details').open=true;document.querySelector('#learn').scrollIntoView({block:'start'});}
+document.querySelectorAll('[data-open-workspace]').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();openWorkspace(b.dataset.openWorkspace);}));
+document.querySelectorAll('[data-open-learning]').forEach(b=>b.addEventListener('click',openLearning));
+document.querySelectorAll('[data-return-chat]').forEach(b=>b.addEventListener('click',()=>{if(state.personaId)startChat();else openStartChoice();}));
+document.addEventListener('mentor:show-learning',openLearning);
+document.addEventListener('mentor:edit-finances',renderIntake);
+document.addEventListener('mentor:inputs-updated',async()=>{if(voice.active)endConversation('Your saved inputs changed.');state.lastTurn=null;const r=await api('/api/profile');state.profile=r.profile;state.snapshot=r.snapshot;});
+document.addEventListener('mentor:workspace-question',e=>{learningQuestion=String(e.detail?.question||'').slice(0,2000);openStartChoice({need:/portfolio|holdings|earnings/.test(learningQuestion)?'future':'question'});});
+
+document.addEventListener('mentor:guidelines-updated',()=>{state.lastTurn=null;if(voice.active)endConversation('Your saved review guidelines changed.');});
