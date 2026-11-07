@@ -1,0 +1,19 @@
+# Render Blueprint: Dashboard -> New -> Blueprint -> pick this repo.
+# The API key is a secret: Render asks for it during setup (sync: false). Never commit it.
+services:
+  - type: web
+    name: mentor-ai
+    runtime: node
+    plan: free
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: HOST
+        value: 0.0.0.0
+      - key: CHAT_LIMIT_PER_HOUR
+        value: "40"
+      - key: MENTOR_API_KEY
+        sync: false
