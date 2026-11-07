@@ -1,10 +1,10 @@
-# Money Mentor (working title)
+# Mentor Labs
 
-**AI money mentors that can't make up numbers. They can only choose.**
+**The vision: hundreds of specialist AI agents, guided by mentor perspectives people already trust.** This demo starts with a free Ramsey-inspired chat and a visible Plus library of ten mentors and ten agent specialties.
 
 RedHawk Builds 2026 · Challenge #21, Variable-income budgeting (Student and Campus Finance track), MVP option 1: plan expenses around variable monthly income.
 
-**Live demo:** https://mentor-ai-ahjs.onrender.com. It's on Render's free plan, so the first visit after about 15 idle minutes takes ~50 seconds to wake up. Click **"Use demo profile (Jordan, 22)"** to skip the quiz.
+**Live demo:** https://mentor-ai-ahjs.onrender.com. The Render free service may take time to wake after idling. Use **Try Ramsey free** for chat without a quiz, or **See a sample plan** for the full money snapshot.
 
 ---
 
@@ -39,21 +39,23 @@ Switch mentor ──► step ③ only: same options, same numbers, different pic
 - **Coaching** = a specialist bot (Budget, Debt, Savings & Emergency Fund) that does the work and the math.
 - **Mentor** = a money philosophy that directs the coach by choosing among its verified options. Mentors are built from summaries of public teachings and labeled *"inspired by; not affiliated or endorsed."* No mentor claims to be a real person, and there are no cloned voices.
 
-**Available now:** 2 free mentors (Debt-Free and Conscious Spender) and 3 free coaches (Budget, Debt, Savings). The other mentors and coaches are planned; the Plus checkout is a Stripe test-mode preview and makes new options available as they launch.
+**Available now:** Ramsey-inspired starter chat with budgeting support is free. Ramit Sethi–inspired mentoring and standalone Debt and Savings coaching are working Plus demonstrations. The other eight mentors and seven specialists are visible Plus previews and are not interactive yet. Checkout is test mode only; no real charge is made.
 
 ## What actually works (and what doesn't)
 
 | Feature | Status |
 |---|---|
-| 13-question screening quiz → money snapshot (lowest month, swing, essentials, shortfall) | Works; computed in code |
+| 6-screen optional intake → money snapshot (lowest month, swing, essentials, shortfall) | Works |
 | Portfolio CSV upload → value, sector mix, fees (`portfolioSummary`) | Works. No brokerage login; the sample file is synthetic |
-| Live chat: generate → validate → pick, for 3 coaches × 2 available mentors | Works on the live site (Claude API) |
+| Free Ramsey-inspired starter chat without an intake | Works with Claude when configured, with a labeled offline demo reply otherwise |
+| Personalized chat: generate → validate → pick, for built mentors and agents | Works when allowed by tier |
 | Persona switch on the same options (`repick`) | Works |
 | Number check visible in the UI ("proposed N, kept K, dropped D: reason") | Checks money, percentages, dates and other numeric claims against calculations; it cannot prove the reasoning is sound |
 | Conversation and memory | Restores after refresh on the same server instance; users can remove remembered facts |
 | Offline fallback: if Claude fails, a rule-based engine answers, labeled "offline fallback" | Works |
 | $4.99/month Plus (Stripe Checkout) | Works in **Stripe test mode**: a real hosted checkout and subscription, verified on the server before Plus unlocks. Use card 4242 4242 4242 4242. Live keys are refused in code |
-| Additional mentors and coaches | Not in the main selection flow until their files and logic are ready |
+| Additional mentors and agents | Shown in the gallery, selector, and chat rail as Plus previews; unbuilt entries cannot be used as if live |
+| Document picker and portfolio URL | Showcase only: documents stay in the browser; URL is session-only reference, with no brokerage connection |
 | "Connect brokerage" (Plaid) | **Not built**: shown as sandbox-only text |
 | Voice (ElevenLabs) | **Not built yet** |
 
@@ -78,7 +80,7 @@ Without a key, the app runs on the rule-based mock engine (labeled "mock engine"
 `npm test` uses a fake Claude client and never calls the network. `npm run eval:chat` runs four live scenarios covering a shortfall, debt versus savings, a good month and missing income. It checks mechanics and prints answers for human review.
 
 - **Valid input:** quiz answers produce an exact-cents snapshot (`$1,780.00` low, `$2,380.00` average, `$1,634.00` essentials in the test profile).
-- **Missing or invalid input:** no income means the coach asks for it without calling the model. Bad dollar amounts and APRs over 100% are rejected with the field named.
+- **Missing or invalid input:** starter chat answers general questions without income. A personal plan requires intake data. Bad dollar amounts and APRs over 100% are rejected with the field named.
 - **Reconciliation:** debt payoff simulations reconcile to the cent (total paid = principal + interest), and in the test case avalanche pays no more interest than snowball.
 - **Pick integrity:**
   - The mentor can only pick an id that exists.
@@ -114,7 +116,7 @@ docs/                     business plan, build plan, strategy, Devpost text
 - **Mentor fidelity still needs human evaluation.** The live scenario script checks mechanics and basic relevance; it does not establish an advice-quality or source-fidelity score.
 - **Coaches share one calculation library.** Debt and Savings coaching differ from Budget only in focus. Taxes, investment returns and pay changes aren't forecast.
 - **Single-instance, anonymous store.** Sessions and chat turns are saved to a local JSON file, but Render's free-service disk is ephemeral. Data can disappear on restart or redeploy. Fictional data only.
-- **No real bank or brokerage connection, and no real payments.**
+- **No real bank or brokerage connection, and no real payments.** Documents and portfolio links are showcase fields; the CSV importer is functional.
 - **The number check matches exact values.** It can't catch wrong reasoning that uses correct numbers, and it can reject a valid rephrasing (for example, a rounded number).
 - Not affiliated with or endorsed by Dave Ramsey, Ramsey Solutions, Ramit Sethi or anyone else named.
 

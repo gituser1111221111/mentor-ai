@@ -7,26 +7,27 @@
       "name": "Budget Coaching",
       "job": "Plan around variable income",
       "status": "live",
-      "tier": "free"
+      "tier": "plus",
+      "includedWithFlagship": true
     },
     {
       "id": "debt",
       "name": "Debt Coaching",
       "job": "Payoff order and timelines",
       "status": "live",
-      "tier": "free"
+      "tier": "plus"
     },
     {
       "id": "savings",
       "name": "Savings & Emergency Fund Coaching",
       "job": "How much and how fast",
       "status": "live",
-      "tier": "free"
+      "tier": "plus"
     },
     {
       "id": "investing",
-      "name": "Investing Coaching",
-      "job": "Portfolio mix and fees (education)",
+      "name": "Portfolio Review Agent",
+      "job": "Review holdings, allocation and fees",
       "status": "locked",
       "tier": "plus"
     },
@@ -67,8 +68,8 @@
     },
     {
       "id": "business",
-      "name": "Business Coaching",
-      "job": "Freelancer and self-employed basics",
+      "name": "Business Coach Agent",
+      "job": "Business cash flow and self-employed basics",
       "status": "locked",
       "tier": "plus"
     }
@@ -139,7 +140,7 @@
       "risk": "moderate",
       "audience": "Young professionals who want to enjoy their money while building wealth",
       "status": "live",
-      "tier": "free",
+      "tier": "plus",
       "image": "/img/mentors/conscious-spender.webp"
     },
     {
@@ -172,7 +173,7 @@
       "risk": "moderate",
       "audience": "College students and beginning investors",
       "status": "locked",
-      "tier": "free",
+      "tier": "plus",
       "image": "/img/mentors/money-basics.webp"
     },
     {
@@ -188,12 +189,12 @@
     }
   ],
   "explainer": {
-    "mentors": "Mentors decide how to think. Each one is built from a well-known money philosophy and directs the coach: it reviews the coach's options and picks the one that fits its worldview.",
-    "coaching": "Coaching is the professional. Each coach is a specialist bot (budget, debt, savings and more) that does the work and all the math, then hands the mentor a set of verified options."
+    "mentors": "A mentor's perspective guides the answer. The Ramsey-inspired flagship is ready to try; the rest of the mentor library is a Plus preview.",
+    "coaching": "Specialist agents focus on budgeting, debt, portfolios, business and more. The free Ramsey starter uses our budgeting engine; the expanded agent library is a Plus preview."
   },
   "tiers": {
-    "free": "2 working mentors + 3 coaches, free; Money Basics coming soon",
-    "plus": "All 10 mentors + all 10 coaches for $4.99/month"
+    "free": "Ramsey-inspired starter chat, with budgeting support",
+    "plus": "Preview access to the mentor and specialist-agent library; only built features are interactive"
   },
   "imageNote": "All mentor portraits are AI-generated editorial likenesses of the public figures whose teachings inspire them. The figures are not affiliated with or endorsing this product."
 }

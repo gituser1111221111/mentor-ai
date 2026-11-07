@@ -101,12 +101,14 @@ test('live chat: structured outputs, cached prompts, persona picks by id, repick
   assert.match(h.text, /Raise your floor/);
 });
 
-test('no income: asks for it without calling the model', async () => {
-  const fake = fakeClient({generated: [], picks: {}});
-  setClient(fake);
-  const r = await chat({messages: [{role: 'user', content: 'help'}], profile: normalizeProfile({}).profile});
-  assert.match(r.text, /take-home pay/);
-  assert.equal(fake.calls.length, 0);
+test('no income: general Ramsey starter answers conversationally', async () => {
+  const calls = [];
+  setClient({messages: {create: async params => { calls.push(params); return {content: [{type: 'text', text: JSON.stringify({reply: 'Start with a written budget. What is your main goal?'})}]}; }}});
+  const r = await chat({messages: [{role: 'user', content: 'How should I start?'}], profile: normalizeProfile({}).profile});
+  assert.match(r.text, /written budget/);
+  assert.equal(r.turnId, null);
+  assert.equal(calls.length, 1);
+  assert.equal(calls[0].model, 'claude-haiku-5-5');
 });
 
 test('refusal or too few verified options raises (routes then fall back to mock)', async () => {

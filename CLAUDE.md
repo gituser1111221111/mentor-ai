@@ -1,4 +1,6 @@
-# Mentor AI (RedHawk Builds 2026, Challenge #21)
+# Mentor Labs (RedHawk Builds 2026, Challenge #21)
+
+Current product direction (Nov 7): free Ramsey-inspired starter chat, optional six-screen intake, ten visible mentors and ten visible specialist agents. Only Ramsey is a free mentor. Standalone agents and all other mentors are Plus; unbuilt entries remain clearly labeled previews. The context hub previews document selection and portfolio URLs; holdings CSV import works. Do not claim a thousands-of-hours source corpus has already been processed.
 
 Start every session by reading:
 - `docs/STRATEGY_AND_STRUCTURE.md`: **v0.4, newest, wins on conflicts.** Quiz, 10 agents/10 personas (1 live each), portfolio upload, deploy, repo layout. Specs: `config/quiz.json`, `config/catalog.json`
@@ -13,7 +15,7 @@ Start every session by reading:
 - **Generate, then pick:** agents (persona-neutral) produce ~12 candidate options with all numbers from code tools. Code validates them. The persona only picks one by id (enum) and explains. `repick()` swaps the persona without changing the facts.
 - MVP persona: Debt-Free Coach, built from Dave Ramsey's public teachings and labeled "not affiliated." Conscious Spender (built-in, from Ramit Sethi's public teachings) is the second live persona for the switch demo. Hustle Coach (Grant Cardone) was removed in v0.6. Never "I am Dave Ramsey." No voice clone.
 - Mentor portraits are AI-generated editorial likenesses of the public figures who inspire each philosophy. Label them as generated and maintain clear non-affiliation language; the figures do not speak for or endorse the app.
-- Business model: free base bot; one $4.99/mo tier unlocks all agents and personas. Specific answers allowed, always with a disclosure (not licensed advice).
+- Business model: free Ramsey-inspired starter; one $4.99/mo test-mode tier previews the Plus library. Only built features are interactive. Specific answers include a disclosure (not licensed advice).
 - Stack: starter Node 22 backend (`server.js`, `lib/`), Claude API (`claude-sonnet-5-5` to generate, `claude-haiku-5-5` to pick and for memory), ElevenLabs STT/TTS, Stripe test mode, static UI in `public/`.
 - All money is a USD decimal string, with math in exact cents via `lib/finance.js`. The model never does arithmetic.
 

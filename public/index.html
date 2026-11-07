@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Money Mentor</title>
-  <meta name="description" content="A budget built around your worst month. Coaching does the math in code; a mentor you trust picks the plan.">
+  <title>Mentor Labs · Advice with a point of view</title>
+  <meta name="description" content="Meet the Ramsey-inspired flagship, explore specialist money agents, and build a plan with a perspective you trust.">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2317191c'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-family='Arial' font-size='38' font-weight='bold' fill='white'%3EM%3C/text%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,17 +13,19 @@
 </head>
 <body>
   <header class="site">
-    <a href="/" class="wordmark" id="home">Money Mentor</a>
+    <a href="/" class="wordmark" id="home">Mentor Labs</a>
     <nav class="links" id="nav">
       <a href="#how">How it works</a>
       <a href="#mentors">Mentors</a>
+      <a href="#method">Our method</a>
+      <a href="#specialists">Agents</a>
       <a href="#pricing">Pricing</a>
     </nav>
     <div class="head-right">
       <span id="tier" class="tag" hidden>Plus</span>
       <span id="engine" class="tag quiet" title="Which engine is answering"></span>
       <button id="restart" class="btn text" hidden>Start over</button>
-      <button id="head-start" class="btn">Start free</button>
+      <button id="head-start" class="btn">Try Ramsey free</button>
     </div>
   </header>
 
@@ -34,19 +36,21 @@
     <section id="v-landing" class="view">
       <div class="hero">
         <div class="hero-copy">
-          <p class="hero-eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span> YOUR MONEY, YOUR POINT OF VIEW</p>
-          <h1>A money plan for <em>the life you live.</em></h1>
-          <p class="lead">Build around the paycheck you actually have. See every calculation, then let a mentor you connect with help you choose your next move.</p>
+          <p class="hero-eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span> MEET MENTOR LABS</p>
+          <h1>Money guidance from <em>a point of view you trust.</em></h1>
+          <p class="lead">Start a conversation with our free Ramsey-inspired mentor. Explore a growing library of specialist agents and familiar financial perspectives, all in one place.</p>
           <div class="row hero-actions">
-            <button id="start" class="btn primary">Build my plan <span aria-hidden="true">↗</span></button>
+            <button id="try-chat" class="btn primary">Try Ramsey free <span aria-hidden="true">↗</span></button>
+            <button id="start" class="btn secondary">Build my plan</button>
             <button id="demo" class="btn secondary">See a sample plan</button>
           </div>
-          <p class="hero-assurance">Free to start <span aria-hidden="true">•</span> No bank login <span aria-hidden="true">•</span> About two minutes</p>
+          <p class="hero-assurance">No account needed <span aria-hidden="true">•</span> Start chatting now <span aria-hidden="true">•</span> Personal plan is optional</p>
+          <p class="hero-vision">Our vision: hundreds of specialist AI agents, guided by mentor perspectives you trust. This demo begins with one free flagship.</p>
         </div>
         <div class="hero-visual">
           <figure class="featured-mentor">
             <img src="/img/mentors/debt-free-coach.webp" alt="AI-generated likeness inspired by Dave Ramsey" width="640" height="800">
-            <figcaption><span>MEET A MENTOR</span><strong>Dave Ramsey–inspired</strong><small>AI likeness · not affiliated</small></figcaption>
+            <figcaption><span>THE FREE FLAGSHIP</span><strong>Dave Ramsey–inspired</strong><small>AI likeness · not affiliated</small></figcaption>
           </figure>
           <div class="plan-preview" aria-label="Illustrative money snapshot for Jordan's sample profile">
             <div class="plan-preview-top"><span>YOUR MONEY SNAPSHOT</span><span class="preview-icon" aria-hidden="true">↗</span></div>
@@ -55,30 +59,37 @@
             <div class="preview-rule"></div>
             <div class="preview-line"><span>Monthly essentials</span><b>$1,955.00</b></div>
             <div class="preview-line short"><span>Gap to plan for</span><b>$175.00</b></div>
-            <div class="preview-check">Numbers calculated in code</div>
+            <div class="preview-check">A plan built around your real life</div>
           </div>
         </div>
       </div>
 
       <section id="how" class="band">
-        <p class="section-eyebrow">GET STARTED</p>
-        <h2>Get started<br>in 3 simple steps.</h2>
+        <p class="section-eyebrow">HOW IT WORKS</p>
+        <h2>A conversation first.<br>A plan when you're ready.</h2>
         <ol class="steps">
-          <li><span class="n">01</span><div><h3>Share your numbers</h3><p>Tell us about your income, essentials, debts, and savings. We find your lowest month and what it needs to cover.</p></div></li>
-          <li><span class="n">02</span><div><h3>See your options</h3><p id="ex-coaching"></p></div></li>
-          <li><span class="n">03</span><div><h3>Choose your point of view</h3><p id="ex-mentors"></p></div></li>
+          <li><span class="n">01</span><div><h3>Talk to a mentor</h3><p>Ask the Ramsey-inspired flagship a question right away. No quiz is required to begin.</p></div></li>
+          <li><span class="n">02</span><div><h3>Add your context</h3><p>Answer a short intake for a personal snapshot. You can also bring a document or a portfolio reference.</p></div></li>
+          <li><span class="n">03</span><div><h3>Explore the lab</h3><p>See the specialist agents and mentor perspectives in the Plus preview. Available features are marked clearly.</p></div></li>
         </ol>
       </section>
 
+      <section id="method" class="band method-band">
+        <div class="method-intro"><p class="section-eyebrow">THE FLAGSHIP</p><h2>How we built the Ramsey-inspired point of view.</h2><p>We organize publicly available ideas from books, shows, interviews and writing into a practical set of principles. For this MVP, the working mentor draws on a curated set of Ramsey themes: a written budget, a starter emergency fund, and paying down debt with momentum.</p><p class="fine">Our long-term goal is a research library spanning thousands of hours of public material. Today's mentor uses a focused set of source notes. It is an AI interpretation, not Dave Ramsey or a product endorsed by him.</p></div>
+        <div class="method-list"><div><span>01 / SOURCE</span><strong>Start with public teaching</strong><p>Map ideas to named sources so the perspective stays recognizable.</p></div><div><span>02 / SPECIALIZE</span><strong>Give each agent a job</strong><p>Budgeting, debt and savings work today. Portfolio, business and other specialties are visible as Plus previews.</p></div><div><span>03 / GUIDE</span><strong>Let the mentor direct</strong><p>The mentor frames the options through its philosophy, while the app keeps the underlying numbers inspectable.</p></div></div>
+      </section>
+
       <section id="mentors" class="band">
-        <div class="band-head"><div><p class="section-eyebrow">YOUR POINT OF VIEW</p><h2>Get to know the mentors.</h2></div><p>Each mentor draws from a public money philosophy. The portraits are AI-generated likenesses; the people shown are not affiliated with or endorsing this app.</p></div>
+        <div class="band-head"><div><p class="section-eyebrow">THE MENTOR LIBRARY</p><h2>Choose a perspective you know.</h2></div><p>Ramsey-inspired guidance is free. The other nine perspectives are Plus previews. The portraits are AI-generated likenesses; the people shown are not affiliated with this app.</p></div>
         <div id="personas" class="portraits"></div>
       </section>
 
-      <section class="band">
-        <div class="band-head"><h2>Coaching</h2><p>The professional. Each coach is a specialist that does the work and every calculation.</p></div>
+      <section id="specialists" class="band">
+        <div class="band-head"><div><p class="section-eyebrow">THE SPECIALIST LIBRARY</p><h2>One job for every agent.</h2></div><p>Ten specialties are on the board, from budgeting and debt to portfolio reviews and business. The Ramsey starter includes budgeting support; standalone agents are in Plus.</p></div>
         <div id="agents" class="table"></div>
       </section>
+
+      <section class="band context-band"><div><p class="section-eyebrow">BRING YOUR CONTEXT</p><h2>Your documents and portfolio, in one place.</h2><p>Add a document, save a portfolio link for reference, or import a holdings CSV. The document and link fields are showcase previews; CSV holdings can be summarized now.</p></div><button class="btn primary" data-context>Open context hub</button></section>
 
       <section id="pricing" class="band">
         <h2>Pricing</h2>
@@ -86,17 +97,17 @@
           <div class="plan">
             <h3>Free</h3>
             <p class="price">$0</p>
-            <p>Dave Ramsey–inspired and Ramit Sethi–inspired mentors are ready now. More are in development.</p>
-            <p>3 coaches: Budget, Debt, and Savings &amp; Emergency Fund.</p>
-            <p>Every option and every number check.</p>
+            <p>Chat with the Ramsey-inspired flagship, with budgeting support.</p>
+            <p>Take the short intake and see a personal money snapshot.</p>
+            <p>No account required for this demo.</p>
           </div>
           <div class="plan plus">
             <h3>Plus</h3>
             <p class="price">$4.99<span>/month</span></p>
-            <p>More mentors and coaches will become available as they launch. This is a test-mode preview.</p>
-            <p>Shared memory across every coach.</p>
-            <p>Cancel anytime.</p>
-            <button class="btn primary" data-unlock>Get Plus</button>
+            <p>Explore nine more mentor perspectives and ten specialist agents.</p>
+            <p>Built features can be tried in demo mode. Unbuilt specialties are clearly marked as previews.</p>
+            <p>Test checkout only; no real charge in this prototype.</p>
+            <button class="btn primary" data-unlock>Preview Plus</button>
           </div>
         </div>
       </section>
@@ -104,7 +115,7 @@
       <section class="band never">
         <h2>What we will never do</h2>
         <ul class="plain">
-          <li>Show an unchecked figure as a verified result. Open the calculation behind each option and check the sources yourself.</li>
+          <li>Present a showcase feature as live. Preview specialties are labeled before you try them.</li>
           <li>Pretend a mentor is the real person. Mentors are inspired by public teachings and not affiliated with or endorsed by anyone.</li>
           <li>Ask for your bank or brokerage password.</li>
           <li>Call this licensed advice. It's education to help you decide.</li>
@@ -115,7 +126,7 @@
         <h2 id="faq-title">Common questions.</h2>
         <details><summary>What if my income changes every month?</summary><p>The plan uses your lowest reported month to check whether your essentials are covered. You can review the calculation before starting coaching.</p></details>
         <details><summary>Can I switch mentors?</summary><p>Yes. A different mentor can choose from the same verified options, so the facts and calculations stay the same.</p></details>
-        <details><summary>Do I need to connect a bank account?</summary><p>No. You can enter your numbers yourself and upload a portfolio CSV if you want to include investments.</p></details>
+        <details><summary>Do I need to connect a bank account?</summary><p>No. You can enter your numbers yourself. A portfolio URL is saved as a reference only; a holdings CSV can be summarized in this demo.</p></details>
       </section>
     </section>
 
@@ -140,31 +151,33 @@
       <h2 id="snap-title" class="q"></h2>
       <div id="snap"></div>
       <h3 class="sub">Choose your mentor</h3>
-      <p class="why">They decide which plan fits. You can switch in the middle of a conversation.</p>
+      <p class="why">The Ramsey-inspired mentor is free. Explore the other perspectives in Plus.</p>
       <div id="pick-mentor" class="choice-grid"></div>
       <p class="fine">Portraits are AI-generated likenesses. The people shown are not affiliated with this app.</p>
-      <h3 class="sub">Choose your coaching</h3>
+      <h3 class="sub">Explore specialist agents</h3>
       <div id="pick-coach" class="choice-list"></div>
-      <div class="row"><button id="to-chat" class="btn primary">Start coaching</button></div>
+      <div class="row"><button id="to-chat" class="btn primary">Chat with Ramsey-inspired mentor</button><button class="btn" data-context>Add documents or portfolio</button></div>
     </section>
 
     <!-- CHAT -->
     <section id="v-chat" class="view chat" hidden>
       <aside class="rail">
-        <h4>Mentor <span>directs</span></h4>
+        <h4>Mentors</h4>
         <div id="persona-switch" class="rail-list"></div>
-        <h4>Coaching <span>does the work</span></h4>
+        <h4>Specialist agents</h4>
         <div id="agent-list" class="rail-list"></div>
+        <button class="btn context-rail" data-context>Add context or portfolio</button>
         <h4>What I remember</h4>
         <ul id="memory" class="memory"></ul>
       </aside>
       <div class="chat-main">
         <div id="chat-head" class="chat-head"></div>
+        <div class="chat-actions"><button type="button" id="chat-plan" class="btn text">Build a personal plan</button></div>
         <div id="log" aria-live="polite"></div>
         <div class="chips" id="suggest"></div>
         <form id="composer">
           <label for="msg" class="sr">Your question</label>
-          <input id="msg" autocomplete="off" placeholder="Ask your coach anything about your money" maxlength="2000">
+          <input id="msg" autocomplete="off" placeholder="Ask a money question…" maxlength="2000">
           <button class="btn primary">Send</button>
         </form>
       </div>
@@ -173,18 +186,26 @@
 
   <dialog id="drawer"><form method="dialog">
     <h3>Every option your coach built</h3>
-    <p class="why">Your mentor picked one by its id. It could not change the numbers.</p>
+    <p class="why">See the options behind this response and how the choice was made.</p>
     <div id="drawer-body"></div>
     <button class="btn primary">Close</button>
   </form></dialog>
 
   <dialog id="unlock"><form method="dialog">
-    <h3>Plus, $4.99 a month</h3>
-    <p>Free currently includes 2 mentors and 3 coaches. More mentors and coaches are in development. This checkout is a test-mode preview with no real charge.</p>
+    <h3>Explore Mentor Labs Plus</h3>
+    <p>The Ramsey-inspired starter is free. Plus previews the other mentor perspectives and specialist agents. Features still in development are marked before you try them. This prototype uses test checkout only.</p>
     <p id="unlock-test" class="fine" hidden>Stripe test mode. Use card 4242 4242 4242 4242, any future date, any CVC. No real charge.</p>
     <p id="unlock-msg" class="error" role="alert"></p>
     <div class="row"><button id="unlock-go" class="btn primary" value="go">Continue to checkout</button><button class="btn">Not now</button></div>
   </form></dialog>
+
+  <dialog id="context-dialog"><div class="context-dialog-head"><div><p class="section-eyebrow">YOUR CONTEXT HUB</p><h3>Bring the details that matter.</h3></div><button id="context-close" type="button" class="btn text" aria-label="Close context hub">Close</button></div>
+    <div class="context-fields"><label class="context-field"><strong>Documents</strong><span>Choose any document to preview here. Files are not analyzed or sent to a model in this MVP.</span><input id="context-files" type="file" multiple><small id="context-file-status" role="status">No documents selected.</small></label>
+    <label class="context-field"><strong>Portfolio link</strong><span>Save a brokerage or portfolio URL as a reference. It will not connect to your account.</span><input id="portfolio-link" type="url" placeholder="https://your-brokerage.example/portfolio"><small id="portfolio-link-status" role="status">No link saved.</small></label>
+    <label class="context-field"><strong>Holdings CSV</strong><span>For a working demo, import a CSV with symbol, sector and market_value columns.</span><input id="context-csv" type="file" accept=".csv,text/csv"><small id="context-csv-status" role="status">No holdings imported.</small></label></div>
+    <div class="row"><button id="portfolio-save" type="button" class="btn primary">Save portfolio reference</button><button id="context-sample" type="button" class="btn">Use sample holdings</button></div>
+  </dialog>
+  <dialog id="feature-preview"><div class="context-dialog-head"><div><p class="section-eyebrow">PLUS LIBRARY</p><h3 id="feature-title"></h3></div><button id="feature-close" type="button" class="btn text">Close</button></div><p id="feature-text"></p><div class="row"><button type="button" class="btn primary" id="feature-plus">Preview Plus</button></div></dialog>
 
   <footer class="site-foot">
     <p>Educational opinion, not advice from a licensed financial adviser, CPA, or attorney. Mentor portraits are AI-generated likenesses. Mentors are inspired by public teachings and are not affiliated with or endorsed by the people named.</p>
