@@ -11,6 +11,7 @@ const {createServer}=await import('../server.js');
 const calls=[];
 let finance=false;
 const create=async p=>{
+ if (p.output_config.format.schema.properties.updates) return {content:[{type:'text',text:JSON.stringify({updates:[],clarification:''})}],stop_reason:'end_turn',usage:{}};
  calls.push(p);
  const classifier=Boolean(p.output_config.format.schema.properties.kind);
  const wood=p.system[0].text.includes('# Cathie Wood');
@@ -67,6 +68,7 @@ test('research retrieval is bounded, relevant, persona-isolated and rejects fabr
 test('qualitative drafts with unsupported amounts get one bounded retry and remain validated',async()=>{
  let n=0;
  const rewrite=async p=>{
+  if(p.output_config.format.schema.properties.updates) return {content:[{type:"text",text:JSON.stringify({updates:[],clarification:""})}],stop_reason:"end_turn",usage:{}};
   n++;
   if(n===2)assert.match(p.system.at(-1).text,/without numerical examples/);
   return {content:[{type:'text',text:JSON.stringify({kind:'conversation',reply:n===1?'A business produces $99.00.':'Owner earnings account for necessary reinvestment.',noteIds:[]})}],stop_reason:'end_turn',usage:{}};

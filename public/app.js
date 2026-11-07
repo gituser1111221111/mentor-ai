@@ -317,13 +317,17 @@ async function send(text, {spoken = false, voiceSession = null} = {}) {
   try {
     const r = await api('/api/chat', {method: 'POST', body: {message: text, personaId: state.personaId, agentId: state.agentId}}); state.lastTurn = r.turnId;
     const el = botMessage(r); refreshMemory();
+    if (r.profileUpdated) el.insertAdjacentHTML('beforeend', '<p class="fine">Saved inputs updated from your message.</p>');
     if (voiceSession && voice.active && voice.session === voiceSession && canSpeak(r) && speechEpoch === voice.epoch) {
       await speakReply(el, r, voiceSession);
     }
     else if (spoken && voice.active && voice.session === voiceSession) note('Voice is unavailable right now. The written answer is above.');
   }
   catch (e) { handleError(e); }
-  finally { sk.stop(); btn.disabled = false; if (!voice.active) $('#msg').focus(); }
+  finally {
+    try { const saved = await api('/api/profile'); state.profile=saved.profile; state.snapshot=saved.snapshot; renderChatChrome(); } catch {}
+    sk.stop(); btn.disabled = false; if (!voice.active) $('#msg').focus();
+  }
 }
 async function refreshMemory() { try { const {memory} = await api('/api/memory'); $('#memory').innerHTML = memory.length ? memory.map((m, i) => `<li>${esc(m.fact)} <button class="btn text" type="button" data-memory="${i}" aria-label="Forget ${esc(m.fact)}">Forget</button></li>`).join('') : '<li>Nothing yet. Tell me about your goals.</li>'; $('#memory').querySelectorAll('[data-memory]').forEach(b => b.onclick = async () => { await api('/api/memory', {method: 'DELETE', body: {fact: memory[Number(b.dataset.memory)].fact}}); refreshMemory(); }); } catch {} }
 

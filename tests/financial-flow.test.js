@@ -17,6 +17,7 @@ const textRes=data=>({stop_reason:'end_turn',content:[{type:'text',text:JSON.str
 function model({kind='finance',reply='Keep $420.00 in savings.',needsInfo=null,onGenerate=async()=>{},onClassify=async()=>{}}={}){
  const calls=[];
  const create=async params=>{
+  if(params.output_config.format.schema.properties.updates) return textRes({updates:[],clarification:""});
   const content=params.messages[0].content;calls.push(content);
   if(content.includes('<coach>')){await onGenerate();return textRes({needsInfo,candidates:['Reserve','Budget','Review'].map(title=>({title,summary:'Keep the current savings available.',calcIds:['starter-ef'],risk:'low',tradeoffs:'Debt waits.',timeToGoalMonths:null}))});}
   if(content.includes('<options>'))return textRes({pickId:'c1',runnersUp:[],rationale:'Keep a buffer.',reply,whyNotOthers:'Other choices can wait.',noteIds:['029'],memoryFacts:[]});

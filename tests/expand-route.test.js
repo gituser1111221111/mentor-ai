@@ -21,6 +21,7 @@ const opt = (t, i) => ({title: t, summary: `${t} for this user.`, calcIds: [calc
 const textRes = obj => ({stop_reason: 'end_turn', content: [{type: 'text', text: JSON.stringify(obj)}], usage: {}, model: 'fake'});
 let failExpand = false, gens = 0;
 const create = async params => {
+ if (params.output_config.format.schema.properties.updates) return {content:[{type:'text',text:JSON.stringify({updates:[],clarification:''})}],stop_reason:'end_turn',usage:{}};
   const c = String(params.messages[0].content);
   if (c.includes('<options>')) { const o = JSON.parse(c.match(/<options>(.*)<\/options>/s)[1]); return textRes({pickId: o.at(-1).id, runnersUp: [], rationale: 'Fits.', reply: `I reviewed these and picked one.`, whyNotOthers: '', noteIds: [], memoryFacts: []}); }
   if (c.includes('<coach>')) {
