@@ -44,3 +44,5 @@ do not recolor whole cards by tier. No section rail or custom scroll navigation.
 Header and hero retain their existing context-hub buttons.
 Provider logos are local; provenance is in public/img/providers/SOURCES.md.
 The thousands-of-hours source library is a research ambition, not a completed corpus.
+
+Mentor chat controls share a compact 124×34 size and align to the card bottoms. Plus badges are small purple pills. Reuse the existing research-library and agent imagery under light section tints. The API directory uses a white surface, Free integrations / Plus integrations headings, and no per-provider connection status; retain the single MVP/planned note.

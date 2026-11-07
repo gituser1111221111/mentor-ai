@@ -937,3 +937,19 @@ body.chat-open .header-context { display:none; }
 }
 .research-goal { margin-top:18px; font-size:.86rem; }
 .research-goal summary { cursor:pointer; padding-block:10px; }
+/* Compact mentor controls and the original illustrated section surfaces. */
+#personas .portrait { display:flex; flex-direction:column; }
+#personas .portrait .frame { flex:none; }
+#personas .portrait > .btn[data-chat-mentor] { align-self:center; margin-top:auto; width:124px; max-width:100%; min-height:34px; height:34px; padding:6px 8px; font-size:.72rem; line-height:1; white-space:nowrap; justify-content:center; }
+#personas .portrait-plus { font:600 .65rem/1 var(--sans); padding:4px 7px; min-height:0; width:auto; height:auto; }
+#agents .tag.plus { font-size:.62rem; padding:4px 7px; }
+#v-landing #mentors { background:linear-gradient(100deg,rgba(244,237,225,.87),rgba(244,237,225,.94)),url('/img/research-library.png') center/cover; }
+#v-landing #method { background:linear-gradient(90deg,rgba(237,243,232,.87),rgba(237,243,232,.92)),url('/img/research-library.png') center/cover; }
+#v-landing #specialists { background:linear-gradient(100deg,rgba(231,238,224,.9),rgba(231,238,224,.95)),url('/img/agents/investing.webp') center/cover; }
+#v-landing #agent-method { background:linear-gradient(90deg,rgba(240,242,232,.88),rgba(240,242,232,.94)),url('/img/research-library.png') center/cover; }
+#v-landing #live-data { background:#fff; --ink:#17332b; --ink-2:#40594e; --muted:#52665b; --rule:#d9e1d8; color:var(--ink); border:1px solid var(--rule); }
+#live-data .section-eyebrow,#live-data h2,#live-data .api-group h3 { color:var(--ink); }
+#live-data .api-logos a { min-height:44px; background:#f7f8f3; border:1px solid #e2e7de; }
+#live-data .api-logos img { grid-row:auto; }
+#live-data .api-logos a:hover { background:#edf2e8; }
+#personas .portrait > p:last-of-type { margin-bottom:12px; }

@@ -73,9 +73,9 @@ function renderSources() {
   const group = (tier, title) => {
     const list = sources().filter(d => d.tier === tier);
     if (!list.length) return '';
-    return `<div class="api-group"><h3>${title}</h3><ul class="api-logos">${list.map(d => `<li><a href="${esc(d.url)}" target="_blank" rel="noopener noreferrer" title="${esc(d.provides)} · ${esc(sourceState(d))}">${d.logo ? `<img src="${esc(d.logo)}" alt="" width="28" height="28" loading="lazy">` : ''}<span>${esc(d.name)}</span><small>${d.status !== 'live' ? 'Planned' : d.connected ? 'Configured' : 'Not configured'}</small></a></li>`).join('')}</ul></div>`;
+    return `<div class="api-group"><h3>${title}</h3><ul class="api-logos">${list.map(d => `<li><a href="${esc(d.url)}" target="_blank" rel="noopener noreferrer" title="${esc(d.provides)}">${d.logo ? `<img src="${esc(d.logo)}" alt="" width="28" height="28" loading="lazy">` : ''}<span>${esc(d.name)}</span></a></li>`).join('')}</ul></div>`;
   };
-  el.innerHTML = group('free', 'Free integrations') + group('plus', 'Plus connections');
+  el.innerHTML = group('free', 'Free integrations') + group('plus', 'Plus integrations');
 }
 function sourceList(id) {
   const list = sourcesFor(id);
