@@ -214,10 +214,14 @@ function botMessage(r, noteText) {
     <p class="say">${esc(r.text)}</p>
     ${calcs.map(calcCard).join('')}
     ${r.citations?.length ? `<p class="sources"><span>Sources:</span> ${r.citations.map(c => `${esc(c.title)} <span>(${esc(c.ref)})</span>`).join('; ')}</p>` : ''}
-    <div class="meta">${r.candidates?.length ? `<button class="btn text" data-drawer>See all ${r.candidates.length} options</button>` : ''}${v ? `<span class="mono">number check: ${v.kept} of ${v.generated} passed</span>` : ''}</div>
+    <div class="meta">${r.candidates?.length ? `<button class="btn text" data-drawer>See all ${r.candidates.length} options</button>` : ''}${v ? `<span class="mono">number check: ${v.kept} of ${v.generated} passed</span>` : ''}${canSpeak(r) ? '<button class="btn text" data-listen>Listen</button>' : ''}</div>
+    ${canSpeak(r) ? '<div class="voice-player" hidden><audio controls preload="none"></audio><button class="btn text" data-stop>Stop</button><p class="fine">Reading the answer above, word for word. The disclosure below applies.</p></div>' : ''}
     <p class="disclose">${esc(r.disclosure || '')}</p>`;
   el.querySelector('[data-drawer]')?.addEventListener('click', () => openDrawer(r));
+  el.querySelector('[data-listen]')?.addEventListener('click', () => speakReply(el, r));
+  el.querySelector('[data-stop]')?.addEventListener('click', stopPlayback);
   $('#log').append(el); el.scrollIntoView({behavior: 'smooth', block: 'start'});
+  return el;
 }
 
 function openDrawer(r) {
@@ -228,13 +232,20 @@ function openDrawer(r) {
   $('#drawer').showModal();
 }
 
-async function send(text) {
+async function send(text, {spoken = false} = {}) {
   text = text.trim(); if (!text) return;
   const u = document.createElement('div'); u.className = 'msg user'; u.textContent = text; $('#log').append(u);
+  if (spoken) u.insertAdjacentHTML('afterbegin', '<span class="via">You said</span>');
   $('#msg').value = ''; const btn = $('#composer button'); btn.disabled = true;
   const p = persona(state.personaId), a = agent(state.agentId);
   const sk = skeleton([`${a.name} is building options`, 'Checking every number against the math', `${p.name} is choosing a plan`]);
-  try { const r = await api('/api/chat', {method: 'POST', body: {message: text, personaId: state.personaId, agentId: state.agentId}}); state.lastTurn = r.turnId; botMessage(r); refreshMemory(); }
+  try {
+    const r = await api('/api/chat', {method: 'POST', body: {message: text, personaId: state.personaId, agentId: state.agentId}}); state.lastTurn = r.turnId;
+    const el = botMessage(r); refreshMemory();
+    // A spoken question is the user's request to hear the answer; typed questions only play on "Listen".
+    if (spoken && canSpeak(r)) speakReply(el, r);
+    else if (spoken) note(`${r.personaName || 'This mentor'} does not have a voice yet. The written answer is above.`);
+  }
   catch (e) { handleError(e); }
   finally { sk.stop(); btn.disabled = false; $('#msg').focus(); }
 }
@@ -293,6 +304,101 @@ const DEMO = {
   trust: {priorAdvisor: 'couldnt_afford', aiTrust: 2, needs: ['show_the_math', 'known_philosophy']}, personaHint: 'debt-free-coach',
 };
 
+// ---------- voice ----------
+// Push-to-talk -> /api/voice/transcribe (ElevenLabs STT) -> the normal /api/chat pipeline.
+// "Listen" -> /api/voice/speak, which reads the server's stored copy of that verified answer
+// (ElevenLabs TTS). The browser never sends text to be spoken and never sees the ElevenLabs key.
+const voice = {rec: null, stream: null, chunks: [], started: 0, pressAt: 0, timer: null, starting: false, busy: false, audio: null};
+const canSpeak = r => Boolean(r?.turnId && state.config?.voice && state.config.voicePersonas?.includes(r.personaId));
+// The status row keeps its height while voice is on, so the mic button never moves under the user's finger.
+function voiceStatus(text, kind = '') { const s = $('#voice-status'); s.textContent = text; s.className = 'voice-status ' + kind; }
+function micUI(on) { const m = $('#mic'); m.classList.toggle('rec', on); m.setAttribute('aria-pressed', String(on)); $('#mic-label').textContent = on ? 'Send' : 'Talk'; }
+const pickMime = () => ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/ogg;codecs=opus', 'audio/ogg'].find(t => window.MediaRecorder?.isTypeSupported?.(t)) || '';
+
+async function startRecording() {
+  if (voice.busy || voice.rec || voice.starting) return;
+  if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) return voiceStatus('This browser cannot record audio here. Type your question instead.', 'warn');
+  stopPlayback(); voice.starting = true;
+  try { voice.stream = await navigator.mediaDevices.getUserMedia({audio: {echoCancellation: true, noiseSuppression: true}}); }
+  catch (e) {
+    voice.starting = false;
+    return voiceStatus(['NotAllowedError', 'SecurityError'].includes(e.name) ? 'Microphone access is blocked. Allow it in your browser settings, or type your question.'
+      : e.name === 'NotFoundError' ? 'No microphone found. Type your question instead.'
+      : e.name === 'NotSupportedError' ? 'The microphone is not available in this browser. Type your question instead.' : `Could not start the microphone: ${e.message}`, 'warn');
+  }
+  const mime = pickMime();
+  voice.chunks = [];
+  voice.rec = new MediaRecorder(voice.stream, mime ? {mimeType: mime} : undefined);
+  voice.rec.ondataavailable = e => { if (e.data.size) voice.chunks.push(e.data); };
+  voice.rec.onstop = finishRecording;
+  voice.rec.start(); voice.started = Date.now(); voice.starting = false; micUI(true);
+  const tick = () => { const s = Math.floor((Date.now() - voice.started) / 1000); voiceStatus(`Recording 0:${String(s).padStart(2, '0')}. Release or tap Send when you finish.`, 'rec'); if (s >= 60) stopRecording(); };
+  tick(); voice.timer = setInterval(tick, 250);
+}
+function stopRecording() {
+  clearInterval(voice.timer);
+  if (voice.rec?.state === 'recording') voice.rec.stop();
+  voice.stream?.getTracks().forEach(t => t.stop()); voice.stream = null; micUI(false);
+}
+async function finishRecording() {
+  const rec = voice.rec; voice.rec = null;
+  const blob = new Blob(voice.chunks, {type: rec?.mimeType || 'audio/webm'});
+  if (Date.now() - voice.started < 600 || blob.size < 1000) return voiceStatus('That was too short. Hold Talk while you speak, or tap it once to start.', 'warn');
+  voice.busy = true; $('#mic').disabled = true; voiceStatus('Turning your question into text...');
+  try {
+    const res = await fetch('/api/voice/transcribe', {method: 'POST', headers: {'Content-Type': blob.type.split(';')[0], 'X-Session-Id': sid}, body: blob});
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || 'We could not hear that. Try again or type your question.');
+    voiceStatus('');
+    await send(data.text, {spoken: true});
+  } catch (e) { voiceStatus(e.message, 'warn'); }
+  finally { voice.busy = false; $('#mic').disabled = false; }
+}
+
+function stopPlayback() {
+  if (!voice.audio) return;
+  voice.audio.pause(); voice.audio.currentTime = 0;
+  voice.audio.closest('.msg')?.classList.remove('speaking'); voice.audio = null;
+}
+async function speakReply(el, r) {
+  const box = el.querySelector('.voice-player'), btn = el.querySelector('[data-listen]'), a = box?.querySelector('audio');
+  if (!box) return;
+  stopPlayback();
+  if (!a.src) {
+    btn.disabled = true; btn.textContent = 'Preparing audio...';
+    try {
+      const res = await fetch('/api/voice/speak', {method: 'POST', headers: {'Content-Type': 'application/json', 'X-Session-Id': sid}, body: JSON.stringify({turnId: r.turnId, personaId: r.personaId})});
+      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || 'Audio is unavailable right now. The written answer is above.');
+      a.src = URL.createObjectURL(await res.blob());
+    } catch (e) { btn.disabled = false; btn.textContent = 'Listen'; return note(e.message); }
+  }
+  btn.hidden = true; box.hidden = false; el.classList.add('speaking'); voice.audio = a;
+  a.onended = () => { el.classList.remove('speaking'); if (voice.audio === a) voice.audio = null; };
+  a.onplay = () => { if (voice.audio && voice.audio !== a) stopPlayback(); voice.audio = a; el.classList.add('speaking'); };
+  box.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+  try { await a.play(); } catch { box.querySelector('.fine').textContent = 'Press play to listen. The disclosure below applies.'; }
+}
+
+function setupVoice() {
+  const mic = $('#mic');
+  mic.hidden = !state.config.voice; $('#voice-status').hidden = !state.config.voice;
+  if (!state.config.voice) return;
+  // Hold to talk (release sends) or tap to start and tap again to send.
+  const down = e => {
+    if ((e.button ?? 0) > 0 || voice.busy) return;
+    e.preventDefault();
+    if (voice.rec) return stopRecording();
+    try { mic.setPointerCapture?.(e.pointerId); } catch {} // release is delivered here even if the finger drifts
+    voice.pressAt = Date.now(); startRecording();
+  };
+  const up = () => { if (voice.rec?.state === 'recording' && voice.pressAt && Date.now() - voice.pressAt > 500) stopRecording(); voice.pressAt = 0; };
+  mic.addEventListener('pointerdown', down);
+  mic.addEventListener('pointerup', up);
+  mic.addEventListener('pointercancel', up);
+  mic.addEventListener('keydown', e => { if ((e.key === ' ' || e.key === 'Enter') && !e.repeat) down(e); });
+  mic.addEventListener('keyup', e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); up(); } });
+}
+
 // ---------- boot ----------
 async function boot() {
   state.config = await api('/api/config');
@@ -310,6 +416,7 @@ async function boot() {
   $('#q-body').addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.tagName === 'INPUT') { e.preventDefault(); next(); } });
   $('#to-chat').onclick = startChat;
   $('#composer').onsubmit = e => { e.preventDefault(); send($('#msg').value); };
+  setupVoice();
   $('#restart').onclick = async () => { if (!confirm('Start over? Your answers and chat will be cleared.')) return; await api('/api/session', {method: 'DELETE'}).catch(() => {}); location.href = '/'; };
   await handleCheckoutReturn();
   try { const r = await api('/api/profile'); if (r.profile?.incomeHistory?.length) { state.profile = r.profile; state.snapshot = r.snapshot; const h = persona(r.profile.personaHint); if (h && usable(h)) state.personaId = h.id; renderSnapshot(); show('v-snap'); return; } } catch {}
