@@ -72,3 +72,12 @@ test('fresh spoken intake saves partial debt and converts annual net income with
  assert.equal(second.profile.pendingDebts.length,0);assert.equal(second.profile.debts[0].balance,'2500.00');assert.equal(second.profile.debts[0].rateBps,1000);
  const follow=partialProfileReply(second.profile,second);assert.match(follow.text,/months, with/);assert.deepEqual(unverifiedNumbers(follow.text,follow.calculations),[]);
 });
+
+
+test('partial debt replies preserve the next clarification instead of repeating the rate-period question',()=>{
+ const profile={pendingDebts:[{name:'Debt 1',balance:'2500.00',minPayment:'100.00'}],debts:[]};
+ const clarification='That monthly rate exceeds this calculator�s supported range. What annual APR is printed on your card statement?';
+ const reply=partialProfileReply(profile,{confirmed:false,changes:[],clarification},'monthly');
+ assert.ok(reply.text.includes(clarification));
+ assert.doesNotMatch(reply.text,/Is the interest rate an annual APR, or a monthly rate/);
+});

@@ -27,7 +27,7 @@ function fakeClient({generated, picks}) {
   const create = async params => {
     calls.push(params);
     if (Boolean(params.output_config.format.schema.properties.kind)) return textRes({kind: /Debt or savings|help|"x"/.test(params.messages[0].content) ? 'finance' : 'conversation', reply: 'Hi there! What is on your mind?'});
-    if (params.model.includes('sonnet')) return textRes({needsInfo: null, candidates: generated});
+    if (Boolean(params.output_config.format.schema.properties.candidates)) return textRes({needsInfo: null, candidates: generated});
     const persona = params.system[0].text.includes('Conscious Spender') ? 'conscious' : 'debt';
     return textRes(picks[persona]);
   };
@@ -97,9 +97,9 @@ test('live chat: structured outputs, cached prompts, persona picks by id, repick
     assert.equal(call.output_config.format.type, 'json_schema');
     assert.ok(call.system.some(b => b.cache_control?.type === 'ephemeral'));
   }
-  assert.equal(fake.calls[0].model, 'claude-haiku-5-5');
+  assert.equal(fake.calls[0].model, 'claude-sonnet-5-5');
   assert.equal(fake.calls[1].model, 'claude-sonnet-5-5');
-  assert.equal(fake.calls[2].model, 'claude-haiku-5-5');
+  assert.equal(fake.calls[2].model, 'claude-sonnet-5-5');
 
   const h = await repick({turnId: r.turnId, personaId: 'conscious-spender'});
   assert.deepEqual(h.candidates, r.candidates);
@@ -118,7 +118,7 @@ test('no income: general Ramsey starter answers conversationally', async () => {
   assert.match(r.text, /written budget/);
   assert.equal(r.turnId, null);
   assert.equal(calls.length, 2);
-  assert.ok(calls.every(c => c.model === 'claude-haiku-5-5'));
+  assert.ok(calls.every(c => c.model === 'claude-sonnet-5-5'));
 });
 
 test('greeting gets a short model reply without generating budget options', async () => {
