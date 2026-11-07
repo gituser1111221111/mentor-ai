@@ -63,3 +63,18 @@ test('research retrieval is bounded, relevant, persona-isolated and rejects fabr
  assert.equal(researchCitations(bnotes,['033','033','fabricated']).length,1);
  assert.match(researchCitations(bnotes,['033'])[0].url,/berkshirehathaway/);
 });
+
+test('qualitative drafts with unsupported amounts get one bounded retry and remain validated',async()=>{
+ let n=0;
+ const rewrite=async p=>{
+  n++;
+  if(n===2)assert.match(p.system.at(-1).text,/without numerical examples/);
+  return {content:[{type:'text',text:JSON.stringify({kind:'conversation',reply:n===1?'A business produces $99.00.':'Owner earnings account for necessary reinvestment.',noteIds:[]})}],stop_reason:'end_turn',usage:{}};
+ };
+ setClient({messages:{create:rewrite},beta:{messages:{create:rewrite}}});
+ try{
+  const r=await post('/api/chat','qualitative-retry-mentor',{personaId:'value-investor',message:'Explain owner earnings conceptually.'});
+  const answer=await r.json();assert.equal(r.status,200);assert.equal(n,2);
+  assert.equal(answer.text,'Owner earnings account for necessary reinvestment.');assert.ok(!answer.text.includes('99'));
+ }finally{setClient({messages:{create},beta:{messages:{create}}});}
+});

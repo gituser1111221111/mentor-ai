@@ -26,4 +26,6 @@ This mentor implementation adds no agent capability, data connector or calculato
 
 ## Validation
 
-116 automated tests passed, including free access for the new mentors, general-prompt identity isolation, bounded source retrieval, citation filtering, and voice endpoint rejection for text-only mentors. Both persona data checkers pass. Browser checks covered direct card entry, switching all three live mentors, voice button visibility, and a 390-pixel mobile layout.
+117 automated tests passed, including free access for the new mentors, general-prompt identity isolation, bounded source retrieval, citation filtering, and voice endpoint rejection for text-only mentors. Both persona data checkers pass. Browser checks covered direct card entry, switching all three live mentors, voice button visibility, and a 390-pixel mobile layout.
+
+Live release checks: eight real API conversations returned successful responses and distinct mentor reasoning. An initial qualitative fallback prompted a bounded no-numbers retry; remaining invalid values still fail validation. Greeting and identity examples were tightened after live review. No automated evaluation proves complete persona fidelity or investment performance.
