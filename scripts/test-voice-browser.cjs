@@ -13,12 +13,14 @@ const http=require('node:http'),fs=require('node:fs'),cp=require('node:child_pro
  const {unverifiedNumbers}=await import('../lib/mentor/validate.js');
  const {calcLibrary}=await import('../lib/mentor/tools.js');
  const {normalizeProfile}=await import('../lib/profile.js');
+ const {createHash}=await import('node:crypto');
+ const {speakableText}=await import('../lib/speech-numbers.js');
  const profile=normalizeProfile({incomeHistory:[{month:'2026-10',amount:'3000'}],bills:[{name:'Rent',amount:'1000'}],savings:'420'}).profile;
  const short='Keep your emergency savings available for unexpected bills.';
  const long=('Start with a plan you can keep when income changes. Keep money for essential bills accessible, and review your debt minimums before assigning extra money. A higher investment return is uncertain, while a bill still needs to be paid when it is due. Avoid borrowing to cover ordinary spending. If a plan leaves you without money for an unexpected expense, revisit the tradeoff before committing. ').repeat(4);
  const lengths=[short,long].map((text,i)=>{
   if(unverifiedNumbers(text,calcLibrary(profile).calcs).length)throw Error('Invalid numeric fixture');
-  const turnId='length-fixture-'+i;store.update('voice-length-00000001',s=>{s.replies||={};s.replies[`${turnId}:debt-free-coach`]={text};});
+  const turnId='length-fixture-'+i;store.update('voice-length-00000001',s=>{s.replies||={};s.profile=profile;s.replies[`${turnId}:debt-free-coach`]={text,calculations:calcLibrary(profile).calcs,amountCheck:[],context:{profileKey:createHash('sha256').update(JSON.stringify(profile)).digest('hex'),requestSerial:0}};});
   return {turnId,personaId:'debt-free-coach',text};
  });const app=createServer();await new Promise(r=>app.listen(0,'127.0.0.1',r));
  let browser;
@@ -50,7 +52,7 @@ const http=require('node:http'),fs=require('node:fs'),cp=require('node:child_pro
   if(a.src || !a.paused)throw Error('Cancelled old request restarted');
   return {timings,expectedTexts,errors:events.filter(e=>e.event==='error'||e.event==='playback-error'),midPlaybackWaiting:events.filter(e=>e.event==='waiting'&&e.interruption).length,cancellationPassed:true};
  },{questions,lengths});
- const unchangedFullTextPayloads=spoken.every(s=>results.expectedTexts.includes(s.text));delete results.expectedTexts;
+ const unchangedFullTextPayloads=spoken.every(s=>results.expectedTexts.some(t=>speakableText(t)===s.text));delete results.expectedTexts;
  if(!unchangedFullTextPayloads || results.errors.length || results.timings.length!==17)throw Error(JSON.stringify(results));
  await page.evaluate(()=>localStorage.setItem('sid','voice-browser-00000001'));
  await page.reload();await page.locator('#msg').waitFor({state:'visible'});

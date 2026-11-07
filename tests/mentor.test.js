@@ -41,15 +41,15 @@ test('number check: copied numbers pass, invented ones are caught', () => {
   assert.deepEqual(unverifiedNumbers('Save $1,000 a month', snap), ['$1,000']);
   const ef = lib.calcs.filter(c => c.id === 'starter-ef');
   assert.deepEqual(unverifiedNumbers('Need $580.00 more over 2 months', [...snap, ...ef]), []);
-  assert.deepEqual(unverifiedNumbers('in 7 months', [...snap, ...ef]), ['7']);
+  assert.deepEqual(unverifiedNumbers('in 7 months', [...snap, ...ef]), ['7 months']);
   assert.deepEqual(unverifiedNumbers('Save 50% and earn 12% next week', snap), ['50%', '12%']);
   assert.deepEqual(unverifiedNumbers('Pay it by 2027-03-01', snap), ['2027-03-01']);
 });
 
-test('a dollar amount stated by the user can be repeated without authorizing invented figures', () => {
+test('a user-stated amount stays labeled input and cannot authorize a calculated recommendation', () => {
   const lib = calcLibrary(profile, 'I received an extra $200 this month.');
   assert.deepEqual(lib.calcs[0].result.userStatedAmounts, ['200.00']);
-  assert.deepEqual(unverifiedNumbers('Keep the $200 as a buffer.', [lib.calcs[0]]), []);
+  assert.deepEqual(unverifiedNumbers('Keep the $200 as a buffer.', [lib.calcs[0]]), ['$200']);
   assert.deepEqual(unverifiedNumbers('You will have $620.00.', [lib.calcs[0]]), ['$620.00']);
 });
 

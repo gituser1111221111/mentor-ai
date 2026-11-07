@@ -9,6 +9,7 @@ let sid; try { sid = localStorage.getItem('sid'); } catch {}
 if (!sid) { sid = crypto.randomUUID(); try { localStorage.setItem('sid', sid); } catch {} }
 
 async function api(path, {method = 'GET', body} = {}) {
+  if ((method === 'POST' && ['/api/profile','/api/portfolio/upload','/api/attachment'].includes(path)) || (method === 'DELETE' && path === '/api/session')) { if (voice.active) endConversation('Financial details changed. Start a new conversation with the updated numbers.');else {++voice.epoch;stopPlayback('financial-input-update');}state.lastTurn = null; }
   const r = await fetch(path, {method, headers: {'Content-Type': 'application/json', 'X-Session-Id': sid}, body: body ? JSON.stringify(body) : undefined});
   const data = await r.json().catch(() => ({}));
   if (!r.ok) { const e = new Error(data.error || (data.errors || []).map(x => x.error).join('; ') || 'Something went wrong. Try again.'); e.status = r.status; e.data = data; throw e; }

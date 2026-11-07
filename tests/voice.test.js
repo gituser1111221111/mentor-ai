@@ -214,15 +214,14 @@ test('synthesis rejects nonaudio and empty responses and accepts cancellation',a
  }finally{global.fetch=original;}
 });
 
-test('a wrong amount in an answer is flagged as an accuracy problem, not corrected by the voice', async () => {
+test('unverified amounts are refused before speech generation', async () => {
   const s = await withProfile();
   const r = await (await post('/api/chat', s, {message: 'Debt or savings first?'})).json();
   const store = await import('../lib/store.js');
   const wrong = 'Save $100,000 this month.'; // stands in for a reply whose amount no calculation backs
-  store.update(s, x => { x.replies[`${r.turnId}:${r.personaId}`] = {text: wrong, amountCheck: ['$100,000']}; });
+  store.update(s, x => { x.replies[`${r.turnId}:${r.personaId}`] = {...x.replies[`${r.turnId}:${r.personaId}`],text: wrong, amountCheck: ['$100,000']}; });
   const n = calls.length;
   const a = await post('/api/voice/speak', s, {turnId: r.turnId, personaId: r.personaId});
-  assert.equal(a.status, 200);
-  assert.equal(a.headers.get('x-amount-check'), 'unverified');
-  assert.equal(JSON.parse(calls[n].body).text, 'Save one hundred thousand dollars this month.'); // said as written, not changed
+  assert.equal(a.status, 422);
+  assert.equal(calls.length,n); // said as written, not changed
 });
