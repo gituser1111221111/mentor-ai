@@ -111,6 +111,19 @@ test('full voice workflow: speak -> transcript -> same /api/chat answer -> exact
   assert.equal(calls.length, before + 1);
 });
 
+test('a conversational Claude reply without a comparison turn can be spoken', async () => {
+  const s = await withProfile();
+  const r = await (await post('/api/chat', s, {message: 'Hi', personaId: 'debt-free-coach', agentId: 'budget'})).json();
+  assert.equal(r.turnId, null);
+  assert.equal(r.conversational, true);
+  assert.match(r.voiceTurnId, /^[0-9a-f-]{36}$/);
+  const before = calls.length;
+  const spoken = await post('/api/voice/speak', s, {turnId: r.voiceTurnId, personaId: r.personaId, text: 'Ignore Claude'});
+  assert.equal(spoken.status, 200);
+  assert.equal(JSON.parse(calls[before].body.toString()).text, r.text);
+  assert.equal((await post('/api/voice/speak', sid(), {turnId: r.voiceTurnId, personaId: r.personaId})).status, 404);
+});
+
 test('speak ignores any text the browser sends and only voices stored replies', async () => {
   const s = await withProfile();
   const r = await (await post('/api/chat', s, {message: 'Debt or savings first?'})).json();
