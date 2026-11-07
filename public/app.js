@@ -56,7 +56,7 @@ const agentSymbol = id => {
 function renderLanding() {
   $('#personas').innerHTML = personas().map(p => `<div class="portrait ${usable(p) ? '' : 'locked'}">${art(p)}${p.tier === 'plus' ? `<button type="button" class="tag plus portrait-plus" data-unlock aria-label="Explore Plus for ${esc(p.name)}">Plus</button>` : badge(p)}
     <h3>${esc(p.name)}</h3><p class="portrait-source">${p.textOnly ? 'AI perspective · Text chat' : 'AI-inspired perspective'}</p><p>${esc(p.philosophy)}.</p>${usable(p) ? `<button class="btn outline" type="button" data-chat-mentor="${esc(p.id)}">Chat with ${esc(displayName(p.name).split(' ')[0])}</button>` : ''}</div>`).join('');
-  $('#agents').innerHTML = `<div class="agent-grid">${agents().map((a,i) => `<button type="button" class="agent-card tone-${i%4}" data-a="${a.id}">${agentSymbol(a.id)}<span class="agent-card-top"><strong>${esc(a.name)}</strong>${badge(a)}</span><span class="agent-card-job">${esc(a.job)}</span><span class="agent-availability">${a.built ? "Available" : "Planned"}</span></button>`).join('')}</div>`;
+  $('#agents').innerHTML = `<div class="agent-grid">${agents().map((a,i) => `<button type="button" class="agent-card tone-${i%4}" data-a="${a.id}">${agentSymbol(a.id)}<span class="agent-card-top"><strong>${esc(a.name)}</strong>${badge(a)}</span><span class="agent-card-job">${esc(a.job)}</span></button>`).join('')}</div>`;
   document.querySelectorAll('#agents [data-a]').forEach(b => b.onclick = () => { const a = agent(b.dataset.a); if (a.id === 'budget') renderIntake(); else showAgent(a); });
   document.querySelectorAll('#personas [data-unlock]').forEach(b => b.onclick = openUnlock);
   document.querySelectorAll('[data-chat-mentor]').forEach(b => b.onclick = () => { state.personaId = b.dataset.chatMentor; state.agentId = 'budget'; startChat(); });
@@ -86,7 +86,7 @@ function showAgent(a) {
   const ready = a.built && usable(a);
   $('#feature-eyebrow').textContent = ready ? 'SPECIALIST AGENT · FREE' : 'PLUS LIBRARY';
   $('#feature-title').textContent = a.name;
-  $('#feature-text').textContent = ready ? `${a.job}. Every number it quotes comes from these sources and is checked in code before you see it.` : a.built ? `${a.name} is part of Plus.` : `${a.name} is in the Plus library. This feature is not available yet.`;
+  $('#feature-text').textContent = ready ? `${a.job}. Every number it quotes comes from these sources and is checked in code before you see it.` : a.built ? `${a.name} is part of Plus.` : `${a.name} is coming to the Plus library.`;
   $('#feature-sources').innerHTML = sourceList(a.id);
   $('#feature-plus').hidden = ready || state.tier === 'plus';
   $('#feature-try').hidden = !ready;
