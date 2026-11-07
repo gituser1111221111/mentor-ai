@@ -17,7 +17,7 @@ async function api(path, {method = 'GET', body} = {}) {
 const state = {config: null, tier: 'free', answers: {}, i: 0, profile: null, snapshot: null, personaId: 'debt-free-coach', agentId: 'budget', lastTurn: null};
 const DEMO_PERSONA = 'debt-free-coach';
 const DEMO_AGENT = 'budget';
-const views = ['v-landing', 'v-quiz', 'v-snap', 'v-chat'];
+const views = ['v-landing', 'v-quiz', 'v-chat'];
 function show(id) {
   views.forEach(v => { $('#' + v).hidden = v !== id; });
   const landing = id === 'v-landing';
@@ -36,6 +36,7 @@ const allowed = x => x.tier === 'free' || state.tier === 'plus';
 const starterCoach = x => x?.id === 'budget' && state.personaId === 'debt-free-coach';
 const usable = x => x?.built && (allowed(x) || starterCoach(x));
 const statusLabel = x => x?.tier === 'free' ? 'Free' : '+';
+const railStatus = x => !x.built ? 'Soon' : x.tier === 'free' || starterCoach(x) ? 'Free' : 'Plus';
 const badge = x => `<span class="tag ${x.tier === 'plus' ? 'plus' : ''}" ${x.tier === 'plus' ? 'title="Mentor Labs Plus" aria-label="Mentor Labs Plus"' : ''}>${statusLabel(x)}</span>`;
 const initials = name => name.replace(/^The /, '').split(/[\s-]+/).map(w => w[0]).join('').slice(0, 2).toUpperCase();
 const art = (p, cls = 'frame') => `<div class="${cls}">${p.image ? `<img src="${esc(p.image)}" alt="AI-generated likeness inspired by ${esc(p.inspiredBy)}" width="640" height="800" loading="lazy" decoding="async">` : `<span class="mono-gram">${esc(initials(p.name))}</span>`}</div>`;
@@ -47,132 +48,85 @@ function renderLanding() {
     <h3>${esc(p.name)}</h3><p class="portrait-source">AI-inspired perspective</p><p>${esc(p.philosophy)}.</p></div>`).join('');
   const groups = ['Everyday money', 'Investing & property', 'Business building'];
   $('#agents').innerHTML = groups.map(group => `<section class="agent-group"><h3>${esc(group)}</h3><div class="agent-grid">${agents().filter(a => a.category === group).map(a => `<button type="button" class="agent-card" data-a="${a.id}"><span class="agent-card-top"><strong>${esc(a.name)}</strong>${badge(a)}</span><span class="agent-card-job">${esc(a.job)}</span></button>`).join('')}</div></section>`).join('');
-  document.querySelectorAll('#agents [data-a]').forEach(b => b.onclick = () => { const a = agent(b.dataset.a); if (a.id === 'budget') startChat(); else blocked(a); });
+  document.querySelectorAll('#agents [data-a]').forEach(b => b.onclick = () => { const a = agent(b.dataset.a); if (a.id === 'budget') renderIntake(); else blocked(a); });
 }
 
-// ---------- quiz ----------
-const setPath = (obj, path, val) => { const k = path.split('.'); let o = obj; k.slice(0, -1).forEach(x => o = o[x] ??= {}); o[k.at(-1)] = val; };
-const getPath = (obj, path) => path.split('.').reduce((o, k) => o?.[k], obj);
-const optVal = o => (typeof o === 'object' ? o.value : o);
-const optLabel = o => (typeof o === 'object' ? o.label : String(o));
-const colLabel = {name: 'Name', amount: 'Amount', dueDay: 'Due day', balance: 'Balance', aprPercent: 'APR %', minPayment: 'Minimum'};
+// ---------- intake ----------
 function lastMonths(n) { const out = [], d = new Date(); for (let i = n; i >= 1; i--) { const x = new Date(Date.UTC(d.getFullYear(), d.getMonth() - i, 15)); out.push(x.toISOString().slice(0, 7)); } return out; }
 
-function renderQuestion() {
-  const qs = state.config.quiz.questions, q = qs[state.i];
-  $('#bar').style.width = `${Math.round(state.i / qs.length * 100)}%`;
-  $('#q-section').textContent = `${q.section} · ${state.i + 1} of ${qs.length}`;
-  $('#q-prompt').textContent = q.prompt;
-  $('#q-why').textContent = state.config.quiz.sectionWhy?.[q.section] || '';
+async function submitQuiz(answers) {
+  try {
+    const r = await api("/api/profile", {method: "POST", body: {answers}});
+    state.profile = r.profile; state.snapshot = r.snapshot;
+    const hint = persona(r.profile.personaHint);
+    state.personaId = hint && usable(hint) ? hint.id : "debt-free-coach";
+    startChat();
+  } catch (e) { banner(e.message, true); }
+}
+
+function renderIntake() {
+  $('#income-months').innerHTML = lastMonths(6).map(m => `<label class="f">${esc(new Date(m + '-15T12:00:00Z').toLocaleString('en-US', {month: 'short', year: 'numeric', timeZone: 'UTC'}))}<input inputmode="decimal" data-month="${m}" placeholder="0.00"></label>`).join('');
   $('#q-error').textContent = '';
-  $('#q-back').disabled = state.i === 0;
-  $('#q-skip').hidden = q.required;
-  $('#q-next').textContent = state.i === qs.length - 1 ? 'See my numbers' : 'Next';
-  const cur = getPath(state.answers, q.field), body = $('#q-body');
-
-  if (['single', 'multi', 'boolean'].includes(q.type)) {
-    const options = q.type === 'boolean' ? [{value: true, label: 'Yes'}, {value: false, label: 'No'}] : q.options;
-    body.innerHTML = `<div class="opts" role="${q.type === 'multi' ? 'group' : 'radiogroup'}">${options.map((o, k) => {
-      const on = q.type === 'multi' ? (cur || []).includes(optVal(o)) : cur === optVal(o);
-      return `<button type="button" class="opt ${on ? 'on' : ''}" data-k="${k}" aria-pressed="${on}">${esc(optLabel(o))}</button>`;
-    }).join('')}</div>${q.type === 'multi' ? `<p class="fine">${q.maxSelect ? `Pick up to ${q.maxSelect}.` : 'Pick any that apply.'}</p>` : ''}${q.id === 'portfolio' ? '<div id="pf-extra"></div>' : ''}`;
-    body.querySelectorAll('.opt').forEach(b => b.onclick = () => {
-      const v = optVal(options[+b.dataset.k]);
-      if (q.type === 'multi') { const set = new Set(cur || []); set.has(v) ? set.delete(v) : (!q.maxSelect || set.size < q.maxSelect) && set.add(v); setPath(state.answers, q.field, [...set]); renderQuestion(); }
-      else { setPath(state.answers, q.field, v); if (q.id === 'portfolio') renderQuestion(); else next(); }
-    });
-    if (q.id === 'portfolio') renderPortfolioExtra(cur);
-  } else if (q.type === 'scale') {
-    body.innerHTML = `<div class="scale">${[1, 2, 3, 4, 5].map(n => `<button type="button" class="opt ${cur === n ? 'on' : ''}" data-n="${n}">${n}</button>`).join('')}</div><p class="fine">1 means not at all. 5 means completely.</p>`;
-    body.querySelectorAll('.opt').forEach(b => b.onclick = () => { setPath(state.answers, q.field, +b.dataset.n); next(); });
-  } else if (q.type === 'money_series') {
-    const list = cur || [];
-    body.innerHTML = `<div class="money-grid">${lastMonths(q.months).map(m => `<label class="f">${esc(new Date(m + '-15T12:00:00Z').toLocaleString('en-US', {month: 'long', year: 'numeric', timeZone: 'UTC'}))}<input inputmode="decimal" data-m="${m}" value="${esc(list.find(x => x.month === m)?.amount ?? '')}" placeholder="0.00"></label>`).join('')}</div><p class="fine">Take-home pay after taxes. Leave a month blank if you don't remember.</p>`;
-  } else if (q.type === 'money') {
-    body.innerHTML = `<label class="f" style="max-width:240px">Amount<input inputmode="decimal" id="q-money" value="${esc(cur ?? '')}" placeholder="0.00"></label>`;
-  } else if (q.type === 'rows') {
-    const list = cur?.length ? cur : (q.fixedRows || ['']).map(n => ({name: n.replace(/_/g, ' ')}));
-    const rowHtml = r => `<div class="r">${q.columns.map(c => `<label class="f">${esc(colLabel[c.key] || c.key)}<input data-k="${c.key}" ${c.type === 'text' ? '' : 'inputmode="decimal"'} value="${esc(r[c.key] ?? '')}"></label>`).join('')}${q.fixedRows ? '' : '<button type="button" class="btn text rm">Remove</button>'}</div>`;
-    body.innerHTML = `<div class="rows">${list.map(rowHtml).join('')}</div>${q.fixedRows ? '' : '<button type="button" class="btn" id="add-row">Add another</button>'}`;
-    const rows = body.querySelector('.rows');
-    body.querySelector('#add-row')?.addEventListener('click', () => rows.insertAdjacentHTML('beforeend', rowHtml({})));
-    rows.addEventListener('click', e => { if (e.target.classList.contains('rm')) e.target.closest('.r').remove(); });
-  }
-  body.querySelector('input')?.focus();
+  show('v-quiz');
 }
 
-function renderPortfolioExtra(choice) {
-  const box = $('#pf-extra');
-  if (choice === 'upload_csv') {
-    box.innerHTML = `<p class="fine">Export your holdings as a CSV (symbol, sector, market value). We read the file only. We never ask for your brokerage password.</p><input type="file" accept=".csv,text/csv" id="pf-file"><div class="row"><button type="button" class="btn" id="pf-sample">Use a sample portfolio</button></div><p id="pf-out" class="fine"></p>`;
-    const done = s => { state.answers.portfolio = 'upload_csv'; $('#pf-out').innerHTML = `Loaded ${s.holdings} holdings worth <span class="mono">${usd(s.marketValue)}</span>, about <span class="mono">${usd(s.estimatedAnnualFees)}</span> a year in fees.`; };
-    $('#pf-file').onchange = async e => { try { done(await api('/api/portfolio/upload', {method: 'POST', body: {csv: await e.target.files[0].text()}})); } catch (err) { $('#pf-out').textContent = err.message; } };
-    $('#pf-sample').onclick = async () => { try { done(await api('/api/portfolio/upload', {method: 'POST', body: {sample: true}})); } catch (err) { $('#pf-out').textContent = err.message; } };
-  } else if (choice === 'connect_brokerage_sandbox') {
-    box.innerHTML = '<p class="fine">Direct brokerage connections are coming. For now, upload a CSV export instead.</p>';
-  } else box.innerHTML = '';
-}
-
-function collect() {
-  const q = state.config.quiz.questions[state.i], body = $('#q-body');
-  if (q.type === 'money_series') setPath(state.answers, q.field, [...body.querySelectorAll('input')].filter(i => i.value.trim()).map(i => ({month: i.dataset.m, amount: i.value.trim()})));
-  if (q.type === 'money') setPath(state.answers, q.field, $('#q-money').value.trim() || undefined);
-  if (q.type === 'rows') setPath(state.answers, q.field, [...body.querySelectorAll('.r')].map(r => Object.fromEntries([...r.querySelectorAll('input')].map(i => [i.dataset.k, i.value.trim()]))).filter(r => Object.entries(r).some(([k, v]) => k !== 'name' && v)));
-  if (q.required) { const v = getPath(state.answers, q.field); if (v === undefined || (Array.isArray(v) && !v.length)) { $('#q-error').textContent = q.type === 'money_series' ? 'Enter at least one month so we can plan.' : 'Please answer this one.'; return false; } }
-  return true;
-}
-async function next() { if (!collect()) return; if (state.i < state.config.quiz.questions.length - 1) { state.i++; renderQuestion(); } else await submitQuiz(); }
-
-async function submitQuiz(answers = state.answers) {
+const moneyInput = id => $(id).value.trim();
+async function submitIntake(e) {
+  e.preventDefault();
+  $('#q-error').textContent = '';
+  const incomeHistory = [...$('#income-months').querySelectorAll('input')].filter(i => i.value.trim()).map(i => ({month: i.dataset.month, amount: i.value.trim()}));
+  if (!incomeHistory.length) { $('#q-error').textContent = 'Enter at least one month of take-home pay.'; $('#income-months input')?.focus(); return; }
+  const debt = [moneyInput('#intake-debt-balance'), moneyInput('#intake-debt-apr'), moneyInput('#intake-debt-minimum')];
+  if (debt.some(Boolean) && !debt.every(Boolean)) { $('#q-error').textContent = 'For debt, enter the balance, APR, and monthly minimum—or leave all three blank.'; return; }
+  const answers = {
+    incomeHistory,
+    bills: moneyInput('#intake-bills') ? [{name: 'Fixed monthly bills', amount: moneyInput('#intake-bills')}] : [],
+    expenses: moneyInput('#intake-spending') ? [{name: 'Everyday spending', amount: moneyInput('#intake-spending')}] : [],
+    debts: debt.every(Boolean) ? [{name: 'Debt', balance: debt[0], aprPercent: debt[1], minPayment: debt[2]}] : [],
+    savings: moneyInput('#intake-savings') || '0', goals: [$('#intake-goal').value],
+  };
+  const button = $('#intake-form button[type="submit"]'); button.disabled = true;
   try {
     const r = await api('/api/profile', {method: 'POST', body: {answers}});
     state.profile = r.profile; state.snapshot = r.snapshot;
-    const hint = persona(r.profile.personaHint);
-    state.personaId = DEMO_PERSONA;
-    state.agentId = DEMO_AGENT;
-    renderSnapshot(); show('v-snap');
-  } catch (e) { show('v-quiz'); $('#q-error').textContent = e.message; }
+    const portfolioName = state.pendingPortfolio?.name;
+    const documentName = state.pendingDocument?.name;
+    if (state.pendingPortfolio) await uploadPortfolio(state.pendingPortfolio);
+    if (state.pendingDocument) await uploadDocument(state.pendingDocument);
+    startChat();
+    if (portfolioName) note(`Portfolio loaded from ${portfolioName}.`);
+    if (documentName) note(`Document added: ${documentName}.`);
+  } catch (err) { $('#q-error').textContent = err.message; }
+  finally { button.disabled = false; }
 }
 
-// ---------- your numbers + setup ----------
-function bars(s, profile) {
-  const months = profile.incomeHistory || []; if (!months.length) return '';
-  const ess = Number(s.essentialsTotal), max = Math.max(ess, ...months.map(m => Number(m.amount))) * 1.1;
-  const W = 600, H = 170, bw = W / months.length, y = v => H - 22 - (v / max) * (H - 34);
-  const label = m => new Date(m + '-15T12:00:00Z').toLocaleString('en-US', {month: 'short', timeZone: 'UTC'});
-  return `<div class="bars"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Take-home pay by month compared with monthly essentials of ${usd(ess)}">
-    ${months.map((m, i) => { const v = Number(m.amount), low = v < ess; return `<rect x="${i * bw + 10}" y="${y(v)}" width="${bw - 20}" height="${H - 22 - y(v)}" fill="${low ? 'var(--ochre)' : 'var(--green)'}" opacity="${low ? 1 : .85}"><title>${label(m.month)}: ${usd(v)}</title></rect><text x="${i * bw + bw / 2}" y="${H - 6}" text-anchor="middle">${label(m.month)}</text>`; }).join('')}
-    <line x1="0" x2="${W}" y1="${y(ess)}" y2="${y(ess)}" stroke="var(--ink)" stroke-dasharray="4 4"/>
-  </svg><p class="fine legend"><span class="key ink"></span>Monthly essentials ${usd(ess)} <span class="key ochre"></span>Months below essentials</p></div>`;
+function uploadNote(message) {
+  if (!$('#v-chat').hidden) note(message);
+  else $('#upload-status').textContent = message;
+}
+async function uploadPortfolio(file) {
+  const summary = await api('/api/portfolio/upload', {method: 'POST', body: {csv: await file.text()}});
+  const refreshed = await api('/api/profile'); state.profile = refreshed.profile; state.snapshot = refreshed.snapshot;
+  if (!$('#v-chat').hidden) renderChatChrome();
+  uploadNote(`Portfolio loaded: ${summary.holdings} holdings, ${usd(summary.marketValue)} total value.`);
+  state.pendingPortfolio = null;
+}
+async function uploadDocument(file) {
+  if (file.size > 2_000_000) throw Error('Choose a document under 2 MB.');
+  const base64 = await new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(String(reader.result).split(',')[1]); reader.onerror = () => reject(Error('Could not read file')); reader.readAsDataURL(file); });
+  const result = await api('/api/attachment', {method: 'POST', body: {name: file.name, base64}});
+  uploadNote(`Document added: ${result.name}. Its text can guide the chat; only quiz numbers are used in calculations.`);
+  state.pendingDocument = null;
 }
 
-function renderSnapshot() {
-  const s = state.snapshot;
-  if (s.status !== 'ok') { $('#snap-title').textContent = 'We need your income to plan.'; $('#snap').innerHTML = `<p class="error">${esc(s.message)}</p>`; renderSetup(); return; }
-  const short = Number(s.lowestMonthShortfall) > 0;
-  $('#snap-title').textContent = short ? `In your lowest month you'd be ${usd(s.lowestMonthShortfall)} short.` : `Even your lowest month covers essentials, with ${usd(s.lowestMonthLeftover)} left.`;
-  const stat = (k, v, bad) => `<div class="stat ${bad ? 'bad' : ''}"><div class="k">${esc(k)}</div><div class="v">${usd(v)}</div></div>`;
-  $('#snap').innerHTML = `${bars(s, state.profile)}
-    <div class="stats">${stat('Lowest month', s.lowestMonth, short)}${stat('Average month', s.averageMonth)}${stat('Monthly essentials', s.essentialsTotal)}${stat('Swing, high minus low', s.swing)}${stat('Debt', s.debtTotal)}${stat('Savings', s.savings)}</div>
-    <details class="fine"><summary>How we calculated this</summary><ul>${s.assumptions.map(a => `<li>${esc(a)}</li>`).join('')}</ul></details>`;
-  renderSetup();
-}
-
-function renderSetup() {
-  const hint = state.profile?.personaHint;
-  $('#pick-mentor').innerHTML = personas().map(p => `<button type="button" class="choice ${p.id === state.personaId ? 'on' : ''}" data-p="${p.id}">${art(p)}<strong>${esc(p.name)}</strong><small>${esc(p.philosophy)}.</small>${badge(p)}${p.id === hint ? '<small class="hint">Suggested from your answers</small>' : ''}</button>`).join('');
-  $('#pick-coach').innerHTML = agents().map(a => `<button type="button" class="choice ${a.id === state.agentId ? 'on' : ''}" data-a="${a.id}"><span><strong>${esc(a.name)}</strong><small>${esc(a.job)}</small>${a.id === 'budget' && state.personaId === 'debt-free-coach' ? '<small class="hint">Included in the Ramsey starter</small>' : ''}</span>${badge(a)}</button>`).join('');
-  $('#to-chat').textContent = `Chat with ${persona(state.personaId)?.name || 'your mentor'}`;
-  document.querySelectorAll('#pick-mentor [data-p]').forEach(b => b.onclick = () => { const p = persona(b.dataset.p); if (blocked(p)) return; state.personaId = p.id; renderSetup(); });
-  document.querySelectorAll('#pick-coach [data-a]').forEach(b => b.onclick = () => { const a = agent(b.dataset.a); if (blocked(a)) return; state.agentId = a.id; renderSetup(); });
-}
+function connectPortfolio() { uploadNote('Direct brokerage connections are not available yet. Upload a portfolio CSV instead.'); }
 
 // ---------- chat ----------
 function renderChatChrome() {
   const p = persona(state.personaId), a = agent(state.agentId), s = state.snapshot;
   $('#chat-head').innerHTML = `${thumb(p)}<div><strong>${esc(p.name)}</strong><small>${state.profile?.incomeHistory?.length ? `With ${esc(a.name)}` : 'Start with any money question'} · AI-inspired, not affiliated</small></div>${s?.status === 'ok' ? `<div class="snap-mini">lowest ${usd(s.lowestMonth)}<br>essentials ${usd(s.essentialsTotal)}</div>` : ''}`;
-  $('#persona-switch').innerHTML = personas().map(x => `<button class="rail-item ${x.id === state.personaId ? 'on' : ''}" data-p="${x.id}">${thumb(x)}<span>${esc(x.name)}</span><small ${x.tier === 'plus' ? 'title="Mentor Labs Plus" aria-label="Mentor Labs Plus"' : ''}>${statusLabel(x)}</small></button>`).join('');
-  $('#agent-list').innerHTML = agents().map(x => `<button class="rail-item coach-item ${x.id === state.agentId ? 'on' : ''}" data-a="${x.id}"><span>${esc(x.name)}</span><small title="Mentor Labs Plus" aria-label="Mentor Labs Plus">+</small></button>`).join('');
+  $('#persona-switch').innerHTML = personas().map(x => `<button type="button" class="rail-item ${x.id === state.personaId ? 'on' : ''}" data-p="${esc(x.id)}">${thumb(x)}<span>${esc(x.name)}</span><small>${railStatus(x)}</small></button>`).join('');
+  $('#agent-list').innerHTML = agents().map(x => `<button type="button" class="rail-item coach-item ${x.id === state.agentId ? 'on' : ''}" data-a="${esc(x.id)}"><span>${esc(x.name)}</span><small>${railStatus(x)}</small></button>`).join('');
   document.querySelectorAll('#persona-switch [data-p]').forEach(b => b.onclick = () => pickPersona(b.dataset.p));
   document.querySelectorAll('#agent-list [data-a]').forEach(b => b.onclick = () => pickAgent(b.dataset.a));
   const prompts = {budget: ['How should I budget when my pay keeps changing?', 'What do I do in my slow months?', 'Where should extra money go in a good month?'], debt: ['How fast can I get rid of my debt?', 'Which debt should I pay first?', 'Should I pay off debt or save first?'], savings: ['How big should my emergency fund be?', 'How do I save when my income drops?', 'Should I stop investing until I have savings?']};
@@ -203,11 +157,10 @@ function handleError(e) { if (e.status === 402) openUnlock(); else note(e.messag
 
 // Shown the moment a question is sent. Past the slow threshold it says so honestly and keeps waiting;
 // it never cuts the answer off or presents anything as verified early.
-function skeleton(label = 'Thinking') {
-  const el = document.createElement('div'); el.className = 'msg bot skeleton'; el.setAttribute('aria-label', 'Working'); el.setAttribute('role', 'status');
-  el.innerHTML = `<span class="stage">${esc(label)}</span><span class="typing" aria-hidden="true"><i></i><i></i><i></i></span>`;
-  $('#log').append(el); el.scrollIntoView({block: 'nearest'});
-  const slow = setTimeout(() => { el.querySelector('.stage').textContent = 'Still checking the numbers. This is taking longer than usual.'; }, state.config?.perf?.thresholdMs || 10000);
+function skeleton(label) {
+  const el = document.createElement('div'); el.className = 'msg bot skeleton'; el.setAttribute('aria-label', 'Working');
+  el.innerHTML = `<div class="typing-head">${thumb(persona(state.personaId))}<span class="stage" role="status">${esc(label || `${persona(state.personaId).name} is thinking`)}</span></div><i></i><i></i><i></i>`; $('#log').append(el); el.scrollIntoView({block: 'nearest'});
+  const slow = setTimeout(() => { const st = el.querySelector('.stage'); if (st) st.textContent = 'Still checking the numbers. This is taking longer than usual.'; }, state.config?.perf?.thresholdMs || 10000);
   return {stop() { clearTimeout(slow); el.remove(); }};
 }
 
@@ -229,7 +182,8 @@ function sourceLink(c) {
 function botMessage(r) {
   const el = document.createElement('div'); el.className = 'msg bot';
   const calcs = (r.calculations || []).slice(1);
-  el.innerHTML = `<div class="who"><strong>${esc(r.personaName || '')}</strong>${r.agentName ? ` · ${esc(r.agentName)}` : ''}</div>
+  const p = persona(r.personaId) || persona(state.personaId);
+  el.innerHTML = `<div class="who">${p ? thumb(p) : ''}<div><strong>${esc(r.personaName || p?.name || '')}</strong>${r.agentName ? ` · ${esc(r.agentName)}` : ''}<small>${p?.inspiredBy ? `Inspired by ${esc(p.inspiredBy)} · not the real person` : ''}</small></div></div>
     <p class="say">${esc(r.text)}</p>
     ${canSpeak(r) ? '<button class="btn text" type="button" data-listen>Listen</button><div class="voice-player" hidden><audio controls preload="none"></audio><button class="btn text" type="button" data-stop>Stop</button><p class="fine">AI-generated voice, not the real person.</p></div>' : ''}
     ${calcs.length || r.citations?.length ? `<details class="answer-details"><summary>Sources and calculations</summary>${calcs.map(calcCard).join('')}${r.citations?.length ? `<p class="sources">${r.citations.map(c => `${sourceLink(c)} <span>(${esc(c.ref)})</span>`).join('; ')}</p>` : ''}</details>` : ''}
@@ -354,7 +308,7 @@ $('#unlock-go').addEventListener('click', async e => {
 async function setPlus(message) {
   state.tier = 'plus'; $('#tier').hidden = false; banner(message);
   state.config = await api('/api/config'); renderLanding();
-  if (!$('#v-snap').hidden) renderSetup(); if (!$('#v-chat').hidden) renderChatChrome();
+  if (!$('#v-chat').hidden) renderChatChrome();
 }
 async function handleCheckoutReturn() {
   const q = new URLSearchParams(location.search), status = q.get('checkout');
@@ -375,9 +329,13 @@ function setupContextHub() {
   $('#feature-close').onclick = () => $('#feature-preview').close();
   $('#feature-plus').onclick = () => { $('#feature-preview').close(); openUnlock(); };
   try { const saved = sessionStorage.getItem('mentor-labs-portfolio-link'); if (saved) { $('#portfolio-link').value = saved; $('#portfolio-link-status').textContent = 'Reference saved for this browser session; no account connected.'; } } catch {}
-  $('#context-files').onchange = e => {
-    const files = [...e.target.files];
-    $('#context-file-status').textContent = files.length ? `${files.length} document${files.length === 1 ? '' : 's'} selected: ${files.map(f => f.name).join(', ')}. Preview only; content is not analyzed.` : 'No documents selected.';
+  $('#context-files').onchange = async e => {
+    const file = e.target.files?.[0]; if (!file) return;
+    try {
+      if (state.profile?.incomeHistory?.length) { await uploadDocument(file); $('#context-file-status').textContent = `${file.name} added to this chat.`; }
+      else { state.pendingDocument = file; $('#context-file-status').textContent = `${file.name} will be added after the six questions.`; }
+    } catch (err) { $('#context-file-status').textContent = err.message; }
+    e.target.value = '';
   };
   $('#portfolio-save').onclick = () => {
     const value = $('#portfolio-link').value.trim();
@@ -393,7 +351,7 @@ function setupContextHub() {
   $('#context-csv').onchange = async e => {
     const file = e.target.files[0]; if (!file) return;
     if (file.size > 1024 * 1024) { $('#context-csv-status').textContent = 'Choose a CSV smaller than 1 MB.'; return; }
-    try { done(await api('/api/portfolio/upload', {method: 'POST', body: {csv: await file.text()}})); }
+    try { if (state.profile?.incomeHistory?.length) { await uploadPortfolio(file); done(state.profile.portfolio); } else { state.pendingPortfolio = file; $('#context-csv-status').textContent = `${file.name} will be imported after the six questions.`; } }
     catch (err) { $('#context-csv-status').textContent = err.message; }
   };
   $('#context-sample').onclick = async () => { try { done(await api('/api/portfolio/upload', {method: 'POST', body: {sample: true}})); } catch (err) { $('#context-csv-status').textContent = err.message; } };
@@ -518,22 +476,25 @@ async function boot() {
   $('#engine').textContent = state.config.engine === 'live' ? 'Live AI' : state.config.engine === 'mock' ? 'Local test mode' : 'AI unavailable';
   renderLanding();
   $('#home').onclick = e => { e.preventDefault(); show('v-landing'); };
-  const startQuiz = () => { state.i = 0; state.answers = {}; renderQuestion(); show('v-quiz'); };
-  $('#start').onclick = startQuiz; $('#head-start').onclick = startChat; $('#try-chat').onclick = startChat;
-  $('#chat-plan').onclick = startQuiz;
+  $('#start').onclick = renderIntake; $('#head-start').onclick = renderIntake; $('#try-chat').onclick = renderIntake;
+  $('#chat-plan').onclick = renderIntake;
   $('#demo').onclick = async () => { await api('/api/portfolio/upload', {method: 'POST', body: {sample: true}}).catch(() => {}); submitQuiz(DEMO); };
   document.querySelectorAll('[data-unlock]').forEach(b => b.onclick = openUnlock);
   setupContextHub();
-  $('#q-next').onclick = next;
-  $('#q-back').onclick = () => { collect(); state.i = Math.max(0, state.i - 1); renderQuestion(); };
-  $('#q-skip').onclick = () => { state.i < state.config.quiz.questions.length - 1 ? (state.i++, renderQuestion()) : submitQuiz(); };
-  $('#q-body').addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.tagName === 'INPUT') { e.preventDefault(); next(); } });
-  $('#to-chat').onclick = startChat;
+  $('#intake-form').onsubmit = submitIntake;
+  $('#connect-portfolio').onclick = connectPortfolio;
+  $('#chat-connect-portfolio').onclick = connectPortfolio;
+  $('#upload-portfolio').onclick = () => $('#portfolio-file').click();
+  $('#chat-upload-portfolio').onclick = () => $('#portfolio-file').click();
+  $('#upload-document').onclick = () => $('#document-file').click();
+  $('#chat-upload-document').onclick = () => $('#document-file').click();
+  $('#portfolio-file').onchange = async e => { const file = e.target.files?.[0]; if (!file) return; try { if (state.profile) await uploadPortfolio(file); else { state.pendingPortfolio = file; uploadNote(`${file.name} will be added when you start chatting.`); } } catch (err) { uploadNote(err.message); } e.target.value = ''; };
+  $('#document-file').onchange = async e => { const file = e.target.files?.[0]; if (!file) return; try { if (state.profile) await uploadDocument(file); else { state.pendingDocument = file; uploadNote(`${file.name} will be added when you start chatting.`); } } catch (err) { uploadNote(err.message); } e.target.value = ''; };
   $('#composer').onsubmit = e => { e.preventDefault(); send($('#msg').value); };
   setupVoice();
   $('#restart').onclick = async () => { if (!confirm('Start over? Your answers and chat will be cleared.')) return; await api('/api/session', {method: 'DELETE'}).catch(() => {}); location.href = '/'; };
   await handleCheckoutReturn();
-  try { const r = await api('/api/profile'); if (r.profile?.incomeHistory?.length) { state.profile = r.profile; state.snapshot = r.snapshot; const h = persona(r.profile.personaHint); if (h && usable(h)) state.personaId = h.id; } const {history} = await api('/api/history'); if (history.length) { await restoreChat(history); return; } if (state.profile?.incomeHistory?.length) { renderSnapshot(); show('v-snap'); return; } } catch {}
+  try { const r = await api('/api/profile'); if (r.profile?.incomeHistory?.length) { state.profile = r.profile; state.snapshot = r.snapshot; const h = persona(r.profile.personaHint); if (h && usable(h)) state.personaId = h.id; const {history} = await api('/api/history'); if (history.length) await restoreChat(history); else startChat(); return; } } catch {}
   show('v-landing');
 }
 boot().catch(e => banner(`The app could not load: ${e.message}`, true));

@@ -101,6 +101,10 @@ test('API: quiz -> chat -> repick, static UI, and traversal blocked', async () =
     assert.ok(cfg.catalog.agents.every(a => a.tier === 'plus' && a.name.endsWith('Agent')));
     const p = await fetch(base + '/api/profile', {method: 'POST', headers: h, body: JSON.stringify({answers})});
     assert.equal(p.status, 200);
+    const attachment = await fetch(base + '/api/attachment', {method: 'POST', headers: h, body: JSON.stringify({name: 'statement.txt', base64: Buffer.from('Monthly statement for review').toString('base64')})});
+    assert.equal(attachment.status, 200);
+    assert.equal((await (await fetch(base + '/api/profile', {headers: h})).json()).profile.documents[0].name, 'statement.txt');
+    assert.equal((await fetch(base + '/api/attachment', {method: 'POST', headers: h, body: JSON.stringify({name: 'photo.exe', base64: 'YWJj'})})).status, 422);
     const bad = await fetch(base + '/api/profile', {method: 'POST', headers: h, body: JSON.stringify({answers: {incomeHistory: [{amount: '-5'}]}})});
     assert.equal(bad.status, 422);
     const c = await (await fetch(base + '/api/chat', {method: 'POST', headers: h, body: JSON.stringify({message: 'How do I budget?'})})).json();
