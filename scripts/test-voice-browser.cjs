@@ -24,7 +24,8 @@ const http=require('node:http'),fs=require('node:fs'),cp=require('node:child_pro
  let browser;
  try {
  browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH || undefined,args:['--no-sandbox','--autoplay-policy=no-user-gesture-required']});
- const page=await browser.newPage();const browserEvents=[];page.on('console',msg=>{if(msg.text().startsWith('[voice] '))try{browserEvents.push(JSON.parse(msg.text().slice(8)));}catch{}});await page.goto(`http://127.0.0.1:${app.address().port}`);
+ const page=await browser.newPage();const browserEvents=[];page.on('console',msg=>{if(msg.text().startsWith('[voice] '))try{browserEvents.push(JSON.parse(msg.text().slice(8)));}catch{}});await page.route('**/app.js',async route=>{const response=await route.fetch();await route.fulfill({response,body:(await response.text())+'\nwindow.__voiceTest={voice,speakReply,endConversation};'});});
+ await page.goto(`http://127.0.0.1:${app.address().port}`);
  const questions=['How should I budget?','Explain a longer debt payoff plan.','What does $1,340.00 in card debt mean?','Should I build a $1,000 fund?','Save or pay debt first?','What about the highest APR?','Explain the snowball.','My income changes every month.','Can I invest with credit card debt?','What about rent and groceries?','How do I prepare for car repairs?','What should I do in a good month?','How much emergency savings?','How much emergency savings?','Explain my next financial step slowly.'];
  const results=await page.evaluate(async ({questions,lengths})=>{
   const {VoicePlayback}=await import('/voice-playback.js'),sid='voice-browser-00000001',headers={'Content-Type':'application/json','X-Session-Id':sid};
@@ -59,6 +60,16 @@ const http=require('node:http'),fs=require('node:fs'),cp=require('node:child_pro
  await page.waitForFunction(()=>document.querySelectorAll('.msg.bot').length>10);
  const typedInterruptionLogged=browserEvents.some(e=>e.event==='cancelled'&&e.reason==='new-question');
  if(!typedInterruptionLogged)throw Error('Typed interruption did not cancel audio');
+ const handsFreeWaitsForEnd=await page.evaluate(async()=>{
+  const t=window.__voiceTest,history=await (await fetch('/api/history',{headers:{'X-Session-Id':localStorage.getItem('sid')}})).json();
+  const reply=history.history.filter(h=>h.role==='assistant').at(-1).response;
+  const el=document.querySelector('.msg.bot:last-child') || [...document.querySelectorAll('.msg.bot')].at(-1);
+  t.voice.active=true;t.voice.session++;const session=t.voice.session;
+  let finished=false;const task=t.speakReply(el,reply,session).then(()=>finished=true);
+  await new Promise((resolve,reject)=>{const a=el.querySelector('audio');if(!a.paused)resolve();else a.addEventListener('playing',resolve,{once:true});setTimeout(()=>reject(Error('No speech start')),5000);});
+  if(finished)throw Error('Hands-free turn finished before playback ended');
+  await task;t.endConversation('Test complete');return true;
+ });
  const source=cp.execFileSync('git',['show','47a9a63:public/app.js'],{encoding:'utf8'});
  const start=source.indexOf('function stopPlayback()'),end=source.indexOf('\nfunction setupVoice()',start);
  await page.route('**/latency-fixture',async route=>{await new Promise(r=>setTimeout(r,20));await route.fulfill({body:mp3,contentType:'audio/mpeg'});});
@@ -77,6 +88,6 @@ const http=require('node:http'),fs=require('node:fs'),cp=require('node:child_pro
   }
   const median=a=>[...a].sort((a,b)=>a-b)[Math.floor(a.length/2)];return {samplesPerVersion:15,beforeMedianMs:median(times.before),afterMedianMs:median(times.after)};
  },source.slice(start,end));
- console.log(JSON.stringify({latency,typedInterruptionLogged,scenarioCount:17,uniqueSynthesisCalls:spoken.length,unchangedFullTextPayloads,...results},null,2));
+ console.log(JSON.stringify({latency,typedInterruptionLogged,handsFreeWaitsForEnd,scenarioCount:17,uniqueSynthesisCalls:spoken.length,unchangedFullTextPayloads,...results},null,2));
  }finally{await browser?.close();await new Promise(r=>app.close(r));await new Promise(r=>fake.close(r));}
 })().catch(e=>{console.error(e);process.exit(1)});

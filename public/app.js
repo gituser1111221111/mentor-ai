@@ -408,6 +408,7 @@ function endConversation(message = 'Voice conversation ended.') {
   closeCapture(); stopPlayback(); micUI(); voiceStatus(message);
 }
 async function startListening(session) {
+  if (playback.active && !playback.active.audio.ended) return; // Never capture speaker output while a reply is loading or playing.
   if (!voice.active || session !== voice.session || voice.starting || voice.rec) return;
   voice.starting = true; voiceStatus('Opening microphone...');
   let stream;
