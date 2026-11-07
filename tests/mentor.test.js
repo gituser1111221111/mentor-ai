@@ -40,7 +40,9 @@ test('number check: copied numbers pass, invented ones are caught', () => {
   assert.deepEqual(unverifiedNumbers('Save $1,000 a month', snap), ['$1,000']);
   const ef = lib.calcs.filter(c => c.id === 'starter-ef');
   assert.deepEqual(unverifiedNumbers('Need $580.00 more over 2 months', [...snap, ...ef]), []);
-  assert.deepEqual(unverifiedNumbers('in 7 months', [...snap, ...ef]), ['7 months']);
+  assert.deepEqual(unverifiedNumbers('in 7 months', [...snap, ...ef]), ['7']);
+  assert.deepEqual(unverifiedNumbers('Save 50% and earn 12% next week', snap), ['50%', '12%']);
+  assert.deepEqual(unverifiedNumbers('Pay it by 2027-03-01', snap), ['2027-03-01']);
 });
 
 const GOOD = [
@@ -67,14 +69,19 @@ test('live chat: structured outputs, cached prompts, persona picks by id, repick
     conscious: {pickId: 'c3', runnersUp: ['c1'], rationale: 'Big wins beat small cuts.', reply: 'You need $5,000.00 more a month. Go get it.', whyNotOthers: 'Cutting is small.', noteIds: ['big-wins'], memoryFacts: []},
   }});
   setClient(fake);
-  const r = await chat({personaId: 'debt-free-coach', agentId: 'budget', messages: [{role: 'user', content: 'Debt or savings first?'}], profile});
+  const r = await chat({personaId: 'debt-free-coach', agentId: 'budget', messages: [{role: 'user', content: 'Debt or savings first?'}], profile, memory: [{fact: 'Prefers a cash buffer'}]});
   assert.equal(r.mode, 'live');
   assert.equal(r.pick.pickId, 'c1');
   assert.deepEqual(r.pick.runnersUp, ['c2']); // c9 doesn't exist
   assert.equal(r.text, 'Get that $580.00 saved, then go after the card.');
   assert.deepEqual(r.citations.map(c => c.noteId), ['029']); // file note id (Baby Step 1); unknown note dropped
+  assert.ok(r.citations[0].url.startsWith('https://'));
   assert.equal(r.validation.kept, 3);
   assert.equal(r.memoryUpdates[0].fact, 'Wants to pay off the card');
+  assert.match(fake.calls[0].messages[0].content, /Prefers a cash buffer/);
+  assert.match(fake.calls[1].messages[0].content, /Prefers a cash buffer/);
+  assert.equal(r.candidates[0].calculations[0].units.lowestMonth, 'money');
+  assert.deepEqual(unverifiedNumbers('The card APR is 24.90%', r.candidates[0].calculations), []);
   // request shape: no forced tool_choice, JSON schema output, cache_control on system
   for (const call of fake.calls) {
     assert.equal(call.tool_choice, undefined);

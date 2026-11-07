@@ -42,9 +42,9 @@ function renderLanding() {
   const c = state.config.catalog;
   $('#ex-coaching').textContent = c.explainer.coaching;
   $('#ex-mentors').textContent = c.explainer.mentors;
-  $('#personas').innerHTML = personas().map(p => `<div class="portrait ${usable(p) ? '' : 'locked'}">${art(p)}<span class="tag ${p.tier === 'plus' ? 'plus' : ''}">${p.tier === 'plus' ? 'Plus' : 'Free'}</span></div>
+  $('#personas').innerHTML = personas().filter(p => p.built).map(p => `<div class="portrait ${usable(p) ? '' : 'locked'}">${art(p)}<span class="tag ${p.tier === 'plus' ? 'plus' : ''}">${p.tier === 'plus' ? 'Plus' : 'Free'}</span></div>
     <h3>${esc(p.name)}</h3><p>${esc(p.philosophy)}.</p><p>From the public work of ${esc(p.inspiredBy)}.</p></div>`).join('');
-  $('#agents').innerHTML = agents().map(a => `<div class="tr"><strong>${esc(a.name)}</strong><span>${esc(a.job)}</span><span class="tag ${a.tier === 'plus' ? 'plus' : ''}">${a.tier === 'plus' ? 'Plus' : 'Free'}</span></div>`).join('');
+  $('#agents').innerHTML = agents().filter(a => a.built).map(a => `<div class="tr"><strong>${esc(a.name)}</strong><span>${esc(a.job)}</span><span class="tag ${a.tier === 'plus' ? 'plus' : ''}">${a.tier === 'plus' ? 'Plus' : 'Free'}</span></div>`).join('');
 }
 
 // ---------- quiz ----------
@@ -156,8 +156,7 @@ function renderSnapshot() {
 
 function renderSetup() {
   const hint = state.profile?.personaHint;
-  $('#pick-mentor').innerHTML = personas().filter(p => p.tier === 'free' || state.tier === 'plus').map(p => `<button type="button" class="choice ${p.id === state.personaId ? 'on' : ''}" data-p="${p.id}" ${usable(p) ? '' : 'disabled'}>${art(p)}</div><strong>${esc(p.name)}</strong><small>${esc(p.philosophy)}.</small>${p.id === hint ? '<small class="hint">Suggested from your quiz</small>' : ''}${usable(p) ? '' : '<small>Coming soon</small>'}</button>`).join('')
-    + (state.tier === 'plus' ? '' : `<button type="button" class="choice" data-unlock><div class="frame"><span class="mono-gram">+7</span></div><strong>7 more mentors</strong><small>Bogle, Housel, Orman and more, with Plus.</small></button>`);
+  $('#pick-mentor').innerHTML = personas().filter(p => p.built && allowed(p)).map(p => `<button type="button" class="choice ${p.id === state.personaId ? 'on' : ''}" data-p="${p.id}">${art(p)}</div><strong>${esc(p.name)}</strong><small>${esc(p.philosophy)}.</small>${p.id === hint ? '<small class="hint">Suggested from your quiz</small>' : ''}</button>`).join('');
   $('#pick-coach').innerHTML = agents().filter(usable).map(a => `<button type="button" class="choice ${a.id === state.agentId ? 'on' : ''}" data-a="${a.id}"><span><strong>${esc(a.name)}</strong><small>${esc(a.job)}</small></span><span class="tag ${a.tier === 'plus' ? 'plus' : ''}">${statusLabel(a)}</span></button>`).join('');
   document.querySelectorAll('#pick-mentor [data-p]').forEach(b => b.onclick = () => { state.personaId = b.dataset.p; renderSetup(); });
   document.querySelectorAll('#pick-coach [data-a]').forEach(b => b.onclick = () => { state.agentId = b.dataset.a; renderSetup(); });
@@ -168,8 +167,8 @@ function renderSetup() {
 function renderChatChrome() {
   const p = persona(state.personaId), a = agent(state.agentId), s = state.snapshot;
   $('#chat-head').innerHTML = `${thumb(p)}<div><strong>${esc(p.name)}</strong><small>directing ${esc(a.name)}</small></div>${s?.status === 'ok' ? `<div class="snap-mini">lowest ${usd(s.lowestMonth)}<br>essentials ${usd(s.essentialsTotal)}</div>` : ''}`;
-  $('#persona-switch').innerHTML = personas().map(x => `<button class="rail-item ${x.id === state.personaId ? 'on' : ''} ${usable(x) ? '' : 'locked'}" data-p="${x.id}">${thumb(x)}<span>${esc(x.name)}</span><small>${usable(x) ? '' : statusLabel(x)}</small></button>`).join('');
-  $('#agent-list').innerHTML = agents().map(x => `<button class="rail-item coach-item ${x.id === state.agentId ? 'on' : ''} ${usable(x) ? '' : 'locked'}" data-a="${x.id}"><span>${esc(x.name.replace(/ Coaching$/, ''))}</span><small>${usable(x) ? '' : statusLabel(x)}</small></button>`).join('');
+  $('#persona-switch').innerHTML = personas().filter(x => x.built && allowed(x)).map(x => `<button class="rail-item ${x.id === state.personaId ? 'on' : ''}" data-p="${x.id}">${thumb(x)}<span>${esc(x.name)}</span></button>`).join('');
+  $('#agent-list').innerHTML = agents().filter(x => x.built && allowed(x)).map(x => `<button class="rail-item coach-item ${x.id === state.agentId ? 'on' : ''}" data-a="${x.id}"><span>${esc(x.name.replace(/ Coaching$/, ''))}</span></button>`).join('');
   document.querySelectorAll('#persona-switch [data-p]').forEach(b => b.onclick = () => pickPersona(b.dataset.p));
   document.querySelectorAll('#agent-list [data-a]').forEach(b => b.onclick = () => pickAgent(b.dataset.a));
   const prompts = {budget: ['How should I budget when my pay keeps changing?', 'What do I do in my slow months?', 'Where should extra money go in a good month?'], debt: ['How fast can I get rid of my debt?', 'Which debt should I pay first?', 'Should I pay off debt or save first?'], savings: ['How big should my emergency fund be?', 'How do I save when my income drops?', 'Should I stop investing until I have savings?']};
@@ -200,8 +199,18 @@ function skeleton(stages) {
 }
 
 function calcCard(c) {
-  const rows = Object.entries(c.result || {}).filter(([, v]) => v === null || typeof v !== 'object').map(([k, v]) => `<tr><td>${esc(k.replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase().replace(/^./, x => x.toUpperCase()))}</td><td>${typeof v === 'string' && /^-?\d+\.\d{2}$/.test(v) ? usd(v) : esc(v ?? 'n/a')}</td></tr>`).join('');
+  const rows = Object.entries(c.result || {}).filter(([, v]) => v === null || typeof v !== 'object').map(([k, v]) => {
+    const unit = c.units?.[k] || (/percent|pct|apr/i.test(k) ? 'percent' : /^(months|years|monthsOfEssentials|.*Count|.*Months|.*Years)$/i.test(k) ? 'count' : 'money');
+    const shown = v === null ? 'n/a' : unit === 'percent' ? `${v}%` : unit === 'money' && typeof v === 'string' && /^-?\d+\.\d{2}$/.test(v) ? usd(v) : String(v);
+    return `<tr><td>${esc(k.replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase().replace(/^./, x => x.toUpperCase()))}</td><td>${esc(shown)}</td></tr>`;
+  }).join('');
   return `<div class="calc"><div class="ch"><span>${esc(c.label || c.name)}</span><span>calculated in code, exact to the cent</span></div><table>${rows}</table></div>`;
+}
+
+function sourceLink(c) {
+  let url; try { url = new URL(c.url); } catch {}
+  const label = esc(c.title);
+  return url?.protocol === 'https:' ? `<a href="${esc(url.href)}" target="_blank" rel="noopener noreferrer">${label}</a>` : label;
 }
 
 function botMessage(r, noteText) {
@@ -213,7 +222,7 @@ function botMessage(r, noteText) {
   el.innerHTML = `<div class="who"><strong>${esc(r.personaName || '')}</strong>${r.agentName ? ` directing ${esc(r.agentName)}` : ''}${noteText ? ` · ${esc(noteText)}` : ''}${engine}</div>
     <p class="say">${esc(r.text)}</p>
     ${calcs.map(calcCard).join('')}
-    ${r.citations?.length ? `<p class="sources"><span>Sources:</span> ${r.citations.map(c => `${esc(c.title)} <span>(${esc(c.ref)})</span>`).join('; ')}</p>` : ''}
+    ${r.citations?.length ? `<p class="sources"><span>Sources:</span> ${r.citations.map(c => `${sourceLink(c)} <span>(${esc(c.ref)})</span>`).join('; ')}</p>` : ''}
     <div class="meta">${r.candidates?.length ? `<button class="btn text" data-drawer>See all ${r.candidates.length} options</button>` : ''}${v ? `<span class="mono">number check: ${v.kept} of ${v.generated} passed</span>` : ''}</div>
     <p class="disclose">${esc(r.disclosure || '')}</p>`;
   el.querySelector('[data-drawer]')?.addEventListener('click', () => openDrawer(r));
@@ -238,7 +247,20 @@ async function send(text) {
   catch (e) { handleError(e); }
   finally { sk.stop(); btn.disabled = false; $('#msg').focus(); }
 }
-async function refreshMemory() { try { const {memory} = await api('/api/memory'); $('#memory').innerHTML = memory.length ? memory.map(m => `<li>${esc(m.fact)}</li>`).join('') : '<li>Nothing yet. Tell me about your goals.</li>'; } catch {} }
+async function refreshMemory() { try { const {memory} = await api('/api/memory'); $('#memory').innerHTML = memory.length ? memory.map((m, i) => `<li>${esc(m.fact)} <button class="btn text" type="button" data-memory="${i}" aria-label="Forget ${esc(m.fact)}">Forget</button></li>`).join('') : '<li>Nothing yet. Tell me about your goals.</li>'; $('#memory').querySelectorAll('[data-memory]').forEach(b => b.onclick = async () => { await api('/api/memory', {method: 'DELETE', body: {fact: memory[Number(b.dataset.memory)].fact}}); refreshMemory(); }); } catch {} }
+
+async function restoreChat(history) {
+  const last = [...history].reverse().find(x => x.role === 'assistant')?.response;
+  if (last?.personaId && persona(last.personaId)) state.personaId = last.personaId;
+  if (last?.agentId && agent(last.agentId)) state.agentId = last.agentId;
+  state.lastTurn = last?.turnId || null;
+  $('#log').innerHTML = '';
+  renderChatChrome(); refreshMemory(); show('v-chat');
+  for (const item of history) {
+    if (item.role === 'user') { const el = document.createElement('div'); el.className = 'msg user'; el.textContent = item.text; $('#log').append(el); }
+    else if (item.response) botMessage(item.response);
+  }
+}
 
 function startChat() {
   $('#log').innerHTML = ''; state.lastTurn = null; renderChatChrome(); refreshMemory(); show('v-chat');
@@ -312,7 +334,7 @@ async function boot() {
   $('#composer').onsubmit = e => { e.preventDefault(); send($('#msg').value); };
   $('#restart').onclick = async () => { if (!confirm('Start over? Your answers and chat will be cleared.')) return; await api('/api/session', {method: 'DELETE'}).catch(() => {}); location.href = '/'; };
   await handleCheckoutReturn();
-  try { const r = await api('/api/profile'); if (r.profile?.incomeHistory?.length) { state.profile = r.profile; state.snapshot = r.snapshot; const h = persona(r.profile.personaHint); if (h && usable(h)) state.personaId = h.id; renderSnapshot(); show('v-snap'); return; } } catch {}
+  try { const r = await api('/api/profile'); if (r.profile?.incomeHistory?.length) { state.profile = r.profile; state.snapshot = r.snapshot; const h = persona(r.profile.personaHint); if (h && usable(h)) state.personaId = h.id; const {history} = await api('/api/history'); if (history.length) await restoreChat(history); else { renderSnapshot(); show('v-snap'); } return; } } catch {}
   show('v-landing');
 }
 boot().catch(e => banner(`The app could not load: ${e.message}`, true));
