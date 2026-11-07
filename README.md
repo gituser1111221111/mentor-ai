@@ -39,7 +39,7 @@ Switch mentor ──► step ③ only: same options, same numbers, different pic
 - **Coaching** = a specialist bot (Budget, Debt, Savings & Emergency Fund) that does the work and the math.
 - **Mentor** = a money philosophy that directs the coach by choosing among its verified options. Mentors are built from summaries of public teachings and labeled *"inspired by; not affiliated or endorsed."* No mentor claims to be a real person, and there are no cloned voices.
 
-**Free tier:** 3 mentors (Debt-Free, from Dave Ramsey's public work; Conscious Spender, from Ramit Sethi's; Money Basics, from Humphrey Yang's) and 3 coaches (Budget, Debt, Savings). **Plus ($4.99/month, Stripe test mode):** all 10 mentors and 10 coaches.
+**Available now:** 2 free mentors (Debt-Free and Conscious Spender) and 3 free coaches (Budget, Debt, Savings). The other mentors and coaches are planned; the Plus checkout is a Stripe test-mode preview and makes new options available as they launch.
 
 ## What actually works (and what doesn't)
 
@@ -47,12 +47,13 @@ Switch mentor ──► step ③ only: same options, same numbers, different pic
 |---|---|
 | 13-question screening quiz → money snapshot (lowest month, swing, essentials, shortfall) | Works; computed in code |
 | Portfolio CSV upload → value, sector mix, fees (`portfolioSummary`) | Works. No brokerage login; the sample file is synthetic |
-| Live chat: generate → validate → pick, for 3 coaches × 3 mentors | Works on the live site (Claude API) |
+| Live chat: generate → validate → pick, for 3 coaches × 2 available mentors | Works on the live site (Claude API) |
 | Persona switch on the same options (`repick`) | Works |
-| Number check visible in the UI ("proposed N, kept K, dropped D: reason") | Works |
+| Number check visible in the UI ("proposed N, kept K, dropped D: reason") | Checks money, percentages, dates and other numeric claims against calculations; it cannot prove the reasoning is sound |
+| Conversation and memory | Restores after refresh on the same server instance; users can remove remembered facts |
 | Offline fallback: if Claude fails, a rule-based engine answers, labeled "offline fallback" | Works |
 | $4.99/month Plus (Stripe Checkout) | Works in **Stripe test mode**: a real hosted checkout and subscription, verified on the server before Plus unlocks. Use card 4242 4242 4242 4242. Live keys are refused in code |
-| Plus mentors and coaches beyond the free 3 + 3 | Unlock with Plus; each shows "Soon" until its files are added |
+| Additional mentors and coaches | Not in the main selection flow until their files and logic are ready |
 | "Connect brokerage" (Plaid) | **Not built**: shown as sandbox-only text |
 | Voice (ElevenLabs) | **Not built yet** |
 
@@ -64,7 +65,8 @@ Requires Node 22+.
 npm ci
 cp .env.example .env      # then put your Anthropic key on the MENTOR_API_KEY= line
 npm run dev               # http://127.0.0.1:4180
-npm test                  # 30 tests, no network or key needed
+npm test                  # offline tests, no network or key needed
+npm run eval:chat         # live answer-quality scenarios; requires MENTOR_API_KEY
 ```
 
 Without a key, the app runs on the rule-based mock engine (labeled "mock engine" in the UI). `MENTOR_API_KEY` takes priority over `ANTHROPIC_API_KEY`, in case your machine already has a different key set. `MENTOR_ENGINE=mock` forces the mock.
@@ -73,7 +75,7 @@ Without a key, the app runs on the rule-based mock engine (labeled "mock engine"
 
 ## Accuracy and tests
 
-`npm test` runs 30 tests: the 18 from the starter kit plus 12 of ours. The live engine tests use a fake Claude client, so they never call the network.
+`npm test` uses a fake Claude client and never calls the network. `npm run eval:chat` runs four live scenarios covering a shortfall, debt versus savings, a good month and missing income. It checks mechanics and prints answers for human review.
 
 - **Valid input:** quiz answers produce an exact-cents snapshot (`$1,780.00` low, `$2,380.00` average, `$1,634.00` essentials in the test profile).
 - **Missing or invalid input:** no income means the coach asks for it without calling the model. Bad dollar amounts and APRs over 100% are rejected with the field named.
@@ -109,9 +111,9 @@ docs/                     business plan, build plan, strategy, Devpost text
 ## Limitations (honest)
 
 - **Educational opinion, not advice** from a licensed financial adviser, CPA, or attorney. The disclosure shows under every answer.
-- **Mentor fidelity hasn't been measured yet.** Mentors are short, hand-written summaries of public teachings, not trained on full source material. We have no eval score yet.
+- **Mentor fidelity still needs human evaluation.** The live scenario script checks mechanics and basic relevance; it does not establish an advice-quality or source-fidelity score.
 - **Coaches share one calculation library.** Debt and Savings coaching differ from Budget only in focus. Taxes, investment returns and pay changes aren't forecast.
-- **Single-instance, anonymous, in-memory store.** No accounts, and data resets when the server restarts. Fictional data only.
+- **Single-instance, anonymous store.** Sessions and chat turns are saved to a local JSON file, but Render's free-service disk is ephemeral. Data can disappear on restart or redeploy. Fictional data only.
 - **No real bank or brokerage connection, and no real payments.**
 - **The number check matches exact values.** It can't catch wrong reasoning that uses correct numbers, and it can reject a valid rephrasing (for example, a rounded number).
 - Not affiliated with or endorsed by Dave Ramsey, Ramsey Solutions, Ramit Sethi or anyone else named.
