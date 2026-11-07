@@ -8,6 +8,9 @@ import {writeFileSync} from 'node:fs';
 // One test client sends many requests from one IP, so lift the per-IP hourly limit for this run only.
 process.env.CHAT_LIMIT_PER_HOUR ||= '100000';
 const {createServer} = await import('../server.js');
+const {summarize} = await import('../lib/mentor/perf.js');
+const {performance} = await import('node:perf_hooks');
+const latency = {chat: [], expand: []}; // wall-clock ms per request (monotonic clock)
 
 const engine = process.env.MENTOR_ENGINE === 'mock' ? 'practice' : 'live';
 if (engine === 'live' && !process.env.MENTOR_API_KEY && !process.env.ANTHROPIC_API_KEY) {
@@ -62,7 +65,15 @@ async function run() {
     for (const [i, person] of PEOPLE.entries()) {
       const sid = `eval-person-${String(i + 1).padStart(2, '0')}-${Date.now()}`;
       const H = {'Content-Type': 'application/json', 'X-Session-Id': sid};
-      const call = async (method, path, body) => { const r = await fetch(base + path, {method, headers: H, body: body ? JSON.stringify(body) : undefined}); return {status: r.status, json: await r.json().catch(() => ({}))}; };
+      const call = async (method, path, body) => {
+        const t0 = performance.now();
+        const r = await fetch(base + path, {method, headers: H, body: body ? JSON.stringify(body) : undefined});
+        const out = {status: r.status, json: await r.json().catch(() => ({}))};
+        out.ms = Math.round(performance.now() - t0);
+        if (path === '/api/chat' && r.status === 200) latency.chat.push(out.ms);
+        if (path === '/api/expand' && r.status === 200) latency.expand.push(out.ms);
+        return out;
+      };
       const out = {person: person.name, question: person.q, checks: {}, turns: [], problems: []};
       const fail = (k, msg) => { out.checks[k] = false; out.problems.push(msg); };
       const ok = k => { if (out.checks[k] !== false) out.checks[k] = true; };
@@ -102,6 +113,18 @@ async function run() {
           out.turns.push({coach, ramseyAnswer: r.text, citations: (r.citations || []).map(x => x.title), options: cands.map(x => x.title), ramseyPick: pick?.pickTitle, mode: r.mode});
         }
         out.optionCount = optionIds.size;
+        // Progressive answer: expand the first turn toward the full option set without changing what was shown.
+        if (firstTurn) {
+          const before = await call('POST', '/api/compare', {turnId: firstTurn, personaIds: [RAMSEY]});
+          const x = await call('POST', '/api/expand', {turnId: firstTurn});
+          const after = await call('POST', '/api/compare', {turnId: firstTurn, personaIds: [RAMSEY]});
+          const shown = (before.json.candidates || []).map(c => c.title);
+          const keptShown = shown.every((t, k) => after.json.candidates?.[k]?.title === t);
+          const distinct = new Set((after.json.candidates || []).map(c => c.title.trim().toLowerCase())).size;
+          out.expansion = {status: x.status, ms: x.ms, added: x.json.added?.length ?? 0, total: x.json.total ?? null, distinct, note: x.json.note || null};
+          x.status === 200 && keptShown && distinct === (after.json.candidates || []).length ? ok('expansionConsistent')
+            : fail('expansionConsistent', `expand ${x.status}, shown options kept: ${keptShown}, distinct ${distinct}`);
+        }
         out.optionCount >= 3 ? ok('verifiedOptions') : fail('verifiedOptions', `only ${out.optionCount} verified options`);
 
         // Planned perspectives are gated before and after the test-mode Plus unlock.
@@ -136,10 +159,14 @@ async function run() {
     }
   } finally { await new Promise(r => server.close(r)); }
   const passed = results.filter(r => r.passed).length;
-  const report = {engine, ranAt: new Date().toISOString(), passed, total: results.length, results};
+  const timing = {chat: summarize(latency.chat), expand: summarize(latency.expand)};
+  const report = {engine, ranAt: new Date().toISOString(), passed, total: results.length, timing, results};
   const file = process.argv[2];
   if (file) writeFileSync(file, JSON.stringify(report, null, 2));
   console.log(`\n${engine} engine: ${passed}/${results.length} people passed every check.${file ? ` Full report: ${file}` : ''}`);
+  const fmt = t => t.count ? `n=${t.count} avg ${t.avg}ms median ${t.median}ms p90 ${t.p90}ms p95 ${t.p95}ms min ${t.min}ms max ${t.max}ms | <=5s ${t.within5s}% <=8s ${t.within8s}% <=10s ${t.within10s}%` : 'no samples';
+  console.log(`Answer latency (${engine === 'live' ? 'LIVE Claude' : 'practice engine, NOT Claude'}): ${fmt(timing.chat)}`);
+  console.log(`Expand latency: ${fmt(timing.expand)}`);
   if (passed !== results.length) process.exitCode = 1;
 }
 run();

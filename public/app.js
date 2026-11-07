@@ -201,11 +201,14 @@ async function pickPersona(id) {
 function note(text) { const el = document.createElement('div'); el.className = 'msg note'; el.textContent = text; $('#log').append(el); el.scrollIntoView({block: 'nearest'}); }
 function handleError(e) { if (e.status === 402) openUnlock(); else note(e.message); }
 
-function skeleton() {
-  const el = document.createElement('div'); el.className = 'msg bot skeleton'; el.setAttribute('aria-label', 'Working');
-  el.innerHTML = '<span class="stage">Thinking</span><span class="typing" aria-hidden="true"><i></i><i></i><i></i></span>';
+// Shown the moment a question is sent. Past the slow threshold it says so honestly and keeps waiting;
+// it never cuts the answer off or presents anything as verified early.
+function skeleton(label = 'Thinking') {
+  const el = document.createElement('div'); el.className = 'msg bot skeleton'; el.setAttribute('aria-label', 'Working'); el.setAttribute('role', 'status');
+  el.innerHTML = `<span class="stage">${esc(label)}</span><span class="typing" aria-hidden="true"><i></i><i></i><i></i></span>`;
   $('#log').append(el); el.scrollIntoView({block: 'nearest'});
-  return {stop() { el.remove(); }};
+  const slow = setTimeout(() => { el.querySelector('.stage').textContent = 'Still checking the numbers. This is taking longer than usual.'; }, state.config?.perf?.thresholdMs || 10000);
+  return {stop() { clearTimeout(slow); el.remove(); }};
 }
 
 function calcCard(c) {
@@ -230,13 +233,37 @@ function botMessage(r) {
     <p class="say">${esc(r.text)}</p>
     ${canSpeak(r) ? '<button class="btn text" type="button" data-listen>Listen</button><div class="voice-player" hidden><audio controls preload="none"></audio><button class="btn text" type="button" data-stop>Stop</button><p class="fine">AI-generated voice, not the real person.</p></div>' : ''}
     ${calcs.length || r.citations?.length ? `<details class="answer-details"><summary>Sources and calculations</summary>${calcs.map(calcCard).join('')}${r.citations?.length ? `<p class="sources">${r.citations.map(c => `${sourceLink(c)} <span>(${esc(c.ref)})</span>`).join('; ')}</p>` : ''}</details>` : ''}
-    ${r.turnId ? '<div class="meta"><button class="btn text" type="button" data-compare>Compare mentors</button></div>' : ''}
+    ${r.optionsReviewed ? `<p class="fine reviewed">${esc(r.personaName || 'Your mentor')} chose from ${r.optionsReviewed} verified options.</p>` : ''}
+    ${r.turnId ? `<div class="meta"><button class="btn text" type="button" data-compare>Compare mentors</button>${r.canExpand ? '<button class="btn text" type="button" data-expand>Show more options</button>' : ''}</div><div class="more-options" hidden></div>` : ''}
     ${r.conversational ? '' : `<p class="disclose">${esc(r.disclosure || '')}</p>`}`;
   el.querySelector('[data-listen]')?.addEventListener('click', () => speakReply(el, r));
   el.querySelector('[data-stop]')?.addEventListener('click', stopPlayback);
   el.querySelector('[data-compare]')?.addEventListener('click', () => openCompare(r));
+  el.querySelector('[data-expand]')?.addEventListener('click', e => expandOptions(el, r, e.currentTarget));
   $('#log').append(el); el.scrollIntoView({behavior: 'smooth', block: 'start'});
   return el;
+}
+
+// ---------- more options (progressive: the first answer used a small verified set) ----------
+async function expandOptions(el, r, btn) {
+  const box = el.querySelector('.more-options');
+  btn.disabled = true; btn.textContent = 'Finding more verified options...';
+  try {
+    const x = await api('/api/expand', {method: 'POST', body: {turnId: r.turnId}});
+    box.hidden = false;
+    box.innerHTML = x.added.length
+      ? `<p class="fine">${x.added.length} more verified options (${x.total} total). Your mentor has not reviewed these yet, so the answer above is unchanged.</p>
+         <ul class="opt-list">${x.added.map(o => `<li><strong>${esc(o.title)}</strong> <span class="fine">${esc(o.summary)}</span></li>`).join('')}</ul>
+         <button class="btn text" type="button" data-review>Ask your mentor to review all ${x.total}</button>`
+      : `<p class="fine">${esc(x.note || 'No additional distinct options fit this question.')}</p>`;
+    btn.remove();
+    box.querySelector('[data-review]')?.addEventListener('click', async e => {
+      const b = e.currentTarget; b.disabled = true;
+      const sk = skeleton(`Reviewing all ${x.total} options`);
+      try { botMessage(await api('/api/repick', {method: 'POST', body: {turnId: r.turnId, personaId: state.personaId}})); }
+      catch (err) { handleError(err); b.disabled = false; } finally { sk.stop(); }
+    });
+  } catch (e) { btn.disabled = false; btn.textContent = 'Show more options'; note(e.message); }
 }
 
 // ---------- compare mentors (same verified options, only the pick changes) ----------
@@ -420,7 +447,11 @@ function stopRecording() {
   if (voice.rec?.state === 'recording') voice.rec.stop();
   voice.stream?.getTracks().forEach(t => t.stop()); voice.stream = null; micUI(false);
 }
+// Development-only voice timing (localStorage mmDebugPerf=1); never shown to users.
+const perfDebug = (() => { try { return localStorage.getItem('mmDebugPerf') === '1'; } catch { return false; } })();
+let voiceT0 = null;
 async function finishRecording() {
+  voiceT0 = performance.now();
   const rec = voice.rec; voice.rec = null;
   const blob = new Blob(voice.chunks, {type: rec?.mimeType || 'audio/webm'});
   if (Date.now() - voice.started < 600 || blob.size < 1000) return voiceStatus('That was too short. Hold Talk while you speak, or tap it once to start.', 'warn');
@@ -456,7 +487,7 @@ async function speakReply(el, r) {
   a.onended = () => { el.classList.remove('speaking'); if (voice.audio === a) voice.audio = null; };
   a.onplay = () => { if (voice.audio && voice.audio !== a) stopPlayback(); voice.audio = a; el.classList.add('speaking'); };
   box.scrollIntoView({behavior: 'smooth', block: 'nearest'});
-  try { await a.play(); } catch { box.querySelector('.fine').textContent = 'Press play to listen. The disclosure below applies.'; }
+  try { await a.play(); if (perfDebug && voiceT0 !== null) { console.debug(`[perf] voice end-to-end ${Math.round(performance.now() - voiceT0)}ms`); voiceT0 = null; } } catch { box.querySelector('.fine').textContent = 'Press play to listen. The disclosure below applies.'; }
 }
 
 function setupVoice() {
