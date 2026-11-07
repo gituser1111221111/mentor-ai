@@ -1,0 +1,84 @@
+{
+  "persona": "disruptive-growth",
+  "speakers": [
+    "Cathie Wood"
+  ],
+  "researchDepth": "limited",
+  "summary": {
+    "total_sources": 4,
+    "by_type": {
+      "article": 2,
+      "webpage": 1,
+      "critique": 1
+    },
+    "by_tier": {
+      "3": 3,
+      "4": 1
+    },
+    "note_count": 10,
+    "books": 0,
+    "episodes": 0,
+    "accessed": "2026-11-07",
+    "notice": "Built from the publicly documented teachings of Cathie Wood. Not affiliated with or endorsed by Cathie Wood."
+  },
+  "sources": [
+    {
+      "id": "FOOL_WHO",
+      "url": "https://www.fool.com/investing/how-to-invest/famous-investors/cathie-wood/",
+      "title": "Who Is Cathie Wood? (The Motley Fool, Robin Hartill)",
+      "date": "2025-09-23",
+      "tier": 3,
+      "type": "article",
+      "byline": "Robin Hartill, CFP (third-party profile)",
+      "note_ids": [
+        "001",
+        "009"
+      ]
+    },
+    {
+      "id": "FOOL_3P",
+      "url": "https://www.fool.com/investing/2022/10/02/want-to-invest-like-cathie-wood-use-these-3-princi/",
+      "title": "Want to Invest Like Cathie Wood? Use These 3 Principles. (The Motley Fool, Alex Carchidi)",
+      "date": "2022-10-02",
+      "tier": 3,
+      "type": "article",
+      "byline": "Alex Carchidi (third-party analysis)",
+      "note_ids": [
+        "002",
+        "006",
+        "007"
+      ]
+    },
+    {
+      "id": "WIKI_ARK",
+      "url": "https://en.wikipedia.org/wiki/ARK_Invest",
+      "title": "ARK Invest (Wikipedia)",
+      "date": "accessed 2026-11-07",
+      "tier": 3,
+      "type": "webpage",
+      "byline": "Wikipedia contributors (third-party summary)",
+      "note_ids": [
+        "003",
+        "004",
+        "005",
+        "008",
+        "010"
+      ]
+    },
+    {
+      "id": "WIKI_WOOD",
+      "url": "https://en.wikipedia.org/wiki/Cathie_Wood",
+      "title": "Cathie Wood (Wikipedia)",
+      "date": "accessed 2026-11-07",
+      "tier": 4,
+      "type": "critique",
+      "byline": "Wikipedia contributors (independent summary including criticism)",
+      "note_ids": [
+        "001",
+        "004",
+        "005",
+        "007"
+      ]
+    }
+  ]
+}

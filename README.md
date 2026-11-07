@@ -59,7 +59,7 @@ No intake ──► general Ramsey-inspired chat, without a personalized plan
 | Additional mentors and agents | Nine mentors and fifteen more agent specialties are shown in the gallery, selector, and chat rail as planned Plus entries; they cannot be used as if live |
 | Document picker and portfolio URL | Showcase only: documents stay in the browser; URL is session-only reference, with no brokerage connection |
 | Direct brokerage connection (Plaid) | **Not built**; the portfolio link is reference-only |
-| Voice (ElevenLabs) | **Not built yet** |
+| Voice (ElevenLabs) | Optional on the Ramsey starter when server keys and a voice are configured; text chat works without it |
 
 ## Run it locally
 

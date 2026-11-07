@@ -1,4 +1,4 @@
-# Debt-Free Mentor
+# Dave Ramsey–inspired
 
 Built from Dave Ramsey's public teachings. Not affiliated with or endorsed by him.
 

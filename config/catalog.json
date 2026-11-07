@@ -142,7 +142,10 @@
       "audience": "Beginners, people with debt, financially inexperienced users",
       "status": "live",
       "tier": "free",
-      "image": "/img/mentors/debt-free-coach.webp"
+      "image": "/img/mentors/debt-free-coach.webp",
+      "riskNote": "Conservative. Pausing retirement investing while paying debt can cost employer match and growth; several of these views are disputed.",
+      "voiceIdEnv": "ELEVENLABS_VOICE_DEBT_FREE_COACH",
+      "affiliation": "Inspired by the publicly documented teachings of Dave Ramsey. Not affiliated with or endorsed by Dave Ramsey. Not an official or AI version of any real person."
     },
     {
       "id": "value-investor",
@@ -153,7 +156,10 @@
       "audience": "Young investors building long-term wealth",
       "status": "planned",
       "tier": "plus",
-      "image": "/img/mentors/value-investor.webp"
+      "image": "/img/mentors/value-investor.webp",
+      "riskNote": "Stocks can fall sharply in the short run. Long-term historical returns are not a forecast, and index funds do not protect against losses.",
+      "voiceIdEnv": "ELEVENLABS_VOICE_VALUE_INVESTOR",
+      "affiliation": "Inspired by the publicly documented teachings of Warren Buffett. Not affiliated with or endorsed by Warren Buffett. Not an official or AI version of any real person."
     },
     {
       "id": "asset-builder",
@@ -165,7 +171,10 @@
       "status": "planned",
       "tier": "plus",
       "reviewNote": "Leverage and wealth-creation claims need independent evaluation in contested fields before this persona goes live.",
-      "image": "/img/mentors/asset-builder.webp"
+      "image": "/img/mentors/asset-builder.webp",
+      "riskNote": "Debt, leverage and speculative investments can magnify losses, including losing more than you put in. Real estate and businesses are illiquid and can fail. Several of these views are widely disputed.",
+      "voiceIdEnv": "ELEVENLABS_VOICE_ASSET_BUILDER",
+      "affiliation": "Inspired by the publicly documented teachings of Robert Kiyosaki. Not affiliated with or endorsed by Robert Kiyosaki. Not an official or AI version of any real person."
     },
     {
       "id": "disruptive-growth",
@@ -177,18 +186,24 @@
       "status": "planned",
       "tier": "plus",
       "reviewNote": "Public material is mostly fund research on specific companies. The picker must never steer users toward individual stocks or funds.",
-      "image": "/img/mentors/disruptive-growth.webp"
+      "image": "/img/mentors/disruptive-growth.webp",
+      "riskNote": "Concentrated bets on emerging technology are highly volatile and can lose much of their value. Valuations are uncertain, forecasts can be wrong, and you can lose capital.",
+      "voiceIdEnv": "ELEVENLABS_VOICE_DISRUPTIVE_GROWTH",
+      "affiliation": "Inspired by the publicly documented teachings of Cathie Wood. Not affiliated with or endorsed by Cathie Wood. Not an official or AI version of any real person."
     },
     {
       "id": "credit-smart",
       "name": "Vivian Tu–inspired",
-      "inspiredBy": "Vivian Tu (Your Rich BFF)",
+      "inspiredBy": "Vivian Tu",
       "philosophy": "Use credit on purpose, negotiate your pay, and start investing early",
       "risk": "moderate",
       "audience": "Gen Z, college students, young professionals",
       "status": "planned",
       "tier": "plus",
-      "image": "/img/mentors/credit-smart.webp"
+      "image": "/img/mentors/credit-smart.webp",
+      "riskNote": "Credit cards only help if paid in full every month. Carrying a balance costs far more than any rewards.",
+      "voiceIdEnv": "ELEVENLABS_VOICE_CREDIT_SMART",
+      "affiliation": "Inspired by the publicly documented teachings of Vivian Tu. Not affiliated with or endorsed by Vivian Tu. Not an official or AI version of any real person."
     },
     {
       "id": "conscious-spender",
@@ -199,7 +214,10 @@
       "audience": "Young professionals who want to enjoy their money while building wealth",
       "status": "planned",
       "tier": "plus",
-      "image": "/img/mentors/conscious-spender.webp"
+      "image": "/img/mentors/conscious-spender.webp",
+      "riskNote": "Guilt-free spending only works once savings, investing and fixed costs are covered.",
+      "voiceIdEnv": "ELEVENLABS_VOICE_CONSCIOUS_SPENDER",
+      "affiliation": "Inspired by the publicly documented teachings of Ramit Sethi. Not affiliated with or endorsed by Ramit Sethi. Not an official or AI version of any real person."
     },
     {
       "id": "money-psychology",
@@ -210,7 +228,10 @@
       "audience": "Users interested in the psychology behind financial decisions",
       "status": "planned",
       "tier": "plus",
-      "image": "/img/mentors/money-psychology.webp"
+      "image": "/img/mentors/money-psychology.webp",
+      "riskNote": "Emphasizes resilience and room for error; it does not promise any particular return.",
+      "voiceIdEnv": "ELEVENLABS_VOICE_MONEY_PSYCHOLOGY",
+      "affiliation": "Inspired by the publicly documented teachings of Morgan Housel. Not affiliated with or endorsed by Morgan Housel. Not an official or AI version of any real person."
     },
     {
       "id": "real-estate-saver",
@@ -221,7 +242,10 @@
       "audience": "Gen Z and younger millennials interested in investing and real estate",
       "status": "planned",
       "tier": "plus",
-      "image": "/img/mentors/real-estate-saver.webp"
+      "image": "/img/mentors/real-estate-saver.webp",
+      "riskNote": "Real estate uses borrowed money and is illiquid. Leverage magnifies losses as well as gains.",
+      "voiceIdEnv": "ELEVENLABS_VOICE_REAL_ESTATE_SAVER",
+      "affiliation": "Inspired by the publicly documented teachings of Graham Stephan. Not affiliated with or endorsed by Graham Stephan. Not an official or AI version of any real person."
     },
     {
       "id": "money-basics",
@@ -232,7 +256,10 @@
       "audience": "College students and beginning investors",
       "status": "planned",
       "tier": "plus",
-      "image": "/img/mentors/money-basics.webp"
+      "image": "/img/mentors/money-basics.webp",
+      "riskNote": "Educational and beginner-focused. Tax rules change, so check current official guidance.",
+      "voiceIdEnv": "ELEVENLABS_VOICE_MONEY_BASICS",
+      "affiliation": "Inspired by the publicly documented teachings of Humphrey Yang. Not affiliated with or endorsed by Humphrey Yang. Not an official or AI version of any real person."
     },
     {
       "id": "step-by-step-planner",
@@ -243,7 +270,10 @@
       "audience": "Users seeking a structured financial plan",
       "status": "planned",
       "tier": "plus",
-      "image": "/img/mentors/step-by-step-planner.webp"
+      "image": "/img/mentors/step-by-step-planner.webp",
+      "riskNote": "A general order of steps. Your own situation, such as job stability or very high-interest debt, can change the order.",
+      "voiceIdEnv": "ELEVENLABS_VOICE_STEP_BY_STEP_PLANNER",
+      "affiliation": "Inspired by the publicly documented teachings of Brian Preston and Bo Hanson (The Money Guy Show). Not affiliated with or endorsed by Brian Preston and Bo Hanson (The Money Guy Show). Not an official or AI version of any real person."
     }
   ],
   "explainer": {
