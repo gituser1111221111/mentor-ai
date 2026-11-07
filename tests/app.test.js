@@ -120,9 +120,9 @@ test('API: quiz -> chat -> repick, static UI, and traversal blocked', async () =
     assert.equal(r.personaName, 'Dave Ramsey–inspired');
     assert.equal('candidates' in r, false);
     const history = await (await fetch(base + '/api/history', {headers: h})).json();
-    assert.deepEqual(history.history.map(x => x.role), ['user', 'assistant', 'assistant']);
-    assert.equal(history.history[1].response.turnId, c.turnId);
-    assert.equal(history.history[2].response.personaId, 'debt-free-coach');
+    assert.deepEqual(history.history.map(x => x.role), ['user', 'assistant', 'user', 'assistant', 'assistant']);
+    assert.equal(history.history[3].response.turnId, c.turnId);
+    assert.equal(history.history[4].response.personaId, 'debt-free-coach');
     const other = {'X-Session-Id': 'test-session-0000000002', 'Content-Type': 'application/json'};
     assert.equal((await fetch(base + '/api/repick', {method: 'POST', headers: other, body: JSON.stringify({turnId: c.turnId, personaId: 'debt-free-coach'})})).status, 404);
     assert.deepEqual((await (await fetch(base + '/api/history', {headers: other})).json()).history, []);

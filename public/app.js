@@ -3,6 +3,7 @@ import {VoicePlayback} from './voice-playback.js';
 // Vanilla JS, no build step. All money shown here comes from the server's exact-cents math.
 const $ = s => document.querySelector(s);
 const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
+const displayName = name => String(name || '').replace(/[–—-]inspired\b/gi, '').trim();
 const usd = v => (v === null || v === undefined || v === '') ? 'n/a' : '$' + Number(v).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
 
 let sid; try { sid = localStorage.getItem('sid'); } catch {}
@@ -23,6 +24,7 @@ const views = ['v-landing', 'v-quiz', 'v-chat'];
 function show(id) {
   if (id !== 'v-chat' && voice.active) endConversation();
   views.forEach(v => { $('#' + v).hidden = v !== id; });
+  document.body.classList.toggle('chat-open', id === 'v-chat');
   const landing = id === 'v-landing';
   $('#nav').hidden = !landing; $('#head-start').hidden = !landing; $('#restart').hidden = landing;
   $('#engine').hidden = landing;
@@ -38,20 +40,21 @@ const agent = id => agents().find(a => a.id === id);
 const allowed = x => x.tier === 'free' || state.tier === 'plus';
 const starterCoach = x => x?.id === 'budget' && state.personaId === 'debt-free-coach';
 const usable = x => x?.built && (allowed(x) || starterCoach(x));
-const statusLabel = x => x?.tier === 'free' ? 'Free' : '+';
-const railStatus = x => !x.built ? 'Soon' : x.tier === 'free' || starterCoach(x) ? 'Free' : 'Plus';
-const badge = x => `<span class="tag ${x.tier === 'plus' ? 'plus' : ''}" ${x.tier === 'plus' ? 'title="Mentor Labs Plus" aria-label="Mentor Labs Plus"' : ''}>${statusLabel(x)}</span>`;
+const statusLabel = x => x?.tier === 'free' || x?.id === 'budget' ? 'Free' : 'Plus';
+const railStatus = statusLabel;
+const badge = x => `<span class="tag ${statusLabel(x) === 'Plus' ? 'plus' : ''}" ${statusLabel(x) === 'Plus' ? 'title="Mentor Labs Plus" aria-label="Mentor Labs Plus"' : ''}>${statusLabel(x)}</span>`;
 const initials = name => name.replace(/^The /, '').split(/[\s-]+/).map(w => w[0]).join('').slice(0, 2).toUpperCase();
 const art = (p, cls = 'frame') => `<div class="${cls}">${p.image ? `<img src="${esc(p.image)}" alt="AI-generated likeness inspired by ${esc(p.inspiredBy)}" width="640" height="800" loading="lazy" decoding="async">` : `<span class="mono-gram">${esc(initials(p.name))}</span>`}</div>`;
 const thumb = p => `<span class="thumb">${p.image ? `<img src="${esc(p.image)}" alt="">` : esc(initials(p.name))}</span>`;
 
 // ---------- landing ----------
 function renderLanding() {
-  $('#personas').innerHTML = personas().map(p => `<div class="portrait ${usable(p) ? '' : 'locked'}">${art(p)}${badge(p)}
+  $('#personas').innerHTML = personas().map(p => `<div class="portrait ${usable(p) ? '' : 'locked'}">${art(p)}${p.tier === 'plus' ? `<button type="button" class="tag plus portrait-plus" data-unlock aria-label="Explore Plus for ${esc(p.name)}">Plus</button>` : badge(p)}
     <h3>${esc(p.name)}</h3><p class="portrait-source">AI-inspired perspective</p><p>${esc(p.philosophy)}.</p></div>`).join('');
-  const groups = ['Everyday money', 'Investing & property', 'Business building'];
-  $('#agents').innerHTML = groups.map(group => `<section class="agent-group"><h3>${esc(group)}</h3><div class="agent-grid">${agents().filter(a => a.category === group).map(a => `<button type="button" class="agent-card" data-a="${a.id}"><span class="agent-card-top"><strong>${esc(a.name)}</strong>${badge(a)}</span><span class="agent-card-job">${esc(a.job)}</span></button>`).join('')}</div></section>`).join('');
+  const glyphs = ['M5 4h14v16H5z M8 8h8 M8 12h3 M8 16h5','M5 7h14 M5 12h10 M5 17h6','M12 3v18 M6 7h9a3 3 0 010 6H9a3 3 0 000 6h9','M6 3h12v18H6z M9 7h6 M9 11h6 M9 15h3','M3 6h18v12H3z M3 10h18 M6 15h4','M4 18h16 M7 18V9 M12 18V5 M17 18v-6','M12 3l8 4v6c0 4-8 8-8 8s-8-4-8-8V7z','M4 19V5 M4 19h16 M7 15l4-5 4 2 5-7','M4 20l6-6 M14 4a6 6 0 110 12 6 6 0 010-12','M3 11l9-8 9 8 M6 9v12h12V9 M10 21v-7h4v7','M5 5h14v15H5z M5 9h14 M8 3v4 M16 3v4','M3 7h18v13H3z M8 7V3h8v4 M3 12h18','M3 8h18 M17 4l4 4-4 4 M21 16H3 M7 12l-4 4 4 4','M4 20L20 4 M12 4h8v8 M4 12v8h8','M3 5h10l8 8-8 8-10-10z M7 9h.1','M4 20h16 M6 16l5-5 4 2 5-9 M15 4h5v5'];
+  $('#agents').innerHTML = `<div class="agent-grid">${agents().map((a,i) => `<button type="button" class="agent-card tone-${i%4}" data-a="${a.id}"><span class="agent-art" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="${glyphs[i%glyphs.length]}"/></svg></span><span class="agent-card-top"><strong>${esc(a.name)}</strong>${badge(a)}</span><span class="agent-card-job">${esc(a.job)}</span></button>`).join('')}</div>`;
   document.querySelectorAll('#agents [data-a]').forEach(b => b.onclick = () => { const a = agent(b.dataset.a); if (a.id === 'budget') renderIntake(); else blocked(a); });
+  document.querySelectorAll('#personas [data-unlock]').forEach(b => b.onclick = openUnlock);
 }
 
 // ---------- intake ----------
@@ -69,6 +72,18 @@ async function submitQuiz(answers) {
 
 function renderIntake() {
   $('#income-months').innerHTML = lastMonths(6).map(m => `<label class="f">${esc(new Date(m + '-15T12:00:00Z').toLocaleString('en-US', {month: 'short', year: 'numeric', timeZone: 'UTC'}))}<input inputmode="decimal" data-month="${m}" placeholder="0.00"></label>`).join('');
+  const p = state.profile;
+  if (p) {
+    document.querySelectorAll('#income-months input').forEach(i => { i.value = p.incomeHistory?.find(x => x.month === i.dataset.month)?.amount || ''; });
+    const sum = rows => (rows || []).reduce((n,r) => n + Number(r.amount || 0),0).toFixed(2);
+    $('#intake-bills').value = sum(p.bills); $('#intake-spending').value = sum(p.expenses);
+    $('#intake-savings').value = p.savings || '';
+    $('#intake-goal').value = p.goals?.[0] || 'stop_paycheck_to_paycheck';
+    const debt = p.debts?.[0];
+    $('#intake-debt-balance').value = debt?.balance || '';
+    $('#intake-debt-apr').value = debt?.rateBps != null ? debt.rateBps / 100 : '';
+    $('#intake-debt-minimum').value = debt?.minPayment || '';
+  }
   $('#q-error').textContent = '';
   show('v-quiz');
 }
@@ -82,10 +97,11 @@ async function submitIntake(e) {
   const debt = [moneyInput('#intake-debt-balance'), moneyInput('#intake-debt-apr'), moneyInput('#intake-debt-minimum')];
   if (debt.some(Boolean) && !debt.every(Boolean)) { $('#q-error').textContent = 'For debt, enter the balance, APR, and monthly minimum—or leave all three blank.'; return; }
   const answers = {
+    ...(state.profile || {}),
     incomeHistory,
     bills: moneyInput('#intake-bills') ? [{name: 'Fixed monthly bills', amount: moneyInput('#intake-bills')}] : [],
     expenses: moneyInput('#intake-spending') ? [{name: 'Everyday spending', amount: moneyInput('#intake-spending')}] : [],
-    debts: debt.every(Boolean) ? [{name: 'Debt', balance: debt[0], aprPercent: debt[1], minPayment: debt[2]}] : [],
+    debts: debt.every(Boolean) ? [{name: state.profile?.debts?.[0]?.name || 'Debt', balance: debt[0], aprPercent: debt[1], minPayment: debt[2]}, ...(state.profile?.debts?.slice(1) || [])] : (state.profile?.debts?.slice(1) || []),
     savings: moneyInput('#intake-savings') || '0', goals: [$('#intake-goal').value],
   };
   const button = $('#intake-form button[type="submit"]'); button.disabled = true;
@@ -128,8 +144,8 @@ function connectPortfolio() { uploadNote('Direct brokerage connections are not a
 function renderChatChrome() {
   const p = persona(state.personaId), a = agent(state.agentId), s = state.snapshot;
   $('#chat-head').innerHTML = `${thumb(p)}<div><strong>${esc(p.name)}</strong><small>${state.profile?.incomeHistory?.length ? `With ${esc(a.name)}` : 'Start with any money question'} · AI-inspired, not affiliated</small></div>${s?.status === 'ok' ? `<div class="snap-mini">lowest ${usd(s.lowestMonth)}<br>essentials ${usd(s.essentialsTotal)}</div>` : ''}`;
-  $('#persona-switch').innerHTML = personas().map(x => `<button type="button" class="rail-item ${x.id === state.personaId ? 'on' : ''}" data-p="${esc(x.id)}">${thumb(x)}<span>${esc(x.name)}</span><small>${railStatus(x)}</small></button>`).join('');
-  $('#agent-list').innerHTML = agents().map(x => `<button type="button" class="rail-item coach-item ${x.id === state.agentId ? 'on' : ''}" data-a="${esc(x.id)}"><span>${esc(x.name)}</span><small>${railStatus(x)}</small></button>`).join('');
+  $('#persona-switch').innerHTML = personas().map(x => `<button type="button" class="rail-item ${x.id === state.personaId ? 'on' : ''}" data-p="${esc(x.id)}">${thumb(x)}<span>${esc(displayName(x.name))}</span><small>${railStatus(x)}</small></button>`).join('');
+  $('#agent-list').innerHTML = agents().map((x,i) => `<button type="button" class="rail-item coach-item tone-${i%4} ${x.id === state.agentId ? 'on' : ''}" data-a="${esc(x.id)}"><span>${esc(displayName(x.name))}</span><small>${railStatus(x)}</small></button>`).join('');
   document.querySelectorAll('#persona-switch [data-p]').forEach(b => b.onclick = () => pickPersona(b.dataset.p));
   document.querySelectorAll('#agent-list [data-a]').forEach(b => b.onclick = () => pickAgent(b.dataset.a));
   const prompts = {budget: ['How should I budget when my pay keeps changing?', 'What do I do in my slow months?', 'Where should extra money go in a good month?'], debt: ['How fast can I get rid of my debt?', 'Which debt should I pay first?', 'Should I pay off debt or save first?'], savings: ['How big should my emergency fund be?', 'How do I save when my income drops?', 'Should I stop investing until I have savings?']};
@@ -138,11 +154,11 @@ function renderChatChrome() {
 }
 function showFeature(x) {
   $('#feature-title').textContent = x.name;
-  $('#feature-text').textContent = `${x.job || x.philosophy}. This ${x.inspiredBy ? 'mentor perspective' : 'specialist agent'} is part of the Mentor Labs Plus lineup. The Ramsey starter is the interactive MVP today; more mentor-agent pairings are being created.`;
+  $('#feature-text').textContent = `${x.name} is in the Plus library. This feature is not available yet.`;
   $('#feature-plus').hidden = state.tier === 'plus';
   $('#feature-preview').showModal();
 }
-function blocked(x) { if (!x) return true; if (!x.built) { showFeature(x); return true; } if (!allowed(x) && !starterCoach(x)) { openUnlock(); return true; } return false; }
+function blocked(x) { if (!x) return true; if (!allowed(x) && !starterCoach(x)) { openUnlock(); return true; } if (!x.built) { showFeature(x); return true; } return false; }
 function pickAgent(id) {
   const a = agent(id); if (id === state.agentId || blocked(a)) return;
   state.agentId = id; state.lastTurn = null; renderChatChrome(); note(`Switched to ${a.name}. Ask your next question.`);
@@ -187,11 +203,11 @@ function botMessage(r) {
   const el = document.createElement('div'); el.className = 'msg bot';
   const calcs = (r.calculations || []).slice(1);
   const p = persona(r.personaId) || persona(state.personaId);
-  el.innerHTML = `<div class="who">${p ? thumb(p) : ''}<div><strong>${esc(r.personaName || p?.name || '')}</strong>${r.agentName ? ` · ${esc(r.agentName)}` : ''}<small>${p?.inspiredBy ? `Inspired by ${esc(p.inspiredBy)} · not the real person` : ''}</small></div></div>
+  el.innerHTML = `<div class="who">${p ? thumb(p) : ''}<div><strong>${esc(displayName(r.personaName || p?.name || ''))}</strong></div></div>
     <p class="say">${esc(r.text)}</p>
-    ${canSpeak(r) ? '<button class="btn text" type="button" data-listen>Listen</button><div class="voice-player" hidden><audio controls preload="none"></audio><button class="btn text" type="button" data-stop>Stop</button><p class="fine">AI-generated voice, not the real person.</p></div>' : ''}
+    ${voice.active && canSpeak(r) ? '<button class="btn text" type="button" data-listen>Listen</button><div class="voice-player" hidden><audio controls preload="none"></audio><button class="btn text" type="button" data-stop>Stop</button><p class="fine">AI-generated voice, not the real person.</p></div>' : ''}
     ${calcs.length || r.citations?.length ? `<details class="answer-details"><summary>Sources and calculations</summary>${calcs.map(calcCard).join('')}${r.citations?.length ? `<p class="sources">${r.citations.map(c => `${sourceLink(c)} <span>(${esc(c.ref)})</span>`).join('; ')}</p>` : ''}</details>` : ''}
-    ${r.optionsReviewed ? `<p class="fine reviewed">${esc(r.personaName || 'Your mentor')} chose from ${r.optionsReviewed} verified options.</p>` : ''}
+    ${r.optionsReviewed ? `<p class="fine reviewed">${esc(displayName(r.personaName || 'Your mentor'))} chose from ${r.optionsReviewed} verified options.</p>` : ''}
     ${r.turnId ? `<div class="meta"><button class="btn text" type="button" data-compare>Compare mentors</button>${r.canExpand ? '<button class="btn text" type="button" data-expand>Show more options</button>' : ''}</div><div class="more-options" hidden></div>` : ''}
     ${r.conversational ? '' : `<p class="disclose">${esc(r.disclosure || '')}</p>`}`;
   el.querySelector('[data-listen]')?.addEventListener('click', () => speakReply(el, r));
@@ -234,12 +250,12 @@ async function openCompare(r) {
   catch (e) { body.innerHTML = `<p class="error">${esc(e.message)}</p>`; return; }
   const name = id => c.mentors.find(m => m.personaId === id)?.name || id;
   const card = m => {
-    const head = `<h4>${esc(m.name)}</h4><p class="fine">${esc(m.affiliation || `Inspired by ${m.inspiredBy}'s public teachings. Not affiliated or endorsed.`)}</p>`;
+    const head = `<h4>${esc(displayName(m.name))}</h4><p class="fine">${esc(m.affiliation || `Inspired by ${m.inspiredBy}'s public teachings. Not affiliated or endorsed.`)}</p>`;
     if (m.status === 'locked') return `<div class="cmp-card muted">${head}<p>Part of Plus. <button type="button" class="btn text" data-unlock>Unlock to compare</button></p></div>`;
-    if (m.status === 'coming-soon') return `<div class="cmp-card muted">${head}<p>Coming soon.</p></div>`;
+    if (m.status === 'coming-soon') return `<div class="cmp-card muted">${head}<p><button type="button" class="btn text" data-unlock>Plus</button></p></div>`;
     if (m.status === 'error') return `<div class="cmp-card muted">${head}<p class="error">Could not answer: ${esc(m.error || 'error')}</p></div>`;
-    const agree = m.agreesWith?.length ? `<p class="fine">Agrees with ${m.agreesWith.map(x => esc(x.name)).join(', ')}.</p>` : '';
-    const dis = m.disagreesWith?.length ? `<p class="fine">Disagrees with ${m.disagreesWith.map(x => `${esc(x.name)} (picked "${esc(x.pickTitle)}")`).join(', ')}.</p>` : '';
+    const agree = m.agreesWith?.length ? `<p class="fine">Agrees with ${m.agreesWith.map(x => esc(displayName(x.name))).join(', ')}.</p>` : '';
+    const dis = m.disagreesWith?.length ? `<p class="fine">Disagrees with ${m.disagreesWith.map(x => `${esc(displayName(x.name))} (picked "${esc(x.pickTitle)}")`).join(', ')}.</p>` : '';
     const risk = [m.optionRisk?.risk ? `Option risk: ${esc(m.optionRisk.risk)}.` : '', m.optionRisk?.tradeoffs ? esc(m.optionRisk.tradeoffs) : '', m.riskNote ? esc(m.riskNote) : ''].filter(Boolean).join(' ');
     return `<div class="cmp-card">${head}
       <p><strong>Picked:</strong> ${esc(m.pickTitle)}</p>
@@ -266,9 +282,8 @@ async function send(text, {spoken = false, voiceSession = null} = {}) {
   try {
     const r = await api('/api/chat', {method: 'POST', body: {message: text, personaId: state.personaId, agentId: state.agentId}}); state.lastTurn = r.turnId;
     const el = botMessage(r); refreshMemory();
-    if (canSpeak(r) && speechEpoch === voice.epoch && (!voiceSession || (voice.active && voice.session === voiceSession))) {
-      if (voiceSession) await speakReply(el, r, voiceSession);
-      else speakReply(el, r);
+    if (voiceSession && voice.active && voice.session === voiceSession && canSpeak(r) && speechEpoch === voice.epoch) {
+      await speakReply(el, r, voiceSession);
     }
     else if (spoken && voice.active && voice.session === voiceSession) note('Voice is unavailable right now. The written answer is above.');
   }
@@ -293,7 +308,7 @@ async function restoreChat(history) {
 function startChat() {
   $('#log').innerHTML = ''; state.lastTurn = null; renderChatChrome(); refreshMemory(); show('v-chat');
   const p = persona(state.personaId), a = agent(state.agentId);
-  note(state.profile?.incomeHistory?.length ? `${p.name} is ready to talk through your plan. Ask anything below.` : `Ask anything about budgeting, debt, or savings. For a personal plan, you can add your numbers anytime.`);
+  note(state.profile?.incomeHistory?.length ? `${p.name} is ready to talk through your plan. Ask anything below.` : `Say hello, ask a question, or choose Talk live for a voice conversation. Add your numbers anytime for a personal plan.`);
   $('#msg').focus();
 }
 
@@ -317,7 +332,8 @@ $('#unlock-go').addEventListener('click', async e => {
 });
 async function setPlus(message) {
   state.tier = 'plus'; $('#tier').hidden = false; banner(message);
-  state.config = await api('/api/config'); renderLanding();
+  state.config = await api('/api/config');
+  state.config.catalog.personas.forEach(p => { p.name = displayName(p.name); }); renderLanding();
   if (!$('#v-chat').hidden) renderChatChrome();
 }
 async function handleCheckoutReturn() {
@@ -495,6 +511,7 @@ async function finishUtterance(session, blob, duration) {
 const playback = new VoicePlayback();
 function stopPlayback(reason = 'user') { playback.stop(typeof reason === 'string' ? reason : 'user'); }
 async function speakReply(el, r, session = null) {
+  if (!voice.active) return false;
   const box = el.querySelector('.voice-player'), btn = el.querySelector('[data-listen]'), audio = box?.querySelector('audio');
   if (!box || (session && (!voice.active || session !== voice.session))) return false;
   if (!session && voice.active) endConversation();
@@ -523,8 +540,13 @@ window.addEventListener('pagehide', () => {endConversation('');});
 
 function setupVoice() {
   const mic = $('#mic');
-  mic.hidden = !state.config.voice; $('#voice-status').hidden = !state.config.voice;
-  if (!state.config.voice) return;
+  mic.hidden = false; $('#voice-status').hidden = false;
+  if (!state.config.voice) {
+    $('#mic-label').textContent = 'Talk live';
+    mic.setAttribute('aria-label', 'Live voice setup status');
+    mic.onclick = () => voiceStatus('Live voice is not configured on this server yet. The site owner needs to connect the voice service.', 'warn');
+    return;
+  }
   micUI();
   mic.addEventListener('click', () => {
     if (voice.active) return endConversation();
@@ -538,12 +560,13 @@ function setupVoice() {
 // ---------- boot ----------
 async function boot() {
   state.config = await api('/api/config');
+  state.config.catalog.personas.forEach(p => { p.name = displayName(p.name); });
   try { state.tier = (await api('/api/me')).tier; } catch {}
   $('#tier').hidden = state.tier !== 'plus';
   $('#engine').textContent = state.config.engine === 'live' ? 'Live AI' : state.config.engine === 'mock' ? 'Local test mode' : 'AI unavailable';
   renderLanding();
   $('#home').onclick = e => { e.preventDefault(); show('v-landing'); };
-  $('#start').onclick = renderIntake; $('#head-start').onclick = renderIntake; $('#try-chat').onclick = renderIntake;
+  $('#start').onclick = renderIntake; $('#head-start').onclick = startChat; $('#try-chat').onclick = startChat;
   $('#chat-plan').onclick = renderIntake;
   $('#demo').onclick = async () => { await api('/api/portfolio/upload', {method: 'POST', body: {sample: true}}).catch(() => {}); submitQuiz(DEMO); };
   document.querySelectorAll('[data-unlock]').forEach(b => b.onclick = openUnlock);
@@ -559,9 +582,20 @@ async function boot() {
   $('#document-file').onchange = async e => { const file = e.target.files?.[0]; if (!file) return; try { if (state.profile) await uploadDocument(file); else { state.pendingDocument = file; uploadNote(`${file.name} will be added when you start chatting.`); } } catch (err) { uploadNote(err.message); } e.target.value = ''; };
   $('#composer').onsubmit = e => { e.preventDefault(); if (voice.active) endConversation('Voice conversation ended.'); send($('#msg').value); };
   setupVoice();
+  $('#toggle-chat-sidebar').onclick = () => { const hidden = document.body.classList.toggle('chat-sidebar-hidden'); $('#toggle-chat-sidebar').setAttribute('aria-expanded', String(!hidden)); };
   $('#restart').onclick = async () => { if (!confirm('Start over? Your answers and chat will be cleared.')) return; await api('/api/session', {method: 'DELETE'}).catch(() => {}); location.href = '/'; };
   await handleCheckoutReturn();
-  try { const r = await api('/api/profile'); if (r.profile?.incomeHistory?.length) { state.profile = r.profile; state.snapshot = r.snapshot; const h = persona(r.profile.personaHint); if (h && usable(h)) state.personaId = h.id; const {history} = await api('/api/history'); if (history.length) await restoreChat(history); else startChat(); return; } } catch {}
+  try { const r = await api('/api/profile'); state.profile = r.profile; state.snapshot = r.snapshot; const h = persona(r.profile?.personaHint); if (h && usable(h)) state.personaId = h.id; const {history} = await api('/api/history'); if (history.length) { await restoreChat(history); return; } if (r.profile?.incomeHistory?.length) { startChat(); return; } } catch {}
   show('v-landing');
 }
 boot().catch(e => banner(`The app could not load: ${e.message}`, true));
+// Animate each landing section once as it enters view, without hiding content.
+if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  const sections = new IntersectionObserver(entries => {
+    for (const entry of entries) if (entry.isIntersecting) {
+      entry.target.classList.add('section-enter');
+      sections.unobserve(entry.target);
+    }
+  }, {threshold:0.08});
+  document.querySelectorAll('#v-landing > .band').forEach(section => sections.observe(section));
+}
