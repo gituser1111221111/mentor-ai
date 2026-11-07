@@ -34,7 +34,7 @@ test('launched text mentors are available to free users; voice remains Ramsey on
   assert.equal(voice.status,503);assert.match((await voice.json()).error,/does not have a voice/);
  }
  assert.deepEqual(config.voicePersonas,['debt-free-coach']);
- assert.equal(config.catalog.agents.find(a=>a.id==='equity').built,false,'this change does not launch the equity engine');
+ assert.equal(config.catalog.agents.find(a=>a.id==='equity').built,true,'preserve the concurrently launched equity engine');
 });
 
 test('switching perspectives and no-profile finance use selected persona rather than Ramsey',async()=>{

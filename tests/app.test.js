@@ -97,8 +97,9 @@ test('API: quiz -> chat -> repick, static UI, and traversal blocked', async () =
     assert.equal(cfg.quiz.questions.length, 6);
     assert.deepEqual(cfg.catalog.personas.filter(p => p.tier === 'free').map(p => p.id), ['debt-free-coach', 'value-investor', 'disruptive-growth']);
     assert.deepEqual(cfg.catalog.personas.filter(p => p.built).map(p => p.id), ['debt-free-coach', 'value-investor', 'disruptive-growth']);
-    assert.deepEqual(cfg.catalog.agents.filter(a => a.built).map(a => a.id), ['budget']);
-    assert.ok(cfg.catalog.agents.every(a => a.tier === 'plus' && a.name.endsWith('Agent')));
+    assert.deepEqual(cfg.catalog.agents.filter(a => a.built).map(a => a.id), ['budget', 'investing', 'equity']);
+    assert.ok(cfg.catalog.agents.every(a => a.name.endsWith('Agent')));
+    assert.deepEqual(cfg.catalog.agents.filter(a => a.tier === 'free').map(a => a.id), ['investing','equity']);
     const p = await fetch(base + '/api/profile', {method: 'POST', headers: h, body: JSON.stringify({answers})});
     assert.equal(p.status, 200);
     const attachment = await fetch(base + '/api/attachment', {method: 'POST', headers: h, body: JSON.stringify({name: 'statement.txt', base64: Buffer.from('Monthly statement for review').toString('base64')})});

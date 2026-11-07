@@ -1,6 +1,6 @@
 # Mentor Labs (RedHawk Builds 2026, Challenge #21)
 
-Current product direction (Nov 7): free Ramsey-inspired starter chat, optional six-screen intake, ten visible mentors and sixteen visible specialist agents. Only the Ramsey budgeting starter is interactive. All agent cards show `+`; all other mentor and agent entries belong to the planned Plus library and explain their status when selected. The context hub previews document selection and portfolio URLs; holdings CSV import works. Do not claim a thousands-of-hours source corpus has already been processed.
+Current product direction (Nov 7): free Ramsey-inspired starter chat, optional six-screen intake, ten visible mentors and sixteen visible specialist agents. Interactive: the free Ramsey budgeting starter, plus (Plus tier) the Portfolio Review and Equity Research agents with the Buffett- and Cathie Wood-inspired mentors, backed by live market data (see below). All agent cards show `+`; all other mentor and agent entries belong to the planned Plus library and explain their status when selected. The context hub previews document selection and portfolio URLs; holdings CSV import works. Do not claim a thousands-of-hours source corpus has already been processed.
 
 Start every session by reading:
 - `docs/STRATEGY_AND_STRUCTURE.md`: historical v0.4 plan. Use the current catalog and this file for the 16-agent, single-demo MVP. Specs: `config/quiz.json`, `config/catalog.json`
@@ -28,6 +28,11 @@ Start every session by reading:
 - **Progressive answers (perf):** classification and the first option round run concurrently (generation starts early only for money-like messages and is aborted for small talk). The mentor answers from `MENTOR_INITIAL_OPTIONS` (default 8) and the answer says how many it reviewed; `POST /api/expand` adds verified options up to `MAX_OPTIONS` (40) without changing the shown answer; repick then reviews all. Stage timings via `lib/mentor/perf.js` (monotonic clock), dev stats at `/api/perf` with `MENTOR_DEBUG_PERF=1`. See `docs/PERFORMANCE.md`.
 - **Engine switch:** live when `MENTOR_API_KEY` or `ANTHROPIC_API_KEY` is set (MENTOR wins). Production never silently falls back to the rule-based mock; failures return a retry message. `MENTOR_ENGINE=mock` forces the local test engine.
 - Deploy: set `HOST=0.0.0.0`, `ANTHROPIC_API_KEY`, optional `CHAT_LIMIT_PER_HOUR` (default 40/IP).
+
+## Market data (investing agents, Nov 7)
+- `lib/market/providers.js`: server-side fetchers, all optional: Finnhub (`FINNHUB_API_KEY`), FRED (`FRED_API_KEY`), SEC EDGAR (`SEC_USER_AGENT`, no key), CoinGecko (no key), Alpha Vantage quote fallback (`ALPHA_VANTAGE_API_KEY`). 15-min cache, 3.5 s timeout, `MARKET_LIVE=0` disables network. Falls back to `data/market/snapshot.json` (Nov 6 pull from the Sentinel dashboard) and labels every field's source.
+- `lib/market/review.js`: holdings + market data -> calcs (`pf_mix`, `pf_concentration`, `pf_earnings`, `pf_risk`, `pf_news`, `eq_<ticker>`, `mkt_macro`). The investing agents quote only these; `validate.js` now accepts YYYY-MM-DD dates and negative percents that appear in calcs.
+- `GET /api/market/status` shows which sources are configured. Sample portfolio `data/demo_portfolio.csv` uses real tickers (synthetic values). Tests: `tests/market.test.js` (uses snapshot dates; NVDA's 2026-11-17 call drops out of the window after that date).
 
 ## Ownership
 - Section A (teammate): `lib/mentor/`, `personas/`, `agents/`, `evals/`, `tests/mentor.test.js`

@@ -1,6 +1,10 @@
 symbol,sector,market_value_usd,annual_fee_bps,synthetic
-VTI,Broad US market,1240.18,3,true
-VXUS,International,385.40,7,true
-AAPL,Technology,412.75,0,true
-NVDA,Technology,298.60,0,true
-DOGE-USD,Crypto,96.12,0,true
+NVDA,Information Technology,2240.16,0,true
+AAPL,Information Technology,1369.44,0,true
+MSFT,Information Technology,1061.08,0,true
+AVGO,Information Technology,879.69,0,true
+META,Communication Services,610.12,0,true
+AMZN,Consumer Discretionary,518.70,0,true
+TSLA,Consumer Discretionary,358.16,0,true
+JPM,Financials,334.51,0,true
+BTC,Crypto,455.15,0,true
