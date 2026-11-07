@@ -209,3 +209,10 @@ section[id], .band { scroll-margin-top: 72px; }
 .voice-player audio { height: 34px; max-width: 100%; }
 .voice-player .fine { flex-basis: 100%; margin: 0; }
 .msg.bot.speaking .disclose { color: var(--ink-2); }
+/* ---------- compare mentors ---------- */
+.cmp-summary { font: 600 1.05rem/1.4 var(--serif); margin: 4px 0 6px; }
+.cmp-card { border-top: 1px solid var(--rule); padding: 12px 0; }
+.cmp-card h4 { margin: 0 0 2px; font: 600 1rem var(--sans); }
+.cmp-card .say { font: 400 1rem/1.5 var(--serif); margin: 6px 0; }
+.cmp-card p { margin: 4px 0; }
+.cmp-card.muted { color: var(--muted); }
