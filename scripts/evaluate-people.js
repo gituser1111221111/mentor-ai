@@ -1,6 +1,6 @@
 // End-to-end check with 15 realistic people who are struggling with money.
-// Each person: quiz -> Dave Ramsey-inspired mentor on Budget, Debt and Savings coaches (about 20+ verified
-// options in total) -> switch mentor -> compare every mentor on the same options -> history/memory intact.
+// Each person: profile -> Ramsey-inspired Budget Agent -> verify options and conversation history.
+// Planned Plus mentors and agents must remain visible without answering as live features.
 //
 // Live AI:        MENTOR_API_KEY=... node scripts/evaluate-people.js [report.json]
 // Practice engine: MENTOR_ENGINE=mock node scripts/evaluate-people.js [report.json]
@@ -46,12 +46,12 @@ export const PEOPLE = [
   {name: 'Kenji, 30, commission sales', q: 'Some months I make a lot, some barely anything. Where should extra money go?',
     a: {incomeHistory: months('2500', '7800', '3100', '9200', '2800', '4600'), bills: [{name: 'Rent', amount: '1500'}, {name: 'Car insurance', amount: '150'}], expenses: [{name: 'food', amount: '500'}], debts: [{name: 'Student loan', balance: '22000', aprPercent: '6.8', minPayment: '250'}, card('2600', '21.0', '80')], savings: '1500'}},
   {name: 'Tasha, 33, payday loan cycle', q: 'I keep taking payday loans to make it to the next check. How do I break this?',
-    a: {incomeHistory: months('2200', '2250', '2200', '2150', '2200', '2200'), bills: [{name: 'Rent', amount: '950'}, {name: 'Utilities', amount: '160'}, {name: 'Phone', amount: '50'}], expenses: [{name: 'food', amount: '400'}], debts: [{name: 'Payday loan', balance: '800', aprPercent: '390', minPayment: '160'}, card('1500', '28.0', '50')], savings: '0'}},
+    a: {incomeHistory: months('2200', '2250', '2200', '2150', '2200', '2200'), bills: [{name: 'Rent', amount: '950'}, {name: 'Utilities', amount: '160'}, {name: 'Phone', amount: '50'}], expenses: [{name: 'food', amount: '400'}], debts: [{name: 'Payday loan (illustrative rate)', balance: '800', aprPercent: '99', minPayment: '160'}, card('1500', '28.0', '50')], savings: '0'}},
   {name: 'Noah, 19, no income history yet', q: 'Make me a budget.', missingIncome: true,
     a: {incomeHistory: [], bills: [{name: 'Phone', amount: '40'}], expenses: [{name: 'food', amount: '150'}], debts: [], savings: '50'}},
 ];
 
-const COACHES = ['budget', 'debt', 'savings'];
+const COACHES = ['budget'];
 const RAMSEY = 'debt-free-coach';
 
 async function run() {
@@ -73,11 +73,11 @@ async function run() {
 
         if (person.missingIncome) {
           const c = await call('POST', '/api/chat', {message: person.q, personaId: RAMSEY, agentId: 'budget'});
-          const asks = c.status === 200 && /take-home|income|earn/i.test(c.json.text || '');
-          asks ? ok('asksForIncome') : fail('asksForIncome', `expected a question about income, got ${c.status}: ${(c.json.text || c.json.error || '').slice(0, 120)}`);
+          const answers = c.status === 200 && Boolean(c.json.text) && /not advice from a licensed/i.test(c.json.disclosure || '');
+          answers ? ok('generalAnswer') : fail('generalAnswer', `expected an educational reply, got ${c.status}: ${(c.json.text || c.json.error || '').slice(0, 120)}`);
           out.turns.push({coach: 'budget', text: c.json.text});
           out.passed = Object.values(out.checks).every(Boolean); results.push(out);
-          console.log(`${out.passed ? 'PASS' : 'FAIL'}  ${String(i + 1).padStart(2)}. ${person.name} | asked for income: ${out.checks.asksForIncome}${out.problems.length ? ' | ' + out.problems.join('; ') : ''}`);
+          console.log(`${out.passed ? 'PASS' : 'FAIL'}  ${String(i + 1).padStart(2)}. ${person.name} | general answer: ${out.checks.generalAnswer}${out.problems.length ? ' | ' + out.problems.join('; ') : ''}`);
           continue;
         }
 
@@ -102,17 +102,22 @@ async function run() {
           out.turns.push({coach, ramseyAnswer: r.text, citations: (r.citations || []).map(x => x.title), options: cands.map(x => x.title), ramseyPick: pick?.pickTitle, mode: r.mode});
         }
         out.optionCount = optionIds.size;
-        out.optionCount >= 18 ? ok('about20Options') : fail('about20Options', `only ${out.optionCount} distinct options across 3 coaches`);
+        out.optionCount >= 3 ? ok('verifiedOptions') : fail('verifiedOptions', `only ${out.optionCount} verified options`);
 
-        // Switch mentor on the first turn (free mentor), then compare all mentors after a demo Plus unlock.
+        // Planned perspectives are gated before and after the test-mode Plus unlock.
         const sw = await call('POST', '/api/repick', {turnId: firstTurn, personaId: 'conscious-spender'});
-        sw.status === 200 && sw.json.text ? ok('mentorSwitch') : fail('mentorSwitch', `repick ${sw.status} ${(sw.json.error || '').slice(0, 100)}`);
+        sw.status === 402 ? ok('mentorGate') : fail('mentorGate', `expected 402, got ${sw.status}`);
         await call('POST', '/api/checkout/demo');
+        const planned = await call('POST', '/api/repick', {turnId: firstTurn, personaId: 'conscious-spender'});
+        planned.status === 409 ? ok('plannedMentor') : fail('plannedMentor', `expected 409, got ${planned.status}`);
+        const plannedAgent = await call('POST', '/api/chat', {message: person.q, personaId: RAMSEY, agentId: 'debt'});
+        plannedAgent.status === 409 ? ok('plannedAgent') : fail('plannedAgent', `expected 409, got ${plannedAgent.status}`);
         const all = await call('POST', '/api/compare', {turnId: firstTurn});
         const ran = (all.json.mentors || []).filter(x => x.status === 'ok');
         out.comparison = {summary: all.json.summary, factsUnchanged: all.json.factsUnchanged, ran: ran.map(x => `${x.name}: ${x.pickTitle}`), notRun: (all.json.mentors || []).filter(x => x.status !== 'ok').map(x => `${x.name} (${x.status}${x.error ? ': ' + x.error.slice(0, 60) : ''})`)};
         all.status === 200 && all.json.factsUnchanged ? ok('compareSameFacts') : fail('compareSameFacts', `compare ${all.status} factsUnchanged=${all.json.factsUnchanged}`);
-        ran.length >= 7 ? ok('allBuiltMentorsRan') : fail('allBuiltMentorsRan', `only ${ran.length} mentors answered`);
+        ran.length === 1 && ran[0].personaId === RAMSEY ? ok('onlyFlagshipRan') : fail('onlyFlagshipRan', `${ran.length} mentors answered`);
+        (all.json.mentors || []).filter(x => x.status === 'coming-soon').length === 9 ? ok('plannedMentorsVisible') : fail('plannedMentorsVisible', 'planned mentors missing from comparison');
         const ids = new Set(all.json.candidates?.map(x => x.id));
         ran.every(x => ids.has(x.pickId)) ? ok('mentorPicksInSet') : fail('mentorPicksInSet', 'a mentor picked outside the option set');
 
@@ -120,7 +125,7 @@ async function run() {
         const hist = await call('GET', '/api/history');
         const h = hist.json.history || [];
         const users = h.filter(x => x.role === 'user').length, bots = h.filter(x => x.role === 'assistant').length;
-        users >= messagesSent && bots >= messagesSent + 1 ? ok('historyComplete') : fail('historyComplete', `history has ${users} questions / ${bots} answers for ${messagesSent} questions + 1 switch`);
+        users >= messagesSent && bots >= messagesSent ? ok('historyComplete') : fail('historyComplete', `history has ${users} questions / ${bots} answers for ${messagesSent} questions`);
         const again = await call('POST', '/api/repick', {turnId: firstTurn, personaId: RAMSEY});
         again.status === 200 ? ok('earlyTurnKept') : fail('earlyTurnKept', `first turn no longer available (${again.status})`);
         (await call('GET', '/api/memory')).status === 200 ? ok('memory') : fail('memory', 'memory endpoint failed');
