@@ -77,7 +77,7 @@ test('live chat: structured outputs, cached prompts, persona picks by id, repick
     conscious: {pickId: 'c3', runnersUp: ['c1'], rationale: 'Big wins beat small cuts.', reply: 'You need $5,000.00 more a month. Go get it.', whyNotOthers: 'Cutting is small.', noteIds: ['big-wins'], memoryFacts: []},
   }});
   setClient(fake);
-  const r = await chat({personaId: 'debt-free-coach', agentId: 'budget', messages: [{role: 'user', content: 'Debt or savings first?'}], profile, memory: [{fact: 'Prefers a cash buffer'}]});
+  const r = await chat({personaId: 'debt-free-coach', agentId: 'budget', messages: [{role: 'user', content: 'Debt or savings first?'}], profile: {...profile, documents: [{name: 'statement.txt', text: 'statement for review'}]}, memory: [{fact: 'Prefers a cash buffer'}]});
   assert.equal(r.mode, 'live');
   assert.equal(r.pick.pickId, 'c1');
   assert.deepEqual(r.pick.runnersUp, ['c2']); // c9 doesn't exist
@@ -87,6 +87,7 @@ test('live chat: structured outputs, cached prompts, persona picks by id, repick
   assert.equal(r.validation.kept, 3);
   assert.equal(r.memoryUpdates[0].fact, 'Wants to pay off the card');
   assert.match(fake.calls[1].messages[0].content, /Prefers a cash buffer/);
+  assert.match(fake.calls[1].messages[0].content, /statement for review/);
   assert.match(fake.calls[2].messages[0].content, /Prefers a cash buffer/);
   assert.equal(r.candidates[0].calculations[0].units.lowestMonth, 'money');
   assert.deepEqual(unverifiedNumbers('The card APR is 24.90%', r.candidates[0].calculations), []);
