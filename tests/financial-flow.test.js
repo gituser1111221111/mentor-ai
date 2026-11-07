@@ -20,7 +20,7 @@ function model({kind='finance',reply='Keep $420.00 in savings.',needsInfo=null,o
   const content=params.messages[0].content;calls.push(content);
   if(content.includes('<coach>')){await onGenerate();return textRes({needsInfo,candidates:['Reserve','Budget','Review'].map(title=>({title,summary:'Keep the current savings available.',calcIds:['starter-ef'],risk:'low',tradeoffs:'Debt waits.',timeToGoalMonths:null}))});}
   if(content.includes('<options>'))return textRes({pickId:'c1',runnersUp:[],rationale:'Keep a buffer.',reply,whyNotOthers:'Other choices can wait.',noteIds:['029'],memoryFacts:[]});
-  if(params.system[0].text.includes('Decide whether')) {await onClassify();return textRes({kind,reply});}
+  if(Boolean(params.output_config.format.schema.properties.kind)) {await onClassify();return textRes({kind,reply});}
   return textRes({reply});
  };setClient({messages:{create},beta:{messages:{create}}});return calls;
 }

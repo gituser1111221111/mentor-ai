@@ -26,7 +26,7 @@ function fakeClient({generated, picks}) {
   const calls = [];
   const create = async params => {
     calls.push(params);
-    if (params.system[0].text.includes('Decide whether their latest message')) return textRes({kind: /Debt or savings|help|"x"/.test(params.messages[0].content) ? 'finance' : 'conversation', reply: 'Hi there! What is on your mind?'});
+    if (Boolean(params.output_config.format.schema.properties.kind)) return textRes({kind: /Debt or savings|help|"x"/.test(params.messages[0].content) ? 'finance' : 'conversation', reply: 'Hi there! What is on your mind?'});
     if (params.model.includes('sonnet')) return textRes({needsInfo: null, candidates: generated});
     const persona = params.system[0].text.includes('Conscious Spender') ? 'conscious' : 'debt';
     return textRes(picks[persona]);

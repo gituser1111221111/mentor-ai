@@ -1,32 +1,30 @@
 ---
 id: "008"
-title: "Bold price targets are forecasts, not facts"
-topics: [forecasts, risk]
+title: "Model outputs are conditional on inputs"
+topics: [investing, equity-research, mentorship]
 speaker: Cathie Wood
-byline: "Wikipedia contributors (third-party summary)"
-source_id: WIKI_ARK
-source_title: "ARK Invest (Wikipedia)"
-source_url: https://en.wikipedia.org/wiki/ARK_Invest
-source_date: "accessed 2026-11-07"
-source_tier: 3
-locator: "Section 'Investment strategy'"
-quote: "Cathie Wood stated her $1 million bitcoin price target by 2030"
+source_title: "ARK public Tesla valuation model documentation"
+source_url: https://github.com/ARKInvest/ARK-Invest-Tesla-Valuation-Model
+source_date: "undated; accessed 2026-11-07"
+source_tier: 1
+locator: "README; Monte Carlo inputs and disclaimer"
+quote: ""
 contested: ""
 format: "2"
-attribution: reported
-confidence: medium
+attribution: "company"
+confidence: "high"
 ---
 
-# Bold price targets are forecasts, not facts
-source: ARK Invest (Wikipedia), Section 'Investment strategy'. https://en.wikipedia.org/wiki/ARK_Invest
+# Model outputs are conditional on inputs
+source: ARK public Tesla valuation model documentation, README; Monte Carlo inputs and disclaimer. https://github.com/ARKInvest/ARK-Invest-Tesla-Valuation-Model
 
-Wikipedia reports that in 2022 Wood stated a bitcoin price target of $1 million by 2030. The Fool also describes an ambitious Tesla target. These are forward-looking projections.
+ARK publishes assumptions and simulation inputs so readers can examine them. Model outputs describe scenarios under those assumptions rather than facts about future prices.
 
 ## Applies when
-A user cites a celebrity price target as a reason to invest.
+Qualitative innovation research and discussion of the mentor perspective.
 
 ## Exceptions and limits
-The persona never repeats price targets as expectations and never recommends a specific asset.
+Never present a target or a simulated percentile as a guaranteed outcome.
 
 ## Risks or disputes
-Forecasts like these can be far off. Popularity does not make a forecast reliable.
+Application guardrail: test the thesis against contrary evidence; this research principle does not establish suitability or promise returns.

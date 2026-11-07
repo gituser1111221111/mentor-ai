@@ -1,32 +1,30 @@
 ---
 id: "002"
-title: "What counts as disruptive"
-topics: [investing, innovation]
+title: "Convergence across technology platforms"
+topics: [investing, equity-research, mentorship]
 speaker: Cathie Wood
-byline: "Alex Carchidi (third-party analysis)"
-source_id: FOOL_3P
-source_title: "Want to Invest Like Cathie Wood? Use These 3 Principles. (The Motley Fool, Alex Carchidi)"
-source_url: https://www.fool.com/investing/2022/10/02/want-to-invest-like-cathie-wood-use-these-3-princi/
-source_date: "2022-10-02"
-source_tier: 3
-locator: "Section on finding disruptive innovators"
-quote: "technologies that significantly slash costs"
+source_title: "ARK investment philosophy"
+source_url: https://helpcenter.ark-funds.com/what-is-arks-investment-philosophy
+source_date: "undated; accessed 2026-11-07"
+source_tier: 1
+locator: "Investment philosophy"
+quote: ""
 contested: ""
 format: "2"
-attribution: reported
-confidence: medium
+attribution: "company"
+confidence: "high"
 ---
 
-# What counts as disruptive
-source: Want to Invest Like Cathie Wood? Use These 3 Principles. (The Motley Fool, Alex Carchidi), Section on finding disruptive innovators. https://www.fool.com/investing/2022/10/02/want-to-invest-like-cathie-wood-use-these-3-princi/
+# Convergence across technology platforms
+source: ARK investment philosophy, Investment philosophy. https://helpcenter.ark-funds.com/what-is-arks-investment-philosophy
 
-The Fool's summary says Wood looks for technologies that sharply cut costs, reach across several industries or regions, and spur further innovation. Entrenched incumbents get less attention.
+ARK organizes research around technologies including AI, sequencing, robotics, energy storage and blockchain. It looks for interaction among technologies rather than limiting research to traditional industry categories.
 
 ## Applies when
-Discussing why a technology might matter long-term.
+Qualitative innovation research and discussion of the mentor perspective.
 
 ## Exceptions and limits
-Third-party description of her criteria, not her own words.
+Platform exposure is a research classification, not diversification by itself.
 
 ## Risks or disputes
-Concentrated innovation investing is highly volatile and can lose a large share of its value. Valuations are uncertain and you can lose capital.
+Application guardrail: test the thesis against contrary evidence; this research principle does not establish suitability or promise returns.

@@ -95,8 +95,8 @@ test('API: quiz -> chat -> repick, static UI, and traversal blocked', async () =
     assert.equal(cfg.catalog.agents.length, 16);
     assert.equal(cfg.catalog.personas.length, 10);
     assert.equal(cfg.quiz.questions.length, 6);
-    assert.deepEqual(cfg.catalog.personas.filter(p => p.tier === 'free').map(p => p.id), ['debt-free-coach']);
-    assert.deepEqual(cfg.catalog.personas.filter(p => p.built).map(p => p.id), ['debt-free-coach']);
+    assert.deepEqual(cfg.catalog.personas.filter(p => p.tier === 'free').map(p => p.id), ['debt-free-coach', 'value-investor', 'disruptive-growth']);
+    assert.deepEqual(cfg.catalog.personas.filter(p => p.built).map(p => p.id), ['debt-free-coach', 'value-investor', 'disruptive-growth']);
     assert.deepEqual(cfg.catalog.agents.filter(a => a.built).map(a => a.id), ['budget']);
     assert.ok(cfg.catalog.agents.every(a => a.tier === 'plus' && a.name.endsWith('Agent')));
     const p = await fetch(base + '/api/profile', {method: 'POST', headers: h, body: JSON.stringify({answers})});
@@ -142,12 +142,12 @@ test('Plus gating: locked mentor -> 402, demo unlock without Stripe, unbuilt -> 
   const post = (p, b) => fetch(base + p, {method: 'POST', headers: h, body: JSON.stringify(b || {})});
   try {
     await post('/api/profile', {answers});
-    assert.equal((await post('/api/chat', {message: 'hi', personaId: 'value-investor'})).status, 402);
+    assert.equal((await post('/api/chat', {message: 'hi', personaId: 'asset-builder'})).status, 402);
     assert.equal((await post('/api/chat', {message: 'hi', agentId: 'tax'})).status, 402);
     assert.equal((await (await post('/api/checkout')).json()).mode, 'demo');
     assert.equal((await (await post('/api/checkout/demo')).json()).tier, 'plus');
     assert.equal((await (await fetch(base + '/api/me', {headers: h})).json()).tier, 'plus');
-    const soon = await post('/api/chat', {message: 'hi', personaId: 'value-investor'});
+    const soon = await post('/api/chat', {message: 'hi', personaId: 'asset-builder'});
     assert.equal(soon.status, 409);
     assert.match((await soon.json()).error, /coming soon/);
     assert.equal((await post('/api/chat', {message: 'hi', agentId: 'debt'})).status, 409);

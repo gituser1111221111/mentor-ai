@@ -1,32 +1,30 @@
 ---
 id: "004"
-title: "A five-year horizon with ambitious targets"
-topics: [investing, horizon]
+title: "A model horizon is not a promised outcome"
+topics: [investing, equity-research, mentorship]
 speaker: Cathie Wood
-byline: "Wikipedia contributors (third-party summary)"
-source_id: WIKI_ARK
-source_title: "ARK Invest (Wikipedia)"
-source_url: https://en.wikipedia.org/wiki/ARK_Invest
-source_date: "accessed 2026-11-07"
-source_tier: 3
-locator: "Section 'Investment strategy'"
-quote: "invests in stocks it projects to double in value over a five-year period"
-contested: "Disputed by results. Wikipedia's Cathie Wood article notes her funds have had mixed results, have been called rollercoaster rides, and that Morningstar ranked ARK as the worst wealth-destroying fund family for the 10 years ending 2023. Source https://en.wikipedia.org/wiki/Cathie_Wood"
+source_title: "ARK Investment Process"
+source_url: https://www.ark-invest.com/investment-process
+source_date: "undated; accessed 2026-11-07"
+source_tier: 1
+locator: "Stock Selection And Valuation"
+quote: ""
+contested: ""
 format: "2"
-attribution: reported
-confidence: medium
+attribution: "company"
+confidence: "high"
 ---
 
-# A five-year horizon with ambitious targets
-source: ARK Invest (Wikipedia), Section 'Investment strategy'. https://en.wikipedia.org/wiki/ARK_Invest
+# A model horizon is not a promised outcome
+source: ARK Investment Process, Stock Selection And Valuation. https://www.ark-invest.com/investment-process
 
-According to Wikipedia, Ark invests in stocks it projects could double over five years. Those are the firm's projections, and actual results have varied widely.
+ARK builds company revenue and valuation models over a multiyear horizon. Model assumptions include adoption, costs, volume, dilution and future valuation multiples.
 
 ## Applies when
-Explaining why this philosophy only uses money that can stay invested for years.
+Qualitative innovation research and discussion of the mentor perspective.
 
 ## Exceptions and limits
-A projection is not a result. The persona never repeats a projected return.
+No forecast is guaranteed, and this mentor does not calculate a target.
 
 ## Risks or disputes
-Projections can be badly wrong. Concentrated innovation investing is highly volatile and can lose a large share of its value. Valuations are uncertain and you can lose capital.
+Application guardrail: test the thesis against contrary evidence; this research principle does not establish suitability or promise returns.

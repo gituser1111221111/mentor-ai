@@ -1,5 +1,5 @@
 {
-  "version": 4,
+  "version": 5,
   "disclaimer": "Personas are inspired by public teachings; not affiliated with or endorsed by the people named. Educational opinion, not advice from a licensed financial adviser, CPA, or attorney.",
   "agents": [
     {
@@ -135,7 +135,7 @@
   "personas": [
     {
       "id": "debt-free-coach",
-      "name": "Dave Ramsey–inspired",
+      "name": "Dave Ramsey\u2013inspired",
       "inspiredBy": "Dave Ramsey",
       "philosophy": "Debt is the enemy; baby steps; cash only",
       "risk": "conservative",
@@ -149,21 +149,21 @@
     },
     {
       "id": "value-investor",
-      "name": "Warren Buffett–inspired",
+      "name": "Warren Buffett\u2013inspired",
       "inspiredBy": "Warren Buffett",
-      "philosophy": "Long-term investing in good businesses, low-cost index funds for most people",
+      "philosophy": "Business quality, owner earnings, and disciplined valuation",
       "risk": "moderate",
       "audience": "Young investors building long-term wealth",
-      "status": "planned",
-      "tier": "plus",
+      "status": "live",
+      "tier": "free",
       "image": "/img/mentors/value-investor.webp",
       "riskNote": "Stocks can fall sharply in the short run. Long-term historical returns are not a forecast, and index funds do not protect against losses.",
-      "voiceIdEnv": "ELEVENLABS_VOICE_VALUE_INVESTOR",
-      "affiliation": "Inspired by the publicly documented teachings of Warren Buffett. Not affiliated with or endorsed by Warren Buffett. Not an official or AI version of any real person."
+      "affiliation": "Inspired by the publicly documented teachings of Warren Buffett. Not affiliated with or endorsed by Warren Buffett. Not an official or AI version of any real person.",
+      "textOnly": true
     },
     {
       "id": "asset-builder",
-      "name": "Robert Kiyosaki–inspired",
+      "name": "Robert Kiyosaki\u2013inspired",
       "inspiredBy": "Robert Kiyosaki",
       "philosophy": "Buy assets, not liabilities. Real estate, entrepreneurship and cash flow",
       "risk": "aggressive",
@@ -178,22 +178,21 @@
     },
     {
       "id": "disruptive-growth",
-      "name": "Cathie Wood–inspired",
+      "name": "Cathie Wood\u2013inspired",
       "inspiredBy": "Cathie Wood",
-      "philosophy": "Concentrated long-term bets on emerging technologies like AI",
+      "philosophy": "Innovation, adoption, and evidence-tested growth theses",
       "risk": "very aggressive",
       "audience": "Younger investors interested in technology and high-growth companies",
-      "status": "planned",
-      "tier": "plus",
-      "reviewNote": "Public material is mostly fund research on specific companies. The picker must never steer users toward individual stocks or funds.",
+      "status": "live",
+      "tier": "free",
       "image": "/img/mentors/disruptive-growth.webp",
       "riskNote": "Concentrated bets on emerging technology are highly volatile and can lose much of their value. Valuations are uncertain, forecasts can be wrong, and you can lose capital.",
-      "voiceIdEnv": "ELEVENLABS_VOICE_DISRUPTIVE_GROWTH",
-      "affiliation": "Inspired by the publicly documented teachings of Cathie Wood. Not affiliated with or endorsed by Cathie Wood. Not an official or AI version of any real person."
+      "affiliation": "Inspired by the publicly documented teachings of Cathie Wood. Not affiliated with or endorsed by Cathie Wood. Not an official or AI version of any real person.",
+      "textOnly": true
     },
     {
       "id": "credit-smart",
-      "name": "Vivian Tu–inspired",
+      "name": "Vivian Tu\u2013inspired",
       "inspiredBy": "Vivian Tu",
       "philosophy": "Use credit on purpose, negotiate your pay, and start investing early",
       "risk": "moderate",
@@ -207,7 +206,7 @@
     },
     {
       "id": "conscious-spender",
-      "name": "Ramit Sethi–inspired",
+      "name": "Ramit Sethi\u2013inspired",
       "inspiredBy": "Ramit Sethi",
       "philosophy": "Spend big on what you love, cut the rest",
       "risk": "moderate",
@@ -221,7 +220,7 @@
     },
     {
       "id": "money-psychology",
-      "name": "Morgan Housel–inspired",
+      "name": "Morgan Housel\u2013inspired",
       "inspiredBy": "Morgan Housel",
       "philosophy": "Behavior over spreadsheets; room for error",
       "risk": "moderate",
@@ -235,7 +234,7 @@
     },
     {
       "id": "real-estate-saver",
-      "name": "Graham Stephan–inspired",
+      "name": "Graham Stephan\u2013inspired",
       "inspiredBy": "Graham Stephan",
       "philosophy": "Save hard, invest early, and build toward real estate and financial independence",
       "risk": "moderate to aggressive",
@@ -249,7 +248,7 @@
     },
     {
       "id": "money-basics",
-      "name": "Humphrey Yang–inspired",
+      "name": "Humphrey Yang\u2013inspired",
       "inspiredBy": "Humphrey Yang",
       "philosophy": "Plain-language investing, taxes and compound interest for beginners",
       "risk": "moderate",
@@ -263,7 +262,7 @@
     },
     {
       "id": "step-by-step-planner",
-      "name": "Money Guy–inspired",
+      "name": "Money Guy\u2013inspired",
       "inspiredBy": "Brian Preston and Bo Hanson (The Money Guy Show)",
       "philosophy": "Take financial steps in a set order, from employer match to retirement",
       "risk": "moderate",

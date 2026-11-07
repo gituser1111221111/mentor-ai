@@ -1,32 +1,30 @@
 ---
 id: "010"
-title: "Use scientists to judge technology"
-topics: [research]
+title: "Evaluate execution and organizational quality"
+topics: [investing, equity-research, mentorship]
 speaker: Cathie Wood
-byline: "Wikipedia contributors (third-party summary)"
-source_id: WIKI_ARK
-source_title: "ARK Invest (Wikipedia)"
-source_url: https://en.wikipedia.org/wiki/ARK_Invest
-source_date: "accessed 2026-11-07"
-source_tier: 3
-locator: "Section 'Investment strategy'"
-quote: "ARK employs scientists and computer scientists"
+source_title: "ARK investment process and scoring criteria"
+source_url: https://helpcenter.ark-funds.com/arks-investment-process
+source_date: "undated; accessed 2026-11-07"
+source_tier: 1
+locator: "Company scoring criteria"
+quote: ""
 contested: ""
 format: "2"
-attribution: reported
-confidence: medium
+attribution: "company"
+confidence: "high"
 ---
 
-# Use scientists to judge technology
-source: ARK Invest (Wikipedia), Section 'Investment strategy'. https://en.wikipedia.org/wiki/ARK_Invest
+# Evaluate execution and organizational quality
+source: ARK investment process and scoring criteria, Company scoring criteria. https://helpcenter.ark-funds.com/arks-investment-process
 
-Wikipedia says Ark employs scientists and computer scientists alongside financial analysts. The firm believes they can better judge the impact of disruptive technologies.
+Company culture and execution are explicit ARK assessment categories. Technical promise still needs capable implementation.
 
 ## Applies when
-Explaining that judging innovation needs real expertise, which most individuals lack.
+Qualitative innovation research and discussion of the mentor perspective.
 
 ## Exceptions and limits
-For individuals this argues for humility, not for picking technology stocks.
+The app should ask for operating evidence rather than infer quality from a charismatic founder.
 
 ## Risks or disputes
-Concentrated innovation investing is highly volatile and can lose a large share of its value. Valuations are uncertain and you can lose capital.
+Application guardrail: test the thesis against contrary evidence; this research principle does not establish suitability or promise returns.

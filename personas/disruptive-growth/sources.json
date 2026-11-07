@@ -3,19 +3,18 @@
   "speakers": [
     "Cathie Wood"
   ],
-  "researchDepth": "limited",
+  "researchDepth": "primary-source expanded; perspective research, not model training",
   "summary": {
-    "total_sources": 4,
+    "total_sources": 8,
     "by_type": {
-      "article": 2,
-      "webpage": 1,
-      "critique": 1
+      "webpage": 6,
+      "letter": 1,
+      "article": 1
     },
     "by_tier": {
-      "3": 3,
-      "4": 1
+      "1": 8
     },
-    "note_count": 10,
+    "note_count": 25,
     "books": 0,
     "episodes": 0,
     "accessed": "2026-11-07",
@@ -23,61 +22,108 @@
   },
   "sources": [
     {
-      "id": "FOOL_WHO",
-      "url": "https://www.fool.com/investing/how-to-invest/famous-investors/cathie-wood/",
-      "title": "Who Is Cathie Wood? (The Motley Fool, Robin Hartill)",
-      "date": "2025-09-23",
-      "tier": 3,
-      "type": "article",
-      "byline": "Robin Hartill, CFP (third-party profile)",
-      "note_ids": [
-        "001",
-        "009"
-      ]
-    },
-    {
-      "id": "FOOL_3P",
-      "url": "https://www.fool.com/investing/2022/10/02/want-to-invest-like-cathie-wood-use-these-3-princi/",
-      "title": "Want to Invest Like Cathie Wood? Use These 3 Principles. (The Motley Fool, Alex Carchidi)",
-      "date": "2022-10-02",
-      "tier": 3,
-      "type": "article",
-      "byline": "Alex Carchidi (third-party analysis)",
-      "note_ids": [
-        "002",
-        "006",
-        "007"
-      ]
-    },
-    {
-      "id": "WIKI_ARK",
-      "url": "https://en.wikipedia.org/wiki/ARK_Invest",
-      "title": "ARK Invest (Wikipedia)",
-      "date": "accessed 2026-11-07",
-      "tier": 3,
+      "id": "ARK_PROCESS",
+      "url": "https://www.ark-invest.com/investment-process",
+      "title": "ARK Investment Process",
+      "date": "undated; accessed 2026-11-07",
+      "tier": 1,
       "type": "webpage",
-      "byline": "Wikipedia contributors (third-party summary)",
       "note_ids": [
         "003",
         "004",
-        "005",
-        "008",
-        "010"
+        "009",
+        "013",
+        "021"
       ]
     },
     {
-      "id": "WIKI_WOOD",
-      "url": "https://en.wikipedia.org/wiki/Cathie_Wood",
-      "title": "Cathie Wood (Wikipedia)",
-      "date": "accessed 2026-11-07",
-      "tier": 4,
-      "type": "critique",
-      "byline": "Wikipedia contributors (independent summary including criticism)",
+      "id": "ARK_SCORE",
+      "url": "https://helpcenter.ark-funds.com/arks-investment-process",
+      "title": "ARK investment process and scoring criteria",
+      "date": "undated; accessed 2026-11-07",
+      "tier": 1,
+      "type": "webpage",
+      "note_ids": [
+        "007",
+        "010",
+        "014",
+        "022"
+      ]
+    },
+    {
+      "id": "ARK_PHILOSOPHY",
+      "url": "https://helpcenter.ark-funds.com/what-is-arks-investment-philosophy",
+      "title": "ARK investment philosophy",
+      "date": "undated; accessed 2026-11-07",
+      "tier": 1,
+      "type": "webpage",
       "note_ids": [
         "001",
-        "004",
+        "002",
+        "025"
+      ]
+    },
+    {
+      "id": "ARK_WRIGHT",
+      "url": "https://www.ark-invest.com/wrights-law",
+      "title": "ARK explanation of Wright's Law",
+      "date": "undated; accessed 2026-11-07",
+      "tier": 1,
+      "type": "webpage",
+      "note_ids": [
+        "011",
+        "012"
+      ]
+    },
+    {
+      "id": "ARK_FAQ",
+      "url": "https://www.ark-invest.com/faq",
+      "title": "ARK FAQ",
+      "date": "undated; accessed 2026-11-07",
+      "tier": 1,
+      "type": "webpage",
+      "note_ids": [
         "005",
-        "007"
+        "006",
+        "020"
+      ]
+    },
+    {
+      "id": "WOOD_LETTER",
+      "url": "https://europe.ark-funds.com/wp-content/uploads/2024/07/ARK-Invest-What-We-Do-A-Letter-To-Investors.pdf",
+      "title": "What We Do: A Letter To Investors From Cathie Wood",
+      "date": "2024-07-22",
+      "tier": 1,
+      "type": "letter",
+      "note_ids": [
+        "015",
+        "016"
+      ]
+    },
+    {
+      "id": "ARK_MODEL",
+      "url": "https://github.com/ARKInvest/ARK-Invest-Tesla-Valuation-Model",
+      "title": "ARK public Tesla valuation model documentation",
+      "date": "undated; accessed 2026-11-07",
+      "tier": 1,
+      "type": "webpage",
+      "note_ids": [
+        "008",
+        "017",
+        "024"
+      ]
+    },
+    {
+      "id": "ARK_UPDATE",
+      "url": "https://www.ark-invest.com/articles/valuation-models/arks-expected-share-price-for-tesla-2031",
+      "title": "ARK expected share price for Tesla in 2031; methodology and assumptions",
+      "date": "2026; accessed 2026-11-07",
+      "tier": 1,
+      "type": "article",
+      "note_ids": [
+        "018",
+        "019",
+        "023"
       ]
     }
   ]

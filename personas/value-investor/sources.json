@@ -4,16 +4,16 @@
     "Warren Buffett"
   ],
   "summary": {
-    "total_sources": 16,
+    "total_sources": 19,
     "by_type": {
-      "letter": 15,
+      "letter": 18,
       "article": 1
     },
     "by_tier": {
-      "1": 15,
+      "1": 18,
       "3": 1
     },
-    "note_count": 32,
+    "note_count": 44,
     "books": 0,
     "episodes": 0,
     "accessed": "2026-11-07",
@@ -29,7 +29,9 @@
       "type": "letter",
       "byline": "Warren E. Buffett, Chairman",
       "note_ids": [
-        "023"
+        "023",
+        "033",
+        "034"
       ]
     },
     {
@@ -65,7 +67,9 @@
       "type": "letter",
       "byline": "Warren E. Buffett, Chairman",
       "note_ids": [
-        "026"
+        "026",
+        "039",
+        "040"
       ]
     },
     {
@@ -89,7 +93,8 @@
       "type": "letter",
       "byline": "Warren E. Buffett, Chairman",
       "note_ids": [
-        "027"
+        "027",
+        "038"
       ]
     },
     {
@@ -116,7 +121,9 @@
         "001",
         "002",
         "014",
-        "022"
+        "022",
+        "042",
+        "043"
       ]
     },
     {
@@ -227,6 +234,42 @@
       "note_ids": [
         "032"
       ]
+    },
+    {
+      "id": "L2007",
+      "url": "https://www.berkshirehathaway.com/letters/2007ltr.pdf",
+      "title": "Berkshire Hathaway shareholder letter for 2007",
+      "date": "2007",
+      "tier": 1,
+      "type": "letter",
+      "note_ids": [
+        "035",
+        "036"
+      ]
+    },
+    {
+      "id": "L1989",
+      "url": "https://www.berkshirehathaway.com/letters/1989.html",
+      "title": "Berkshire Hathaway shareholder letter for 1989",
+      "date": "1989",
+      "tier": 1,
+      "type": "letter",
+      "note_ids": [
+        "037",
+        "044"
+      ]
+    },
+    {
+      "id": "L2011",
+      "url": "https://www.berkshirehathaway.com/letters/2011ltr.pdf",
+      "title": "Berkshire Hathaway shareholder letter for 2011",
+      "date": "2011",
+      "tier": 1,
+      "type": "letter",
+      "note_ids": [
+        "041"
+      ]
     }
-  ]
+  ],
+  "researchDepth": "primary-source expanded; perspective research, not model training"
 }
