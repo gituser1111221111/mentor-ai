@@ -1,5 +1,5 @@
 import {VoicePlayback} from './voice-playback.js';
-// Mentor Labs SPA: free starter chat, short intake, specialist catalog, and coaching chat.
+// Mentor Labs SPA: researched perspectives, optional intake, and specialist tools.
 // Vanilla JS, no build step. All money shown here comes from the server's exact-cents math.
 const $ = s => document.querySelector(s);
 const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
@@ -17,10 +17,8 @@ async function api(path, {method = 'GET', body} = {}) {
   return data;
 }
 
-const state = {config: null, tier: 'free', answers: {}, i: 0, profile: null, snapshot: null, personaId: 'debt-free-coach', agentId: 'budget', lastTurn: null};
-const DEMO_PERSONA = 'debt-free-coach';
-const DEMO_AGENT = 'budget';
-const views = ['v-landing', 'v-quiz', 'v-chat'];
+const state = {config: null, tier: 'free', answers: {}, i: 0, profile: null, snapshot: null, personaId: null, agentId: 'budget', need: 'question', lastTurn: null};
+const views = ['v-landing', 'v-quiz', 'v-chat', 'v-workspace'];
 function show(id) {
   if (id !== 'v-chat' && voice.active) endConversation();
   views.forEach(v => { $('#' + v).hidden = v !== id; });
@@ -33,16 +31,13 @@ function show(id) {
 function banner(text, warn = false) { const b = $('#banner'); b.textContent = text; b.className = 'banner' + (warn ? ' warn' : ''); b.hidden = !text; }
 
 // ---------- catalog helpers ----------
-const freeFirst = list => [...list].sort((a,b) => Number(statusLabel(a) === 'Plus') - Number(statusLabel(b) === 'Plus'));
-const personas = () => freeFirst(state.config.catalog.personas);
-const agents = () => freeFirst(state.config.catalog.agents);
+const personas = () => state.config.catalog.personas;
+const agents = () => state.config.catalog.agents;
 const persona = id => personas().find(p => p.id === id);
 const agent = id => agents().find(a => a.id === id);
-const allowed = x => x.tier === 'free' || state.tier === 'plus';
-const starterCoach = x => x?.id === 'budget' && persona(state.personaId)?.built && persona(state.personaId)?.tier === 'free';
-const usable = x => x?.built && (allowed(x) || starterCoach(x));
-const statusLabel = x => x?.tier === 'free' || x?.id === 'budget' ? 'Free' : 'Plus';
-const badge = x => `<span class="tag ${statusLabel(x) === 'Plus' ? 'plus' : 'free'}" ${statusLabel(x) === 'Plus' ? 'title="Mentor Labs Plus" aria-label="Mentor Labs Plus"' : ''}>${statusLabel(x)}</span>`;
+const usable = x => Boolean(x?.built);
+const statusLabel = x => usable(x) ? 'Available' : 'Preview';
+const badge = x => `<span class="tag ${usable(x) ? 'free' : 'plus'}">${statusLabel(x)}</span>`;
 const initials = name => name.replace(/^The /, '').split(/[\s-]+/).map(w => w[0]).join('').slice(0, 2).toUpperCase();
 const art = (p, cls = 'frame') => `<div class="${cls}">${p.image ? `<img src="${esc(p.image)}" alt="AI-generated likeness inspired by ${esc(p.inspiredBy)}" width="640" height="800" loading="lazy" decoding="async">` : `<span class="mono-gram">${esc(initials(p.name))}</span>`}</div>`;
 const thumb = p => `<span class="thumb">${p.image ? `<img src="${esc(p.image)}" alt="">` : esc(initials(p.name))}</span>`;
@@ -54,13 +49,35 @@ const agentSymbol = id => {
 
 // ---------- landing ----------
 function renderLanding() {
-  $('#personas').innerHTML = personas().map(p => `<div class="portrait ${usable(p) ? '' : 'locked'}">${art(p)}${p.tier === 'plus' ? `<button type="button" class="tag plus portrait-plus" data-unlock aria-label="Explore Plus for ${esc(p.name)}">Plus</button>` : badge(p)}
-    <h3>${esc(p.name)}</h3><p class="portrait-source">${p.textOnly ? 'AI perspective · Text chat' : 'AI-inspired perspective'}</p><p>${esc(p.philosophy)}.</p>${usable(p) ? `<button class="btn outline" type="button" data-chat-mentor="${esc(p.id)}">Chat with ${esc(displayName(p.name).split(' ')[0])}</button>` : ''}</div>`).join('');
-  $('#agents').innerHTML = `<div class="agent-grid">${agents().map((a,i) => `<button type="button" class="agent-card tone-${i%4}" data-a="${a.id}">${agentSymbol(a.id)}<span class="agent-card-top"><strong>${esc(a.name)}</strong>${badge(a)}</span><span class="agent-card-job">${esc(a.job)}</span></button>`).join('')}</div>`;
-  document.querySelectorAll('#agents [data-a]').forEach(b => b.onclick = () => { const a = agent(b.dataset.a); if (a.id === 'budget') renderIntake(); else showAgent(a); });
-  document.querySelectorAll('#personas [data-unlock]').forEach(b => b.onclick = openUnlock);
-  document.querySelectorAll('[data-chat-mentor]').forEach(b => b.onclick = () => { state.personaId = b.dataset.chatMentor; state.agentId = 'budget'; startChat(); });
+  $('#personas').innerHTML = personas().map(p => `<div class="portrait">${art(p)}${badge(p)}
+    <h3>${esc(p.name)}</h3><p class="portrait-source">${p.textOnly ? 'AI perspective · Text chat' : 'AI-inspired perspective'}</p><p>${esc(p.philosophy)}.</p><button class="btn outline" type="button" data-chat-mentor="${esc(p.id)}">${usable(p) ? 'Choose perspective' : 'Explore preview'}</button></div>`).join('');
+  const groups = [...new Set(agents().map(a => a.category || 'Other specialties'))];
+  $('#agents').innerHTML = groups.map(category => `<details class="specialist-group"><summary>${esc(category)} <span class="fine">${agents().filter(a => a.category === category).length} specialties</span></summary><div class="agent-grid">${agents().filter(a => (a.category || 'Other specialties') === category).map((a,i) => `<button type="button" class="agent-card tone-${i%4}" data-a="${esc(a.id)}">${agentSymbol(a.id)}<span class="agent-card-top"><strong>${esc(a.name)}</strong>${badge(a)}</span><span class="agent-card-job">${esc(a.job)}</span></button>`).join('')}</div></details>`).join('');
+  document.querySelectorAll('#agents [data-a]').forEach(b => b.onclick = () => showAgent(agent(b.dataset.a)));
+  document.querySelectorAll('[data-chat-mentor]').forEach(b => b.onclick = () => { const p = persona(b.dataset.chatMentor); if (usable(p)) openStartChoice({personaId:p.id}); else showFeature(p); });
   renderSources();
+}
+
+// Choose explicitly: no mentor is the product's default.
+let pendingAgent = null;
+function openStartChoice({personaId = state.personaId, need = state.need, agentId = null} = {}) {
+  pendingAgent = agentId;
+  $('#start-personas').innerHTML = '<option value="">Choose a perspective</option>' + personas().map(p => `<option value="${esc(p.id)}" ${usable(p) ? '' : 'disabled'}>${esc(p.name)}${usable(p) ? '' : ' · Preview'}</option>`).join('');
+  $('#start-personas').value = usable(persona(personaId)) ? personaId : '';
+  $('#start-need').value = ['question','everyday','future','retirement'].includes(need) ? need : 'question';
+  $('#start-choice-error').textContent = '';
+  $('#start-choice').showModal();
+}
+function submitStartChoice(e) {
+  e.preventDefault();
+  const selected = persona($('#start-personas').value);
+  if (!usable(selected)) { $('#start-choice-error').textContent = 'Choose an available perspective to start.'; return; }
+  state.personaId = selected.id; state.need = $('#start-need').value;
+  state.agentId = pendingAgent || (state.need === 'future' && usable(agent('investing')) ? 'investing' : 'budget');
+  rememberChoice(); $('#start-choice').close(); startChat();
+}
+function rememberChoice() {
+  try { localStorage.setItem('mentor-labs-choice', JSON.stringify({personaId:state.personaId,agentId:state.agentId,need:state.need})); } catch {}
 }
 
 // ---------- live data connections ----------
@@ -70,27 +87,28 @@ const agentNames = ids => ids.map(id => agent(id)?.name.replace(/ Agent$/, '')).
 const sourceState = d => d.status === 'live' ? (d.connected ? 'Configured · fetched on request' : 'Not configured') : 'Planned';
 function renderSources() {
   const el = $('#data-sources'); if (!el) return;
-  const group = (tier, title) => {
-    const list = sources().filter(d => d.tier === tier);
+  const group = (implemented, title) => {
+    const list = sources().filter(d => (d.status === 'live') === implemented);
     if (!list.length) return '';
-    return `<div class="api-group"><h3>${title}</h3><ul class="api-logos">${list.map(d => `<li><a href="${esc(d.url)}" target="_blank" rel="noopener noreferrer" title="${esc(d.provides)}">${d.logo ? `<img src="${esc(d.logo)}" alt="" width="28" height="28" loading="lazy">` : ''}<span>${esc(d.name)}</span></a></li>`).join('')}</ul></div>`;
+    return `<div class="api-group"><h3>${title}</h3><ul class="api-logos">${list.map(d => `<li><a href="${esc(d.url)}" target="_blank" rel="noopener noreferrer" title="${esc(d.provides)} · ${esc(sourceState(d))}">${d.logo ? `<img src="${esc(d.logo)}" alt="" width="28" height="28" loading="lazy">` : ''}<span>${esc(d.name)}<small>${esc(sourceState(d))}</small></span></a></li>`).join('')}</ul></div>`;
   };
-  el.innerHTML = group('free', 'Free integrations') + group('plus', 'Plus integrations');
+  el.innerHTML = group(true, 'Implemented sources') + group(false, 'Planned connections');
 }
 function sourceList(id) {
   const list = sourcesFor(id);
-  if (!list.length) return '<p class="fine">This agent works from your own inputs and code-checked calculations. No market feed is attached yet.</p>';
-  return `<p class="section-eyebrow">DATA THIS AGENT READS</p><ul class="source-list">${list.map(d => `<li><strong>${esc(d.name)}</strong> <span class="tag ${d.tier === 'plus' ? 'plus' : ''}">${d.tier === 'plus' ? 'Plus · planned' : esc(sourceState(d))}</span><br><small>${esc(d.provides)}</small></li>`).join('')}</ul>`;
+  if (!list.length) return '<p class="fine">This agent uses your confirmed inputs and code-checked calculations. No market feed is attached yet.</p>';
+  return `<p class="section-eyebrow">RELEVANT DATA SOURCES</p><ul class="source-list">${list.map(d => `<li><strong>${esc(d.name)}</strong> <span class="tag ${d.status === 'live' ? '' : 'plus'}">${esc(sourceState(d))}</span><br><small>${esc(d.provides)}</small></li>`).join('')}</ul>`;
 }
 function showAgent(a) {
-  const ready = a.built && usable(a);
-  $('#feature-eyebrow').textContent = ready ? 'SPECIALIST AGENT · FREE' : 'PLUS LIBRARY';
+  const ready = usable(a);
+  $('#feature-eyebrow').textContent = ready ? 'SPECIALIST AGENT · AVAILABLE' : 'SPECIALIST PREVIEW';
   $('#feature-title').textContent = a.name;
-  $('#feature-text').textContent = ready ? `${a.job}. Every number it quotes comes from these sources and is checked in code before you see it.` : a.built ? `${a.name} is part of Plus.` : `${a.name} is coming to the Plus library.`;
+  $('#feature-text').textContent = ready ? `${a.job}. Add your context when you are ready; inspect sources and calculations with each answer.` : `${a.job}. This specialty is planned and is not available yet.`;
   $('#feature-sources').innerHTML = sourceList(a.id);
-  $('#feature-plus').hidden = ready || state.tier === 'plus';
+  $('#feature-plus').hidden = true;
   $('#feature-try').hidden = !ready;
-  $('#feature-try').onclick = () => { $('#feature-preview').close(); state.agentId = a.id; startChat(); };
+  $('#feature-try').textContent = 'Choose a perspective and start';
+  $('#feature-try').onclick = () => { $('#feature-preview').close(); openStartChoice({agentId:a.id, need:['investing','equity'].includes(a.id) ? 'future' : 'everyday'}); };
   $('#feature-preview').showModal();
 }
 
@@ -101,8 +119,6 @@ async function submitQuiz(answers) {
   try {
     const r = await api("/api/profile", {method: "POST", body: {answers}});
     state.profile = r.profile; state.snapshot = r.snapshot;
-    const hint = persona(r.profile.personaHint);
-    state.personaId = hint && usable(hint) ? hint.id : "debt-free-coach";
     startChat();
   } catch (e) { banner(e.message, true); }
 }
@@ -182,7 +198,7 @@ function connectPortfolio() { uploadNote('Direct brokerage connections are not a
 // ---------- chat ----------
 function renderChatChrome() {
   const p = persona(state.personaId), a = agent(state.agentId), s = state.snapshot;
-  $('#chat-head').innerHTML = `${thumb(p)}<div><strong>${esc(p.name)}</strong><small>${['investing','equity'].includes(a.id) ? esc(a.name) : p.textOnly ? 'Text mentorship · Research perspectives' : state.profile?.incomeHistory?.length ? `With ${esc(a.name)}` : 'Start with any money question'} · AI-inspired, not affiliated</small></div>${s?.status === 'ok' ? `<div class="snap-mini">lowest ${usd(s.lowestMonth)}<br>essentials ${usd(s.essentialsTotal)}</div>` : ''}`;
+  $('#chat-head').innerHTML = `${thumb(p)}<div><strong>${esc(p.name)}</strong><small>${p.textOnly ? 'Text conversation · Your AI teacher' : 'Your AI teacher · Learn along the way'} · AI-inspired, not affiliated</small></div>${s?.status === 'ok' ? `<div class="snap-mini">lowest ${usd(s.lowestMonth)}<br>essentials ${usd(s.essentialsTotal)}</div>` : ''}`;
   $('#persona-switch').innerHTML = personas().map(x => `<button type="button" class="rail-item ${x.id === state.personaId ? 'on' : ''}" data-p="${esc(x.id)}">${thumb(x)}<span>${esc(displayName(x.name))}</span>${badge(x)}</button>`).join('');
   $('#agent-list').innerHTML = agents().map((x,i) => `<button type="button" class="rail-item coach-item tone-${i%4} ${x.id === state.agentId ? 'on' : ''}" data-a="${esc(x.id)}">${agentSymbol(x.id)}<span>${esc(displayName(x.name))}</span>${badge(x)}</button>`).join('');
   document.querySelectorAll('#persona-switch [data-p]').forEach(b => b.onclick = () => pickPersona(b.dataset.p));
@@ -192,6 +208,7 @@ function renderChatChrome() {
   document.querySelectorAll('#suggest .chip').forEach(c => c.onclick = () => send(c.textContent));
 }
 function starterPrompts() {
+  if (state.need === 'retirement') return ['What assumptions matter when exploring retirement?', 'How do debt, reserves, and retirement contributions interact?', 'What should I understand about retirement account fees?'];
   if (state.agentId === 'budget' && state.personaId === 'value-investor') return ['What makes a business worth owning?', 'How do I recognize a durable competitive advantage?', 'How can growth create or destroy value?'];
   if (state.agentId === 'budget' && state.personaId === 'disruptive-growth') return ['How do I evaluate an innovation thesis?', 'What would make you change your mind about a company?', 'How do falling costs affect adoption and value?'];
   const prompts = {budget: ['How should I budget when my pay keeps changing?', 'What do I do in my slow months?', 'Where should extra money go in a good month?'], debt: ['How fast can I get rid of my debt?', 'Which debt should I pay first?', 'Should I pay off debt or save first?'], savings: ['How big should my emergency fund be?', 'How do I save when my income drops?', 'Should I stop investing until I have savings?'], investing: ['Review my portfolio', 'Which earnings calls are coming up for my holdings?', 'What are the biggest risks in my portfolio?'], equity: ['What should I listen for on NVIDIA’s next earnings call?', 'How did my largest holdings do last quarter?', 'What do analysts and recent filings say about what I own?']};
@@ -207,34 +224,31 @@ function showStarters() {
 }
 const asksForNumbers = r => !r.turnId && /financial details|update your (?:numbers|details)|add your numbers/i.test(r.text || '');
 function showFeature(x) {
-  $('#feature-eyebrow').textContent = 'PLANNED MENTOR';
-  $('#feature-sources').replaceChildren(); $('#feature-try').hidden = true; $('#feature-try').onclick = null;
+  $('#feature-eyebrow').textContent = 'PERSPECTIVE PREVIEW';
   $('#feature-title').textContent = x.name;
-  $('#feature-text').textContent = `${x.name} is in the Plus library. This feature is not available yet.`;
-  $('#feature-eyebrow').textContent = 'PLUS LIBRARY';
-  $('#feature-sources').innerHTML = agent(x.id) ? sourceList(x.id) : '';
-  $('#feature-try').hidden = true;
-  $('#feature-plus').hidden = state.tier === 'plus';
+  $('#feature-text').textContent = `${x.philosophy || x.job}. This perspective is planned; research and interactive support are still being developed.`;
+  $('#feature-sources').replaceChildren(); $('#feature-try').hidden = true; $('#feature-try').onclick = null;
+  $('#feature-plus').hidden = true;
   $('#feature-preview').showModal();
 }
-function blocked(x) { if (!x) return true; if (!allowed(x) && !starterCoach(x)) { openUnlock(); return true; } if (!x.built) { showFeature(x); return true; } return false; }
+function blocked(x) { if (!x) return true; if (!x.built) { agent(x.id) ? showAgent(x) : showFeature(x); return true; } return false; }
 function pickAgent(id) {
   const a = agent(id); if (id === state.agentId || blocked(a)) return;
-  state.agentId = id; state.lastTurn = null; renderChatChrome();
+  state.agentId = id; state.lastTurn = null; rememberChoice(); renderChatChrome();
   const feeds = sourcesFor(id).filter(d => d.status === 'live');
-  note(`Switched to ${a.name}.${feeds.length ? ` It reads live data from ${feeds.map(d => d.name).join(', ')}.` : ''} Ask your next question.`);
+  note(`Switched to ${a.name}.${feeds.length ? ` It can request data from ${feeds.map(d => d.name).join(', ')}.` : ''} Ask your next question.`);
 }
 async function pickPersona(id) {
   const p = persona(id); if (id === state.personaId || blocked(p)) return;
   if (voice.active) endConversation();
-  state.personaId = id; renderChatChrome();
+  state.personaId = id; rememberChoice(); renderChatChrome();
   if (!state.lastTurn) { note(`${p.name} is ready. Ask a question or explore a starting point below.`); showStarters(); return; }
   const sk = skeleton();
   try { botMessage(await api('/api/repick', {method: 'POST', body: {turnId: state.lastTurn, personaId: id}})); }
   catch (e) { handleError(e); } finally { sk.stop(); }
 }
 function note(text) { const el = document.createElement('div'); el.className = 'msg note'; el.textContent = text; $('#log').append(el); el.scrollIntoView({block: 'nearest'}); }
-function handleError(e) { if (e.status === 402) openUnlock(); else note(e.message); }
+function handleError(e) { note(e.message); }
 
 // Shown the moment a question is sent. Past the slow threshold it says so honestly and keeps waiting;
 // it never cuts the answer off or presents anything as verified early.
@@ -336,7 +350,9 @@ async function restoreChat(history) {
   const last = [...history].reverse().find(x => x.role === 'assistant')?.response;
   if (last?.personaId && persona(last.personaId)) state.personaId = last.personaId;
   if (last?.agentId && agent(last.agentId)) state.agentId = last.agentId;
+  if (!usable(persona(state.personaId))) return openStartChoice();
   state.lastTurn = last?.turnId || null;
+  rememberChoice();
   $('#log').innerHTML = '';
   renderChatChrome(); refreshMemory(); show('v-chat');
   for (const item of history) {
@@ -346,49 +362,37 @@ async function restoreChat(history) {
 }
 
 function startChat() {
-  $('#log').innerHTML = ''; state.lastTurn = null; renderChatChrome(); refreshMemory(); show('v-chat');
+  if (!usable(persona(state.personaId))) return openStartChoice();
+  if (!usable(agent(state.agentId))) state.agentId = 'budget';
+  rememberChoice();
+  state.lastTurn = null; renderChatChrome(); refreshMemory(); show('v-chat');
+  if ($('#log .msg.user')) { $('#msg').focus(); return; }
+  $('#log').innerHTML = '';
   const p = persona(state.personaId), a = agent(state.agentId);
   if (['investing','equity'].includes(a.id)) {
-    note(state.profile?.portfolio ? `${a.name} is ready with your saved holdings and ${p.name}'s perspective.` : `${a.name} works from your holdings. Upload a CSV to get started.`);
+    note(state.profile?.portfolio ? `Your teacher can explore your saved holdings through ${p.name}'s researched perspective.` : 'Import your holdings to explore your portfolio with your teacher.');
     if (!state.profile?.portfolio) { const el = document.createElement('div'); el.className = 'portfolio-start'; el.innerHTML = '<button class="btn primary" type="button" data-holdings>Upload holdings CSV</button><button class="btn text" type="button" data-context-open>Open context hub</button>'; el.querySelector('[data-holdings]').onclick = () => $('#portfolio-file').click(); el.querySelector('[data-context-open]').onclick = () => $('#context-dialog').showModal(); $('#log').append(el); }
   } else note(p.textOnly ? `${p.name} is ready for text chat. Explore a perspective or bring a research question.` : state.profile?.incomeHistory?.length ? `${p.name} is ready to talk through your plan. Ask anything below.` : `Say hello, ask a question, or choose Talk live for a voice conversation. Add your numbers anytime for a personal plan.`);
+  if (state.need === 'retirement') note('Explore retirement questions here. A dedicated retirement scenario tool is still planned.');
   showStarters();
   $('#msg').focus();
 }
 
-// ---------- Plus ----------
+// ---------- all-inclusive offer (billing is not active) ----------
 function openUnlock() {
-  $('#unlock-msg').textContent = '';
-  const stripe = state.config.billing?.stripe;
-  $('#unlock-test').hidden = !stripe;
-  $('#unlock-go').textContent = stripe ? 'Continue to secure checkout' : 'Unlock Plus (demo, no payment)';
+  $('#unlock-msg').textContent = 'The planned offer is one month free, then $2.99/month for all perspectives and features. Billing is not active in this demo.';
+  $('#unlock-test').hidden = true;
+  $('#unlock-go').textContent = 'Explore the demo';
   $('#unlock').showModal();
 }
-$('#unlock-go').addEventListener('click', async e => {
-  e.preventDefault(); const b = e.currentTarget; b.disabled = true;
-  try {
-    const r = await api('/api/checkout', {method: 'POST'});
-    if (r.mode === 'stripe' && r.url) { location.href = r.url; return; }
-    await api('/api/checkout/demo', {method: 'POST'});
-    await setPlus('Plus unlocked in demo mode. No payment was taken.');
-    $('#unlock').close();
-  } catch (err) { $('#unlock-msg').textContent = err.message; } finally { b.disabled = false; }
+$('#unlock-go').addEventListener('click', e => {
+  e.preventDefault(); $('#unlock').close(); openStartChoice();
 });
-async function setPlus(message) {
-  state.tier = 'plus'; $('#tier').hidden = false; banner(message);
-  state.config = await api('/api/config');
-  state.config.catalog.personas.forEach(p => { p.name = displayName(p.name); }); renderLanding();
-  if (!$('#v-chat').hidden) renderChatChrome();
-}
 async function handleCheckoutReturn() {
-  const q = new URLSearchParams(location.search), status = q.get('checkout');
-  if (!status) return;
+  const q = new URLSearchParams(location.search);
+  if (!q.has('checkout')) return;
   history.replaceState(null, '', location.pathname);
-  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
-  window.scrollTo(0, 0);
-  if (status === 'cancel') return banner('Checkout canceled. You are still on the free plan.', true);
-  try { await api('/api/checkout/confirm', {method: 'POST', body: {checkoutId: q.get('cs')}}); await setPlus('Plus test access is active. More mentor-agent pairings will launch as they are built. No real charge.'); }
-  catch (e) { banner(`We could not confirm that checkout: ${e.message}`, true); }
+  banner('Billing is not active in this demo. Available perspectives and tools need no checkout.');
 }
 
 function renderSavedDocuments() {
@@ -399,7 +403,7 @@ function renderSavedDocuments() {
 function setupContextHub() {
   const dialog = $('#context-dialog');
   document.querySelectorAll('[data-context]').forEach(b => b.onclick = async () => { dialog.showModal(); renderSavedDocuments(); try { const r = await api('/api/profile'); state.profile=r.profile; state.snapshot=r.snapshot; renderSavedDocuments(); } catch {} });
-  $('#context-done').onclick = () => { dialog.close(); if ($('#v-chat').hidden) startChat(); };
+  $('#context-done').onclick = () => { dialog.close(); if ($('#v-chat').hidden && $('#v-workspace').hidden) startChat(); };
   $('#context-close').onclick = () => dialog.close();
   $('#feature-close').onclick = () => $('#feature-preview').close();
   $('#feature-plus').onclick = () => { $('#feature-preview').close(); openUnlock(); };
@@ -549,7 +553,7 @@ async function finishUtterance(session, blob, duration) {
     const data = await res.json().catch(() => ({}));
     if (!voice.active || session !== voice.session) return;
     if (!res.ok) throw new Error(data.error || 'We could not hear that. Try again or type your question.');
-    voiceStatus('Dave is thinking…');
+    voiceStatus('Your AI perspective is preparing an answer…');
     await send(data.text, {spoken: true, voiceSession: session});
   } catch (e) {
     if (voice.active && session === voice.session) voiceStatus(e.message, 'warn');
@@ -576,7 +580,7 @@ async function speakReply(el, r, session = null) {
   }, (status,error) => {
     if (['ended','stopped','error','blocked'].includes(status)) settle(status === 'ended');
     if (session && status === 'blocked') endConversation('Playback needs a click. Use Listen to retry.');
-    if (status === 'playing') {played = true;if (session && voice.active && voice.session === session) voiceStatus('Dave is speaking…');}
+    if (status === 'playing') {played = true;if (session && voice.active && voice.session === session) voiceStatus('Playing the AI-generated answer…');}
     box.hidden = false;
     btn.disabled = status === 'loading'; btn.hidden = ['playing','ended','blocked'].includes(status);
     btn.textContent = status === 'loading' ? 'Preparing audio…' : 'Listen';
@@ -617,13 +621,16 @@ async function boot() {
   state.config = await api('/api/config');
   state.config.catalog.personas.forEach(p => { p.name = displayName(p.name); });
   try { state.tier = (await api('/api/me')).tier; } catch {}
-  $('#tier').hidden = state.tier !== 'plus';
+  $('#tier').hidden = true;
+  try { const saved = JSON.parse(localStorage.getItem('mentor-labs-choice') || 'null'); if (saved && usable(persona(saved.personaId))) { state.personaId=saved.personaId; state.agentId=usable(agent(saved.agentId)) ? saved.agentId : 'budget'; state.need=saved.need || 'question'; } } catch {}
   $('#engine').textContent = state.config.engine === 'live' ? 'Live AI' : state.config.engine === 'mock' ? 'Local test mode' : 'AI unavailable';
   renderLanding();
   $('#home').onclick = e => { e.preventDefault(); show('v-landing'); };
   $('#start').onclick = renderIntake;
-  const startRamsey = () => {state.personaId = DEMO_PERSONA; state.agentId = DEMO_AGENT; startChat();};
-  $('#head-start').onclick = startRamsey; $('#try-chat').onclick = startRamsey;
+  $('#head-start').onclick = () => openStartChoice(); $('#try-chat').onclick = () => openStartChoice();
+  $('#start-choice-form').onsubmit = submitStartChoice;
+  $('#start-choice-close').onclick = () => $('#start-choice').close();
+  document.querySelectorAll('[data-start-need]').forEach(b => b.onclick = () => openStartChoice({need:b.dataset.startNeed}));
   $('#chat-plan').onclick = renderIntake;
   $('#demo').onclick = async () => { await api('/api/portfolio/upload', {method: 'POST', body: {sample: true}}).catch(() => {}); submitQuiz(DEMO); };
   document.querySelectorAll('[data-unlock]').forEach(b => b.onclick = openUnlock);
@@ -642,7 +649,7 @@ async function boot() {
   $('#toggle-chat-sidebar').onclick = () => { const hidden = document.body.classList.toggle('chat-sidebar-hidden'); $('#toggle-chat-sidebar').setAttribute('aria-expanded', String(!hidden)); };
   $('#restart').onclick = async () => { if (!confirm('Start over? Your answers and chat will be cleared.')) return; await api('/api/session', {method: 'DELETE'}).catch(() => {}); location.href = '/'; };
   await handleCheckoutReturn();
-  try { const r = await api('/api/profile'); state.profile = r.profile; state.snapshot = r.snapshot; const h = persona(r.profile?.personaHint); if (h && usable(h)) state.personaId = h.id; const {history} = await api('/api/history'); if (history.length) { await restoreChat(history); return; } if (r.profile?.incomeHistory?.length) { startChat(); return; } } catch {}
+  try { const r = await api('/api/profile'); state.profile = r.profile; state.snapshot = r.snapshot; const {history} = await api('/api/history'); if (history.length) { await restoreChat(history); return; } if (r.profile?.incomeHistory?.length) { startChat(); return; } } catch {}
   show('v-landing');
 }
 boot().catch(e => banner(`The app could not load: ${e.message}`, true));
@@ -656,3 +663,26 @@ if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: re
   }, {threshold:0.08});
   document.querySelectorAll('#v-landing > .band').forEach(section => sections.observe(section));
 }
+
+// Lessons are optional; the user reviews the question before sending it.
+let learningQuestion = '';
+document.addEventListener('mentor:learn', e => {
+  learningQuestion = 'Teach me the core ideas in ' + String(e.detail?.title || 'this lesson').slice(0,120) + '. Explain why they matter, give me a practical reflection exercise, and help me check my understanding.';
+  openStartChoice({need:'question'});
+});
+document.querySelector('#start-choice')?.addEventListener('submit', () => {
+  if (learningQuestion && !document.querySelector('#start-choice').open) {document.querySelector('#msg').value=learningQuestion;document.querySelector('#msg').focus();learningQuestion='';}
+});
+
+// One teacher conversation, shared with the learning and planning workspace.
+function openWorkspace(tab) {show('v-workspace');document.dispatchEvent(new CustomEvent('mentor:workspace-open'));if(tab)document.querySelector('[data-workspace-tab="'+tab+'"]')?.click();}
+function openLearning() {show('v-landing');document.querySelector('#learn > details').open=true;document.querySelector('#learn').scrollIntoView({block:'start'});}
+document.querySelectorAll('[data-open-workspace]').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();openWorkspace(b.dataset.openWorkspace);}));
+document.querySelectorAll('[data-open-learning]').forEach(b=>b.addEventListener('click',openLearning));
+document.querySelectorAll('[data-return-chat]').forEach(b=>b.addEventListener('click',()=>{if(state.personaId)startChat();else openStartChoice();}));
+document.addEventListener('mentor:show-learning',openLearning);
+document.addEventListener('mentor:edit-finances',renderIntake);
+document.addEventListener('mentor:inputs-updated',async()=>{if(voice.active)endConversation('Your saved inputs changed.');state.lastTurn=null;const r=await api('/api/profile');state.profile=r.profile;state.snapshot=r.snapshot;});
+document.addEventListener('mentor:workspace-question',e=>{learningQuestion=String(e.detail?.question||'').slice(0,2000);openStartChoice({need:/portfolio|holdings|earnings/.test(learningQuestion)?'future':'question'});});
+
+document.addEventListener('mentor:guidelines-updated',()=>{state.lastTurn=null;if(voice.active)endConversation('Your saved review guidelines changed.');});

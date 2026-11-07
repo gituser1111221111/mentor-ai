@@ -1,0 +1,55 @@
+{
+  "version": 1,
+  "project": {
+    "name": "Mentor Labs",
+    "productType": null,
+    "stack": [
+      "Node.js",
+      "vanilla JavaScript",
+      "HTML",
+      "CSS"
+    ]
+  },
+  "sources": {
+    "tokens": [],
+    "components": [],
+    "assets": [],
+    "instructions": [
+      "CLAUDE.md"
+    ]
+  },
+  "design": {
+    "colorMode": "unknown",
+    "colors": {},
+    "typography": {},
+    "spacing": {},
+    "radius": {},
+    "shadows": {},
+    "motion": {},
+    "density": "unknown"
+  },
+  "components": {
+    "installed": [],
+    "preferredPrimitives": [],
+    "patterns": []
+  },
+  "constraints": {
+    "must": [],
+    "avoid": []
+  },
+  "decisions": [
+    "Preserve existing design and imagery.",
+    "Use native disclosures to reduce information overload.",
+    "AI teachers support both everyday and future money, with optional learning modules.",
+    "21st search returned HTTP 401; existing primitives reused.",
+    "One teacher chatbot, optional learning, and a two-tab Budget/Portfolio workspace; no public specialist selector.",
+    "Explain user-defined metrics with accessible native modal dialogs and preserve per-source freshness labels."
+  ],
+  "evidence": [
+    {
+      "fact": "project.instructions",
+      "source": "CLAUDE.md"
+    }
+  ],
+  "generatedAt": "2026-11-07T23:03:32.005Z"
+}
