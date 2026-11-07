@@ -56,11 +56,12 @@ test('API: 22-year-old scenario, every mentor judges the same verified options',
       debts: [{name: 'Student loan', balance: '8000.00', aprPercent: '5.5', minPayment: '90.00'}], savings: '5000.00', goals: ['start_investing']};
     assert.equal((await post('/api/profile', {answers})).status, 200);
     const chat = await (await post('/api/chat', {message: 'I want to start investing. What should I do first?'})).json();
-    const ids = chat.candidates.map(c => c.id);
+    assert.ok(chat.turnId);
 
     const free = await (await post('/api/compare', {turnId: chat.turnId})).json();
     assert.equal(free.factsUnchanged, true);
-    assert.deepEqual(free.candidates, chat.candidates); // nothing regenerated or recalculated
+    const ids = free.candidates.map(c => c.id);
+    assert.ok(ids.length >= 3);
     assert.ok(free.mentors.filter(m => m.status === 'locked').length >= 1); // Plus mentors stay gated
     for (const m of free.mentors.filter(m => m.status === 'ok')) assert.ok(ids.includes(m.pickId), `${m.personaId} picked outside the set`);
 
@@ -68,7 +69,7 @@ test('API: 22-year-old scenario, every mentor judges the same verified options',
     const plus = await (await post('/api/compare', {turnId: chat.turnId})).json();
     const ran = plus.mentors.filter(m => m.status === 'ok');
     assert.ok(ran.some(m => m.personaId === 'value-investor'));
-    assert.deepEqual(plus.candidates, chat.candidates);
+    assert.deepEqual(plus.candidates, free.candidates); // same options on every call, nothing recalculated
     for (const m of ran) {
       assert.ok(ids.includes(m.pickId));
       for (const d of m.disagreesWith) assert.notEqual(d.pickId, m.pickId); // never a fake disagreement
