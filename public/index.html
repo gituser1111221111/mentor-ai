@@ -38,13 +38,13 @@
         <div class="hero-copy">
           <p class="hero-eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span> MEET MENTOR LABS</p>
           <h1>Money guidance from <em>a point of view you trust.</em></h1>
-          <p class="lead">Start a conversation with our free Ramsey-inspired mentor. Explore a growing library of specialist agents and familiar financial perspectives, all in one place.</p>
+          <p class="lead">Answer six quick questions, then talk with our free Ramsey-inspired mentor. Explore a growing library of specialist agents and familiar financial perspectives, all in one place.</p>
           <div class="row hero-actions">
             <button id="try-chat" class="btn primary">Try Ramsey free <span aria-hidden="true">↗</span></button>
-            <button id="start" class="btn secondary">Build my plan</button>
+            <button id="start" class="btn secondary">Answer six questions</button>
             <button id="demo" class="btn secondary">See a sample plan</button>
           </div>
-          <p class="hero-assurance">No account needed <span aria-hidden="true">•</span> Start chatting now <span aria-hidden="true">•</span> Personal plan is optional</p>
+          <p class="hero-assurance">No account needed <span aria-hidden="true">•</span> Six questions on one page <span aria-hidden="true">•</span> Straight into chat</p>
           <p class="hero-vision">Our vision: hundreds of specialist AI agents, guided by mentor perspectives you trust. This demo begins with one free flagship.</p>
         </div>
         <div class="hero-visual">
@@ -66,11 +66,11 @@
 
       <section id="how" class="band">
         <p class="section-eyebrow">HOW IT WORKS</p>
-        <h2>A conversation first.<br>A plan when you're ready.</h2>
+        <h2>Six quick answers.<br>Then a conversation.</h2>
         <ol class="steps">
-          <li><span class="n">01</span><div><h3>Talk to a mentor</h3><p>Ask the Ramsey-inspired flagship a question right away. No quiz is required to begin.</p></div></li>
-          <li><span class="n">02</span><div><h3>Add your context</h3><p>Answer a short intake for a personal snapshot. You can also bring a document or a portfolio reference.</p></div></li>
-          <li><span class="n">03</span><div><h3>Explore the lab</h3><p>See where the Plus library is headed. The Ramsey starter is the working MVP; more mentor-agent pairings will follow.</p></div></li>
+          <li><span class="n">01</span><div><h3>Answer six questions</h3><p>Income, bills, spending, debt, savings, and your goal appear together on one page.</p></div></li>
+          <li><span class="n">02</span><div><h3>Add context if you want</h3><p>Import a holdings CSV or upload a financial document. A live brokerage connection is not available yet.</p></div></li>
+          <li><span class="n">03</span><div><h3>Talk to a mentor</h3><p>Go straight into chat, then use the sidebar to explore other perspectives and AI coaches.</p></div></li>
         </ol>
       </section>
 
@@ -124,47 +124,38 @@
 
       <section class="band faq" aria-labelledby="faq-title">
         <h2 id="faq-title">Common questions.</h2>
-        <details><summary>What if my income changes every month?</summary><p>The plan uses your lowest reported month to check whether your essentials are covered. You can review the calculation before starting coaching.</p></details>
+        <details><summary>What if my income changes every month?</summary><p>The plan uses your lowest reported month to check whether your essentials are covered. The calculation is available in chat.</p></details>
         <details><summary>Can I switch mentors?</summary><p>Yes. A different mentor can choose from the same verified options, so the facts and calculations stay the same.</p></details>
         <details><summary>Do I need to connect a bank account?</summary><p>No. You can enter your numbers yourself. A portfolio URL is saved as a reference only; a holdings CSV can be summarized in this demo.</p></details>
       </section>
     </section>
 
-    <!-- QUIZ -->
-    <section id="v-quiz" class="view narrow" hidden>
-      <div class="progress" aria-hidden="true"><div id="bar"></div></div>
-      <p id="q-section" class="kicker"></p>
-      <h2 id="q-prompt" class="q"></h2>
-      <p id="q-why" class="why"></p>
-      <div id="q-body"></div>
-      <p id="q-error" class="error" role="alert"></p>
-      <div class="row nav">
-        <button id="q-back" class="btn">Back</button>
-        <button id="q-skip" class="btn text">Skip</button>
-        <button id="q-next" class="btn primary">Next</button>
-      </div>
-    </section>
-
-    <!-- SNAPSHOT + SETUP -->
-    <section id="v-snap" class="view narrow" hidden>
-      <p class="kicker">Your numbers</p>
-      <h2 id="snap-title" class="q"></h2>
-      <div id="snap"></div>
-      <h3 class="sub">Choose your mentor</h3>
-      <p class="why">The Ramsey-inspired mentor is free. Explore the other perspectives in Plus.</p>
-      <div id="pick-mentor" class="choice-grid"></div>
-      <p class="fine">Portraits are AI-generated likenesses. The people shown are not affiliated with this app.</p>
-      <h3 class="sub">Explore specialist agents</h3>
-      <div id="pick-coach" class="choice-list"></div>
-      <div class="row"><button id="to-chat" class="btn primary">Chat with Ramsey-inspired mentor</button><button class="btn" data-context>Add documents or portfolio</button></div>
+    <!-- SIX QUESTIONS, ONE SCREEN -->
+    <section id="v-quiz" class="view intake" hidden>
+      <p class="kicker">Start free · one page</p>
+      <h2>Tell us where your money stands.</h2>
+      <p class="why">Answer what you know. Only your income is required; you can add details in chat.</p>
+      <form id="intake-form">
+        <div class="intake-grid">
+          <fieldset class="intake-card"><legend><span>01</span> What did you take home recently?</legend><p class="fine">Enter up to six months of take-home pay. One month is enough to start.</p><div id="income-months" class="money-grid"></div></fieldset>
+          <fieldset class="intake-card"><legend><span>02</span> What are your fixed monthly bills?</legend><label class="f">Total each month, including rent and utilities<input id="intake-bills" inputmode="decimal" placeholder="0.00"></label></fieldset>
+          <fieldset class="intake-card"><legend><span>03</span> What do you spend day to day?</legend><label class="f">Monthly food, transport, and other spending<input id="intake-spending" inputmode="decimal" placeholder="0.00"></label></fieldset>
+          <fieldset class="intake-card"><legend><span>04</span> Do you have debt?</legend><div class="intake-debt"><label class="f">Total balance<input id="intake-debt-balance" inputmode="decimal" placeholder="0.00"></label><label class="f">APR %<input id="intake-debt-apr" inputmode="decimal" placeholder="0"></label><label class="f">Monthly minimum<input id="intake-debt-minimum" inputmode="decimal" placeholder="0.00"></label></div></fieldset>
+          <fieldset class="intake-card"><legend><span>05</span> How much cash savings do you have?</legend><label class="f">Money you can access now<input id="intake-savings" inputmode="decimal" placeholder="0.00"></label></fieldset>
+          <fieldset class="intake-card"><legend><span>06</span> What is your main goal?</legend><select id="intake-goal" class="f"><option value="stop_paycheck_to_paycheck">Stop living paycheck to paycheck</option><option value="pay_off_debt">Pay off debt</option><option value="emergency_fund">Build an emergency fund</option><option value="start_investing">Start investing</option><option value="big_purchase">Save for something big</option></select></fieldset>
+        </div>
+        <div class="intake-uploads"><h3>Have more context?</h3><p class="fine">Optional. Add it now or later in chat. Documents can be PDF, TXT, CSV, or Markdown, under 2 MB. Remove account numbers before uploading.</p><div class="row"><button type="button" id="connect-portfolio" class="btn">Connect portfolio</button><button type="button" id="upload-portfolio" class="btn">Upload portfolio CSV</button><button type="button" id="upload-document" class="btn">Upload financial document</button></div><p id="upload-status" class="fine" role="status"></p></div>
+        <p id="q-error" class="error" role="alert"></p>
+        <button type="submit" class="btn primary">Start chatting</button>
+      </form>
     </section>
 
     <!-- CHAT -->
     <section id="v-chat" class="view chat" hidden>
       <aside class="rail">
-        <h4>Mentors</h4>
+        <h4>Perspective <span>choose another mentor</span></h4>
         <div id="persona-switch" class="rail-list"></div>
-        <h4>Specialist agents</h4>
+        <h4>AI coach <span>choose a specialty</span></h4>
         <div id="agent-list" class="rail-list"></div>
         <button class="btn context-rail" data-context>Add context or portfolio</button>
         <h4>What I remember</h4>
@@ -172,8 +163,9 @@
       </aside>
       <div class="chat-main">
         <div id="chat-head" class="chat-head"></div>
-        <div class="chat-actions"><button type="button" id="chat-plan" class="btn text">Build a personal plan</button></div>
+        <div class="chat-actions"><button type="button" id="chat-plan" class="btn text">Update my answers</button></div>
         <div id="log" aria-live="polite"></div>
+        <div class="chat-actions"><button type="button" id="chat-connect-portfolio" class="btn text">Connect portfolio</button><button type="button" id="chat-upload-portfolio" class="btn text">Upload portfolio CSV</button><button type="button" id="chat-upload-document" class="btn text">Upload document</button></div>
         <div class="chips" id="suggest"></div>
         <form id="composer">
           <label for="msg" class="sr">Your question</label>
@@ -192,6 +184,8 @@
     <div id="compare-body"></div>
     <button class="btn primary">Close</button>
   </form></dialog>
+  <input id="portfolio-file" type="file" accept=".csv,text/csv" hidden>
+  <input id="document-file" type="file" accept=".pdf,.txt,.csv,.md,application/pdf,text/plain,text/csv" hidden>
   <dialog id="unlock"><form method="dialog">
     <h3>Explore Mentor Labs Plus</h3>
     <p>The Ramsey-inspired starter is the free working demo. Plus is the growing library of additional mentor perspectives and specialist agents. The other pairings are planned; this prototype uses test checkout only.</p>
@@ -201,7 +195,7 @@
   </form></dialog>
 
   <dialog id="context-dialog"><div class="context-dialog-head"><div><p class="section-eyebrow">YOUR CONTEXT HUB</p><h3>Bring the details that matter.</h3></div><button id="context-close" type="button" class="btn text" aria-label="Close context hub">Close</button></div>
-    <div class="context-fields"><label class="context-field"><strong>Documents</strong><span>Choose any document to preview here. Files are not analyzed or sent to a model in this MVP.</span><input id="context-files" type="file" multiple><small id="context-file-status" role="status">No documents selected.</small></label>
+    <div class="context-fields"><label class="context-field"><strong>Documents</strong><span>Upload a PDF, TXT, CSV, or Markdown file under 2 MB. Extracted text can inform chat; remove account numbers first.</span><input id="context-files" type="file" accept=".pdf,.txt,.csv,.md,application/pdf,text/plain,text/csv"><small id="context-file-status" role="status">No documents selected.</small></label>
     <label class="context-field"><strong>Portfolio link</strong><span>Save a brokerage or portfolio URL as a reference. It will not connect to your account.</span><input id="portfolio-link" type="url" placeholder="https://your-brokerage.example/portfolio"><small id="portfolio-link-status" role="status">No link saved.</small></label>
     <label class="context-field"><strong>Holdings CSV</strong><span>For a working demo, import a CSV with symbol, sector and market_value columns.</span><input id="context-csv" type="file" accept=".csv,text/csv"><small id="context-csv-status" role="status">No holdings imported.</small></label></div>
     <div class="row"><button id="portfolio-save" type="button" class="btn primary">Save portfolio reference</button><button id="context-sample" type="button" class="btn">Use sample holdings</button></div>
