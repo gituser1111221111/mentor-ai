@@ -137,3 +137,17 @@ test('refusal or too few verified options raises for the route to report', async
   setClient(fakeClient({generated: GOOD.slice(3), picks: {}}));
   await assert.rejects(chat({messages: [{role: 'user', content: 'x'}], profile}), /enough verified options/);
 });
+
+
+test('ordinary chat receives uploaded Markdown as source context without a financial profile',async()=>{
+ let received;
+ setClient({messages:{create:async params=>{
+  received=JSON.parse(params.messages[0].content);
+  return {content:[{type:'text',text:JSON.stringify({kind:'conversation',reply:'Your notes prioritize an emergency reserve before discretionary spending.',noteIds:[]})}],stop_reason:'end_turn',usage:{}};
+ }}});
+ const result=await chat({profile:{documents:[{name:'money-notes.md',text:'# Priorities\nBuild an emergency reserve before discretionary spending.'}]},messages:[{role:'user',content:'What priorities are described in my uploaded notes?'}]});
+ assert.equal(received.uploadedDocuments[0].name,'money-notes.md');
+ assert.match(received.uploadedDocuments[0].text,/emergency reserve/);
+ assert.match(result.text,/emergency reserve/);
+ assert.equal(result.conversational,true);
+});
