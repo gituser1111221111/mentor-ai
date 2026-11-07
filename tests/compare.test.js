@@ -45,7 +45,7 @@ test('factsUnchanged is false if any mentor returned different options', async (
   assert.equal(r.factsUnchanged, false);
 });
 
-test('API: 22-year-old scenario, every mentor judges the same verified options', async () => {
+test('API: only the flagship judges verified options while planned mentors stay visible', async () => {
   const server = createServer(); await new Promise(r => server.listen(0, '127.0.0.1', r));
   const base = `http://127.0.0.1:${server.address().port}`;
   const h = {'Content-Type': 'application/json', 'X-Session-Id': 'compare-test-session-0001'};
@@ -68,7 +68,8 @@ test('API: 22-year-old scenario, every mentor judges the same verified options',
     assert.equal((await (await post('/api/checkout/demo')).json()).tier, 'plus');
     const plus = await (await post('/api/compare', {turnId: chat.turnId})).json();
     const ran = plus.mentors.filter(m => m.status === 'ok');
-    assert.ok(ran.some(m => m.personaId === 'value-investor'));
+    assert.deepEqual(ran.map(m => m.personaId), ['debt-free-coach']);
+    assert.ok(plus.mentors.some(m => m.personaId === 'value-investor' && m.status === 'coming-soon'));
     assert.deepEqual(plus.candidates, free.candidates); // same options on every call, nothing recalculated
     for (const m of ran) {
       assert.ok(ids.includes(m.pickId));

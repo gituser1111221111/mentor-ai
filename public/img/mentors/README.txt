@@ -1,1 +1,1 @@
-Mentor portraits go here: <id>.webp, 4:5, >=600x750. See docs/DESIGN.md.
+AI-generated editorial likenesses of the public figures whose teachings inspire the mentor personas. These figures are not affiliated with or endorsing the app. Each WebP is 640x800 and referenced by config/catalog.json. See docs/DESIGN.md.

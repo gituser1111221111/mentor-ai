@@ -120,15 +120,14 @@ test('speak ignores any text the browser sends and only voices stored replies', 
   assert.ok(!calls[n].body.toString().includes('crypto'));
 });
 
-test('speak refuses unknown turns, other sessions, and mentors without a voice', async () => {
+test('speak refuses unknown turns, other sessions, and unlaunched mentors', async () => {
   const s = await withProfile();
   const r = await (await post('/api/chat', s, {message: 'help'})).json();
   assert.equal((await post('/api/voice/speak', s, {turnId: 'nope', personaId: 'debt-free-coach'})).status, 404);
   assert.equal((await post('/api/voice/speak', sid(), {turnId: r.turnId, personaId: 'debt-free-coach'})).status, 404); // another session
-  const sw = await (await post('/api/repick', s, {turnId: r.turnId, personaId: 'conscious-spender'})).json();
-  const noVoice = await post('/api/voice/speak', s, {turnId: sw.turnId, personaId: 'conscious-spender'});
-  assert.equal(noVoice.status, 503);
-  assert.match((await noVoice.json()).error, /does not have a voice yet/);
+  assert.equal((await post('/api/repick', s, {turnId: r.turnId, personaId: 'conscious-spender'})).status, 402);
+  const noVoice = await post('/api/voice/speak', s, {turnId: r.turnId, personaId: 'conscious-spender'});
+  assert.equal(noVoice.status, 404);
   assert.equal((await post('/api/voice/speak', s, {turnId: 5})).status, 400);
 });
 

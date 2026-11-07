@@ -1,10 +1,10 @@
-# Money Mentor (working title)
+# Mentor Labs
 
-**AI money mentors that can't make up numbers. They can only choose.**
+**The vision: hundreds of specialist AI agents, guided by mentor perspectives people already trust.** This demo starts with a free Ramsey-inspired chat and a visible Plus library of ten mentors and sixteen agent specialties.
 
 RedHawk Builds 2026 · Challenge #21, Variable-income budgeting (Student and Campus Finance track), MVP option 1: plan expenses around variable monthly income.
 
-**Live demo:** https://mentor-ai-ahjs.onrender.com. It's on Render's free plan, so the first visit after about 15 idle minutes takes ~50 seconds to wake up. Click **"Use demo profile (Jordan, 22)"** to skip the quiz.
+**Live demo on main:** https://mentor-ai-ahjs.onrender.com. The current PR branch contains the Mentor Labs redesign; the hosted main demo may lag until that PR is merged and deployed.
 
 ---
 
@@ -17,7 +17,7 @@ We fix one workflow: **getting a budget plan that's built around the lowest mont
 ## How it works
 
 ```
-quiz answers ──► code computes every number (exact cents)
+optional intake ──► code computes every number (exact cents)
                      │  lowest month, shortfall, emergency-fund gap,
                      │  snowball/avalanche payoff, income gap, splits…
                      ▼
@@ -31,31 +31,35 @@ quiz answers ──► code computes every number (exact cents)
        picks ONE option by id (a fixed enum), explains it in its voice, cites its notes.
        If its reply contains an unverified number, the app shows the option's own text instead.
                      ▼
-   answer + calc card + citation chips + "See all options" (with the number-check results)
+   conversational answer + expandable sources and calculations
 
 Switch mentor ──► step ③ only: same options, same numbers, different pick (~2.5 s)
+
+No intake ──► general Ramsey-inspired chat, without a personalized plan
 ```
 
 - **Coaching** = a specialist bot (Budget, Debt, Savings & Emergency Fund) that does the work and the math.
 - **Mentor** = a money philosophy that directs the coach by choosing among its verified options. Mentors are built from summaries of public teachings and labeled *"inspired by; not affiliated or endorsed."* No mentor claims to be a real person, and there are no cloned voices.
 
-**Available now:** 2 free mentors (Debt-Free and Conscious Spender) and 3 free coaches (Budget, Debt, Savings). The other mentors and coaches are planned; the Plus checkout is a Stripe test-mode preview and makes new options available as they launch.
+**Available now:** Ramsey-inspired starter chat with budgeting support is free and is the sole interactive mentor and agent pairing. The other nine mentors and fifteen agent specialties are visible as the planned Plus library. Every agent card has a `+` badge. Checkout is test mode only; no real charge is made.
 
 ## What actually works (and what doesn't)
 
 | Feature | Status |
 |---|---|
-| 13-question screening quiz → money snapshot (lowest month, swing, essentials, shortfall) | Works; computed in code |
+| 6-screen optional intake → money snapshot (lowest month, swing, essentials, shortfall) | Works |
 | Portfolio CSV upload → value, sector mix, fees (`portfolioSummary`) | Works. No brokerage login; the sample file is synthetic |
-| Live chat: generate → validate → pick, for 3 coaches × 2 available mentors | Works on the live site (Claude API) |
-| Persona switch on the same options (`repick`) | Works |
-| Number check visible in the UI ("proposed N, kept K, dropped D: reason") | Checks money, percentages, dates and other numeric claims against calculations; it cannot prove the reasoning is sound |
+| Free Ramsey-inspired starter chat without an intake | Works with Claude when configured; explicit local mock mode is available for testing |
+| Personalized chat: generate → validate → pick | Works for the Ramsey budgeting starter |
+| Persona switch on the same options (`repick`) | Engine support exists; additional mentor pairings are not launched |
+| Internal number check | Checks money, percentages, dates and other numeric claims against calculations; the public chat shows the answer and optional source/calculation details |
 | Conversation and memory | Restores after refresh on the same server instance; users can remove remembered facts |
-| Offline fallback: if Claude fails, a rule-based engine answers, labeled "offline fallback" | Works |
+| Claude unavailable | Chat returns a clear retry message; the rule-based engine runs only when `MENTOR_ENGINE=mock` is explicitly set for local testing |
 | $4.99/month Plus (Stripe Checkout) | Works in **Stripe test mode**: a real hosted checkout and subscription, verified on the server before Plus unlocks. Use card 4242 4242 4242 4242. Live keys are refused in code |
-| Additional mentors and coaches | Not in the main selection flow until their files and logic are ready |
-| "Connect brokerage" (Plaid) | **Not built**: shown as sandbox-only text |
-| Voice (ElevenLabs) | **Not built yet** |
+| Additional mentors and agents | Nine mentors and fifteen more agent specialties are shown in the gallery, selector, and chat rail as planned Plus entries; they cannot be used as if live |
+| Document picker and portfolio URL | Showcase only: documents stay in the browser; URL is session-only reference, with no brokerage connection |
+| Direct brokerage connection (Plaid) | **Not built**; the portfolio link is reference-only |
+| Voice (ElevenLabs) | Optional on the Ramsey starter when server keys and a voice are configured; text chat works without it |
 
 ## Run it locally
 
@@ -69,7 +73,7 @@ npm test                  # offline tests, no network or key needed
 npm run eval:chat         # live answer-quality scenarios; requires MENTOR_API_KEY
 ```
 
-Without a key, the app runs on the rule-based mock engine (labeled "mock engine" in the UI). `MENTOR_API_KEY` takes priority over `ANTHROPIC_API_KEY`, in case your machine already has a different key set. `MENTOR_ENGINE=mock` forces the mock.
+Without a key, the app shows that AI chat is unavailable. `MENTOR_API_KEY` takes priority over `ANTHROPIC_API_KEY`. Set `MENTOR_ENGINE=mock` only for an explicit local test session.
 
 **Deploy:** `render.yaml` is a Render Blueprint (free Node 22 web service, `HOST=0.0.0.0`). Set `MENTOR_API_KEY` as a secret in Render's Environment settings. Each IP is limited to 40 model calls per hour (`CHAT_LIMIT_PER_HOUR`).
 
@@ -78,7 +82,7 @@ Without a key, the app runs on the rule-based mock engine (labeled "mock engine"
 `npm test` uses a fake Claude client and never calls the network. `npm run eval:chat` runs four live scenarios covering a shortfall, debt versus savings, a good month and missing income. It checks mechanics and prints answers for human review.
 
 - **Valid input:** quiz answers produce an exact-cents snapshot (`$1,780.00` low, `$2,380.00` average, `$1,634.00` essentials in the test profile).
-- **Missing or invalid input:** no income means the coach asks for it without calling the model. Bad dollar amounts and APRs over 100% are rejected with the field named.
+- **Missing or invalid input:** starter chat answers general questions without income. A personal plan requires intake data. Bad dollar amounts and APRs over 100% are rejected with the field named.
 - **Reconciliation:** debt payoff simulations reconcile to the cent (total paid = principal + interest), and in the test case avalanche pays no more interest than snowball.
 - **Pick integrity:**
   - The mentor can only pick an id that exists.
@@ -97,13 +101,13 @@ config/quiz.json          screening quiz spec (UI renders from it)
 config/catalog.json       10 mentors + 10 coaches, free/plus tiers, explainer text
 lib/profile.js            quiz → validated profile + money snapshot (cents)
 lib/portfolio.js          brokerage CSV → portfolioSummary
-lib/store.js, routes.js   anonymous session store, /api/* routes, rate limit, live→mock fallback
+lib/store.js, routes.js   anonymous session store, /api/* routes, rate limit, Claude availability errors
 lib/mentor/tools.js       calc library: the only numbers the model may use
 lib/mentor/generate.js    coaching step (Sonnet 5.5), per-coach focus
 lib/mentor/validate.js    number check, dedupe, unknown-calc rejection
 lib/mentor/pick.js        mentor step (Haiku 5.5), enum pick, reply number check
 lib/mentor/personas.js    loads personas/<id>/core.md + notes/*.md, else built-in summaries
-lib/mentor/chat.js        live engine (chat, repick); chat.mock.js = rule-based fallback
+lib/mentor/chat.js        live engine (chat, repick); chat.mock.js = explicit local test engine
 public/                   vanilla JS UI: landing, quiz, snapshot, chat
 docs/                     business plan, build plan, strategy, Devpost text
 ```
@@ -114,7 +118,7 @@ docs/                     business plan, build plan, strategy, Devpost text
 - **Mentor fidelity still needs human evaluation.** The live scenario script checks mechanics and basic relevance; it does not establish an advice-quality or source-fidelity score.
 - **Coaches share one calculation library.** Debt and Savings coaching differ from Budget only in focus. Taxes, investment returns and pay changes aren't forecast.
 - **Single-instance, anonymous store.** Sessions and chat turns are saved to a local JSON file, but Render's free-service disk is ephemeral. Data can disappear on restart or redeploy. Fictional data only.
-- **No real bank or brokerage connection, and no real payments.**
+- **No real bank or brokerage connection, and no real payments.** Documents and portfolio links are showcase fields; the CSV importer is functional.
 - **The number check matches exact values.** It can't catch wrong reasoning that uses correct numbers, and it can reject a valid rephrasing (for example, a rounded number).
 - Not affiliated with or endorsed by Dave Ramsey, Ramsey Solutions, Ramit Sethi or anyone else named.
 

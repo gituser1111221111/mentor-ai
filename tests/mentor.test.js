@@ -110,12 +110,14 @@ test('live chat: structured outputs, cached prompts, persona picks by id, repick
   assert.match(h.text, /Raise your floor/);
 });
 
-test('no income: finance question asks for pay after classification', async () => {
-  const fake = fakeClient({generated: [], picks: {}});
-  setClient(fake);
-  const r = await chat({messages: [{role: 'user', content: 'help'}], profile: normalizeProfile({}).profile});
-  assert.match(r.text, /take-home pay/);
-  assert.equal(fake.calls.length, 1);
+test('no income: general Ramsey starter answers conversationally', async () => {
+  const calls = [];
+  setClient({messages: {create: async params => { calls.push(params); return {content: [{type: 'text', text: JSON.stringify(calls.length === 1 ? {kind: 'finance', reply: ''} : {reply: 'Start with a written budget. What is your main goal?'})}]}; }}});
+  const r = await chat({messages: [{role: 'user', content: 'How should I start?'}], profile: normalizeProfile({}).profile});
+  assert.match(r.text, /written budget/);
+  assert.equal(r.turnId, null);
+  assert.equal(calls.length, 2);
+  assert.ok(calls.every(c => c.model === 'claude-haiku-5-5'));
 });
 
 test('greeting gets a short model reply without generating budget options', async () => {

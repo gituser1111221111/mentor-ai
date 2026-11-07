@@ -1,47 +1,34 @@
-# Design guide (v1, Nov 7)
+# Design guide (v4, Nov 7)
 
-## Direction: "a well-kept ledger"
-Young adults with uneven pay who don't trust AI with money. The site should feel like a careful notebook kept by someone who reads a lot of money books: calm, specific, checkable. No fintech neon, no AI sparkle.
+## Direction
+
+Mentor Labs takes broad cues from investing sites such as Autopilot, Betterment, Wealthfront, and Public: prominent product context, confident typography, and clear next steps. It has its own editorial look with warm paper, evergreen, and mentor portraits.
+
+The hero leads with trust and the free Ramsey-inspired chat. The landing page explains the three-step flow, the sourced-method idea, ten visible mentor perspectives, sixteen agent specialties, and the context hub. The intake is optional and six screens. The chat opens immediately for general questions; a personal snapshot follows the intake.
+
+## System
 
 | Token | Value | Use |
 |---|---|---|
-| `--paper` | `#f4f1ea` | page background (never pure white) |
-| `--ink` | `#1d1b16` | text, rules, button outlines |
-| `--green` | `#1f4d3a` | the one brand color: primary buttons, "on" states, kickers |
-| `--ochre` | `#a85a17` | the one accent: shortfalls, months below essentials, Plus tags |
-| `--rule` | `#d8d1c1` | 1px dividers (we use rules, not shadows) |
+| `--paper` | `#faf9f5` | Page canvas |
+| `--paper-2` | `#edf2eb` | Quiet surfaces |
+| `--ink` | `#17332b` | Primary text |
+| `--green` | `#155c49` | Primary action and selected state |
+| `--rule` | `#d9e1d8` | Borders and separators |
+| `--ochre` | `#a84032` | Shortfalls and errors |
 
-Dark mode swaps every token (see `styles.css`).
+- **Newsreader** is the editorial headline face. **DM Sans** handles interface copy. **Inter** supplies tabular numbers.
+- The hero uses a dark evergreen field; internal app screens return to warm paper and white cards.
+- Buttons are rounded pills. Portrait cards, snapshot panels, and form choices have softer corners.
+- Keep visible focus rings, clear selected states, readable contrast, and reduced-motion support.
+- The landing page is responsive. Mentor images retain a 4:5 crop and load lazily below the fold.
 
-**Type**
-- **Fraunces** (serif): headlines and the mentor's voice in chat. It echoes the books the mentors come from.
-- **Public Sans**: UI and body. It's plain and trustworthy.
-- **IBM Plex Mono**: every number. Verified math reads like a receipt.
+## Portraits
 
-**Rules we keep**
-- One 3px radius everywhere.
-- No drop shadows, gradients or glass effects.
-- No emojis or stock icon sets.
-- No em dashes in copy.
-- No fake testimonials. The hero sample is real output from the live app.
-- Loading uses a skeleton with staged steps, not a spinner.
+`public/img/mentors/<id>.webp` contains ten optimized, AI-generated editorial likenesses. The Step-by-Step Planner image shows both Brian Preston and Bo Hanson. The image paths live in `config/catalog.json` and appear on the landing page, mentor chooser, and chat rail. Portraits are 640×800 WebP assets, about 32–67 KB each.
 
-## Vocabulary (use exactly these)
-- **Coaching** is the professional, a specialist bot that does the work and the math. Write "Budget Coaching" or "your coach."
-- **Mentor** is the philosophy that *directs* the coach by choosing among verified options. Write "Debt-Free Mentor directing Budget Coaching."
-- **Plus** is the $4.99/month plan. **Free** means 3 mentors and 3 coaches.
-- **Number check** is the code validation. Write "number check: 9 of 9 passed."
-- Never write "advisor," "financial advice," or "I am [real person]."
+Always describe them as AI-generated likenesses. Every card names the real figure whose public teaching inspired the mentor. The app must clearly state that these figures are not affiliated with or endorsing the product. A portrait is visual identification; it does not turn the mentor into the person or authorize a voice clone.
 
-## Flow
-Landing → quiz (13 questions, one per screen, each section says *why we ask*) → **Your numbers** (a monthly bar chart against an essentials line, plus stats) → **Choose your mentor** and **choose your coaching** → chat (rail on the left with mentors and coaches, header naming who is directing whom, answer + receipt + sources + "See all N options").
+## Product language
 
-## Character art (team: 10 mentors)
-Each mentor has an image slot. Until art exists, the UI shows a monogram.
-1. Export each portrait at **4:5, at least 600×750**, WebP or PNG. Keep one consistent style across all 10, and use the same background tone family as `--paper-2` (`#ebe6da`) so they sit on the page.
-2. **Don't make it look like the real person.** These are original characters "inspired by" a philosophy, not likenesses of Dave Ramsey, Grant Cardone and the others. This is the right-of-publicity line.
-3. Save as `public/img/mentors/<id>.webp`. The ids are in `config/catalog.json` (for example `debt-free-coach`, `hustle-coach`, `conscious-spender`, `index-investor`…).
-4. Set `"image": "/img/mentors/<id>.webp"` on that mentor in `config/catalog.json`. No code change is needed.
-
-## Payments
-Stripe Checkout runs in **test mode only** (`sk_test_…`). Live keys are refused in code. Without a key, the unlock button says "Unlock Plus (demo, no payment)." With a key, it redirects to Stripe and the server verifies the completed session before granting Plus.
+**Agents** have a specialty, such as debt consolidation, portfolio review, equity research, tax, or business coaching. A **mentor** brings a distinct public-teaching perspective to that specialty. All agent cards use a simple `+` badge. Ramsey-inspired guidance with budgeting support is the sole working flagship; other agents and mentors belong to the planned Plus library. If selected, they explain that they are being built. The long-term corpus and hundreds-of-agents language must be framed as a vision until implemented. The context hub must distinguish document and link previews from the functional CSV import.

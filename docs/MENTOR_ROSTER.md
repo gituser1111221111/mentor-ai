@@ -1,17 +1,17 @@
 # Mentor Roster: Research Status
 
-Every mentor is labeled "inspired by public teachings, not affiliated or endorsed" and is never presented as an AI version of the real person. Mentors only pick among options that code already calculated and validated. The demo focuses on the Dave Ramsey–inspired mentor. The others exist for the Plus tier and for mentor comparison.
+Every mentor is labeled "inspired by public teachings, not affiliated or endorsed" and is never presented as an AI version of the real person. Mentors only pick among options that code already calculated and validated. Only the Dave Ramsey–inspired mentor is interactive in this MVP. The other nine are planned Plus entries, even where research notes or prototype code already exist. The table tracks research depth, not launch status.
 
-| Mentor (catalog id) | Tier | Status | Notes | Research depth | Main sources (all opened and checked) |
+| Mentor (catalog id) | Tier | Research files | Notes | Research depth | Main sources (all opened and checked) |
 |---|---|---|---|---|---|
 | Dave Ramsey–inspired (debt-free-coach) | Free | Built | 59 | Full | Ramsey Solutions articles, Dave Says columns, Pew interview |
 | Warren Buffett–inspired (value-investor) | Plus | Built | 32 | Full | Berkshire Hathaway shareholder letters 1986–2024, with page locators |
 | Money Guy–inspired (step-by-step-planner) | Plus | Built | 34 | Full | moneyguy.com FOO guide and an episode transcript with timestamps |
 | Morgan Housel–inspired (money-psychology) | Plus | Built | 28 | Full | Six Collaborative Fund essays he wrote |
 | Cathie Wood–inspired (disruptive-growth) | Plus | Built | 10 | Limited | Motley Fool and Wikipedia only (third-party, "reported") |
-| Humphrey Yang–inspired (money-basics) | Free | Built | 14 | Limited | Motley Fool reports of his videos |
+| Humphrey Yang–inspired (money-basics) | Plus | Built | 14 | Limited | Motley Fool reports of his videos |
 | Vivian Tu–inspired (credit-smart) | Plus | Built | 11 | Limited | Motley Fool Q&A in her words, plus reports of her videos |
-| Ramit Sethi–inspired (conscious-spender) | Free | Built-in summary only | 0 files | Not started | See postponed sources below |
+| Ramit Sethi–inspired (conscious-spender) | Plus | Built-in summary only | 0 files | Not started | See postponed sources below |
 | Graham Stephan–inspired (real-estate-saver) | Plus | Coming soon | 0 | Not started | See postponed sources below |
 | Robert Kiyosaki–inspired (asset-builder) | Plus | Coming soon | 0 | Not started | See postponed sources below |
 
@@ -27,4 +27,4 @@ Sources found and saved but not turned into notes:
 ark-invest.com, richdad.com, iwillteachyoutoberich.com, morningstar.com and cnbc.com returned 403 to automated access, and humphreyyang.com failed TLS. We did not try to get around any block. No books, paid content or transcripts were copied into the repo.
 
 ## Voice
-Each catalog entry has `voiceIdEnv` (for example `ELEVENLABS_VOICE_VALUE_INVESTOR`) for a future original synthetic voice. Never clone or imitate the real person. The ElevenLabs speech-to-text and text-to-speech integration lives on branch `app/voice` and is not merged here yet.
+Each catalog entry has `voiceIdEnv` (for example `ELEVENLABS_VOICE_VALUE_INVESTOR`) for a future original synthetic voice. Never clone or imitate the real person. The optional ElevenLabs speech-to-text and text-to-speech integration is available for the Ramsey starter when configured on the server.

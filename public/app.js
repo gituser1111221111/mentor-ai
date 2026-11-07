@@ -1,4 +1,4 @@
-// Money Mentor SPA: landing -> quiz -> your numbers + choose mentor/coach -> coaching chat.
+// Mentor Labs SPA: free starter chat, short intake, specialist catalog, and coaching chat.
 // Vanilla JS, no build step. All money shown here comes from the server's exact-cents math.
 const $ = s => document.querySelector(s);
 const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
@@ -22,6 +22,7 @@ function show(id) {
   views.forEach(v => { $('#' + v).hidden = v !== id; });
   const landing = id === 'v-landing';
   $('#nav').hidden = !landing; $('#head-start').hidden = !landing; $('#restart').hidden = landing;
+  $('#engine').hidden = landing;
   window.scrollTo(0, 0);
 }
 function banner(text, warn = false) { const b = $('#banner'); b.textContent = text; b.className = 'banner' + (warn ? ' warn' : ''); b.hidden = !text; }
@@ -32,20 +33,21 @@ const agents = () => state.config.catalog.agents;
 const persona = id => personas().find(p => p.id === id);
 const agent = id => agents().find(a => a.id === id);
 const allowed = x => x.tier === 'free' || state.tier === 'plus';
-const usable = x => allowed(x) && x.built;
-const statusLabel = x => !allowed(x) ? 'Plus' : !x.built ? 'Soon' : (x.tier === 'free' ? 'Free' : 'Plus');
+const starterCoach = x => x?.id === 'budget' && state.personaId === 'debt-free-coach';
+const usable = x => x?.built && (allowed(x) || starterCoach(x));
+const statusLabel = x => x?.tier === 'free' ? 'Free' : '+';
+const badge = x => `<span class="tag ${x.tier === 'plus' ? 'plus' : ''}" ${x.tier === 'plus' ? 'title="Mentor Labs Plus" aria-label="Mentor Labs Plus"' : ''}>${statusLabel(x)}</span>`;
 const initials = name => name.replace(/^The /, '').split(/[\s-]+/).map(w => w[0]).join('').slice(0, 2).toUpperCase();
-const art = (p, cls = 'frame') => `<div class="${cls}">${p.image ? `<img src="${esc(p.image)}" alt="Illustration of the ${esc(p.name)} mentor" loading="lazy">` : `<span class="mono-gram">${esc(initials(p.name))}</span>`}`;
+const art = (p, cls = 'frame') => `<div class="${cls}">${p.image ? `<img src="${esc(p.image)}" alt="AI-generated likeness inspired by ${esc(p.inspiredBy)}" width="640" height="800" loading="lazy" decoding="async">` : `<span class="mono-gram">${esc(initials(p.name))}</span>`}</div>`;
 const thumb = p => `<span class="thumb">${p.image ? `<img src="${esc(p.image)}" alt="">` : esc(initials(p.name))}</span>`;
 
 // ---------- landing ----------
 function renderLanding() {
-  const c = state.config.catalog;
-  $('#ex-coaching').textContent = c.explainer.coaching;
-  $('#ex-mentors').textContent = c.explainer.mentors;
-  $('#personas').innerHTML = personas().filter(p => p.id === DEMO_PERSONA).map(p => `<div class="portrait">${art(p)}<span class="tag">Free</span>
-    <h3>${esc(p.name)}</h3><p>${esc(p.philosophy)}.</p><p>From the public work of ${esc(p.inspiredBy)}.</p></div>`).join('');
-  $('#agents').innerHTML = agents().filter(a => a.id === DEMO_AGENT).map(a => `<div class="tr"><strong>${esc(a.name)}</strong><span>${esc(a.job)}</span><span class="tag ${a.tier === 'plus' ? 'plus' : ''}">${a.tier === 'plus' ? 'Plus' : 'Free'}</span></div>`).join('');
+  $('#personas').innerHTML = personas().map(p => `<div class="portrait ${usable(p) ? '' : 'locked'}">${art(p)}${badge(p)}
+    <h3>${esc(p.name)}</h3><p class="portrait-source">AI-inspired perspective</p><p>${esc(p.philosophy)}.</p></div>`).join('');
+  const groups = ['Everyday money', 'Investing & property', 'Business building'];
+  $('#agents').innerHTML = groups.map(group => `<section class="agent-group"><h3>${esc(group)}</h3><div class="agent-grid">${agents().filter(a => a.category === group).map(a => `<button type="button" class="agent-card" data-a="${a.id}"><span class="agent-card-top"><strong>${esc(a.name)}</strong>${badge(a)}</span><span class="agent-card-job">${esc(a.job)}</span></button>`).join('')}</div></section>`).join('');
+  document.querySelectorAll('#agents [data-a]').forEach(b => b.onclick = () => { const a = agent(b.dataset.a); if (a.id === 'budget') startChat(); else blocked(a); });
 }
 
 // ---------- quiz ----------
@@ -158,26 +160,32 @@ function renderSnapshot() {
 
 function renderSetup() {
   const hint = state.profile?.personaHint;
-  $('#pick-mentor').innerHTML = personas().filter(p => p.id === DEMO_PERSONA).map(p => `<div class="choice on">${art(p)}<strong>${esc(p.name)}</strong><small>${esc(p.philosophy)}.</small></div>`).join('');
-  $('#pick-coach').innerHTML = agents().filter(a => a.id === DEMO_AGENT).map(a => `<div class="choice on"><span><strong>${esc(a.name)}</strong><small>${esc(a.job)}</small></span><span class="tag">Free</span></div>`).join('');
-  document.querySelectorAll('#pick-mentor [data-p]').forEach(b => b.onclick = () => { state.personaId = b.dataset.p; renderSetup(); });
-  document.querySelectorAll('#pick-coach [data-a]').forEach(b => b.onclick = () => { state.agentId = b.dataset.a; renderSetup(); });
-  document.querySelectorAll('#pick-mentor [data-unlock]').forEach(b => b.onclick = openUnlock);
+  $('#pick-mentor').innerHTML = personas().map(p => `<button type="button" class="choice ${p.id === state.personaId ? 'on' : ''}" data-p="${p.id}">${art(p)}<strong>${esc(p.name)}</strong><small>${esc(p.philosophy)}.</small>${badge(p)}${p.id === hint ? '<small class="hint">Suggested from your answers</small>' : ''}</button>`).join('');
+  $('#pick-coach').innerHTML = agents().map(a => `<button type="button" class="choice ${a.id === state.agentId ? 'on' : ''}" data-a="${a.id}"><span><strong>${esc(a.name)}</strong><small>${esc(a.job)}</small>${a.id === 'budget' && state.personaId === 'debt-free-coach' ? '<small class="hint">Included in the Ramsey starter</small>' : ''}</span>${badge(a)}</button>`).join('');
+  $('#to-chat').textContent = `Chat with ${persona(state.personaId)?.name || 'your mentor'}`;
+  document.querySelectorAll('#pick-mentor [data-p]').forEach(b => b.onclick = () => { const p = persona(b.dataset.p); if (blocked(p)) return; state.personaId = p.id; renderSetup(); });
+  document.querySelectorAll('#pick-coach [data-a]').forEach(b => b.onclick = () => { const a = agent(b.dataset.a); if (blocked(a)) return; state.agentId = a.id; renderSetup(); });
 }
 
 // ---------- chat ----------
 function renderChatChrome() {
   const p = persona(state.personaId), a = agent(state.agentId), s = state.snapshot;
-  $('#chat-head').innerHTML = `${thumb(p)}<div><strong>${esc(p.name)}</strong><small>directing ${esc(a.name)}</small></div>${s?.status === 'ok' ? `<div class="snap-mini">lowest ${usd(s.lowestMonth)}<br>essentials ${usd(s.essentialsTotal)}</div>` : ''}`;
-  $('#persona-switch').innerHTML = personas().filter(x => x.id === DEMO_PERSONA).map(x => `<div class="rail-item on">${thumb(x)}<span>${esc(x.name)}</span></div>`).join('');
-  $('#agent-list').innerHTML = agents().filter(x => x.id === DEMO_AGENT).map(x => `<div class="rail-item coach-item on"><span>${esc(x.name.replace(/ Coaching$/, ''))}</span></div>`).join('');
+  $('#chat-head').innerHTML = `${thumb(p)}<div><strong>${esc(p.name)}</strong><small>${state.profile?.incomeHistory?.length ? `With ${esc(a.name)}` : 'Start with any money question'} · AI-inspired, not affiliated</small></div>${s?.status === 'ok' ? `<div class="snap-mini">lowest ${usd(s.lowestMonth)}<br>essentials ${usd(s.essentialsTotal)}</div>` : ''}`;
+  $('#persona-switch').innerHTML = personas().map(x => `<button class="rail-item ${x.id === state.personaId ? 'on' : ''}" data-p="${x.id}">${thumb(x)}<span>${esc(x.name)}</span><small ${x.tier === 'plus' ? 'title="Mentor Labs Plus" aria-label="Mentor Labs Plus"' : ''}>${statusLabel(x)}</small></button>`).join('');
+  $('#agent-list').innerHTML = agents().map(x => `<button class="rail-item coach-item ${x.id === state.agentId ? 'on' : ''}" data-a="${x.id}"><span>${esc(x.name)}</span><small title="Mentor Labs Plus" aria-label="Mentor Labs Plus">+</small></button>`).join('');
   document.querySelectorAll('#persona-switch [data-p]').forEach(b => b.onclick = () => pickPersona(b.dataset.p));
   document.querySelectorAll('#agent-list [data-a]').forEach(b => b.onclick = () => pickAgent(b.dataset.a));
   const prompts = {budget: ['How should I budget when my pay keeps changing?', 'What do I do in my slow months?', 'Where should extra money go in a good month?'], debt: ['How fast can I get rid of my debt?', 'Which debt should I pay first?', 'Should I pay off debt or save first?'], savings: ['How big should my emergency fund be?', 'How do I save when my income drops?', 'Should I stop investing until I have savings?']};
   $('#suggest').innerHTML = (prompts[state.agentId] || prompts.budget).map(t => `<button class="chip" type="button">${esc(t)}</button>`).join('');
   document.querySelectorAll('#suggest .chip').forEach(c => c.onclick = () => send(c.textContent));
 }
-function blocked(x) { if (!allowed(x)) { openUnlock(); return true; } if (!x.built) { note(`${x.name} is coming soon.`); return true; } return false; }
+function showFeature(x) {
+  $('#feature-title').textContent = x.name;
+  $('#feature-text').textContent = `${x.job || x.philosophy}. This ${x.inspiredBy ? 'mentor perspective' : 'specialist agent'} is part of the Mentor Labs Plus lineup. The Ramsey starter is the interactive MVP today; more mentor-agent pairings are being created.`;
+  $('#feature-plus').hidden = state.tier === 'plus';
+  $('#feature-preview').showModal();
+}
+function blocked(x) { if (!x) return true; if (!x.built) { showFeature(x); return true; } if (!allowed(x) && !starterCoach(x)) { openUnlock(); return true; } return false; }
 function pickAgent(id) {
   const a = agent(id); if (id === state.agentId || blocked(a)) return;
   state.agentId = id; state.lastTurn = null; renderChatChrome(); note(`Switched to ${a.name}. Ask your next question.`);
@@ -206,7 +214,7 @@ function calcCard(c) {
     const shown = v === null ? 'n/a' : unit === 'percent' ? `${v}%` : unit === 'money' && typeof v === 'string' && /^-?\d+\.\d{2}$/.test(v) ? usd(v) : String(v);
     return `<tr><td>${esc(k.replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase().replace(/^./, x => x.toUpperCase()))}</td><td>${esc(shown)}</td></tr>`;
   }).join('');
-  return `<div class="calc"><div class="ch"><span>${esc(c.label || c.name)}</span><span>calculated in code, exact to the cent</span></div><table>${rows}</table></div>`;
+  return `<div class="calc"><div class="ch"><span>${esc(c.label || c.name)}</span><span>Based on your inputs</span></div><table>${rows}</table></div>`;
 }
 
 function sourceLink(c) {
@@ -294,7 +302,7 @@ async function restoreChat(history) {
 function startChat() {
   $('#log').innerHTML = ''; state.lastTurn = null; renderChatChrome(); refreshMemory(); show('v-chat');
   const p = persona(state.personaId), a = agent(state.agentId);
-  note(`${p.name} is guiding ${a.name}. Type a budget question or tap Talk.`);
+  note(state.profile?.incomeHistory?.length ? `${p.name} is ready to talk through your plan. Ask anything below.` : `Ask anything about budgeting, debt, or savings. For a personal plan, you can add your numbers anytime.`);
   $('#msg').focus();
 }
 
@@ -328,8 +336,40 @@ async function handleCheckoutReturn() {
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
   window.scrollTo(0, 0);
   if (status === 'cancel') return banner('Checkout canceled. You are still on the free plan.', true);
-  try { await api('/api/checkout/confirm', {method: 'POST', body: {checkoutId: q.get('cs')}}); await setPlus('Welcome to Plus. Every mentor and coach is unlocked as it launches. (Stripe test mode, no real charge.)'); }
+  try { await api('/api/checkout/confirm', {method: 'POST', body: {checkoutId: q.get('cs')}}); await setPlus('Plus test access is active. More mentor-agent pairings will launch as they are built. No real charge.'); }
   catch (e) { banner(`We could not confirm that checkout: ${e.message}`, true); }
+}
+
+// Document and portfolio links are showcase context only. Holdings CSV is the working import.
+function setupContextHub() {
+  const dialog = $('#context-dialog');
+  document.querySelectorAll('[data-context]').forEach(b => b.onclick = () => dialog.showModal());
+  $('#context-close').onclick = () => dialog.close();
+  $('#feature-close').onclick = () => $('#feature-preview').close();
+  $('#feature-plus').onclick = () => { $('#feature-preview').close(); openUnlock(); };
+  try { const saved = sessionStorage.getItem('mentor-labs-portfolio-link'); if (saved) { $('#portfolio-link').value = saved; $('#portfolio-link-status').textContent = 'Reference saved for this browser session; no account connected.'; } } catch {}
+  $('#context-files').onchange = e => {
+    const files = [...e.target.files];
+    $('#context-file-status').textContent = files.length ? `${files.length} document${files.length === 1 ? '' : 's'} selected: ${files.map(f => f.name).join(', ')}. Preview only; content is not analyzed.` : 'No documents selected.';
+  };
+  $('#portfolio-save').onclick = () => {
+    const value = $('#portfolio-link').value.trim();
+    if (!value) { $('#portfolio-link-status').textContent = 'Paste a portfolio URL first.'; return; }
+    try {
+      const url = new URL(value);
+      if (!['http:', 'https:'].includes(url.protocol) || url.username || url.password) throw Error('Invalid URL');
+      sessionStorage.setItem('mentor-labs-portfolio-link', url.href);
+      $('#portfolio-link-status').textContent = 'Reference saved for this browser session. No brokerage connection or holdings import was made.';
+    } catch { $('#portfolio-link-status').textContent = 'Enter a valid web URL without a username or password.'; }
+  };
+  const done = s => { $('#context-csv-status').textContent = `Imported ${s.holdings} holdings worth ${usd(s.marketValue)}. Estimated annual fees: ${usd(s.estimatedAnnualFees)}.`; };
+  $('#context-csv').onchange = async e => {
+    const file = e.target.files[0]; if (!file) return;
+    if (file.size > 1024 * 1024) { $('#context-csv-status').textContent = 'Choose a CSV smaller than 1 MB.'; return; }
+    try { done(await api('/api/portfolio/upload', {method: 'POST', body: {csv: await file.text()}})); }
+    catch (err) { $('#context-csv-status').textContent = err.message; }
+  };
+  $('#context-sample').onclick = async () => { try { done(await api('/api/portfolio/upload', {method: 'POST', body: {sample: true}})); } catch (err) { $('#context-csv-status').textContent = err.message; } };
 }
 
 // ---------- sample profile ----------
@@ -446,10 +486,13 @@ async function boot() {
   $('#tier').hidden = state.tier !== 'plus';
   $('#engine').textContent = state.config.engine === 'live' ? 'Live AI' : state.config.engine === 'mock' ? 'Local test mode' : 'AI unavailable';
   renderLanding();
+  $('#home').onclick = e => { e.preventDefault(); show('v-landing'); };
   const startQuiz = () => { state.i = 0; state.answers = {}; renderQuestion(); show('v-quiz'); };
-  $('#start').onclick = startQuiz; $('#head-start').onclick = startQuiz;
+  $('#start').onclick = startQuiz; $('#head-start').onclick = startChat; $('#try-chat').onclick = startChat;
+  $('#chat-plan').onclick = startQuiz;
   $('#demo').onclick = async () => { await api('/api/portfolio/upload', {method: 'POST', body: {sample: true}}).catch(() => {}); submitQuiz(DEMO); };
   document.querySelectorAll('[data-unlock]').forEach(b => b.onclick = openUnlock);
+  setupContextHub();
   $('#q-next').onclick = next;
   $('#q-back').onclick = () => { collect(); state.i = Math.max(0, state.i - 1); renderQuestion(); };
   $('#q-skip').onclick = () => { state.i < state.config.quiz.questions.length - 1 ? (state.i++, renderQuestion()) : submitQuiz(); };
@@ -459,7 +502,7 @@ async function boot() {
   setupVoice();
   $('#restart').onclick = async () => { if (!confirm('Start over? Your answers and chat will be cleared.')) return; await api('/api/session', {method: 'DELETE'}).catch(() => {}); location.href = '/'; };
   await handleCheckoutReturn();
-  try { const r = await api('/api/profile'); if (r.profile?.incomeHistory?.length) { state.profile = r.profile; state.snapshot = r.snapshot; const h = persona(r.profile.personaHint); if (h && usable(h)) state.personaId = h.id; const {history} = await api('/api/history'); if (history.length) await restoreChat(history); else { renderSnapshot(); show('v-snap'); } return; } } catch {}
+  try { const r = await api('/api/profile'); if (r.profile?.incomeHistory?.length) { state.profile = r.profile; state.snapshot = r.snapshot; const h = persona(r.profile.personaHint); if (h && usable(h)) state.personaId = h.id; } const {history} = await api('/api/history'); if (history.length) { await restoreChat(history); return; } if (state.profile?.incomeHistory?.length) { renderSnapshot(); show('v-snap'); return; } } catch {}
   show('v-landing');
 }
 boot().catch(e => banner(`The app could not load: ${e.message}`, true));

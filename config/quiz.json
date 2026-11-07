@@ -1,116 +1,16 @@
 {
-  "version": 2,
-  "note": "Screening quiz spec. UI renders one question per screen. Money values are USD decimal strings parsed with minor(). APR entered in percent, stored as basis points (rateBps).",
+  "version": 3,
+  "note": "Six-screen optional intake for a personal snapshot. Documents and portfolio can be added separately.",
   "questions": [
-    {
-      "id": "priorAdvisor",
-      "section": "trust",
-      "field": "trust.priorAdvisor",
-      "type": "single",
-      "prompt": "Have you ever paid for financial advice?",
-      "options": [
-        {
-          "value": "yes",
-          "label": "Yes"
-        },
-        {
-          "value": "no",
-          "label": "No"
-        },
-        {
-          "value": "couldnt_afford",
-          "label": "I've wanted to but couldn't afford it"
-        }
-      ],
-      "required": false
-    },
-    {
-      "id": "aiTrust",
-      "section": "trust",
-      "field": "trust.aiTrust",
-      "type": "scale",
-      "min": 1,
-      "max": 5,
-      "prompt": "How much do you trust AI with money questions?",
-      "required": false
-    },
-    {
-      "id": "trustNeeds",
-      "section": "trust",
-      "field": "trust.needs",
-      "type": "multi",
-      "prompt": "What would make you trust an answer?",
-      "options": [
-        {
-          "value": "show_the_math",
-          "label": "Show me the math"
-        },
-        {
-          "value": "show_sources",
-          "label": "Show where the advice comes from"
-        },
-        {
-          "value": "known_philosophy",
-          "label": "Use a philosophy I already trust"
-        },
-        {
-          "value": "a_human",
-          "label": "A real person checked it"
-        }
-      ],
-      "required": false
-    },
-    {
-      "id": "incomeVaries",
-      "section": "income",
-      "field": "incomeVaries",
-      "type": "boolean",
-      "prompt": "Does your income change month to month?",
-      "required": true
-    },
     {
       "id": "incomeHistory",
       "section": "income",
       "field": "incomeHistory",
       "type": "money_series",
-      "months": 6,
-      "prompt": "What did you take home each of the last 6 months?",
+      "months": 3,
+      "prompt": "What did you take home in the last 3 months?",
       "allowUnknown": true,
       "required": true
-    },
-    {
-      "id": "incomeSources",
-      "section": "income",
-      "field": "incomeSources",
-      "type": "multi",
-      "prompt": "Where does your income come from?",
-      "options": [
-        {
-          "value": "hourly_job",
-          "label": "Hourly job"
-        },
-        {
-          "value": "tips",
-          "label": "Tips"
-        },
-        {
-          "value": "gig_delivery",
-          "label": "Gig or delivery apps"
-        },
-        {
-          "value": "freelance",
-          "label": "Freelance"
-        },
-        {
-          "value": "stipend_aid",
-          "label": "Stipend or financial aid"
-        },
-        {
-          "value": "family",
-          "label": "Help from family"
-        }
-      ],
-      "required": false
     },
     {
       "id": "bills",
@@ -133,7 +33,7 @@
           "max": 31
         }
       ],
-      "prompt": "List your fixed monthly bills (rent, phone, car, insurance, subscriptions).",
+      "prompt": "What are your main monthly bills?",
       "required": false
     },
     {
@@ -156,7 +56,7 @@
           "type": "money"
         }
       ],
-      "prompt": "Roughly how much do you spend each month on food, gas, and fun?",
+      "prompt": "About how much do you spend on everyday things each month?",
       "required": false
     },
     {
@@ -183,7 +83,7 @@
           "type": "money"
         }
       ],
-      "prompt": "Any debts? (credit cards, car loan, student loans, BNPL)",
+      "prompt": "Any debts you want to plan around?",
       "required": false
     },
     {
@@ -191,29 +91,7 @@
       "section": "savings",
       "field": "savings",
       "type": "money",
-      "prompt": "How much cash could you reach today?",
-      "required": false
-    },
-    {
-      "id": "portfolio",
-      "section": "portfolio",
-      "field": "portfolio",
-      "type": "single",
-      "prompt": "Do you invest?",
-      "options": [
-        {
-          "value": "upload_csv",
-          "label": "Upload a CSV from my brokerage"
-        },
-        {
-          "value": "connect_brokerage_sandbox",
-          "label": "Connect my brokerage"
-        },
-        {
-          "value": "skip",
-          "label": "I don't invest yet"
-        }
-      ],
+      "prompt": "About how much cash do you have set aside?",
       "required": false
     },
     {
@@ -222,7 +100,7 @@
       "field": "goals",
       "type": "multi",
       "maxSelect": 2,
-      "prompt": "Top goal for the next 12 months?",
+      "prompt": "What would you like to work on first?",
       "options": [
         {
           "value": "stop_paycheck_to_paycheck",
@@ -243,32 +121,6 @@
         {
           "value": "big_purchase",
           "label": "Save for something big"
-        }
-      ],
-      "required": false
-    },
-    {
-      "id": "personaHint",
-      "section": "style",
-      "field": "personaHint",
-      "type": "single",
-      "prompt": "Which statement do you agree with most?",
-      "options": [
-        {
-          "value": "debt-free-coach",
-          "label": "Debt is the enemy. Get out and stay out."
-        },
-        {
-          "value": "asset-builder",
-          "label": "Buy things that pay me, not things that cost me."
-        },
-        {
-          "value": "conscious-spender",
-          "label": "Spend on what I love, cut what I don't."
-        },
-        {
-          "value": "value-investor",
-          "label": "Keep it simple and let time do the work."
         }
       ],
       "required": false
