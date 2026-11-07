@@ -58,7 +58,7 @@ test('validateCandidates drops invented numbers, duplicates and unknown calcs', 
 
 test('live chat: structured outputs, cached prompts, persona picks by id, repick keeps options', async () => {
   const fake = fakeClient({generated: GOOD, picks: {
-    debt: {pickId: 'c1', runnersUp: ['c2', 'c9'], rationale: 'Protect the bad month first.', reply: 'Get that $580.00 saved, then go after the card.', whyNotOthers: 'Income is slower.', noteIds: ['baby-step-1', 'fake-note'], memoryFacts: ['Wants to pay off the card']},
+    debt: {pickId: 'c1', runnersUp: ['c2', 'c9'], rationale: 'Protect the bad month first.', reply: 'Get that $580.00 saved, then go after the card.', whyNotOthers: 'Income is slower.', noteIds: ['029', 'fake-note'], memoryFacts: ['Wants to pay off the card']},
     hustle: {pickId: 'c3', runnersUp: ['c1'], rationale: 'Grow income.', reply: 'You need $5,000.00 more a month. Go get it.', whyNotOthers: 'Cutting is small.', noteIds: ['expand-income'], memoryFacts: []},
   }});
   setClient(fake);
@@ -67,7 +67,7 @@ test('live chat: structured outputs, cached prompts, persona picks by id, repick
   assert.equal(r.pick.pickId, 'c1');
   assert.deepEqual(r.pick.runnersUp, ['c2']); // c9 doesn't exist
   assert.equal(r.text, 'Get that $580.00 saved, then go after the card.');
-  assert.deepEqual(r.citations.map(c => c.noteId), ['baby-step-1']); // unknown note dropped
+  assert.deepEqual(r.citations.map(c => c.noteId), ['029']); // file note id (Baby Step 1); unknown note dropped
   assert.equal(r.validation.kept, 3);
   assert.equal(r.memoryUpdates[0].fact, 'Wants to pay off the card');
   // request shape: no forced tool_choice, JSON schema output, cache_control on system
