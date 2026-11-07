@@ -3,7 +3,6 @@
 const $ = s => document.querySelector(s);
 const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
 const usd = v => (v === null || v === undefined || v === '') ? 'n/a' : '$' + Number(v).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-const wait = ms => new Promise(r => setTimeout(r, ms));
 
 let sid; try { sid = localStorage.getItem('sid'); } catch {}
 if (!sid) { sid = crypto.randomUUID(); try { localStorage.setItem('sid', sid); } catch {} }
@@ -184,18 +183,18 @@ async function pickPersona(id) {
   const p = persona(id); if (id === state.personaId || blocked(p)) return;
   state.personaId = id; renderChatChrome();
   if (!state.lastTurn) return note(`${p.name} is now directing your coach.`);
-  const sk = skeleton(['Same options, new mentor', `${p.name} is choosing`]);
-  try { botMessage(await api('/api/repick', {method: 'POST', body: {turnId: state.lastTurn, personaId: id}}), 'same options, new pick'); }
+  const sk = skeleton();
+  try { botMessage(await api('/api/repick', {method: 'POST', body: {turnId: state.lastTurn, personaId: id}})); }
   catch (e) { handleError(e); } finally { sk.stop(); }
 }
 function note(text) { const el = document.createElement('div'); el.className = 'msg note'; el.textContent = text; $('#log').append(el); el.scrollIntoView({block: 'nearest'}); }
 function handleError(e) { if (e.status === 402) openUnlock(); else note(e.message); }
 
-function skeleton(stages) {
+function skeleton() {
   const el = document.createElement('div'); el.className = 'msg bot skeleton'; el.setAttribute('aria-label', 'Working');
-  el.innerHTML = `<span class="stage"></span><i></i><i></i><i></i>`; $('#log').append(el); el.scrollIntoView({block: 'nearest'});
-  let alive = true; (async () => { for (const s of stages) { if (!alive) return; el.querySelector('.stage').textContent = s; await wait(3500); } })();
-  return {stop() { alive = false; el.remove(); }};
+  el.innerHTML = '<span class="stage">Thinking</span><span class="typing" aria-hidden="true"><i></i><i></i><i></i></span>';
+  $('#log').append(el); el.scrollIntoView({block: 'nearest'});
+  return {stop() { el.remove(); }};
 }
 
 function calcCard(c) {
@@ -213,36 +212,21 @@ function sourceLink(c) {
   return url?.protocol === 'https:' ? `<a href="${esc(url.href)}" target="_blank" rel="noopener noreferrer">${label}</a>` : label;
 }
 
-function botMessage(r, noteText) {
+function botMessage(r) {
   const el = document.createElement('div'); el.className = 'msg bot';
-  const picked = r.candidates?.find(c => c.id === r.pick?.pickId);
-  const calcs = (picked?.calculations || r.calculations || []).slice(1);
-  const engine = r.mode === 'live' ? '' : r.mode === 'mock-fallback' ? ' · offline fallback' : ' · practice engine';
-  const v = r.validation;
-  el.innerHTML = `<div class="who"><strong>${esc(r.personaName || '')}</strong>${r.agentName ? ` directing ${esc(r.agentName)}` : ''}${noteText ? ` · ${esc(noteText)}` : ''}${engine}</div>
+  const calcs = (r.calculations || []).slice(1);
+  el.innerHTML = `<div class="who"><strong>${esc(r.personaName || '')}</strong>${r.agentName ? ` · ${esc(r.agentName)}` : ''}</div>
     <p class="say">${esc(r.text)}</p>
-    ${calcs.map(calcCard).join('')}
-    ${r.citations?.length ? `<p class="sources"><span>Sources:</span> ${r.citations.map(c => `${sourceLink(c)} <span>(${esc(c.ref)})</span>`).join('; ')}</p>` : ''}
-    <div class="meta">${r.candidates?.length ? `<button class="btn text" data-drawer>See all ${r.candidates.length} options</button>` : ''}${v ? `<span class="mono">number check: ${v.kept} of ${v.generated} passed</span>` : ''}</div>
+    ${calcs.length || r.citations?.length ? `<details class="answer-details"><summary>Sources and calculations</summary>${calcs.map(calcCard).join('')}${r.citations?.length ? `<p class="sources">${r.citations.map(c => `${sourceLink(c)} <span>(${esc(c.ref)})</span>`).join('; ')}</p>` : ''}</details>` : ''}
     <p class="disclose">${esc(r.disclosure || '')}</p>`;
-  el.querySelector('[data-drawer]')?.addEventListener('click', () => openDrawer(r));
   $('#log').append(el); el.scrollIntoView({behavior: 'smooth', block: 'start'});
-}
-
-function openDrawer(r) {
-  const v = r.validation;
-  const check = v ? `<div class="numcheck">Your coach proposed ${v.generated} options. ${v.kept} passed the number check and ${v.dropped.length} ${v.dropped.length === 1 ? 'was' : 'were'} dropped.${v.replyVerified === false ? ' Your mentor used a number we could not verify, so we showed the option\'s own wording instead.' : ''}</div>${v.dropped.length ? `<details class="fine"><summary>Dropped options</summary><ul>${v.dropped.map(d => `<li>${esc(d.title)}: ${esc(d.reason)}</li>`).join('')}</ul></details>` : ''}` : '';
-  $('#drawer-body').innerHTML = check + r.candidates.map(c => `<div class="opt-card ${c.id === r.pick?.pickId ? 'picked' : ''}"><h4>${esc(c.title)}${c.id === r.pick?.pickId ? ' · picked' : r.pick?.runnersUp?.includes(c.id) ? ' · runner-up' : ''}</h4><p>${esc(c.summary)}</p><small>Tradeoff: ${esc(c.tradeoffs)} Risk: ${esc(c.risk)}.${c.timeToGoal ? ` About ${esc(c.timeToGoal)} months.` : ''}</small></div>`).join('')
-    + (r.pick?.whyNotOthers ? `<p class="why" style="margin-top:12px">Why not the others: ${esc(r.pick.whyNotOthers)}</p>` : '');
-  $('#drawer').showModal();
 }
 
 async function send(text) {
   text = text.trim(); if (!text) return;
   const u = document.createElement('div'); u.className = 'msg user'; u.textContent = text; $('#log').append(u);
   $('#msg').value = ''; const btn = $('#composer button'); btn.disabled = true;
-  const p = persona(state.personaId), a = agent(state.agentId);
-  const sk = skeleton([`${a.name} is building options`, 'Checking every number against the math', `${p.name} is choosing a plan`]);
+  const sk = skeleton();
   try { const r = await api('/api/chat', {method: 'POST', body: {message: text, personaId: state.personaId, agentId: state.agentId}}); state.lastTurn = r.turnId; botMessage(r); refreshMemory(); }
   catch (e) { handleError(e); }
   finally { sk.stop(); btn.disabled = false; $('#msg').focus(); }
@@ -320,7 +304,7 @@ async function boot() {
   state.config = await api('/api/config');
   try { state.tier = (await api('/api/me')).tier; } catch {}
   $('#tier').hidden = state.tier !== 'plus';
-  $('#engine').textContent = state.config.engine === 'live' ? 'Live AI' : 'Practice engine';
+  $('#engine').textContent = state.config.engine === 'live' ? 'Live AI' : state.config.engine === 'mock' ? 'Local test mode' : 'AI unavailable';
   renderLanding();
   const startQuiz = () => { state.i = 0; state.answers = {}; renderQuestion(); show('v-quiz'); };
   $('#start').onclick = startQuiz; $('#head-start').onclick = startQuiz;
