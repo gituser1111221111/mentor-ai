@@ -32,3 +32,19 @@ Always describe them as AI-generated likenesses. Every card names the real figur
 ## Product language
 
 **Agents** have a specialty, such as debt consolidation, portfolio review, equity research, tax, or business coaching. A **mentor** brings a distinct public-teaching perspective to that specialty. All agent cards use a simple `+` badge. Ramsey-inspired guidance with budgeting support is the sole working flagship; other agents and mentors belong to the planned Plus library. If selected, they explain that they are being built. The long-term corpus and hundreds-of-agents language must be framed as a vision until implemented. The context hub must distinguish document and link previews from the functional CSV import.
+
+
+## Homepage clarity update (Nov 7)
+
+Lead with the mentor/agent method, then the source directory, mentor library,
+and specialist library. Remove decorative numbered steps, including intake labels.
+Use evergreen for data, sage for the method and agents, and warm sand for mentors.
+Header and hero context buttons open the existing document/holdings hub.
+A desktop section rail becomes a horizontally scrollable bottom navigation on mobile.
+It tracks the active section and is contained in the landing view.
+
+Source groups render from `catalog.dataSources`, open by default and collapsible.
+Refresh connections re-reads server configuration while preserving collapsed groups.
+Configured is not a successful fetch; planned connections retain their status.
+Keep descriptions short and put agent mappings under each source's “Used by” disclosure.
+The 21st CLI was unavailable; this update reuses the existing project components and tokens.

@@ -62,7 +62,7 @@
     {
       "id": "investing",
       "name": "Portfolio Review Agent",
-      "job": "Review allocation, concentration, upcoming earnings calls and risks with live market data",
+      "job": "Review portfolio mix, concentration, earnings, and risk",
       "category": "Investing & property",
       "status": "live",
       "tier": "free"
@@ -70,7 +70,7 @@
     {
       "id": "equity",
       "name": "Equity Research Agent",
-      "job": "Research your largest holdings: last quarter, next earnings call, analysts, filings",
+      "job": "Research company earnings, analyst views, and filings",
       "category": "Investing & property",
       "status": "live",
       "tier": "free"
@@ -289,7 +289,7 @@
       "id": "finnhub",
       "name": "Finnhub",
       "url": "https://finnhub.io",
-      "provides": "Stock quotes, 52-week range, P/E, earnings calendar, EPS history, analyst ratings, company news",
+      "provides": "Stock prices, earnings, analyst ratings, and company news",
       "refresh": "Every 15 minutes",
       "agents": [
         "investing",
@@ -303,7 +303,7 @@
       "id": "fred",
       "name": "FRED (St. Louis Fed)",
       "url": "https://fred.stlouisfed.org",
-      "provides": "Fed funds rate, 2- and 10-year Treasury yields, unemployment",
+      "provides": "Interest rates, Treasury yields, and unemployment",
       "refresh": "Daily",
       "agents": [
         "investing",
@@ -317,7 +317,7 @@
       "id": "sec-edgar",
       "name": "SEC EDGAR",
       "url": "https://www.sec.gov/edgar",
-      "provides": "Latest 10-K, 10-Q and 8-K filings for each holding",
+      "provides": "Annual, quarterly, and current company filings",
       "refresh": "Every 6 hours",
       "agents": [
         "equity"
@@ -330,7 +330,7 @@
       "id": "coingecko",
       "name": "CoinGecko",
       "url": "https://www.coingecko.com",
-      "provides": "Crypto prices for coins in your portfolio",
+      "provides": "Crypto prices for your holdings",
       "refresh": "Every 5 minutes",
       "agents": [
         "investing"
@@ -343,7 +343,7 @@
       "id": "quartr",
       "name": "Quartr",
       "url": "https://quartr.com",
-      "provides": "Earnings-call transcripts, slide decks and event summaries",
+      "provides": "Earnings transcripts, presentations, and summaries",
       "agents": [
         "equity",
         "investing"
@@ -355,7 +355,7 @@
       "id": "financial-datasets",
       "name": "Financial Datasets",
       "url": "https://www.financialdatasets.ai",
-      "provides": "Ten-year financial statements, insider trades, institutional ownership, segment data",
+      "provides": "Financial statements, insider trades, and ownership",
       "agents": [
         "equity"
       ],
@@ -366,7 +366,7 @@
       "id": "alpha-vantage",
       "name": "Alpha Vantage Premium",
       "url": "https://www.alphavantage.co",
-      "provides": "News sentiment scores, options data, technical indicators",
+      "provides": "News sentiment, options, and technical indicators",
       "agents": [
         "investing",
         "equity"
@@ -378,7 +378,7 @@
       "id": "plaid",
       "name": "Plaid",
       "url": "https://plaid.com",
-      "provides": "Read-only bank and brokerage linking, so holdings and income sync automatically",
+      "provides": "Bank and brokerage syncing for holdings and income",
       "agents": [
         "budget",
         "investing",
@@ -403,7 +403,7 @@
       "id": "fdic",
       "name": "FDIC BankFind",
       "url": "https://banks.data.fdic.gov",
-      "provides": "Bank health and deposit-insurance checks for savings accounts",
+      "provides": "Bank information and deposit-insurance checks",
       "agents": [
         "savings"
       ],
@@ -414,7 +414,7 @@
       "id": "irs",
       "name": "IRS tax tables",
       "url": "https://www.irs.gov",
-      "provides": "Current brackets, contribution limits and deduction amounts",
+      "provides": "Tax brackets, contribution limits, and deductions",
       "agents": [
         "tax",
         "retirement"
