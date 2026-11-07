@@ -231,7 +231,7 @@ function botMessage(r) {
     ${canSpeak(r) ? '<button class="btn text" type="button" data-listen>Listen</button><div class="voice-player" hidden><audio controls preload="none"></audio><button class="btn text" type="button" data-stop>Stop</button><p class="fine">AI-generated voice, not the real person.</p></div>' : ''}
     ${calcs.length || r.citations?.length ? `<details class="answer-details"><summary>Sources and calculations</summary>${calcs.map(calcCard).join('')}${r.citations?.length ? `<p class="sources">${r.citations.map(c => `${sourceLink(c)} <span>(${esc(c.ref)})</span>`).join('; ')}</p>` : ''}</details>` : ''}
     ${r.turnId ? '<div class="meta"><button class="btn text" type="button" data-compare>Compare mentors</button></div>' : ''}
-    <p class="disclose">${esc(r.disclosure || '')}</p>`;
+    ${r.conversational ? '' : `<p class="disclose">${esc(r.disclosure || '')}</p>`}`;
   el.querySelector('[data-listen]')?.addEventListener('click', () => speakReply(el, r));
   el.querySelector('[data-stop]')?.addEventListener('click', stopPlayback);
   el.querySelector('[data-compare]')?.addEventListener('click', () => openCompare(r));

@@ -26,6 +26,7 @@ function fakeClient({generated, picks}) {
   const calls = [];
   const create = async params => {
     calls.push(params);
+    if (params.system[0].text.includes('Decide whether their latest message')) return textRes({kind: /Debt or savings|help|"x"/.test(params.messages[0].content) ? 'finance' : 'conversation', reply: 'Hi there! What is on your mind?'});
     if (params.model.includes('sonnet')) return textRes({needsInfo: null, candidates: generated});
     const persona = params.system[0].text.includes('Conscious Spender') ? 'conscious' : 'debt';
     return textRes(picks[persona]);
@@ -85,8 +86,8 @@ test('live chat: structured outputs, cached prompts, persona picks by id, repick
   assert.ok(r.citations[0].url.startsWith('https://'));
   assert.equal(r.validation.kept, 3);
   assert.equal(r.memoryUpdates[0].fact, 'Wants to pay off the card');
-  assert.match(fake.calls[0].messages[0].content, /Prefers a cash buffer/);
   assert.match(fake.calls[1].messages[0].content, /Prefers a cash buffer/);
+  assert.match(fake.calls[2].messages[0].content, /Prefers a cash buffer/);
   assert.equal(r.candidates[0].calculations[0].units.lowestMonth, 'money');
   assert.deepEqual(unverifiedNumbers('The card APR is 24.90%', r.candidates[0].calculations), []);
   // request shape: no forced tool_choice, JSON schema output, cache_control on system
@@ -95,13 +96,14 @@ test('live chat: structured outputs, cached prompts, persona picks by id, repick
     assert.equal(call.output_config.format.type, 'json_schema');
     assert.ok(call.system.some(b => b.cache_control?.type === 'ephemeral'));
   }
-  assert.equal(fake.calls[0].model, 'claude-sonnet-5-5');
-  assert.equal(fake.calls[1].model, 'claude-haiku-5-5');
+  assert.equal(fake.calls[0].model, 'claude-haiku-5-5');
+  assert.equal(fake.calls[1].model, 'claude-sonnet-5-5');
+  assert.equal(fake.calls[2].model, 'claude-haiku-5-5');
 
   const h = await repick({turnId: r.turnId, personaId: 'conscious-spender'});
   assert.deepEqual(h.candidates, r.candidates);
   assert.equal(h.pick.pickId, 'c3');
-  assert.equal(fake.calls.length, 3); // repick = one pick call, no regeneration
+  assert.equal(fake.calls.length, 4); // repick = one pick call, no regeneration
   // conscious-spender reply invented $5,000.00 -> replaced with the option's own verified text
   assert.equal(h.validation.replyVerified, false);
   assert.ok(!h.text.includes('5,000'));
@@ -110,12 +112,22 @@ test('live chat: structured outputs, cached prompts, persona picks by id, repick
 
 test('no income: general Ramsey starter answers conversationally', async () => {
   const calls = [];
-  setClient({messages: {create: async params => { calls.push(params); return {content: [{type: 'text', text: JSON.stringify({reply: 'Start with a written budget. What is your main goal?'})}]}; }}});
+  setClient({messages: {create: async params => { calls.push(params); return {content: [{type: 'text', text: JSON.stringify(calls.length === 1 ? {kind: 'finance', reply: ''} : {reply: 'Start with a written budget. What is your main goal?'})}]}; }}});
   const r = await chat({messages: [{role: 'user', content: 'How should I start?'}], profile: normalizeProfile({}).profile});
   assert.match(r.text, /written budget/);
   assert.equal(r.turnId, null);
-  assert.equal(calls.length, 1);
-  assert.equal(calls[0].model, 'claude-haiku-5-5');
+  assert.equal(calls.length, 2);
+  assert.ok(calls.every(c => c.model === 'claude-haiku-5-5'));
+});
+
+test('greeting gets a short model reply without generating budget options', async () => {
+  const fake = fakeClient({generated: GOOD, picks: {}});
+  setClient(fake);
+  const r = await chat({messages: [{role: 'user', content: 'hi'}], profile});
+  assert.equal(r.text, 'Hi there! What is on your mind?');
+  assert.equal(r.conversational, true);
+  assert.equal(r.turnId, null);
+  assert.equal(fake.calls.length, 1);
 });
 
 test('refusal or too few verified options raises for the route to report', async () => {
