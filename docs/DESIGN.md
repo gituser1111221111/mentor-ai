@@ -1,32 +1,34 @@
-# Design guide (v2, Nov 7)
+# Design guide (v3, Nov 7)
 
 ## Direction
 
-The interface uses a spacious, monochrome product style inspired by the Autopilot reference the project owner provided. It keeps the product's existing quiz, snapshot, mentor selection, and coaching flow. The name and monogram are temporary.
+Mentor AI takes broad cues from investing sites such as Autopilot, Betterment, Wealthfront, and Public: prominent product context, confident typography, and clear next steps. It has its own editorial look with warm paper, evergreen, and mentor portraits. The name and monogram remain temporary.
 
-The landing page begins with a centered app mark, one direct headline, a short explanation, and two actions. A row of CSS-built phone previews shows the product's actual concepts: mentor choice, a sample lowest-month snapshot, and coaching. The previews are illustrative; real values and recommendations remain in the application screens.
+The hero pairs a concise explanation with a featured mentor portrait and an illustrative snapshot from the demo profile. The landing page then explains the three-step flow, presents all mentors with visible faces, shows the coaching specialties, and answers common questions. The existing quiz, snapshot, mentor selection, and chat flow remain intact.
 
 ## System
 
 | Token | Value | Use |
 |---|---|---|
-| `--paper` | `#ffffff` | Primary canvas |
-| `--paper-2` | `#f5f6f7` | Quiet surfaces |
-| `--ink` | `#17191c` | Text and primary controls |
-| `--rule` | `#e4e6e8` | Borders and separators |
-| `--ochre` | `#a83434` | Shortfalls and errors |
+| `--paper` | `#faf9f5` | Page canvas |
+| `--paper-2` | `#edf2eb` | Quiet surfaces |
+| `--ink` | `#17332b` | Primary text |
+| `--green` | `#155c49` | Primary action and selected state |
+| `--rule` | `#d9e1d8` | Borders and separators |
+| `--ochre` | `#a84032` | Shortfalls and errors |
 
-- **Inter** is used for headings and numerical emphasis. **DM Sans** is used for interface copy.
-- Buttons are rounded pills; cards and inputs have softer corners. Focus rings remain visible.
-- The landing sections alternate white and soft gray. The quiz, snapshot, chat, and dialogs use the same type, color, and control styling.
-- At small widths, the preview row shows three overlapping phones. The page has no horizontal scrolling; the chat mentor rail scrolls within its own area.
-- Decorative phone previews are hidden from screen readers as individual pieces and described by the gallery label. The functional app remains keyboard accessible.
-- Reduced-motion users do not get hover transforms or animated scrolling.
+- **Newsreader** is the editorial headline face. **DM Sans** handles interface copy. **Inter** supplies tabular numbers.
+- The hero uses a dark evergreen field; internal app screens return to warm paper and white cards.
+- Buttons are rounded pills. Portrait cards, snapshot panels, and form choices have softer corners.
+- Keep visible focus rings, clear selected states, readable contrast, and reduced-motion support.
+- The landing page is responsive. Mentor images retain a 4:5 crop and load lazily below the fold.
+
+## Portraits
+
+`public/img/mentors/<id>.webp` contains ten optimized, AI-generated editorial likenesses. The Step-by-Step Planner image shows both Brian Preston and Bo Hanson. The image paths live in `config/catalog.json` and appear on the landing page, mentor chooser, and chat rail. Portraits are 640×800 WebP assets, about 32–67 KB each.
+
+Always describe them as AI-generated likenesses. Every card names the real figure whose public teaching inspired the mentor. The app must clearly state that these figures are not affiliated with or endorsing the product. A portrait is visual identification; it does not turn the mentor into the person or authorize a voice clone.
 
 ## Product language
 
-**Coaching** is the specialist that computes options. A **mentor** chooses among those verified options using a stated philosophy. A different mentor can choose differently without changing the numbers. Avoid suggesting that any mentor is the real person who inspired it.
-
-## Character art
-
-The product currently uses monograms for mentor cards. If portraits are added, use original characters in one consistent style and do not use a real person's likeness. Export each at 4:5, at least 600×750, then set its path in `config/catalog.json`.
+**Coaching** is the specialist that computes options. A **mentor** chooses among verified options using a stated philosophy. A different mentor can choose differently without changing the numbers. Keep the distinction clear in the hero, mentor cards, and chat header.

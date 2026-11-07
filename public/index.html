@@ -8,7 +8,7 @@
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2317191c'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-family='Arial' font-size='38' font-weight='bold' fill='white'%3EM%3C/text%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,500;1,6..72,500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
@@ -34,22 +34,29 @@
     <section id="v-landing" class="view">
       <div class="hero">
         <div class="hero-copy">
-          <div class="hero-icon" aria-hidden="true"><span>M</span></div>
-          <p class="hero-label">Money Mentor</p>
-          <h1>Make money make sense.</h1>
-          <p class="lead">A plan for real life, even when your paycheck changes. See the math, choose a mentor, and move forward with confidence.</p>
+          <p class="hero-eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span> YOUR MONEY, YOUR POINT OF VIEW</p>
+          <h1>A money plan for <em>the life you live.</em></h1>
+          <p class="lead">Build around the paycheck you actually have. See every calculation, then let a mentor you connect with help you choose your next move.</p>
           <div class="row hero-actions">
-            <button id="start" class="btn primary">Build my plan <span aria-hidden="true">→</span></button>
-            <button id="demo" class="btn secondary">Explore the demo</button>
+            <button id="start" class="btn primary">Build my plan <span aria-hidden="true">↗</span></button>
+            <button id="demo" class="btn secondary">See a sample plan</button>
           </div>
-          <p class="fine">Free to start · No bank login · Takes about 2 minutes</p>
+          <p class="hero-assurance">Free to start <span aria-hidden="true">•</span> No bank login <span aria-hidden="true">•</span> About two minutes</p>
         </div>
-        <div class="preview-gallery" aria-label="Preview of the mentor, money snapshot, and coaching screens">
-          <div class="phone phone-edge" aria-hidden="true"><div class="phone-screen"><div class="phone-top">9:41 <span>●●●</span></div><div class="phone-pad"><div class="phone-mini-mark">M</div><h3>Start with your numbers.</h3><p>A better plan begins with the full picture.</p><div class="phone-option">Income that changes <span>→</span></div><div class="phone-option">Bills and essentials <span>→</span></div></div></div></div>
-          <div class="phone phone-mentor" aria-hidden="true"><div class="phone-screen"><div class="phone-top">9:41 <span>●●●</span></div><div class="phone-art"><span>DF</span><small>YOUR MENTOR</small><strong>Debt-Free Mentor</strong></div><div class="phone-pad"><p class="phone-eyebrow">A point of view you choose</p><h3>Advice with a philosophy.</h3><p>Built from public teachings. Always clear about the source.</p><div class="phone-option">Explore mentor <span>→</span></div></div></div></div>
-          <div class="phone phone-balance" aria-hidden="true"><div class="phone-screen"><div class="phone-top">9:41 <span>●●●</span></div><div class="phone-pad"><p class="phone-eyebrow">YOUR NUMBERS</p><h3>Know your lowest month.</h3><p>Jordan's sample profile</p><div class="phone-total">$1,780<small>lowest monthly income</small></div><div class="phone-dark-list"><div>Essentials <strong>$1,955</strong></div><div>Gap to cover <strong>$175</strong></div><div>Number check <strong>9 of 9</strong></div></div><p class="phone-footnote">Every number is calculated in code.</p></div></div></div>
-          <div class="phone phone-chat" aria-hidden="true"><div class="phone-screen"><div class="phone-top">9:41 <span>●●●</span></div><div class="phone-art chat-art"><span>✳</span><small>BUDGET COACHING</small><strong>Make a plan that holds up.</strong></div><div class="phone-pad"><p class="phone-eyebrow">YOUR COACH</p><h3>Same facts. Your mentor's call.</h3><p>See the plan, the calculations, and the other options.</p><div class="phone-option">Start coaching <span>→</span></div></div></div></div>
-          <div class="phone phone-edge" aria-hidden="true"><div class="phone-screen"><div class="phone-top">9:41 <span>●●●</span></div><div class="phone-pad"><p class="phone-eyebrow">YOUR PLAN</p><h3>A clearer next move.</h3><div class="phone-option">Starter cushion <span>$1,000</span></div><div class="phone-option">Your next step <span>→</span></div></div></div></div>
+        <div class="hero-visual">
+          <figure class="featured-mentor">
+            <img src="/img/mentors/debt-free-coach.webp" alt="AI-generated likeness inspired by Dave Ramsey" width="640" height="800">
+            <figcaption><span>MEET A MENTOR</span><strong>Debt-Free Mentor</strong><small>AI likeness of Dave Ramsey · not affiliated</small></figcaption>
+          </figure>
+          <div class="plan-preview" aria-label="Illustrative money snapshot for Jordan's sample profile">
+            <div class="plan-preview-top"><span>YOUR MONEY SNAPSHOT</span><span class="preview-icon" aria-hidden="true">↗</span></div>
+            <p>Jordan's lowest month</p>
+            <strong>$1,780<span>.00</span></strong>
+            <div class="preview-rule"></div>
+            <div class="preview-line"><span>Monthly essentials</span><b>$1,955.00</b></div>
+            <div class="preview-line short"><span>Gap to plan for</span><b>$175.00</b></div>
+            <div class="preview-check">Numbers calculated in code</div>
+          </div>
         </div>
       </div>
 
@@ -64,7 +71,7 @@
       </section>
 
       <section id="mentors" class="band">
-        <div class="band-head"><h2>Mentors</h2><p>How to think. Each mentor is built from a well-known money philosophy, labeled with its source, and never pretends to be the real person.</p></div>
+        <div class="band-head"><div><p class="section-eyebrow">YOUR POINT OF VIEW</p><h2>Get to know the mentors.</h2></div><p>Each mentor draws from a public money philosophy. The portraits are AI-generated likenesses; the people shown are not affiliated with or endorsing this app.</p></div>
         <div id="personas" class="portraits"></div>
       </section>
 
@@ -79,7 +86,7 @@
           <div class="plan">
             <h3>Free</h3>
             <p class="price">$0</p>
-            <p>3 mentors: Debt-Free, Conscious Spender and Money Basics.</p>
+            <p>Debt-Free and Conscious Spender mentors are ready now. Money Basics is coming soon.</p>
             <p>3 coaches: Budget, Debt, and Savings &amp; Emergency Fund.</p>
             <p>Every option and every number check.</p>
           </div>
@@ -135,6 +142,7 @@
       <h3 class="sub">Choose your mentor</h3>
       <p class="why">They decide which plan fits. You can switch in the middle of a conversation.</p>
       <div id="pick-mentor" class="choice-grid"></div>
+      <p class="fine">Portraits are AI-generated likenesses. The people shown are not affiliated with this app.</p>
       <h3 class="sub">Choose your coaching</h3>
       <div id="pick-coach" class="choice-list"></div>
       <div class="row"><button id="to-chat" class="btn primary">Start coaching</button></div>
@@ -172,14 +180,14 @@
 
   <dialog id="unlock"><form method="dialog">
     <h3>Plus, $4.99 a month</h3>
-    <p>Free gets you 3 mentors and 3 coaches. Plus unlocks all 10 mentors and all 10 coaches as they launch, with shared memory across them.</p>
+    <p>Free includes the working Debt-Free and Conscious Spender mentors and 3 coaches. Plus unlocks all mentors and coaches as they launch, with shared memory across them.</p>
     <p id="unlock-test" class="fine" hidden>Stripe test mode. Use card 4242 4242 4242 4242, any future date, any CVC. No real charge.</p>
     <p id="unlock-msg" class="error" role="alert"></p>
     <div class="row"><button id="unlock-go" class="btn primary" value="go">Continue to checkout</button><button class="btn">Not now</button></div>
   </form></dialog>
 
   <footer class="site-foot">
-    <p>Educational opinion, not advice from a licensed financial adviser, CPA, or attorney. Mentors are inspired by public teachings and are not affiliated with or endorsed by the people named.</p>
+    <p>Educational opinion, not advice from a licensed financial adviser, CPA, or attorney. Mentor portraits are AI-generated likenesses. Mentors are inspired by public teachings and are not affiliated with or endorsed by the people named.</p>
     <p><a href="/terms.html">Terms</a> · <a href="/privacy.html">Privacy</a> · <a href="https://github.com/gituser1111221111/mentor-ai">Source</a> · Built for RedHawk Builds 2026</p>
   </footer>
   <script type="module" src="/app.js"></script>

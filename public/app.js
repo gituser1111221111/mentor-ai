@@ -35,7 +35,7 @@ const allowed = x => x.tier === 'free' || state.tier === 'plus';
 const usable = x => allowed(x) && x.built;
 const statusLabel = x => !allowed(x) ? 'Plus' : !x.built ? 'Soon' : (x.tier === 'free' ? 'Free' : 'Plus');
 const initials = name => name.replace(/^The /, '').split(/[\s-]+/).map(w => w[0]).join('').slice(0, 2).toUpperCase();
-const art = (p, cls = 'frame') => `<div class="${cls}">${p.image ? `<img src="${esc(p.image)}" alt="Illustration of the ${esc(p.name)} mentor" loading="lazy">` : `<span class="mono-gram">${esc(initials(p.name))}</span>`}`;
+const art = (p, cls = 'frame') => `<div class="${cls}">${p.image ? `<img src="${esc(p.image)}" alt="AI-generated likeness inspired by ${esc(p.inspiredBy)}" width="640" height="800" loading="lazy" decoding="async">` : `<span class="mono-gram">${esc(initials(p.name))}</span>`}</div>`;
 const thumb = p => `<span class="thumb">${p.image ? `<img src="${esc(p.image)}" alt="">` : esc(initials(p.name))}</span>`;
 
 // ---------- landing ----------
@@ -43,8 +43,8 @@ function renderLanding() {
   const c = state.config.catalog;
   $('#ex-coaching').textContent = c.explainer.coaching;
   $('#ex-mentors').textContent = c.explainer.mentors;
-  $('#personas').innerHTML = personas().map(p => `<div class="portrait ${usable(p) ? '' : 'locked'}">${art(p)}<span class="tag ${p.tier === 'plus' ? 'plus' : ''}">${p.tier === 'plus' ? 'Plus' : 'Free'}</span></div>
-    <h3>${esc(p.name)}</h3><p>${esc(p.philosophy)}.</p><p>From the public work of ${esc(p.inspiredBy)}.</p></div>`).join('');
+  $('#personas').innerHTML = personas().map(p => `<div class="portrait ${usable(p) ? '' : 'locked'}">${art(p)}<span class="tag ${p.tier === 'plus' ? 'plus' : ''}">${usable(p) ? (p.tier === 'plus' ? 'Plus' : 'Free') : (p.tier === 'plus' ? 'Plus · soon' : 'Soon')}</span>
+    <h3>${esc(p.name)}</h3><p class="portrait-source">Inspired by ${esc(p.inspiredBy)}</p><p>${esc(p.philosophy)}.</p></div>`).join('');
   $('#agents').innerHTML = agents().map(a => `<div class="tr"><strong>${esc(a.name)}</strong><span>${esc(a.job)}</span><span class="tag ${a.tier === 'plus' ? 'plus' : ''}">${a.tier === 'plus' ? 'Plus' : 'Free'}</span></div>`).join('');
 }
 
@@ -157,8 +157,8 @@ function renderSnapshot() {
 
 function renderSetup() {
   const hint = state.profile?.personaHint;
-  $('#pick-mentor').innerHTML = personas().filter(p => p.tier === 'free' || state.tier === 'plus').map(p => `<button type="button" class="choice ${p.id === state.personaId ? 'on' : ''}" data-p="${p.id}" ${usable(p) ? '' : 'disabled'}>${art(p)}</div><strong>${esc(p.name)}</strong><small>${esc(p.philosophy)}.</small>${p.id === hint ? '<small class="hint">Suggested from your quiz</small>' : ''}${usable(p) ? '' : '<small>Coming soon</small>'}</button>`).join('')
-    + (state.tier === 'plus' ? '' : `<button type="button" class="choice" data-unlock><div class="frame"><span class="mono-gram">+7</span></div><strong>7 more mentors</strong><small>Bogle, Housel, Orman and more, with Plus.</small></button>`);
+  $('#pick-mentor').innerHTML = personas().filter(p => p.tier === 'free' || state.tier === 'plus').map(p => `<button type="button" class="choice ${p.id === state.personaId ? 'on' : ''}" data-p="${p.id}" ${usable(p) ? '' : 'disabled'}>${art(p)}<strong>${esc(p.name)}</strong><small>Inspired by ${esc(p.inspiredBy)}</small><small>${esc(p.philosophy)}.</small>${p.id === hint ? '<small class="hint">Suggested from your quiz</small>' : ''}${usable(p) ? '' : '<small>Coming soon</small>'}</button>`).join('')
+    + (state.tier === 'plus' ? '' : `<button type="button" class="choice" data-unlock><div class="frame"><span class="mono-gram">+7</span></div><strong>7 more mentors</strong><small>Buffett, Housel, Wood and more, with Plus.</small></button>`);
   $('#pick-coach').innerHTML = agents().filter(usable).map(a => `<button type="button" class="choice ${a.id === state.agentId ? 'on' : ''}" data-a="${a.id}"><span><strong>${esc(a.name)}</strong><small>${esc(a.job)}</small></span><span class="tag ${a.tier === 'plus' ? 'plus' : ''}">${statusLabel(a)}</span></button>`).join('');
   document.querySelectorAll('#pick-mentor [data-p]').forEach(b => b.onclick = () => { state.personaId = b.dataset.p; renderSetup(); });
   document.querySelectorAll('#pick-coach [data-a]').forEach(b => b.onclick = () => { state.agentId = b.dataset.a; renderSetup(); });
@@ -168,7 +168,7 @@ function renderSetup() {
 // ---------- chat ----------
 function renderChatChrome() {
   const p = persona(state.personaId), a = agent(state.agentId), s = state.snapshot;
-  $('#chat-head').innerHTML = `${thumb(p)}<div><strong>${esc(p.name)}</strong><small>directing ${esc(a.name)}</small></div>${s?.status === 'ok' ? `<div class="snap-mini">lowest ${usd(s.lowestMonth)}<br>essentials ${usd(s.essentialsTotal)}</div>` : ''}`;
+  $('#chat-head').innerHTML = `${thumb(p)}<div><strong>${esc(p.name)}</strong><small>Inspired by ${esc(p.inspiredBy)} · directing ${esc(a.name)}</small></div>${s?.status === 'ok' ? `<div class="snap-mini">lowest ${usd(s.lowestMonth)}<br>essentials ${usd(s.essentialsTotal)}</div>` : ''}`;
   $('#persona-switch').innerHTML = personas().map(x => `<button class="rail-item ${x.id === state.personaId ? 'on' : ''} ${usable(x) ? '' : 'locked'}" data-p="${x.id}">${thumb(x)}<span>${esc(x.name)}</span><small>${usable(x) ? '' : statusLabel(x)}</small></button>`).join('');
   $('#agent-list').innerHTML = agents().map(x => `<button class="rail-item coach-item ${x.id === state.agentId ? 'on' : ''} ${usable(x) ? '' : 'locked'}" data-a="${x.id}"><span>${esc(x.name.replace(/ Coaching$/, ''))}</span><small>${usable(x) ? '' : statusLabel(x)}</small></button>`).join('');
   document.querySelectorAll('#persona-switch [data-p]').forEach(b => b.onclick = () => pickPersona(b.dataset.p));

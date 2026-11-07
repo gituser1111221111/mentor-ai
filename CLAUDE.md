@@ -12,6 +12,7 @@ Start every session by reading:
 - Challenge 21, Variable-income budgeting, MVP option 1: plan expenses around variable monthly income. User: young adult with uneven income who can't afford an advisor and doesn't trust AI.
 - **Generate, then pick:** agents (persona-neutral) produce ~12 candidate options with all numbers from code tools. Code validates them. The persona only picks one by id (enum) and explains. `repick()` swaps the persona without changing the facts.
 - MVP persona: Debt-Free Coach, built from Dave Ramsey's public teachings and labeled "not affiliated." Conscious Spender (built-in, from Ramit Sethi's public teachings) is the second live persona for the switch demo. Hustle Coach (Grant Cardone) was removed in v0.6. Never "I am Dave Ramsey." No voice clone.
+- Mentor portraits are AI-generated editorial likenesses of the public figures who inspire each philosophy. Label them as generated and maintain clear non-affiliation language; the figures do not speak for or endorse the app.
 - Business model: free base bot; one $4.99/mo tier unlocks all agents and personas. Specific answers allowed, always with a disclosure (not licensed advice).
 - Stack: starter Node 22 backend (`server.js`, `lib/`), Claude API (`claude-sonnet-5-5` to generate, `claude-haiku-5-5` to pick and for memory), ElevenLabs STT/TTS, Stripe test mode, static UI in `public/`.
 - All money is a USD decimal string, with math in exact cents via `lib/finance.js`. The model never does arithmetic.

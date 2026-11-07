@@ -83,7 +83,7 @@
       "audience": "Beginners, people with debt, financially inexperienced users",
       "status": "live",
       "tier": "free",
-      "image": null
+      "image": "/img/mentors/debt-free-coach.webp"
     },
     {
       "id": "value-investor",
@@ -94,7 +94,7 @@
       "audience": "Young investors building long-term wealth",
       "status": "locked",
       "tier": "plus",
-      "image": null
+      "image": "/img/mentors/value-investor.webp"
     },
     {
       "id": "asset-builder",
@@ -106,7 +106,7 @@
       "status": "locked",
       "tier": "plus",
       "reviewNote": "Leverage and wealth-creation claims need independent evaluation in contested fields before this persona goes live.",
-      "image": null
+      "image": "/img/mentors/asset-builder.webp"
     },
     {
       "id": "disruptive-growth",
@@ -118,7 +118,7 @@
       "status": "locked",
       "tier": "plus",
       "reviewNote": "Public material is mostly fund research on specific companies. The picker must never steer users toward individual stocks or funds.",
-      "image": null
+      "image": "/img/mentors/disruptive-growth.webp"
     },
     {
       "id": "credit-smart",
@@ -129,7 +129,7 @@
       "audience": "Gen Z, college students, young professionals",
       "status": "locked",
       "tier": "plus",
-      "image": null
+      "image": "/img/mentors/credit-smart.webp"
     },
     {
       "id": "conscious-spender",
@@ -140,7 +140,7 @@
       "audience": "Young professionals who want to enjoy their money while building wealth",
       "status": "live",
       "tier": "free",
-      "image": null
+      "image": "/img/mentors/conscious-spender.webp"
     },
     {
       "id": "money-psychology",
@@ -151,7 +151,7 @@
       "audience": "Users interested in the psychology behind financial decisions",
       "status": "locked",
       "tier": "plus",
-      "image": null
+      "image": "/img/mentors/money-psychology.webp"
     },
     {
       "id": "real-estate-saver",
@@ -162,7 +162,7 @@
       "audience": "Gen Z and younger millennials interested in investing and real estate",
       "status": "locked",
       "tier": "plus",
-      "image": null
+      "image": "/img/mentors/real-estate-saver.webp"
     },
     {
       "id": "money-basics",
@@ -173,7 +173,7 @@
       "audience": "College students and beginning investors",
       "status": "locked",
       "tier": "free",
-      "image": null
+      "image": "/img/mentors/money-basics.webp"
     },
     {
       "id": "step-by-step-planner",
@@ -184,7 +184,7 @@
       "audience": "Users seeking a structured financial plan",
       "status": "locked",
       "tier": "plus",
-      "image": null
+      "image": "/img/mentors/step-by-step-planner.webp"
     }
   ],
   "explainer": {
@@ -192,8 +192,8 @@
     "coaching": "Coaching is the professional. Each coach is a specialist bot (budget, debt, savings and more) that does the work and all the math, then hands the mentor a set of verified options."
   },
   "tiers": {
-    "free": "3 mentors + 3 coaches, free",
+    "free": "2 working mentors + 3 coaches, free; Money Basics coming soon",
     "plus": "All 10 mentors + all 10 coaches for $4.99/month"
   },
-  "imageNote": "Drop character art in public/img/mentors/<id>.webp (4:5, at least 600x750) and set \"image\": \"/img/mentors/<id>.webp\". Until then the UI shows a monogram."
+  "imageNote": "All mentor portraits are AI-generated editorial likenesses of the public figures whose teachings inspire them. The figures are not affiliated with or endorsing this product."
 }
