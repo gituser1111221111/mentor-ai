@@ -72,6 +72,7 @@ test('live Finnhub data overrides the snapshot and is labeled with its source (f
     const body = u.host === 'finnhub.io'
       ? u.pathname.endsWith('/quote') ? {c: 200.5, t: 1762560000}
       : u.pathname.endsWith('/calendar/earnings') ? {earningsCalendar: [{date: '2026-11-18', hour: 'amc', epsEstimate: 2.5, symbol: u.searchParams.get('symbol')}]}
+      : u.pathname.endsWith('/stock/metric') ? {metric:{peTTM:22}}
       : u.pathname.endsWith('/stock/recommendation') ? [{buy: 50, strongBuy: 20, hold: 3, sell: 1, strongSell: 0, period: '2026-11-01'}]
       : u.pathname.endsWith('/company-news') ? [{headline: 'Live headline', source: 'Wire', url: 'https://example.com/a', datetime: 1762560000}]
       : {}
@@ -85,8 +86,43 @@ test('live Finnhub data overrides the snapshot and is labeled with its source (f
     assert.equal(nvda.nextEarningsCall.date, '2026-11-18');
     assert.equal(nvda.nextEarningsCall.source, 'Finnhub');
     assert.equal(nvda.analysts.buyRatings, 70);
+    assert.equal(nvda.analysts.source, 'Finnhub');
+    assert.equal(nvda.analysts.targetSource, 'snapshot');
+    assert.equal(nvda.analysts.targetAsOf, '2026-11-06');
+    assert.equal(nvda.priceSource, 'Finnhub');
+    assert.equal(nvda.metricSources.pe.source, 'Finnhub');
+    assert.equal(nvda.metricSources.week52High.source, 'snapshot');
+    assert.equal(nvda.oneYearChangePercent, null);
     assert.equal(nvda.headlines[0].title, 'Live headline');
     assert.ok(market.sources.includes('Finnhub'));
     assert.ok(seen.every(u => !u.includes('alphavantage'))); // Finnhub configured: no Alpha Vantage calls
   } finally { delete process.env.FINNHUB_API_KEY; process.env.MARKET_LIVE = '0'; clearMarketCache(); }
+});
+
+
+test('configured provider failure falls back to Alpha Vantage without relabeling snapshot metrics', async () => {
+  delete process.env.MARKET_LIVE;
+  process.env.FINNHUB_API_KEY = 'test-key'; process.env.ALPHA_VANTAGE_API_KEY = 'test-key'; clearMarketCache();
+  const single = {portfolio: summarizePortfolioCSV('symbol,market_value\nAAPL,100')};
+  const seen=[];
+  const fetcher=async url=>{ seen.push(url); return new URL(url).host==='finnhub.io' ? {ok:false,status:503} : {ok:true,json:async()=>({'Global Quote':{'05. price':'201.50','07. latest trading day':'2026-11-05'}})}; };
+  try {
+    const {calcs}=await marketCalcs(single,'equity',{fetcher,today:TODAY});
+    const a=calcs.find(c=>c.id==='eq_aapl').result;
+    assert.equal(a.price,'201.50');assert.equal(a.priceSource,'Alpha Vantage');
+    assert.equal(a.priceAsOf,'2026-11-05');assert.equal(a.metricsSource,'snapshot');
+    assert.equal(a.analysts.targetSource,'snapshot');
+    assert.ok(seen.some(u=>u.includes('alphavantage.co')));
+  } finally {delete process.env.FINNHUB_API_KEY;delete process.env.ALPHA_VANTAGE_API_KEY;process.env.MARKET_LIVE='0';clearMarketCache();}
+});
+
+test('matching earnings estimates are not beats and zero estimates do not imply zero surprise',async()=>{
+  delete process.env.MARKET_LIVE;process.env.FINNHUB_API_KEY='test-key';clearMarketCache();
+  const single={portfolio:summarizePortfolioCSV('symbol,market_value\nAAPL,100')};
+  const fetcher=async url=>({ok:true,json:async()=>new URL(url).pathname.endsWith('/stock/earnings')?[{actual:0,estimate:0,period:'2026-09-30'}]:{}});
+  try{
+    const {calcs}=await marketCalcs(single,'equity',{fetcher,today:TODAY});
+    const last=calcs.find(c=>c.id==='eq_aapl').result.lastQuarter;
+    assert.equal(last.result,'met estimate');assert.equal(last.surprisePercent,null);
+  }finally{delete process.env.FINNHUB_API_KEY;process.env.MARKET_LIVE='0';clearMarketCache();}
 });

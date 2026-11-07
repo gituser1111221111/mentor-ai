@@ -842,3 +842,20 @@ body:not(.chat-open) header.site #engine { border-color: #ffffff40; }
 .source-list { list-style: none; padding: 0; margin: 0 0 14px; display: grid; gap: 10px; }
 .source-list li { font-size: .88rem; } .source-list small { color: var(--muted); }
 .source-list .tag { font-size: .62rem; padding: 3px 7px; margin-left: 4px; }
+
+/* Keep the conversation primary and secondary research controls compact. */
+.msg.bot .say { white-space:pre-line; overflow-wrap:anywhere; }
+.answer-details { border:1px solid var(--rule); border-radius:12px; padding:0 14px; background:#f4f6ef; }
+.answer-details > summary { min-height:44px; display:list-item; align-content:center; padding:12px 0; font-weight:600; }
+.answer-details[open] { padding-bottom:12px; }
+.answer-details .sources { overflow-wrap:anywhere; line-height:1.65; }
+.answer-details .meta { margin-top:10px; }
+.answer-details .meta .btn { min-height:44px; }
+.data-note,.source-note { color:var(--ink-2); font-size:.83rem; line-height:1.6; }
+.portfolio-start { display:flex; flex-wrap:wrap; gap:10px; padding:0 12px 14px; }
+.source-card { background:linear-gradient(145deg,#eef2e8,#f9f8ef); }
+.source-card small { font-size:.8rem; line-height:1.5; }
+.planned-sources { border-top:1px solid var(--rule); margin-top:22px; padding-top:10px; }
+.planned-sources > summary { min-height:44px; padding:12px 0; cursor:pointer; color:var(--ink); font-weight:600; }
+.planned-sources .source-grid { margin-top:12px; }
+@media(max-width:640px) { .source-grid { grid-template-columns:minmax(0,1fr); } .portfolio-start .btn { flex:1 1 auto; } }

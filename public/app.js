@@ -67,16 +67,16 @@ function renderLanding() {
 const sources = () => state.config.catalog.dataSources || [];
 const sourcesFor = id => sources().filter(d => d.agents.includes(id));
 const agentNames = ids => ids.map(id => agent(id)?.name.replace(/ Agent$/, '')).filter(Boolean).join(', ');
-const sourceState = d => d.status === 'live' ? (d.connected ? 'Live · connected' : 'Live · using dated snapshot') : 'Planned';
+const sourceState = d => d.status === 'live' ? (d.connected ? 'Configured · checked when requested' : 'Not configured · dated fallback where available') : 'Planned';
 function sourceCard(d) {
   return `<article class="source-card ${esc(d.status)}"><div class="source-top"><a href="${esc(d.url)}" target="_blank" rel="noopener noreferrer"><strong>${esc(d.name)}</strong></a><span class="tag ${d.tier === 'plus' ? 'plus' : ''}">${d.tier === 'plus' ? 'Plus' : 'Free'}</span></div>
-    <p>${esc(d.provides)}</p><small><span class="dot ${d.status === 'live' ? (d.connected ? 'on' : 'half') : ''}" aria-hidden="true"></span>${esc(sourceState(d))}${d.refresh ? ` · refreshes ${esc(d.refresh.toLowerCase())}` : ''}</small><small>Feeds: ${esc(agentNames(d.agents))}</small></article>`;
+    <p>${esc(d.provides)}</p><small><span class="dot ${d.status === 'live' ? (d.connected ? 'on' : 'half') : ''}" aria-hidden="true"></span>${esc(sourceState(d))}${d.refresh ? ` · cache interval ${esc(d.refresh.toLowerCase())}` : ''}</small><small>Feeds: ${esc(agentNames(d.agents))}</small></article>`;
 }
 function renderSources() {
   const el = $('#data-sources'); if (!el) return;
   const free = sources().filter(d => d.tier === 'free'), plus = sources().filter(d => d.tier === 'plus');
-  el.innerHTML = `<h3 class="source-group">Free · live now</h3><div class="source-grid">${free.map(sourceCard).join('')}</div>
-    <h3 class="source-group">Plus · planned connections</h3><div class="source-grid">${plus.map(sourceCard).join('')}</div>`;
+  el.innerHTML = `<p class="source-note">API configuration is not a successful connection check. Answers identify the sources used; fallback data is dated ${esc(state.config.marketSnapshotAsOf || 'in each answer')}.</p><h3 class="source-group">Available integrations</h3><div class="source-grid">${free.map(sourceCard).join('')}</div>
+    <details class="planned-sources"><summary>Explore ${plus.length} planned connections</summary><div class="source-grid">${plus.map(sourceCard).join('')}</div></details>`;
 }
 function sourceList(id) {
   const list = sourcesFor(id);
@@ -91,7 +91,7 @@ function showAgent(a) {
   $('#feature-sources').innerHTML = sourceList(a.id);
   $('#feature-plus').hidden = ready || state.tier === 'plus';
   $('#feature-try').hidden = !ready;
-  $('#feature-try').onclick = async () => { $('#feature-preview').close(); state.agentId = a.id; await api('/api/portfolio/upload', {method: 'POST', body: {sample: true}}).catch(() => {}); submitQuiz(DEMO); };
+  $('#feature-try').onclick = () => { $('#feature-preview').close(); state.agentId = a.id; startChat(); };
   $('#feature-preview').showModal();
 }
 
@@ -164,7 +164,7 @@ function uploadNote(message) {
 async function uploadPortfolio(file) {
   const summary = await api('/api/portfolio/upload', {method: 'POST', body: {csv: await file.text()}});
   const refreshed = await api('/api/profile'); state.profile = refreshed.profile; state.snapshot = refreshed.snapshot;
-  if (!$('#v-chat').hidden) renderChatChrome();
+  if (!$('#v-chat').hidden) { renderChatChrome(); document.querySelector('#log .portfolio-start')?.remove(); }
   uploadNote(`Portfolio loaded: ${summary.holdings} holdings, ${usd(summary.marketValue)} total value.`);
   state.pendingPortfolio = null;
 }
@@ -181,7 +181,7 @@ function connectPortfolio() { uploadNote('Direct brokerage connections are not a
 // ---------- chat ----------
 function renderChatChrome() {
   const p = persona(state.personaId), a = agent(state.agentId), s = state.snapshot;
-  $('#chat-head').innerHTML = `${thumb(p)}<div><strong>${esc(p.name)}</strong><small>${p.textOnly ? 'Text mentorship · Research perspectives' : state.profile?.incomeHistory?.length ? `With ${esc(a.name)}` : 'Start with any money question'} · AI-inspired, not affiliated</small></div>${s?.status === 'ok' ? `<div class="snap-mini">lowest ${usd(s.lowestMonth)}<br>essentials ${usd(s.essentialsTotal)}</div>` : ''}`;
+  $('#chat-head').innerHTML = `${thumb(p)}<div><strong>${esc(p.name)}</strong><small>${['investing','equity'].includes(a.id) ? esc(a.name) : p.textOnly ? 'Text mentorship · Research perspectives' : state.profile?.incomeHistory?.length ? `With ${esc(a.name)}` : 'Start with any money question'} · AI-inspired, not affiliated</small></div>${s?.status === 'ok' ? `<div class="snap-mini">lowest ${usd(s.lowestMonth)}<br>essentials ${usd(s.essentialsTotal)}</div>` : ''}`;
   $('#persona-switch').innerHTML = personas().map(x => `<button type="button" class="rail-item ${x.id === state.personaId ? 'on' : ''}" data-p="${esc(x.id)}">${thumb(x)}<span>${esc(displayName(x.name))}</span><small>${railStatus(x)}</small></button>`).join('');
   $('#agent-list').innerHTML = agents().map((x,i) => `<button type="button" class="rail-item coach-item tone-${i%4} ${x.id === state.agentId ? 'on' : ''}" data-a="${esc(x.id)}">${agentSymbol(x.id)}<span>${esc(displayName(x.name))}</span><small>${railStatus(x)}</small></button>`).join('');
   document.querySelectorAll('#persona-switch [data-p]').forEach(b => b.onclick = () => pickPersona(b.dataset.p));
@@ -206,6 +206,8 @@ function showStarters() {
 }
 const asksForNumbers = r => !r.turnId && /financial details|update your (?:numbers|details)|add your numbers/i.test(r.text || '');
 function showFeature(x) {
+  $('#feature-eyebrow').textContent = 'PLANNED MENTOR';
+  $('#feature-sources').replaceChildren(); $('#feature-try').hidden = true; $('#feature-try').onclick = null;
   $('#feature-title').textContent = x.name;
   $('#feature-text').textContent = `${x.name} is in the Plus library. This feature is not available yet.`;
   $('#feature-eyebrow').textContent = 'PLUS LIBRARY';
@@ -248,7 +250,7 @@ function calcCard(c) {
     const shown = v === null ? 'n/a' : unit === 'percent' ? `${v}%` : unit === 'money' && typeof v === 'string' && /^-?\d+\.\d{2}$/.test(v) ? usd(v) : String(v);
     return `<tr><td>${esc(k.replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase().replace(/^./, x => x.toUpperCase()))}</td><td>${esc(shown)}</td></tr>`;
   }).join('');
-  return `<div class="calc"><div class="ch"><span>${esc(c.label || c.name)}</span><span>Based on your inputs</span></div><table>${rows}</table></div>`;
+  return `<div class="calc"><div class="ch"><span>${esc(c.label || c.name)}</span><span>${esc(c.inputs?.source || 'Based on your inputs')}</span></div><table>${rows}</table></div>`;
 }
 
 function sourceLink(c) {
@@ -264,15 +266,17 @@ function botMessage(r) {
   el.innerHTML = `<div class="who">${p ? thumb(p) : ''}<div><strong>${esc(displayName(r.personaName || p?.name || ''))}</strong></div></div>
     <p class="say">${esc(r.text)}</p>
     ${voice.active && canSpeak(r) ? '<button class="btn text" type="button" data-listen>Listen</button><div class="voice-player" hidden><audio controls preload="none"></audio><button class="btn text" type="button" data-stop>Stop</button><p class="fine">AI-generated voice, not the real person.</p></div>' : ''}
-    ${calcs.length || r.citations?.length ? `<details class="answer-details"><summary>Sources and calculations</summary>${calcs.map(calcCard).join('')}${r.citations?.length ? `<p class="sources">${r.citations.map(c => `${sourceLink(c)} <span>(${esc(c.ref)})</span>`).join('; ')}</p>` : ''}</details>` : ''}
-    ${r.optionsReviewed ? `<p class="fine reviewed">${esc(displayName(r.personaName || 'Your mentor'))} chose from ${r.optionsReviewed} verified options.</p>` : ''}
-    ${r.turnId ? `<div class="meta"><button class="btn text" type="button" data-compare>Compare mentors</button>${r.canExpand ? '<button class="btn text" type="button" data-expand>Show more options</button>' : ''}</div><div class="more-options" hidden></div>` : ''}
+    ${r.market ? `<p class="data-note">Data sources: ${esc(r.market.sources.join(', '))}. Latest price date: ${esc(r.market.asOf)}; individual fields may be older.</p>` : ''}
+    ${calcs.length || r.citations?.length || r.optionsReviewed || (!r.conversational && r.disclosure) ? `<details class="answer-details"><summary>Sources & answer details</summary>
+      ${calcs.map(calcCard).join('')}${r.citations?.length ? `<p class="sources">${r.citations.map(c => `${sourceLink(c)} <span>(${esc(c.ref)})</span>`).join('; ')}</p>` : ''}
+      ${r.optionsReviewed ? `<p class="fine reviewed">This answer considered ${r.optionsReviewed} checked options.</p>` : ''}
+      ${r.turnId && r.canExpand ? '<div class="meta"><button class="btn text" type="button" data-expand>Explore other options</button></div><div class="more-options" hidden></div>' : ''}
+      ${r.conversational ? '' : `<p class="disclose">${esc(r.disclosure || '')}</p>`}</details>` : ''}
     ${asksForNumbers(r) ? '<div class="meta"><button class="btn primary" type="button" data-add-numbers>Add my numbers</button></div>' : ''}
-    ${r.conversational ? '' : `<p class="disclose">${esc(r.disclosure || '')}</p>`}`;
+    `;
   el.querySelector('[data-add-numbers]')?.addEventListener('click', renderIntake);
   el.querySelector('[data-listen]')?.addEventListener('click', () => speakReply(el, r));
   el.querySelector('[data-stop]')?.addEventListener('click', () => {++voice.epoch;if(voice.active)endConversation();else stopPlayback();});
-  el.querySelector('[data-compare]')?.addEventListener('click', () => openCompare(r));
   el.querySelector('[data-expand]')?.addEventListener('click', e => expandOptions(el, r, e.currentTarget));
   $('#log').append(el); el.scrollIntoView({behavior: 'smooth', block: 'start'});
   return el;
@@ -297,37 +301,7 @@ async function expandOptions(el, r, btn) {
       try { botMessage(await api('/api/repick', {method: 'POST', body: {turnId: r.turnId, personaId: state.personaId}})); }
       catch (err) { handleError(err); b.disabled = false; } finally { sk.stop(); }
     });
-  } catch (e) { btn.disabled = false; btn.textContent = 'Show more options'; note(e.message); }
-}
-
-// ---------- compare mentors (same verified options, only the pick changes) ----------
-async function openCompare(r) {
-  const body = $('#compare-body');
-  body.innerHTML = '<p class="why">Asking each mentor to judge the same options...</p>';
-  $('#compare').showModal();
-  let c;
-  try { c = await api('/api/compare', {method: 'POST', body: {turnId: r.turnId}}); }
-  catch (e) { body.innerHTML = `<p class="error">${esc(e.message)}</p>`; return; }
-  const name = id => c.mentors.find(m => m.personaId === id)?.name || id;
-  const card = m => {
-    const head = `<h4>${esc(displayName(m.name))}</h4><p class="fine">${esc(m.affiliation || `Inspired by ${m.inspiredBy}'s public teachings. Not affiliated or endorsed.`)}</p>`;
-    if (m.status === 'locked') return `<div class="cmp-card muted">${head}<p>Part of Plus. <button type="button" class="btn text" data-unlock>Unlock to compare</button></p></div>`;
-    if (m.status === 'coming-soon') return `<div class="cmp-card muted">${head}<p><button type="button" class="btn text" data-unlock>Plus</button></p></div>`;
-    if (m.status === 'error') return `<div class="cmp-card muted">${head}<p class="error">Could not answer: ${esc(m.error || 'error')}</p></div>`;
-    const agree = m.agreesWith?.length ? `<p class="fine">Agrees with ${m.agreesWith.map(x => esc(displayName(x.name))).join(', ')}.</p>` : '';
-    const dis = m.disagreesWith?.length ? `<p class="fine">Disagrees with ${m.disagreesWith.map(x => `${esc(displayName(x.name))} (picked "${esc(x.pickTitle)}")`).join(', ')}.</p>` : '';
-    const risk = [m.optionRisk?.risk ? `Option risk: ${esc(m.optionRisk.risk)}.` : '', m.optionRisk?.tradeoffs ? esc(m.optionRisk.tradeoffs) : '', m.riskNote ? esc(m.riskNote) : ''].filter(Boolean).join(' ');
-    return `<div class="cmp-card">${head}
-      <p><strong>Picked:</strong> ${esc(m.pickTitle)}</p>
-      <p class="say">${esc(m.text || m.rationale)}</p>
-      ${m.citations?.length ? `<p class="sources"><span>Sources:</span> ${m.citations.map(x => `${esc(x.title)}${x.ref ? ` <span>(${esc(x.ref)})</span>` : ''}`).join('; ')}</p>` : ''}
-      ${risk ? `<p class="fine"><strong>Risks:</strong> ${risk}</p>` : ''}${agree}${dis}</div>`;
-  };
-  body.innerHTML = `<p class="cmp-summary">${esc(c.summary)}</p>
-    <p class="fine">${c.factsUnchanged ? 'Every mentor judged the same options with the same numbers. Nothing was recalculated.' : 'Warning: the options changed between mentors, so this comparison is not reliable.'}</p>
-    ${c.mentors.map(card).join('')}
-    <p class="disclose">${esc(c.disclosure || '')}</p>`;
-  body.querySelectorAll('[data-unlock]').forEach(b => b.onclick = () => { $('#compare').close(); openUnlock(); });
+  } catch (e) { btn.disabled = false; btn.textContent = 'Explore other options'; note(e.message); }
 }
 
 async function send(text, {spoken = false, voiceSession = null} = {}) {
@@ -369,7 +343,10 @@ async function restoreChat(history) {
 function startChat() {
   $('#log').innerHTML = ''; state.lastTurn = null; renderChatChrome(); refreshMemory(); show('v-chat');
   const p = persona(state.personaId), a = agent(state.agentId);
-  note(p.textOnly ? `${p.name} is ready for text chat. Explore a perspective or bring a research question.` : state.profile?.incomeHistory?.length ? `${p.name} is ready to talk through your plan. Ask anything below.` : `Say hello, ask a question, or choose Talk live for a voice conversation. Add your numbers anytime for a personal plan.`);
+  if (['investing','equity'].includes(a.id)) {
+    note(state.profile?.portfolio ? `${a.name} is ready with your saved holdings and ${p.name}'s perspective.` : `${a.name} works from your holdings. Upload a CSV to get started.`);
+    if (!state.profile?.portfolio) { const el = document.createElement('div'); el.className = 'portfolio-start'; el.innerHTML = '<button class="btn primary" type="button" data-holdings>Upload holdings CSV</button><button class="btn text" type="button" data-context-open>Open context hub</button>'; el.querySelector('[data-holdings]').onclick = () => $('#portfolio-file').click(); el.querySelector('[data-context-open]').onclick = () => $('#context-dialog').showModal(); $('#log').append(el); }
+  } else note(p.textOnly ? `${p.name} is ready for text chat. Explore a perspective or bring a research question.` : state.profile?.incomeHistory?.length ? `${p.name} is ready to talk through your plan. Ask anything below.` : `Say hello, ask a question, or choose Talk live for a voice conversation. Add your numbers anytime for a personal plan.`);
   showStarters();
   $('#msg').focus();
 }
@@ -420,8 +397,7 @@ function setupContextHub() {
   $('#context-files').onchange = async e => {
     const file = e.target.files?.[0]; if (!file) return;
     try {
-      if (state.profile?.incomeHistory?.length) { await uploadDocument(file); $('#context-file-status').textContent = `${file.name} added to this chat.`; }
-      else { state.pendingDocument = file; $('#context-file-status').textContent = `${file.name} will be added after the six questions.`; }
+      await uploadDocument(file); $('#context-file-status').textContent = `${file.name} added to this chat.`;
     } catch (err) { $('#context-file-status').textContent = err.message; }
     e.target.value = '';
   };
@@ -439,10 +415,10 @@ function setupContextHub() {
   $('#context-csv').onchange = async e => {
     const file = e.target.files[0]; if (!file) return;
     if (file.size > 1024 * 1024) { $('#context-csv-status').textContent = 'Choose a CSV smaller than 1 MB.'; return; }
-    try { if (state.profile?.incomeHistory?.length) { await uploadPortfolio(file); done(state.profile.portfolio); } else { state.pendingPortfolio = file; $('#context-csv-status').textContent = `${file.name} will be imported after the six questions.`; } }
+    try { await uploadPortfolio(file); done(state.profile.portfolio); }
     catch (err) { $('#context-csv-status').textContent = err.message; }
   };
-  $('#context-sample').onclick = async () => { try { done(await api('/api/portfolio/upload', {method: 'POST', body: {sample: true}})); } catch (err) { $('#context-csv-status').textContent = err.message; } };
+  $('#context-sample').onclick = async () => { try { const summary = await api('/api/portfolio/upload', {method: 'POST', body: {sample: true}}); const refreshed = await api('/api/profile'); state.profile = refreshed.profile; state.snapshot = refreshed.snapshot; if (!$('#v-chat').hidden) renderChatChrome(); done(summary); } catch (err) { $('#context-csv-status').textContent = err.message; } };
 }
 
 // ---------- sample profile ----------
@@ -633,7 +609,9 @@ async function boot() {
   $('#engine').textContent = state.config.engine === 'live' ? 'Live AI' : state.config.engine === 'mock' ? 'Local test mode' : 'AI unavailable';
   renderLanding();
   $('#home').onclick = e => { e.preventDefault(); show('v-landing'); };
-  $('#start').onclick = renderIntake; $('#head-start').onclick = startChat; $('#try-chat').onclick = startChat;
+  $('#start').onclick = renderIntake;
+  const startRamsey = () => {state.personaId = DEMO_PERSONA; state.agentId = DEMO_AGENT; startChat();};
+  $('#head-start').onclick = startRamsey; $('#try-chat').onclick = startRamsey;
   $('#chat-plan').onclick = renderIntake;
   $('#demo').onclick = async () => { await api('/api/portfolio/upload', {method: 'POST', body: {sample: true}}).catch(() => {}); submitQuiz(DEMO); };
   document.querySelectorAll('[data-unlock]').forEach(b => b.onclick = openUnlock);
@@ -645,8 +623,8 @@ async function boot() {
   $('#chat-upload-portfolio').onclick = () => $('#portfolio-file').click();
   $('#upload-document').onclick = () => $('#document-file').click();
   $('#chat-upload-document').onclick = () => $('#document-file').click();
-  $('#portfolio-file').onchange = async e => { const file = e.target.files?.[0]; if (!file) return; try { if (state.profile) await uploadPortfolio(file); else { state.pendingPortfolio = file; uploadNote(`${file.name} will be added when you start chatting.`); } } catch (err) { uploadNote(err.message); } e.target.value = ''; };
-  $('#document-file').onchange = async e => { const file = e.target.files?.[0]; if (!file) return; try { if (state.profile) await uploadDocument(file); else { state.pendingDocument = file; uploadNote(`${file.name} will be added when you start chatting.`); } } catch (err) { uploadNote(err.message); } e.target.value = ''; };
+  $('#portfolio-file').onchange = async e => { const file = e.target.files?.[0]; if (!file) return; try { await uploadPortfolio(file); } catch (err) { uploadNote(err.message); } e.target.value = ''; };
+  $('#document-file').onchange = async e => { const file = e.target.files?.[0]; if (!file) return; try { await uploadDocument(file); } catch (err) { uploadNote(err.message); } e.target.value = ''; };
   $('#composer').onsubmit = e => { e.preventDefault(); if (voice.active) endConversation('Voice conversation ended.'); send($('#msg').value); };
   setupVoice();
   $('#toggle-chat-sidebar').onclick = () => { const hidden = document.body.classList.toggle('chat-sidebar-hidden'); $('#toggle-chat-sidebar').setAttribute('aria-expanded', String(!hidden)); };
