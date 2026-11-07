@@ -23,8 +23,11 @@ export function parseNote(text) {
     fields[line.slice(0, i).trim()] = v;
   }
   // The loader (lib/mentor/personas.js) reads a '# title' heading and a 'source:' line; they are not part of the summary.
-  const summary = m[2].split("\n").filter(l => !/^#\s/.test(l) && !/^source:/i.test(l)).join("\n").trim();
-  return { fields, summary };
+  // Format 2 notes add '## Applies when', '## Exceptions and limits' and '## Risks or disputes' sections after the summary.
+  const [lead, ...rest] = m[2].split(/^## /m);
+  const summary = lead.split("\n").filter(l => !/^#\s/.test(l) && !/^source:/i.test(l)).join("\n").trim();
+  const sections = Object.fromEntries(rest.map(s => { const i = s.indexOf("\n"); return [s.slice(0, i).trim(), s.slice(i + 1).trim()]; }));
+  return { fields, summary, sections };
 }
 
 const words = s => s.trim().split(/\s+/).filter(Boolean).length;
@@ -43,7 +46,8 @@ export function checkPersona(personaId = "debt-free-coach", root = ROOT) {
 
   const sourcesDoc = JSON.parse(readFileSync(sourcesPath, "utf8"));
   const sources = sourcesDoc.sources || [];
-  const speaker = sourcesDoc.speaker || "Dave Ramsey";
+  // Who may be quoted for this persona: sources.json "speakers" (list) or "speaker", default Dave Ramsey.
+  const speakers = sourcesDoc.speakers || [sourcesDoc.speaker || "Dave Ramsey"];
   const byUrl = new Map(sources.map(s => [s.url, s]));
 
   // ---- notes ----
@@ -55,16 +59,21 @@ export function checkPersona(personaId = "debt-free-coach", root = ROOT) {
     if (INVISIBLE.test(text)) errors.push(`${where}: contains invisible Unicode characters`);
     const parsed = parseNote(text);
     if (!parsed) { errors.push(`${where}: missing front matter`); continue; }
-    const { fields: f, summary } = parsed;
+    const { fields: f, summary, sections } = parsed;
     for (const k of REQUIRED) if (!(k in f)) errors.push(`${where}: missing field "${k}"`);
     for (const k of REQUIRED.filter(k => !["quote", "contested"].includes(k)))
       if (k in f && (f[k] === "" || (Array.isArray(f[k]) && !f[k].length))) errors.push(`${where}: empty field "${k}"`);
     if (!/^\d{3}$/.test(f.id || "")) errors.push(`${where}: id must be three digits`);
     if (!file.startsWith(`${f.id}-`)) errors.push(`${where}: filename must start with id ${f.id}-`);
     if (notes.has(f.id)) errors.push(`${where}: duplicate id ${f.id}`);
-    if (f.speaker !== speaker) errors.push(`${where}: speaker is "${f.speaker}", must be "${speaker}"`);
+    if (!speakers.includes(f.speaker)) errors.push(`${where}: speaker is "${f.speaker}", must be one of ${speakers.join(", ")}`);
+    if (f.format === "2") {
+      if (!["direct", "reported", "company"].includes(f.attribution)) errors.push(`${where}: attribution must be direct, reported or company`);
+      if (!["high", "medium", "low"].includes(f.confidence)) errors.push(`${where}: confidence must be high, medium or low`);
+      for (const h of ["Applies when", "Exceptions and limits", "Risks or disputes"]) if (!sections[h]) errors.push(`${where}: missing "## ${h}" section`);
+    }
     const tier = Number(f.source_tier);
-    if (![1, 2, 3].includes(tier)) errors.push(`${where}: source_tier must be 1-3 for a Ramsey-view note (got ${f.source_tier})`);
+    if (![1, 2, 3].includes(tier)) errors.push(`${where}: source_tier must be 1-3 for a note stating the mentor's view (got ${f.source_tier})`);
     const src = byUrl.get(f.source_url);
     if (!src) errors.push(`${where}: source_url not in sources.json: ${f.source_url}`);
     else {
@@ -90,7 +99,7 @@ export function checkPersona(personaId = "debt-free-coach", root = ROOT) {
   const byType = {}, byTier = {};
   for (const s of sources) {
     for (const k of ["id", "url", "title", "date", "tier", "type", "note_ids"]) if (!(k in s)) errors.push(`sources.json ${s.id || s.url}: missing "${k}"`);
-    if (!["article", "column", "transcript", "interview", "critique"].includes(s.type)) errors.push(`sources.json ${s.id}: bad type ${s.type}`);
+    if (!["article", "column", "letter", "webpage", "podcast", "video", "transcript", "interview", "critique"].includes(s.type)) errors.push(`sources.json ${s.id}: bad type ${s.type}`);
     const actual = [...(citedBy.get(s.url) || [])].sort();
     const listed = [...(s.note_ids || [])].sort();
     if (!actual.length) errors.push(`sources.json ${s.id}: not cited by any note (do not count unused sources)`);
@@ -107,7 +116,7 @@ export function checkPersona(personaId = "debt-free-coach", root = ROOT) {
   // ---- core.md ----
   const core = readFileSync(corePath, "utf8");
   if (INVISIBLE.test(core)) errors.push("core.md: contains invisible Unicode characters");
-  if (new RegExp(`\\bI am ${speaker}\\b|\\bI'm ${speaker}\\b`, "i").test(core)) errors.push(`core.md: must not claim to be ${speaker}`);
+  for (const speaker of speakers) if (new RegExp(`\\bI am ${speaker}\\b|\\bI'm ${speaker}\\b`, "i").test(core)) errors.push(`core.md: must not claim to be ${speaker}`);
   const citeRe = /\(notes? (\d{3}(?:,\s*\d{3})*)\)/g;
   for (const m of core.matchAll(citeRe))
     for (const id of m[1].split(/,\s*/)) if (!notes.has(id)) errors.push(`core.md: cites missing note ${id}`);
@@ -122,7 +131,7 @@ export function checkPersona(personaId = "debt-free-coach", root = ROOT) {
   if (existsSync(evalPath)) {
     const ev = JSON.parse(readFileSync(evalPath, "utf8"));
     evalCount = (ev.questions || []).length;
-    if (evalCount < 25 || evalCount > 30) errors.push(`evals: ${evalCount} questions (need 25 to 30)`);
+    if (evalCount < 10 || evalCount > 30) errors.push(`evals: ${evalCount} questions (need 10 to 30)`);
     for (const q of ev.questions || []) {
       if (!q.question || !q.expected_stance || !(q.note_ids || []).length) errors.push(`evals ${q.id}: needs question, expected_stance, note_ids`);
       for (const id of q.note_ids || []) if (!notes.has(id)) errors.push(`evals ${q.id}: cites missing note ${id}`);

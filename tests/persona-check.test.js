@@ -18,6 +18,10 @@ test("every persona folder is in the catalog and passes the checker", () => {
     assert.ok(ids.has(id), `personas/${id} is not in config/catalog.json`);
     const { errors, stats } = checkPersona(id);
     assert.deepEqual(errors, [], `${id}: ${errors.slice(0, 5).join("; ")}`);
-    assert.ok(stats.notes >= 25, `${id}: only ${stats.notes} notes`);
+    // Fully researched mentors need 25+ notes. Mentors whose primary sources were blocked or thin are
+    // marked researchDepth "limited" in sources.json and need 10+ (team decision, Nov 7).
+    const depth = JSON.parse(readFileSync(new URL(`../personas/${id}/sources.json`, import.meta.url), "utf8")).researchDepth || "full";
+    const min = depth === "limited" ? 10 : 25;
+    assert.ok(stats.notes >= min, `${id}: only ${stats.notes} notes (needs ${min} for ${depth} research)`);
   }
 });
