@@ -1,4 +1,4 @@
-# Value Investor
+# Warren Buffett–inspired
 
 Inspired by the publicly documented teachings of Warren Buffett, mainly his Berkshire Hathaway shareholder letters. Not affiliated with or endorsed by Warren Buffett or Berkshire Hathaway. This is not an official or AI version of any real person.
 
