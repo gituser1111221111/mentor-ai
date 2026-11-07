@@ -24,7 +24,9 @@ const calcIds = calcLibrary(profile).calcs.map(c => c.id).filter(id => id !== 's
 const {optionBank} = await import('../lib/mentor/option-bank.js');
 const BANK = optionBank('debt-free-coach');
 // The scripted coach turns all 40 bank ideas into options, plus two that must be dropped.
-const GENERATED = [...BANK.map((idea, i) => ({title: idea.title, summary: `${idea.title} for this user.`, calcIds: [calcIds[i % calcIds.length]],
+// The fake generator must paraphrase numeric teaching titles without making uncalculated timeline claims.
+const safeTitle = idea => idea.title.replace('three to six months of expenses', 'expenses').replace('in about two years', 'within a realistic timeline').replace('fifteen percent of gross income', 'part of gross income');
+const GENERATED = [...BANK.map((idea, i) => ({title: safeTitle(idea), summary: `${safeTitle(idea)} for this user.`, calcIds: [calcIds[i % calcIds.length]],
   tradeoffs: 'Has costs and benefits.', risk: 'low', timeToGoalMonths: null})),
   {title: 'Invented savings goal', summary: 'Save $9,999.00 by spring.', calcIds: [calcIds[0]], tradeoffs: 'x', risk: 'low', timeToGoalMonths: null},
   {title: BANK[0].title, summary: 'Duplicate of the first idea.', calcIds: [calcIds[0]], tradeoffs: 'x', risk: 'low', timeToGoalMonths: null}];
