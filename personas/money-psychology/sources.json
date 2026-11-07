@@ -1,0 +1,116 @@
+{
+  "persona": "money-psychology",
+  "speakers": [
+    "Morgan Housel"
+  ],
+  "summary": {
+    "total_sources": 6,
+    "by_type": {
+      "article": 6
+    },
+    "by_tier": {
+      "1": 6
+    },
+    "note_count": 28,
+    "books": 0,
+    "episodes": 0,
+    "accessed": "2026-11-07",
+    "notice": "Built from the publicly documented teachings of Morgan Housel. Not affiliated with or endorsed by Morgan Housel."
+  },
+  "sources": [
+    {
+      "id": "POM",
+      "url": "https://collabfund.com/blog/the-psychology-of-money/",
+      "title": "The Psychology of Money (Collaborative Fund blog)",
+      "date": "2018-06-01",
+      "tier": 1,
+      "type": "article",
+      "byline": "Morgan Housel",
+      "note_ids": [
+        "001",
+        "002",
+        "003",
+        "004",
+        "005",
+        "006",
+        "007",
+        "008",
+        "009",
+        "010",
+        "011",
+        "012",
+        "013",
+        "014",
+        "015",
+        "016",
+        "017",
+        "018",
+        "019",
+        "020"
+      ]
+    },
+    {
+      "id": "RISK3",
+      "url": "https://collabfund.com/blog/the-three-sides-of-risk/",
+      "title": "The Three Sides of Risk (Collaborative Fund blog)",
+      "date": "2020-08-08",
+      "tier": 1,
+      "type": "article",
+      "byline": "Morgan Housel",
+      "note_ids": [
+        "021",
+        "022"
+      ]
+    },
+    {
+      "id": "STAY",
+      "url": "https://collabfund.com/blog/getting-wealthy-vs-staying-wealthy/",
+      "title": "Getting Wealthy vs. Staying Wealthy (Collaborative Fund blog)",
+      "date": "2022-11-28",
+      "tier": 1,
+      "type": "article",
+      "byline": "Morgan Housel",
+      "note_ids": [
+        "023",
+        "024",
+        "025"
+      ]
+    },
+    {
+      "id": "TAILS",
+      "url": "https://collabfund.com/blog/tails-you-win/",
+      "title": "Tails, You Win (Collaborative Fund blog)",
+      "date": "2022-07-26",
+      "tier": 1,
+      "type": "article",
+      "byline": "Morgan Housel",
+      "note_ids": [
+        "026"
+      ]
+    },
+    {
+      "id": "EXPECT",
+      "url": "https://collabfund.com/blog/expectations-and-reality/",
+      "title": "Expectations and Reality (Collaborative Fund blog)",
+      "date": "2022-10-24",
+      "tier": 1,
+      "type": "article",
+      "byline": "Morgan Housel",
+      "note_ids": [
+        "028"
+      ]
+    },
+    {
+      "id": "SPEND",
+      "url": "https://collabfund.com/blog/the-art-and-science-of-spending-money/",
+      "title": "The Art and Science of Spending Money (Collaborative Fund blog)",
+      "date": "2023-01-12",
+      "tier": 1,
+      "type": "article",
+      "byline": "Morgan Housel",
+      "note_ids": [
+        "027"
+      ]
+    }
+  ]
+}

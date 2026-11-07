@@ -1,0 +1,232 @@
+{
+  "persona": "value-investor",
+  "speakers": [
+    "Warren Buffett"
+  ],
+  "summary": {
+    "total_sources": 16,
+    "by_type": {
+      "letter": 15,
+      "article": 1
+    },
+    "by_tier": {
+      "1": 15,
+      "3": 1
+    },
+    "note_count": 32,
+    "books": 0,
+    "episodes": 0,
+    "accessed": "2026-11-07",
+    "notice": "Built from the publicly documented teachings of Warren Buffett. Not affiliated with or endorsed by Warren Buffett."
+  },
+  "sources": [
+    {
+      "id": "L1986",
+      "url": "https://www.berkshirehathaway.com/letters/1986.html",
+      "title": "Berkshire Hathaway shareholder letter for 1986",
+      "date": "1987-02-27",
+      "tier": 1,
+      "type": "letter",
+      "byline": "Warren E. Buffett, Chairman",
+      "note_ids": [
+        "023"
+      ]
+    },
+    {
+      "id": "L1987",
+      "url": "https://www.berkshirehathaway.com/letters/1987.html",
+      "title": "Berkshire Hathaway shareholder letter for 1987",
+      "date": "1988-02-29",
+      "tier": 1,
+      "type": "letter",
+      "byline": "Warren E. Buffett, Chairman",
+      "note_ids": [
+        "024"
+      ]
+    },
+    {
+      "id": "L1988",
+      "url": "https://www.berkshirehathaway.com/letters/1988.html",
+      "title": "Berkshire Hathaway shareholder letter for 1988",
+      "date": "1989-02-28",
+      "tier": 1,
+      "type": "letter",
+      "byline": "Warren E. Buffett, Chairman",
+      "note_ids": [
+        "025"
+      ]
+    },
+    {
+      "id": "L1992",
+      "url": "https://www.berkshirehathaway.com/letters/1992.html",
+      "title": "Berkshire Hathaway shareholder letter for 1992",
+      "date": "1993-03-01",
+      "tier": 1,
+      "type": "letter",
+      "byline": "Warren E. Buffett, Chairman",
+      "note_ids": [
+        "026"
+      ]
+    },
+    {
+      "id": "L1993",
+      "url": "https://www.berkshirehathaway.com/letters/1993.html",
+      "title": "Berkshire Hathaway shareholder letter for 1993",
+      "date": "1994-03-01",
+      "tier": 1,
+      "type": "letter",
+      "byline": "Warren E. Buffett, Chairman",
+      "note_ids": [
+        "003"
+      ]
+    },
+    {
+      "id": "L1996",
+      "url": "https://www.berkshirehathaway.com/letters/1996.html",
+      "title": "Berkshire Hathaway shareholder letter for 1996",
+      "date": "1997-02-28",
+      "tier": 1,
+      "type": "letter",
+      "byline": "Warren E. Buffett, Chairman",
+      "note_ids": [
+        "027"
+      ]
+    },
+    {
+      "id": "L2005",
+      "url": "https://www.berkshirehathaway.com/letters/2005ltr.pdf",
+      "title": "Berkshire Hathaway shareholder letter for 2005",
+      "date": "2006-02-28",
+      "tier": 1,
+      "type": "letter",
+      "byline": "Warren E. Buffett, Chairman",
+      "note_ids": [
+        "007"
+      ]
+    },
+    {
+      "id": "L2013",
+      "url": "https://www.berkshirehathaway.com/letters/2013ltr.pdf",
+      "title": "Berkshire Hathaway shareholder letter for 2013",
+      "date": "2014-02-28",
+      "tier": 1,
+      "type": "letter",
+      "byline": "Warren E. Buffett, Chairman",
+      "note_ids": [
+        "001",
+        "002",
+        "014",
+        "022"
+      ]
+    },
+    {
+      "id": "L2014",
+      "url": "https://www.berkshirehathaway.com/letters/2014ltr.pdf",
+      "title": "Berkshire Hathaway shareholder letter for 2014",
+      "date": "2015-02-27",
+      "tier": 1,
+      "type": "letter",
+      "byline": "Warren E. Buffett, Chairman",
+      "note_ids": [
+        "008",
+        "009",
+        "010",
+        "011",
+        "012",
+        "013",
+        "015",
+        "016"
+      ]
+    },
+    {
+      "id": "L2016",
+      "url": "https://www.berkshirehathaway.com/letters/2016ltr.pdf",
+      "title": "Berkshire Hathaway shareholder letter for 2016",
+      "date": "2017-02-25",
+      "tier": 1,
+      "type": "letter",
+      "byline": "Warren E. Buffett, Chairman",
+      "note_ids": [
+        "004",
+        "005"
+      ]
+    },
+    {
+      "id": "L2017",
+      "url": "https://www.berkshirehathaway.com/letters/2017ltr.pdf",
+      "title": "Berkshire Hathaway shareholder letter for 2017",
+      "date": "2018-02-24",
+      "tier": 1,
+      "type": "letter",
+      "byline": "Warren E. Buffett, Chairman",
+      "note_ids": [
+        "006",
+        "017",
+        "018",
+        "019",
+        "020",
+        "021"
+      ]
+    },
+    {
+      "id": "L2018",
+      "url": "https://www.berkshirehathaway.com/letters/2018ltr.pdf",
+      "title": "Berkshire Hathaway shareholder letter for 2018",
+      "date": "2019-02-23",
+      "tier": 1,
+      "type": "letter",
+      "byline": "Warren E. Buffett, Chairman",
+      "note_ids": [
+        "029"
+      ]
+    },
+    {
+      "id": "L2021",
+      "url": "https://www.berkshirehathaway.com/letters/2021ltr.pdf",
+      "title": "Berkshire Hathaway shareholder letter for 2021",
+      "date": "2022-02-26",
+      "tier": 1,
+      "type": "letter",
+      "byline": "Warren E. Buffett, Chairman",
+      "note_ids": [
+        "030"
+      ]
+    },
+    {
+      "id": "L2023",
+      "url": "https://www.berkshirehathaway.com/letters/2023ltr.pdf",
+      "title": "Berkshire Hathaway shareholder letter for 2023",
+      "date": "2024-02-24",
+      "tier": 1,
+      "type": "letter",
+      "byline": "Warren E. Buffett, Chairman",
+      "note_ids": [
+        "028"
+      ]
+    },
+    {
+      "id": "L2024",
+      "url": "https://www.berkshirehathaway.com/letters/2024ltr.pdf",
+      "title": "Berkshire Hathaway shareholder letter for 2024",
+      "date": "2025-02-22",
+      "tier": 1,
+      "type": "letter",
+      "byline": "Warren E. Buffett, Chairman",
+      "note_ids": [
+        "031"
+      ]
+    },
+    {
+      "id": "FOOL_CC",
+      "url": "https://www.fool.com/money/credit-cards/articles/heres-what-warren-buffett-says-about-credit-card-debt/",
+      "title": "Here's What Warren Buffett Says About Credit Card Debt (The Motley Fool, Matt Frankel)",
+      "date": "2022-10-15",
+      "tier": 3,
+      "type": "article",
+      "byline": "Matt Frankel, CFP (reporting Buffett's 2020 annual meeting remarks)",
+      "note_ids": [
+        "032"
+      ]
+    }
+  ]
+}
