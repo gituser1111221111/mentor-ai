@@ -33,16 +33,16 @@ function show(id) {
 function banner(text, warn = false) { const b = $('#banner'); b.textContent = text; b.className = 'banner' + (warn ? ' warn' : ''); b.hidden = !text; }
 
 // ---------- catalog helpers ----------
-const personas = () => state.config.catalog.personas;
-const agents = () => state.config.catalog.agents;
+const freeFirst = list => [...list].sort((a,b) => Number(statusLabel(a) === 'Plus') - Number(statusLabel(b) === 'Plus'));
+const personas = () => freeFirst(state.config.catalog.personas);
+const agents = () => freeFirst(state.config.catalog.agents);
 const persona = id => personas().find(p => p.id === id);
 const agent = id => agents().find(a => a.id === id);
 const allowed = x => x.tier === 'free' || state.tier === 'plus';
 const starterCoach = x => x?.id === 'budget' && persona(state.personaId)?.built && persona(state.personaId)?.tier === 'free';
 const usable = x => x?.built && (allowed(x) || starterCoach(x));
 const statusLabel = x => x?.tier === 'free' || x?.id === 'budget' ? 'Free' : 'Plus';
-const railStatus = statusLabel;
-const badge = x => `<span class="tag ${statusLabel(x) === 'Plus' ? 'plus' : ''}" ${statusLabel(x) === 'Plus' ? 'title="Mentor Labs Plus" aria-label="Mentor Labs Plus"' : ''}>${statusLabel(x)}</span>`;
+const badge = x => `<span class="tag ${statusLabel(x) === 'Plus' ? 'plus' : 'free'}" ${statusLabel(x) === 'Plus' ? 'title="Mentor Labs Plus" aria-label="Mentor Labs Plus"' : ''}>${statusLabel(x)}</span>`;
 const initials = name => name.replace(/^The /, '').split(/[\s-]+/).map(w => w[0]).join('').slice(0, 2).toUpperCase();
 const art = (p, cls = 'frame') => `<div class="${cls}">${p.image ? `<img src="${esc(p.image)}" alt="AI-generated likeness inspired by ${esc(p.inspiredBy)}" width="640" height="800" loading="lazy" decoding="async">` : `<span class="mono-gram">${esc(initials(p.name))}</span>`}</div>`;
 const thumb = p => `<span class="thumb">${p.image ? `<img src="${esc(p.image)}" alt="">` : esc(initials(p.name))}</span>`;
@@ -183,8 +183,8 @@ function connectPortfolio() { uploadNote('Direct brokerage connections are not a
 function renderChatChrome() {
   const p = persona(state.personaId), a = agent(state.agentId), s = state.snapshot;
   $('#chat-head').innerHTML = `${thumb(p)}<div><strong>${esc(p.name)}</strong><small>${['investing','equity'].includes(a.id) ? esc(a.name) : p.textOnly ? 'Text mentorship · Research perspectives' : state.profile?.incomeHistory?.length ? `With ${esc(a.name)}` : 'Start with any money question'} · AI-inspired, not affiliated</small></div>${s?.status === 'ok' ? `<div class="snap-mini">lowest ${usd(s.lowestMonth)}<br>essentials ${usd(s.essentialsTotal)}</div>` : ''}`;
-  $('#persona-switch').innerHTML = personas().map(x => `<button type="button" class="rail-item ${x.id === state.personaId ? 'on' : ''}" data-p="${esc(x.id)}">${thumb(x)}<span>${esc(displayName(x.name))}</span><small>${railStatus(x)}</small></button>`).join('');
-  $('#agent-list').innerHTML = agents().map((x,i) => `<button type="button" class="rail-item coach-item tone-${i%4} ${x.id === state.agentId ? 'on' : ''}" data-a="${esc(x.id)}">${agentSymbol(x.id)}<span>${esc(displayName(x.name))}</span><small>${railStatus(x)}</small></button>`).join('');
+  $('#persona-switch').innerHTML = personas().map(x => `<button type="button" class="rail-item ${x.id === state.personaId ? 'on' : ''}" data-p="${esc(x.id)}">${thumb(x)}<span>${esc(displayName(x.name))}</span>${badge(x)}</button>`).join('');
+  $('#agent-list').innerHTML = agents().map((x,i) => `<button type="button" class="rail-item coach-item tone-${i%4} ${x.id === state.agentId ? 'on' : ''}" data-a="${esc(x.id)}">${agentSymbol(x.id)}<span>${esc(displayName(x.name))}</span>${badge(x)}</button>`).join('');
   document.querySelectorAll('#persona-switch [data-p]').forEach(b => b.onclick = () => pickPersona(b.dataset.p));
   document.querySelectorAll('#agent-list [data-a]').forEach(b => b.onclick = () => pickAgent(b.dataset.a));
   syncVoiceAvailability();

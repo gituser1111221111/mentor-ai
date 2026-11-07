@@ -923,3 +923,9 @@ header.site .links { gap:18px; }
 /* Clip decorative full-width imagery without creating a second scroll container. */
 body { overflow-x:clip; }
 body.chat-open .header-context { display:none; }
+
+/* Consistent plan badges: evergreen for Free, violet for Plus. */
+.tag.free { color:#14543f; background:#dceee2; border:1px solid #aacdb7; }
+.tag.plus { color:#623b87; background:#eee4f7; border:1px solid #cfb5e4; }
+.rail-item > .tag { display:inline-flex; align-items:center; justify-content:center; min-width:42px; padding:5px 9px; font:700 .68rem/1.1 var(--sans); white-space:nowrap; }
+@media(max-width:900px) { .rail-item { grid-template-columns:32px minmax(0,1fr) auto; } }
