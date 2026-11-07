@@ -1,0 +1,103 @@
+{
+  "persona": "money-basics",
+  "speakers": [
+    "Humphrey Yang"
+  ],
+  "researchDepth": "limited",
+  "summary": {
+    "total_sources": 6,
+    "by_type": {
+      "article": 6
+    },
+    "by_tier": {
+      "3": 6
+    },
+    "note_count": 14,
+    "books": 0,
+    "episodes": 0,
+    "accessed": "2026-11-07",
+    "notice": "Built from the publicly documented teachings of Humphrey Yang. Not affiliated with or endorsed by Humphrey Yang."
+  },
+  "sources": [
+    {
+      "id": "FIRST",
+      "url": "https://www.fool.com/money/buying-stocks/articles/personal-finance-guru-humphrey-yangs-tips-for-first-time-investors/",
+      "title": "Personal Finance Guru Humphrey Yang's Tips for First-Time Investors (The Motley Fool)",
+      "date": "2023-01-12",
+      "tier": 3,
+      "type": "article",
+      "byline": "Lyle Daly (reporting Humphrey Yang's videos)",
+      "note_ids": [
+        "001",
+        "002",
+        "003",
+        "004",
+        "005"
+      ]
+    },
+    {
+      "id": "K100",
+      "url": "https://www.fool.com/money/banks/articles/this-is-how-to-save-100000-in-2023-according-to-humphrey-yang/",
+      "title": "This Is How to Save $100,000 in 2023, According to Humphrey Yang (The Motley Fool)",
+      "date": "2023-02-27",
+      "tier": 3,
+      "type": "article",
+      "byline": "Lyle Daly (reporting Humphrey Yang's videos)",
+      "note_ids": [
+        "006",
+        "007",
+        "008"
+      ]
+    },
+    {
+      "id": "WORST",
+      "url": "https://www.fool.com/the-ascent/buying-stocks/articles/these-are-the-4-worst-investments-according-to-humphrey-yang/",
+      "title": "These Are the 4 Worst Investments, According to Humphrey Yang (The Motley Fool)",
+      "date": "2023-04-11",
+      "tier": 3,
+      "type": "article",
+      "byline": "Lyle Daly (reporting Humphrey Yang's videos)",
+      "note_ids": [
+        "009",
+        "010"
+      ]
+    },
+    {
+      "id": "RETIRE",
+      "url": "https://www.fool.com/money/buying-stocks/articles/5-big-retirement-account-mistakes-according-to-former-financial-advisor-humphrey-yang/",
+      "title": "5 Big Retirement Account Mistakes, According to Former Financial Advisor Humphrey Yang (The Motley Fool)",
+      "date": "2023-01-25",
+      "tier": 3,
+      "type": "article",
+      "byline": "Lyle Daly (reporting Humphrey Yang's videos)",
+      "note_ids": [
+        "011",
+        "012"
+      ]
+    },
+    {
+      "id": "HYSA",
+      "url": "https://www.fool.com/money/banks/articles/heres-why-humphrey-yang-is-shocked-at-how-many-people-are-missing-out-on-free-money-through-this-account/",
+      "title": "Here's Why Humphrey Yang Is 'Shocked' at How Many People Are Missing Out on Free Money Through This Account (The Motley Fool)",
+      "date": "2023-05-25",
+      "tier": 3,
+      "type": "article",
+      "byline": "Lyle Daly (reporting Humphrey Yang's videos)",
+      "note_ids": [
+        "013"
+      ]
+    },
+    {
+      "id": "PLACES",
+      "url": "https://www.fool.com/the-ascent/banks/articles/5-places-to-keep-your-money-other-than-the-bank-according-to-humphrey-yang/",
+      "title": "5 Places to Keep Your Money Other Than the Bank, According to Humphrey Yang (The Motley Fool)",
+      "date": "2023-06-23",
+      "tier": 3,
+      "type": "article",
+      "byline": "Brittney Myers (reporting Humphrey Yang's videos)",
+      "note_ids": [
+        "014"
+      ]
+    }
+  ]
+}
