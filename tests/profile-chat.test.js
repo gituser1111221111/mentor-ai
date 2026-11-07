@@ -50,7 +50,7 @@ test('HTTP chat saves corrections before generation, survives reload, and protec
  const post=(path,body)=>fetch(url+path,{method:'POST',headers,body:JSON.stringify(body)});
  try {
    await post('/api/profile',{answers:baseProfile()});
-   const r=await post('/api/chat',{message:'My rent is now $1500',personaId:'value-investor'});assert.equal(r.status,200);assert.equal((await r.json()).profileUpdated,true);
+   const r=await post('/api/chat',{message:'My rent is now $1500',personaId:'value-investor'});assert.equal(r.status,200);const reply=await r.json();assert.equal(reply.profileUpdated,true);assert.equal(reply.text,'Thanks for the update.');
    const saved=await (await fetch(url+'/api/profile',{headers})).json();assert.equal(saved.profile.bills[0].amount,'1500.00');assert.equal(saved.snapshot.essentialsTotal,'1500.00');
    pause=true;const waiting=new Promise(r=>hold=r);const pending=post('/api/chat',{message:'My rent is now $1500'});await waiting;
    await post('/api/profile',{answers:{...baseProfile(),bills:[{name:'Rent',amount:'1800'}]}});release();assert.equal((await pending).status,409);
