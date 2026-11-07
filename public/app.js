@@ -171,6 +171,8 @@ async function uploadDocument(file) {
   if (file.size > 2_000_000) throw Error('Choose a document under 2 MB.');
   const base64 = await new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(String(reader.result).split(',')[1]); reader.onerror = () => reject(Error('Could not read file')); reader.readAsDataURL(file); });
   const result = await api('/api/attachment', {method: 'POST', body: {name: file.name, base64}});
+  const refreshed = await api('/api/profile'); state.profile = refreshed.profile; state.snapshot = refreshed.snapshot;
+  renderSavedDocuments();
   uploadNote(`Document added: ${result.name}. Its text can guide the chat; saved financial inputs are used in calculations.`);
   state.pendingDocument = null;
 }
@@ -389,19 +391,26 @@ async function handleCheckoutReturn() {
   catch (e) { banner(`We could not confirm that checkout: ${e.message}`, true); }
 }
 
-// Document and portfolio links are showcase context only. Holdings CSV is the working import.
+function renderSavedDocuments() {
+  const docs = state.profile?.documents || [];
+  $('#context-saved-documents').innerHTML = docs.length ? `<strong>Saved to this chat</strong><ul>${docs.map(d=>`<li>${esc(d.name)}</li>`).join('')}</ul>` : '';
+}
+// Uploaded documents and holdings are saved immediately; links remain browser references.
 function setupContextHub() {
   const dialog = $('#context-dialog');
-  document.querySelectorAll('[data-context]').forEach(b => b.onclick = () => dialog.showModal());
+  document.querySelectorAll('[data-context]').forEach(b => b.onclick = async () => { dialog.showModal(); renderSavedDocuments(); try { const r = await api('/api/profile'); state.profile=r.profile; state.snapshot=r.snapshot; renderSavedDocuments(); } catch {} });
+  $('#context-done').onclick = () => { dialog.close(); if ($('#v-chat').hidden) startChat(); };
   $('#context-close').onclick = () => dialog.close();
   $('#feature-close').onclick = () => $('#feature-preview').close();
   $('#feature-plus').onclick = () => { $('#feature-preview').close(); openUnlock(); };
   try { const saved = sessionStorage.getItem('mentor-labs-portfolio-link'); if (saved) { $('#portfolio-link').value = saved; $('#portfolio-link-status').textContent = 'Reference saved for this browser session; no account connected.'; } } catch {}
   $('#context-files').onchange = async e => {
     const file = e.target.files?.[0]; if (!file) return;
+    $('#context-done').disabled = true; $('#context-file-status').textContent = 'Saving document…';
     try {
       await uploadDocument(file); $('#context-file-status').textContent = `${file.name} added to this chat.`;
     } catch (err) { $('#context-file-status').textContent = err.message; }
+    finally { $('#context-done').disabled = false; }
     e.target.value = '';
   };
   $('#portfolio-save').onclick = () => {
