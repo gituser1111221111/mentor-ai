@@ -47,12 +47,12 @@ Switch mentor ──► step ③ only: same options, same numbers, different pic
 |---|---|
 | 6-screen optional intake → money snapshot (lowest month, swing, essentials, shortfall) | Works |
 | Portfolio CSV upload → value, sector mix, fees (`portfolioSummary`) | Works. No brokerage login; the sample file is synthetic |
-| Free Ramsey-inspired starter chat without an intake | Works with Claude when configured, with a labeled offline demo reply otherwise |
+| Free Ramsey-inspired starter chat without an intake | Works with Claude when configured; explicit local mock mode is available for testing |
 | Personalized chat: generate → validate → pick, for built mentors and agents | Works when allowed by tier |
 | Persona switch on the same options (`repick`) | Works |
 | Number check visible in the UI ("proposed N, kept K, dropped D: reason") | Checks money, percentages, dates and other numeric claims against calculations; it cannot prove the reasoning is sound |
 | Conversation and memory | Restores after refresh on the same server instance; users can remove remembered facts |
-| Offline fallback: if Claude fails, a rule-based engine answers, labeled "offline fallback" | Works |
+| Claude unavailable | Chat returns a clear retry message; the rule-based engine runs only when `MENTOR_ENGINE=mock` is explicitly set for local testing |
 | $4.99/month Plus (Stripe Checkout) | Works in **Stripe test mode**: a real hosted checkout and subscription, verified on the server before Plus unlocks. Use card 4242 4242 4242 4242. Live keys are refused in code |
 | Additional mentors and agents | Shown in the gallery, selector, and chat rail as Plus previews; unbuilt entries cannot be used as if live |
 | Document picker and portfolio URL | Showcase only: documents stay in the browser; URL is session-only reference, with no brokerage connection |
@@ -71,7 +71,7 @@ npm test                  # offline tests, no network or key needed
 npm run eval:chat         # live answer-quality scenarios; requires MENTOR_API_KEY
 ```
 
-Without a key, the app runs on the rule-based mock engine (labeled "mock engine" in the UI). `MENTOR_API_KEY` takes priority over `ANTHROPIC_API_KEY`, in case your machine already has a different key set. `MENTOR_ENGINE=mock` forces the mock.
+Without a key, the app shows that AI chat is unavailable. `MENTOR_API_KEY` takes priority over `ANTHROPIC_API_KEY`. Set `MENTOR_ENGINE=mock` only for an explicit local test session.
 
 **Deploy:** `render.yaml` is a Render Blueprint (free Node 22 web service, `HOST=0.0.0.0`). Set `MENTOR_API_KEY` as a secret in Render's Environment settings. Each IP is limited to 40 model calls per hour (`CHAT_LIMIT_PER_HOUR`).
 
@@ -99,13 +99,13 @@ config/quiz.json          screening quiz spec (UI renders from it)
 config/catalog.json       10 mentors + 10 coaches, free/plus tiers, explainer text
 lib/profile.js            quiz → validated profile + money snapshot (cents)
 lib/portfolio.js          brokerage CSV → portfolioSummary
-lib/store.js, routes.js   anonymous session store, /api/* routes, rate limit, live→mock fallback
+lib/store.js, routes.js   anonymous session store, /api/* routes, rate limit, Claude availability errors
 lib/mentor/tools.js       calc library: the only numbers the model may use
 lib/mentor/generate.js    coaching step (Sonnet 5.5), per-coach focus
 lib/mentor/validate.js    number check, dedupe, unknown-calc rejection
 lib/mentor/pick.js        mentor step (Haiku 5.5), enum pick, reply number check
 lib/mentor/personas.js    loads personas/<id>/core.md + notes/*.md, else built-in summaries
-lib/mentor/chat.js        live engine (chat, repick); chat.mock.js = rule-based fallback
+lib/mentor/chat.js        live engine (chat, repick); chat.mock.js = explicit local test engine
 public/                   vanilla JS UI: landing, quiz, snapshot, chat
 docs/                     business plan, build plan, strategy, Devpost text
 ```

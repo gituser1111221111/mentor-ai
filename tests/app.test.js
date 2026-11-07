@@ -105,8 +105,12 @@ test('API: quiz -> chat -> repick, static UI, and traversal blocked', async () =
     assert.equal((await fetch(base + '/api/chat', {method: 'POST', headers: h, body: JSON.stringify({message: 'hi', agentId: 'debt'})})).status, 402);
     assert.equal((await fetch(base + '/api/chat', {method: 'POST', headers: h, body: JSON.stringify({message: 'hi', personaId: 'conscious-spender'})})).status, 402);
     await fetch(base + '/api/checkout/demo', {method: 'POST', headers: h, body: '{}'});
+    assert.equal(c.personaName, 'Dave Ramsey–inspired');
+    assert.equal('candidates' in c, false);
+    assert.equal('validation' in c, false);
     const r = await (await fetch(base + '/api/repick', {method: 'POST', headers: h, body: JSON.stringify({turnId: c.turnId, personaId: 'conscious-spender'})})).json();
-    assert.equal(r.candidates.length, c.candidates.length);
+    assert.equal(r.personaName, 'Ramit Sethi–inspired');
+    assert.equal('candidates' in r, false);
     const history = await (await fetch(base + '/api/history', {headers: h})).json();
     assert.deepEqual(history.history.map(x => x.role), ['user', 'assistant', 'assistant']);
     assert.equal(history.history[1].response.turnId, c.turnId);

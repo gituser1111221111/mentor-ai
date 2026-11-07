@@ -45,6 +45,13 @@ test('number check: copied numbers pass, invented ones are caught', () => {
   assert.deepEqual(unverifiedNumbers('Pay it by 2027-03-01', snap), ['2027-03-01']);
 });
 
+test('a dollar amount stated by the user can be repeated without authorizing invented figures', () => {
+  const lib = calcLibrary(profile, 'I received an extra $200 this month.');
+  assert.deepEqual(lib.calcs[0].result.userStatedAmounts, ['200.00']);
+  assert.deepEqual(unverifiedNumbers('Keep the $200 as a buffer.', [lib.calcs[0]]), []);
+  assert.deepEqual(unverifiedNumbers('You will have $620.00.', [lib.calcs[0]]), ['$620.00']);
+});
+
 const GOOD = [
   {title: 'Starter fund first', summary: 'Save the $580.00 gap to reach $1,000.00.', calcIds: ['starter-ef'], tradeoffs: 'Debt waits.', risk: 'low', timeToGoalMonths: 2},
   {title: 'Snowball the card', summary: 'Put extra toward the smallest debt first.', calcIds: ['snowball'], tradeoffs: 'Ignores rates.', risk: 'medium', timeToGoalMonths: null},
@@ -111,7 +118,7 @@ test('no income: general Ramsey starter answers conversationally', async () => {
   assert.equal(calls[0].model, 'claude-haiku-5-5');
 });
 
-test('refusal or too few verified options raises (routes then fall back to mock)', async () => {
+test('refusal or too few verified options raises for the route to report', async () => {
   setClient({messages: {create: async () => ({stop_reason: 'refusal', stop_details: {category: 'general_harms'}, content: []})}, beta: {messages: {create: async () => ({stop_reason: 'refusal', stop_details: {category: 'general_harms'}, content: []})}}});
   await assert.rejects(chat({messages: [{role: 'user', content: 'x'}], profile}), /declined/);
   setClient(fakeClient({generated: GOOD.slice(3), picks: {}}));

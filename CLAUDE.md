@@ -25,7 +25,7 @@ Start every session by reading:
 - `lib/mentor/chat.mock.js` implements the A/B contract with code-computed candidates and rule-based picks; responses say `mode: "mock"`.
 - **Live engine (`lib/mentor/chat.js`, written by Ryan's session):** `tools.js` builds the calc library in code → `generate.js` (Sonnet 5.5, JSON-schema output, server-side refusal fallback) proposes ≤12 options citing calc ids → `validate.js` drops any option with a number not in the calcs, duplicates, unknown calcs → `pick.js` (Haiku 5.5, persona notes cached, `pickId` enum c1..c12) picks + replies; an unverified number in the reply swaps in the option's own text → `repick()` reruns only the pick. No forced `tool_choice` (400s on Sonnet 5.5).
 - **Personas:** `personas.js` loads `personas/<id>/core.md` + `notes/*.md` (note title = first `# heading`, optional `source:` line; note id = filename) and falls back to built-in summaries. Teammate: drop files there; no code change needed.
-- **Engine switch:** live when `MENTOR_API_KEY` or `ANTHROPIC_API_KEY` is set (MENTOR wins; this PC has a stray invalid `ANTHROPIC_API_KEY`). Any live failure falls back to the mock, labeled "offline fallback". `MENTOR_ENGINE=mock` forces mock.
+- **Engine switch:** live when `MENTOR_API_KEY` or `ANTHROPIC_API_KEY` is set (MENTOR wins). Production never silently falls back to the rule-based mock; failures return a retry message. `MENTOR_ENGINE=mock` forces the local test engine.
 - Deploy: set `HOST=0.0.0.0`, `ANTHROPIC_API_KEY`, optional `CHAT_LIMIT_PER_HOUR` (default 40/IP).
 
 ## Ownership
