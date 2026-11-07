@@ -9,16 +9,16 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,500;1,6..72,500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/styles.css?v=plan-badges-15">
+  <link rel="stylesheet" href="/styles.css?v=mentor-first-15">
 </head>
 <body>
   <header class="site">
     <a href="/" class="wordmark" id="home"><img src="/img/mentor-logo-suede.webp" width="38" height="38" alt="">Mentor Labs</a>
     <nav class="links" id="nav">
-      <a href="#method">How we build</a>
       <a href="#mentors">Mentors</a>
-      <a href="#live-data">Data sources</a>
+      <a href="#method">Our process</a>
       <a href="#specialists">Agents</a>
+      <a href="#live-data">Data sources</a>
       <a href="#pricing">Pricing</a>
     </nav>
     <div class="head-right">
@@ -35,55 +35,16 @@
   <main>
     <!-- LANDING -->
     <section id="v-landing" class="view">
-      <nav class="section-rail" aria-label="On this page">
-        <a href="#overview" aria-current="location">Start</a>
-        <a href="#method">How we build</a>
-        <a href="#live-data">Data sources</a>
-        <a href="#mentors">Mentors</a>
-        <a href="#specialists">Agents</a>
-        <a href="#your-context">Your context</a>
-        <a href="#pricing">Pricing</a>
-      </nav>
-
-      <div class="hero" id="overview">
-        <div class="hero-copy">
-          <p class="hero-eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span> MEET MENTOR LABS</p>
-          <h1>AI agents do the analysis.<em> Mentors guide your next step.</em></h1>
-          <p class="lead">Your numbers. Current market context. A clear next step, explained through a mentor’s financial philosophy.</p>
-          <p class="hero-catalog"><span>Budgeting</span><span>Portfolio review</span><span>Equity research</span></p>
-          <div class="row hero-actions">
-            <button id="try-chat" class="btn primary">Try Ramsey Free <span aria-hidden="true">↗</span></button>
-            <button class="btn hero-context" data-context>Add portfolio or documents</button>
-          </div>
-        </div>
-        <div class="hero-visual">
-          <figure class="featured-mentor">
-            <img src="/img/mentors/debt-free-coach.webp" alt="AI-generated likeness inspired by Dave Ramsey" width="640" height="800">
-            <figcaption><span>THE FREE FLAGSHIP</span><strong>Dave Ramsey</strong><small>Inspired AI mentor</small></figcaption>
-          </figure>
-
-        </div>
-      </div>
-
-      <section id="method" class="band method-band">
-        <div class="method-intro"><p class="section-eyebrow">HOW WE BUILD</p><h2>Research shapes the mentor.<br>Tools power the agent.</h2><p>An agent analyzes your situation. A mentor selects from checked options and explains the tradeoffs through a distinct financial philosophy.</p><a class="btn outline" href="#specialists">Explore the agents</a></div>
-        <div class="method-list">
-          <div><span>RESEARCH</span><strong>Build a perspective</strong><p>Public teachings become source notes and guiding principles. Each mentor is inspired by a real body of work, independently of its author.</p></div>
-          <div><span>ANALYZE</span><strong>Give the agent a focused job</strong><p>Your inputs, documents, and available data feed specialist tools. Code calculates the numbers and checks proposed options.</p></div>
-          <div><span>EXPLAIN</span><strong>Make the next step clear</strong><p>The mentor chooses an option, explains why it fits, and helps you question the tradeoffs.</p></div>
-        </div>
-      </section>
-
-      <section id="live-data" class="band data-band">
-        <div class="band-head"><div><p class="section-eyebrow">RESEARCH DATA SOURCES</p><h2>The sources behind your answer.</h2></div><p>Quotes, filings, economic indicators, and crypto prices give the research agents context. Explore the free integrations and the growing Plus lineup below.</p></div>
-        <div class="source-tools"><button type="button" class="btn outline" id="refresh-sources">Refresh connections</button><span id="source-refresh-status" class="fine" role="status"></span></div>
-        <div id="data-sources"></div>
-        <p class="fine">Answers name the sources used. If a feed is unavailable, supported fields use a dated snapshot; missing facts stay unknown.</p>
-      </section>
-
       <section id="mentors" class="band">
-        <div class="band-head"><div><p class="section-eyebrow">THE MENTOR LIBRARY</p><h2>Choose a perspective you know.</h2></div><p>Choose a philosophy for your conversation. Explore each mentor’s focus and availability below.</p></div>
+        <div class="band-head"><div><p class="section-eyebrow">THE MENTOR LIBRARY</p><h1>Find your money mentor.</h1></div><p>Familiar philosophies. Independent AI perspectives. Choose who guides your next step.</p></div>
+        <div class="mentor-start"><button id="try-chat" class="btn primary">Try Ramsey Free</button><button class="btn" data-context>Add portfolio or documents</button><span class="tier-key"><span class="tag">Free</span><span class="tag plus">Plus</span></span></div>
         <div id="personas" class="portraits"></div>
+      </section>
+
+      <section id="method" class="band build-band">
+        <p class="section-eyebrow">HOW WE BUILD MENTORS</p><h2>Public teachings. A distinct perspective.</h2>
+        <div class="build-grid"><article><h3>Research the source</h3><p>Books, interviews, podcasts, and articles become curated research notes.</p></article><article><h3>Map the philosophy</h3><p>We organize principles, priorities, and tradeoffs into a mentor’s instructions.</p></article><article><h3>Test the perspective</h3><p>We check how the mentor explains options across different financial situations.</p></article></div>
+        <details class="research-goal"><summary>Our research ambition</summary><p>Our goal is a library spanning thousands of hours of public material. Today’s mentors use curated teachings and source notes; that larger library is still being built.</p></details>
       </section>
 
       <section id="specialists" class="band">
@@ -91,20 +52,16 @@
         <div id="agents" class="agent-groups"></div>
       </section>
 
-      <section class="band conversation-example"><div><p class="section-eyebrow">A CONVERSATION, NOT A SPREADSHEET</p><h2>Start with what’s on your mind.</h2><p>Ask a question in your own words. Get a clear answer, talk through the tradeoffs, and keep the conversation going.</p></div>          <div class="plan-preview example-chat" aria-label="Illustrative AI conversation">
-<div class="example-head"><img src="/img/mentors/debt-free-coach.webp" alt="AI-generated Ramsey-inspired likeness" width="44" height="44"><div><strong>Dave Ramsey</strong><small>Inspired AI perspective · Example chat</small></div></div>
-<p class="example-user">My income varies. Where do I start?</p>
-<p class="example-reply">Budget around your lowest month. Cover essentials first, then give extra income a job.</p>
-
-</div></section>
-
-      <section class="band evidence-band" id="why-mentor-labs">
-        <div class="band-head"><div><p class="section-eyebrow">WHY THIS APPROACH</p><h2>Your inputs. Checked calculations.<br>A perspective you can question.</h2></div><p>Good financial guidance needs more than a convincing answer. Our budgeting workflow combines your financial inputs, calculations performed in code, and a mentor perspective that explains the choices.</p></div>
-        <div class="evidence-grid"><article><span class="evidence-label">GROUNDED IN YOUR NUMBERS</span><h3>Model the situation you actually have.</h3><p>Your income, bills, debt, and savings shape the options. You can inspect the supporting calculations and update your inputs when your situation changes.</p></article><article><span class="evidence-label">CHECKED BEFORE DELIVERY</span><h3>Test the math—and the failure cases.</h3><p>Our automated tests cover exact-cent budgeting, debt payoff reconciliation, unsupported amounts, mismatched time periods, and stale answers after inputs change.</p></article><article><span class="evidence-label">EXPLAINED THROUGH A PERSPECTIVE</span><h3>Understand the reasoning.</h3><p>The mentor selects from checked options and explains the tradeoffs. Follow-up questions help you understand the recommendation before deciding what to do.</p></article></div>
-        <details class="evidence-detail"><summary>What our testing establishes</summary><p>Tests check calculations, unsupported amounts, changing inputs, and API behavior. They do not guarantee accuracy or investment results. Review the inputs and calculations before acting.</p></details>
+      <section id="agent-method" class="band build-band">
+        <p class="section-eyebrow">HOW WE BUILD AGENTS</p><h2>A focused job. Tools to do it.</h2>
+        <div class="build-grid"><article><h3>Define the task</h3><p>Each specialist focuses on a money decision, from budgeting to company research.</p></article><article><h3>Connect the context</h3><p>Your numbers, documents, holdings, and available data feed the agent’s tools.</p></article><article><h3>Check the options</h3><p>Code calculates and validates. The mentor selects an option and explains why.</p></article></div>
       </section>
 
-      <section id="your-context" class="band context-band"><div><p class="section-eyebrow">BRING YOUR CONTEXT</p><h2>Your documents and portfolio, in one place.</h2><p>Upload a document for chat context or import a holdings CSV for a portfolio summary. Saved portfolio links are references; they do not connect to your brokerage.</p></div><button class="btn primary" data-context>Open context hub</button></section>
+      <section id="live-data" class="band compact-data">
+        <div class="api-heading"><div><p class="section-eyebrow">LIVE DATA &amp; CONNECTIONS</p><h2>Research, connected.</h2></div><p>Market prices, filings, and economic context.</p></div>
+        <div id="data-sources"></div>
+        <p class="fine">Availability depends on configuration. Answers identify live sources or dated fallback data.</p>
+      </section>
 
       <section id="pricing" class="band">
         <h2>Pricing</h2>
@@ -127,6 +84,22 @@
           </div>
         </div>
       </section>
+
+      <section class="band conversation-example"><div><p class="section-eyebrow">A CONVERSATION, NOT A SPREADSHEET</p><h2>Start with what’s on your mind.</h2><p>Ask a question in your own words. Get a clear answer, talk through the tradeoffs, and keep the conversation going.</p></div>          <div class="plan-preview example-chat" aria-label="Illustrative AI conversation">
+<div class="example-head"><img src="/img/mentors/debt-free-coach.webp" alt="AI-generated Ramsey-inspired likeness" width="44" height="44"><div><strong>Dave Ramsey</strong><small>Inspired AI perspective · Example chat</small></div></div>
+<p class="example-user">My income varies. Where do I start?</p>
+<p class="example-reply">Budget around your lowest month. Cover essentials first, then give extra income a job.</p>
+
+</div></section>
+
+      <section class="band evidence-band" id="why-mentor-labs">
+        <div class="band-head"><div><p class="section-eyebrow">WHY THIS APPROACH</p><h2>Your inputs. Checked calculations.<br>A perspective you can question.</h2></div><p>Good financial guidance needs more than a convincing answer. Our budgeting workflow combines your financial inputs, calculations performed in code, and a mentor perspective that explains the choices.</p></div>
+        <div class="evidence-grid"><article><span class="evidence-label">GROUNDED IN YOUR NUMBERS</span><h3>Model the situation you actually have.</h3><p>Your income, bills, debt, and savings shape the options. You can inspect the supporting calculations and update your inputs when your situation changes.</p></article><article><span class="evidence-label">CHECKED BEFORE DELIVERY</span><h3>Test the math—and the failure cases.</h3><p>Our automated tests cover exact-cent budgeting, debt payoff reconciliation, unsupported amounts, mismatched time periods, and stale answers after inputs change.</p></article><article><span class="evidence-label">EXPLAINED THROUGH A PERSPECTIVE</span><h3>Understand the reasoning.</h3><p>The mentor selects from checked options and explains the tradeoffs. Follow-up questions help you understand the recommendation before deciding what to do.</p></article></div>
+        <details class="evidence-detail"><summary>What our testing establishes</summary><p>Tests check calculations, unsupported amounts, changing inputs, and API behavior. They do not guarantee accuracy or investment results. Review the inputs and calculations before acting.</p></details>
+      </section>
+
+      <section id="your-context" class="band context-band"><div><p class="section-eyebrow">BRING YOUR CONTEXT</p><h2>Your documents and portfolio, in one place.</h2><p>Upload a document for chat context or import a holdings CSV for a portfolio summary. Saved portfolio links are references; they do not connect to your brokerage.</p></div><button class="btn primary" data-context>Open context hub</button></section>
+
       <section class="band faq" aria-labelledby="faq-title">
         <h2 id="faq-title">Common questions.</h2>
 <details><summary>What does the agent do, and what does the mentor do?</summary><p>The agent builds options using tools and your context. The mentor applies a financial philosophy to select an option and explain it.</p></details>
@@ -210,6 +183,6 @@
     <p class="footer-note">Independent AI perspectives for education. No affiliation or endorsement. AI can make mistakes.</p>
     <p><a href="/terms.html">Terms</a> · <a href="/privacy.html">Privacy</a> · <a href="https://github.com/gituser1111221111/mentor-ai">Source</a> · © 2026 Mentor Labs</p>
   </footer>
-  <script type="module" src="/app.js?v=plan-badges-15"></script>
+  <script type="module" src="/app.js?v=mentor-first-15"></script>
 </body>
 </html>

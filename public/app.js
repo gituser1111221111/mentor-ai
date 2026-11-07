@@ -54,9 +54,9 @@ const agentSymbol = id => {
 
 // ---------- landing ----------
 function renderLanding() {
-  $('#personas').innerHTML = personas().map(p => `<div class="portrait ${usable(p) ? '' : 'locked'}">${art(p)}${p.tier === 'plus' ? `<button type="button" class="tag plus portrait-plus" data-unlock aria-label="Explore Plus for ${esc(p.name)}">Plus</button>` : badge(p)}
+  $('#personas').innerHTML = personas().map(p => `<div class="portrait tier-${p.tier} ${usable(p) ? '' : 'locked'}">${art(p)}${p.tier === 'plus' ? `<button type="button" class="tag plus portrait-plus" data-unlock aria-label="Explore Plus for ${esc(p.name)}">Plus</button>` : badge(p)}
     <h3>${esc(p.name)}</h3><p class="portrait-source">${p.textOnly ? 'AI perspective · Text chat' : 'AI-inspired perspective'}</p><p>${esc(p.philosophy)}.</p>${usable(p) ? `<button class="btn outline" type="button" data-chat-mentor="${esc(p.id)}">Chat with ${esc(displayName(p.name).split(' ')[0])}</button>` : ''}</div>`).join('');
-  $('#agents').innerHTML = `<div class="agent-grid">${agents().map((a,i) => `<button type="button" class="agent-card tone-${i%4}" data-a="${a.id}">${agentSymbol(a.id)}<span class="agent-card-top"><strong>${esc(a.name)}</strong>${badge(a)}</span><span class="agent-card-job">${esc(a.job)}</span><span class="agent-availability">${a.built ? "Available" : "Planned"}</span></button>`).join('')}</div>`;
+  $('#agents').innerHTML = `<div class="agent-grid">${agents().map((a,i) => `<button type="button" class="agent-card tier-${statusLabel(a).toLowerCase()}" data-a="${a.id}">${agentSymbol(a.id)}<span class="agent-card-top"><strong>${esc(a.name)}</strong>${badge(a)}</span><span class="agent-card-job">${esc(a.job)}</span><span class="agent-availability">${a.built ? "Available" : "Planned"}</span></button>`).join('')}</div>`;
   document.querySelectorAll('#agents [data-a]').forEach(b => b.onclick = () => { const a = agent(b.dataset.a); if (a.id === 'budget') renderIntake(); else showAgent(a); });
   document.querySelectorAll('#personas [data-unlock]').forEach(b => b.onclick = openUnlock);
   document.querySelectorAll('[data-chat-mentor]').forEach(b => b.onclick = () => { state.personaId = b.dataset.chatMentor; state.agentId = 'budget'; startChat(); });
@@ -68,16 +68,14 @@ const sources = () => state.config.catalog.dataSources || [];
 const sourcesFor = id => sources().filter(d => d.agents.includes(id));
 const agentNames = ids => ids.map(id => agent(id)?.name.replace(/ Agent$/, '')).filter(Boolean).join(', ');
 const sourceState = d => d.status === 'live' ? (d.connected ? 'Configured · fetched on request' : 'Not configured') : 'Planned';
-function sourceCard(d) {
-  return `<article class="source-card ${esc(d.status)}"><div class="source-top"><a href="${esc(d.url)}" target="_blank" rel="noopener noreferrer"><strong>${esc(d.name)}</strong></a><span class="tag ${d.tier === 'plus' ? 'plus' : ''}">${d.tier === 'plus' ? 'Plus' : 'Free'}</span></div>
-    <p>${esc(d.provides)}</p><small><span class="dot ${d.status === 'live' ? (d.connected ? 'on' : 'half') : ''}" aria-hidden="true"></span>${esc(sourceState(d))}</small><details class="source-detail"><summary>Used by</summary><small>${esc(agentNames(d.agents))}</small></details></article>`;
-}
 function renderSources() {
   const el = $('#data-sources'); if (!el) return;
-  const free = sources().filter(d => d.tier === 'free'), plus = sources().filter(d => d.tier === 'plus');
-  const openGroups = new Map([...el.querySelectorAll('[data-source-tier]')].map(d => [d.dataset.sourceTier, d.open]));
-  const group = (tier, title, list) => `<details class="source-collection" data-source-tier="${tier}" ${openGroups.get(tier) !== false ? 'open' : ''}><summary>${title}<span>${list.length} sources</span></summary><div class="source-grid">${list.map(sourceCard).join('')}</div></details>`;
-  el.innerHTML = group('free', 'Free data integrations', free) + group('plus', 'Plus connections', plus) + `<p class="source-note">Configured means ready to request, not a verified response. Snapshot fallback: ${esc(state.config.marketSnapshotAsOf || 'dated in each answer')}.</p>`;
+  const group = (tier, title) => {
+    const list = sources().filter(d => d.tier === tier);
+    if (!list.length) return '';
+    return `<div class="api-group"><h3>${title}</h3><ul class="api-logos">${list.map(d => `<li><a href="${esc(d.url)}" target="_blank" rel="noopener noreferrer" title="${esc(d.provides)} · ${esc(sourceState(d))}">${d.logo ? `<img src="${esc(d.logo)}" alt="" width="28" height="28" loading="lazy">` : ''}<span>${esc(d.name)}</span><small>${d.status !== 'live' ? 'Planned' : d.connected ? 'Configured' : 'Not configured'}</small></a></li>`).join('')}</ul></div>`;
+  };
+  el.innerHTML = group('free', 'Free integrations') + group('plus', 'Plus connections');
 }
 function sourceList(id) {
   const list = sourcesFor(id);
@@ -613,17 +611,6 @@ async function boot() {
   $('#tier').hidden = state.tier !== 'plus';
   $('#engine').textContent = state.config.engine === 'live' ? 'Live AI' : state.config.engine === 'mock' ? 'Local test mode' : 'AI unavailable';
   renderLanding();
-  $('#refresh-sources').onclick = async () => {
-    const button = $('#refresh-sources'), status = $('#source-refresh-status');
-    button.disabled = true; status.textContent = 'Refreshing…';
-    try {
-      const fresh = await api('/api/config');
-      state.config.catalog.dataSources = fresh.catalog.dataSources;
-      state.config.marketSnapshotAsOf = fresh.marketSnapshotAsOf;
-      renderSources(); status.textContent = 'Configuration updated. Feeds are fetched when used.';
-    } catch { status.textContent = 'Could not refresh. Showing the last loaded configuration.'; }
-    finally { button.disabled = false; }
-  };
   $('#home').onclick = e => { e.preventDefault(); show('v-landing'); };
   $('#start').onclick = renderIntake;
   const startRamsey = () => {state.personaId = DEMO_PERSONA; state.agentId = DEMO_AGENT; startChat();};
@@ -650,32 +637,6 @@ async function boot() {
   show('v-landing');
 }
 boot().catch(e => banner(`The app could not load: ${e.message}`, true));
-// Keep the section rail in sync with scrolling, including long source/library sections.
-const sectionLinks = [...document.querySelectorAll('.section-rail a')];
-let sectionFrame = 0;
-function updateSectionRail() {
-  sectionFrame = 0;
-  if ($('#v-landing').hidden) return;
-  const threshold = document.querySelector('header.site').getBoundingClientRect().bottom + 160;
-  let active = sectionLinks[0];
-  for (const link of sectionLinks) {
-    if ($(link.hash).getBoundingClientRect().top <= threshold) active = link;
-  }
-  for (const link of sectionLinks) {
-    if (link === active) link.setAttribute('aria-current', 'location');
-    else link.removeAttribute('aria-current');
-  }
-  const rail = document.querySelector('.section-rail');
-  if (rail.scrollWidth > rail.clientWidth && active) {
-    rail.scrollLeft = active.offsetLeft - (rail.clientWidth - active.offsetWidth) / 2;
-  }
-}
-function scheduleSectionRail() {
-  if (!sectionFrame) sectionFrame = requestAnimationFrame(updateSectionRail);
-}
-window.addEventListener('scroll', scheduleSectionRail, {passive: true});
-window.addEventListener('resize', scheduleSectionRail);
-document.addEventListener('toggle', scheduleSectionRail, true);
 // Animate each landing section once as it enters view, without hiding content.
 if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
   const sections = new IntersectionObserver(entries => {
