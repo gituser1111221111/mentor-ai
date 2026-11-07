@@ -8,7 +8,7 @@ process.env.NODE_ENV = 'test';
 process.env.MENTOR_MAX_OPTIONS = '40';
 const {MAX_OPTIONS} = await import('../lib/mentor/options.js');
 const {setClient} = await import('../lib/mentor/llm.js');
-const {chat, repick} = await import('../lib/mentor/chat.js');
+const {chat, repick, expand} = await import('../lib/mentor/chat.js');
 const {calcLibrary} = await import('../lib/mentor/tools.js');
 const {normalizeProfile} = await import('../lib/profile.js');
 const {loadPersona} = await import('../lib/mentor/personas.js');
@@ -48,7 +48,7 @@ test('the option limit is configurable up to 40 and the Ramsey bank has 40 ideas
   assert.ok(BANK.every(b => b.findings.length && !/\d/.test(b.title))); // traceable to findings, no numbers
 });
 
-test('Ramsey receives 40 verified options, his full rules and all notes, and picks one by id', async () => {
+test('Ramsey answers from a fast verified subset, then can review all 40 after expansion', async () => {
   const ramsey = loadPersona('debt-free-coach');
   assert.equal(ramsey.from, 'files');
   const fake = fakeClient(options => ({pickId: idOf(options, BANK[0].title),
@@ -58,14 +58,24 @@ test('Ramsey receives 40 verified options, his full rules and all notes, and pic
   setClient(fake);
   const r = await chat({personaId: 'debt-free-coach', agentId: 'budget', messages: [{role: 'user', content: 'Where do I start?'}], profile});
   assert.equal(r.mode, 'live');
-  assert.equal(r.candidates.length, 40);                       // 42 proposed: invented number and duplicate dropped
-  assert.equal(new Set(r.candidates.map(c => c.title)).size, 40);
+  assert.equal(r.candidates.length, 8);                        // fast first answer from the initial verified subset
+  assert.equal(r.optionsReviewed, 8);
+  assert.equal(r.canExpand, true);
+  const firstText = r.text, firstPick = r.pick.pickId;
+  const ex = await expand({turnId: r.turnId});
+  assert.equal(ex.total, 40);                                   // expanded to the full 40
+  assert.equal(ex.added.length, 32);
+  assert.equal(new Set([...r.candidates, ...ex.added].map(c => c.title)).size, 40); // all distinct
+  assert.deepEqual(ex.added.map(c => c.id), Array.from({length: 32}, (_, i) => `c${i + 9}`)); // appended, never renumbered
+  const all = await repick({turnId: r.turnId, personaId: 'debt-free-coach'}); // explicit full review
+  assert.equal(all.candidates.length, 40);
+  assert.equal(r.text, firstText); assert.equal(r.pick.pickId, firstPick); // earlier answer untouched
   const genCall = fake.calls.find(c => String(c.messages[0].content).includes('<coach>')); // the option-generation step
   assert.match(genCall.messages[0].content, /<option_ideas>/);  // coach was given the 40 Ramsey ideas
   assert.ok(BANK.every(b => genCall.messages[0].content.includes(b.title)));
 
   const isPick = c => String(c.messages[0].content).includes('<options>');
-  const pickCall = fake.calls.find(isPick);
+  const pickCall = fake.calls.filter(isPick).at(-1); // the explicit review of all 40
   const sent = JSON.parse(pickCall.messages[0].content.match(/<options>(.*)<\/options>/s)[1]);
   assert.equal(sent.length, 40);                                // Ramsey saw every option
   const schemaText = JSON.stringify(pickCall);

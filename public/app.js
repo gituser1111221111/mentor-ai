@@ -20,6 +20,7 @@ const DEMO_PERSONA = 'debt-free-coach';
 const DEMO_AGENT = 'budget';
 const views = ['v-landing', 'v-quiz', 'v-chat'];
 function show(id) {
+  if (id !== 'v-chat' && voice.active) endConversation();
   views.forEach(v => { $('#' + v).hidden = v !== id; });
   const landing = id === 'v-landing';
   $('#nav').hidden = !landing; $('#head-start').hidden = !landing; $('#restart').hidden = landing;
@@ -142,13 +143,12 @@ function showFeature(x) {
 }
 function blocked(x) { if (!x) return true; if (!x.built) { showFeature(x); return true; } if (!allowed(x) && !starterCoach(x)) { openUnlock(); return true; } return false; }
 function pickAgent(id) {
-  ++voice.epoch;stopPlayback('coach-change');
   const a = agent(id); if (id === state.agentId || blocked(a)) return;
   state.agentId = id; state.lastTurn = null; renderChatChrome(); note(`Switched to ${a.name}. Ask your next question.`);
 }
 async function pickPersona(id) {
-  ++voice.epoch;stopPlayback('mentor-change');
   const p = persona(id); if (id === state.personaId || blocked(p)) return;
+  if (voice.active) endConversation();
   state.personaId = id; renderChatChrome();
   if (!state.lastTurn) return note(`${p.name} is now directing your coach.`);
   const sk = skeleton();
@@ -158,10 +158,13 @@ async function pickPersona(id) {
 function note(text) { const el = document.createElement('div'); el.className = 'msg note'; el.textContent = text; $('#log').append(el); el.scrollIntoView({block: 'nearest'}); }
 function handleError(e) { if (e.status === 402) openUnlock(); else note(e.message); }
 
-function skeleton() {
+// Shown the moment a question is sent. Past the slow threshold it says so honestly and keeps waiting;
+// it never cuts the answer off or presents anything as verified early.
+function skeleton(label) {
   const el = document.createElement('div'); el.className = 'msg bot skeleton'; el.setAttribute('aria-label', 'Working');
-  el.innerHTML = `<div class="typing-head">${thumb(persona(state.personaId))}<span class="stage" role="status">${esc(persona(state.personaId).name)} is thinking</span></div><i></i><i></i><i></i>`; $('#log').append(el); el.scrollIntoView({block: 'nearest'});
-  return {stop() { el.remove(); }};
+  el.innerHTML = `<div class="typing-head">${thumb(persona(state.personaId))}<span class="stage" role="status">${esc(label || `${persona(state.personaId).name} is thinking`)}</span></div><i></i><i></i><i></i>`; $('#log').append(el); el.scrollIntoView({block: 'nearest'});
+  const slow = setTimeout(() => { const st = el.querySelector('.stage'); if (st) st.textContent = 'Still checking the numbers. This is taking longer than usual.'; }, state.config?.perf?.thresholdMs || 10000);
+  return {stop() { clearTimeout(slow); el.remove(); }};
 }
 
 function calcCard(c) {
@@ -187,13 +190,37 @@ function botMessage(r) {
     <p class="say">${esc(r.text)}</p>
     ${canSpeak(r) ? '<button class="btn text" type="button" data-listen>Listen</button><div class="voice-player" hidden><audio controls preload="none"></audio><button class="btn text" type="button" data-stop>Stop</button><p class="fine">AI-generated voice, not the real person.</p></div>' : ''}
     ${calcs.length || r.citations?.length ? `<details class="answer-details"><summary>Sources and calculations</summary>${calcs.map(calcCard).join('')}${r.citations?.length ? `<p class="sources">${r.citations.map(c => `${sourceLink(c)} <span>(${esc(c.ref)})</span>`).join('; ')}</p>` : ''}</details>` : ''}
-    ${r.turnId ? '<div class="meta"><button class="btn text" type="button" data-compare>Compare mentors</button></div>' : ''}
+    ${r.optionsReviewed ? `<p class="fine reviewed">${esc(r.personaName || 'Your mentor')} chose from ${r.optionsReviewed} verified options.</p>` : ''}
+    ${r.turnId ? `<div class="meta"><button class="btn text" type="button" data-compare>Compare mentors</button>${r.canExpand ? '<button class="btn text" type="button" data-expand>Show more options</button>' : ''}</div><div class="more-options" hidden></div>` : ''}
     ${r.conversational ? '' : `<p class="disclose">${esc(r.disclosure || '')}</p>`}`;
   el.querySelector('[data-listen]')?.addEventListener('click', () => speakReply(el, r));
-  el.querySelector('[data-stop]')?.addEventListener('click', () => {++voice.epoch;stopPlayback();});
+  el.querySelector('[data-stop]')?.addEventListener('click', () => {++voice.epoch;if(voice.active)endConversation();else stopPlayback();});
   el.querySelector('[data-compare]')?.addEventListener('click', () => openCompare(r));
+  el.querySelector('[data-expand]')?.addEventListener('click', e => expandOptions(el, r, e.currentTarget));
   $('#log').append(el); el.scrollIntoView({behavior: 'smooth', block: 'start'});
   return el;
+}
+
+// ---------- more options (progressive: the first answer used a small verified set) ----------
+async function expandOptions(el, r, btn) {
+  const box = el.querySelector('.more-options');
+  btn.disabled = true; btn.textContent = 'Finding more verified options...';
+  try {
+    const x = await api('/api/expand', {method: 'POST', body: {turnId: r.turnId}});
+    box.hidden = false;
+    box.innerHTML = x.added.length
+      ? `<p class="fine">${x.added.length} more verified options (${x.total} total). Your mentor has not reviewed these yet, so the answer above is unchanged.</p>
+         <ul class="opt-list">${x.added.map(o => `<li><strong>${esc(o.title)}</strong> <span class="fine">${esc(o.summary)}</span></li>`).join('')}</ul>
+         <button class="btn text" type="button" data-review>Ask your mentor to review all ${x.total}</button>`
+      : `<p class="fine">${esc(x.note || 'No additional distinct options fit this question.')}</p>`;
+    btn.remove();
+    box.querySelector('[data-review]')?.addEventListener('click', async e => {
+      const b = e.currentTarget; b.disabled = true;
+      const sk = skeleton(`Reviewing all ${x.total} options`);
+      try { botMessage(await api('/api/repick', {method: 'POST', body: {turnId: r.turnId, personaId: state.personaId}})); }
+      catch (err) { handleError(err); b.disabled = false; } finally { sk.stop(); }
+    });
+  } catch (e) { btn.disabled = false; btn.textContent = 'Show more options'; note(e.message); }
 }
 
 // ---------- compare mentors (same verified options, only the pick changes) ----------
@@ -226,8 +253,9 @@ async function openCompare(r) {
   body.querySelectorAll('[data-unlock]').forEach(b => b.onclick = () => { $('#compare').close(); openUnlock(); });
 }
 
-async function send(text, {spoken = false} = {}) {
+async function send(text, {spoken = false, voiceSession = null} = {}) {
   text = text.trim(); if (!text) return;
+  if (!voiceSession && voice.active) endConversation();
   stopPlayback('new-question');
   const speechEpoch = ++voice.epoch;
   const u = document.createElement('div'); u.className = 'msg user'; u.textContent = text; $('#log').append(u);
@@ -237,11 +265,14 @@ async function send(text, {spoken = false} = {}) {
   try {
     const r = await api('/api/chat', {method: 'POST', body: {message: text, personaId: state.personaId, agentId: state.agentId}}); state.lastTurn = r.turnId;
     const el = botMessage(r); refreshMemory();
-    if (canSpeak(r) && speechEpoch === voice.epoch) speakReply(el, r);
-    else if (spoken) note('Voice is unavailable right now. The written answer is above.');
+    if (canSpeak(r) && speechEpoch === voice.epoch && (!voiceSession || (voice.active && voice.session === voiceSession))) {
+      if (voiceSession) await speakReply(el, r, voiceSession);
+      else speakReply(el, r);
+    }
+    else if (spoken && voice.active && voice.session === voiceSession) note('Voice is unavailable right now. The written answer is above.');
   }
   catch (e) { handleError(e); }
-  finally { sk.stop(); btn.disabled = false; $('#msg').focus(); }
+  finally { sk.stop(); btn.disabled = false; if (!voice.active) $('#msg').focus(); }
 }
 async function refreshMemory() { try { const {memory} = await api('/api/memory'); $('#memory').innerHTML = memory.length ? memory.map((m, i) => `<li>${esc(m.fact)} <button class="btn text" type="button" data-memory="${i}" aria-label="Forget ${esc(m.fact)}">Forget</button></li>`).join('') : '<li>Nothing yet. Tell me about your goals.</li>'; $('#memory').querySelectorAll('[data-memory]').forEach(b => b.onclick = async () => { await api('/api/memory', {method: 'DELETE', body: {fact: memory[Number(b.dataset.memory)].fact}}); refreshMemory(); }); } catch {} }
 
@@ -348,69 +379,135 @@ const DEMO = {
 };
 
 // ---------- voice ----------
-// Push-to-talk -> /api/voice/transcribe (ElevenLabs STT) -> the normal /api/chat pipeline.
-// "Listen" -> /api/voice/speak, which reads the server's stored copy of that verified answer
-// (ElevenLabs TTS). The browser never sends text to be spoken and never sees the ElevenLabs key.
-const voice = {rec: null, stream: null, chunks: [], started: 0, pressAt: 0, timer: null, starting: false, busy: false, epoch: 0};
-const canSpeak = r => Boolean(r?.turnId && state.config?.voice && state.config.voicePersonas?.includes(r.personaId));
-// The status row keeps its height while voice is on, so the mic button never moves under the user's finger.
+// One tap starts a hands-free, turn-taking conversation. ElevenLabs transcribes each
+// utterance and speaks the exact Claude answer stored on the server. The key stays there.
+const voice = {active: false, session: 0, rec: null, stream: null, context: null, analyser: null,
+  timer: null, starting: false, epoch: 0};
+const canSpeak = r => Boolean((r?.voiceTurnId || r?.turnId) && state.config?.voice && state.config.voicePersonas?.includes(r.personaId));
 function voiceStatus(text, kind = '') { const s = $('#voice-status'); s.textContent = text; s.className = 'voice-status ' + kind; }
-function micUI(on) { const m = $('#mic'); m.classList.toggle('rec', on); m.setAttribute('aria-pressed', String(on)); $('#mic-label').textContent = on ? 'Send' : 'Talk'; }
+function micUI() {
+  const m = $('#mic'); m.classList.toggle('rec', voice.active);
+  m.setAttribute('aria-pressed', String(voice.active));
+  m.setAttribute('aria-label', voice.active ? 'End voice conversation' : 'Start voice conversation');
+  $('#mic-label').textContent = voice.active ? 'End call' : 'Talk live';
+}
 const pickMime = () => ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/ogg;codecs=opus', 'audio/ogg'].find(t => window.MediaRecorder?.isTypeSupported?.(t)) || '';
 
-async function startRecording() {
-  ++voice.epoch;stopPlayback('recording');
-  if (voice.busy || voice.rec || voice.starting) return;
-  if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) return voiceStatus('This browser cannot record audio here. Type your question instead.', 'warn');
-  stopPlayback(); voice.starting = true;
-  try { voice.stream = await navigator.mediaDevices.getUserMedia({audio: {echoCancellation: true, noiseSuppression: true}}); }
-  catch (e) {
-    voice.starting = false;
-    return voiceStatus(['NotAllowedError', 'SecurityError'].includes(e.name) ? 'Microphone access is blocked. Allow it in your browser settings, or type your question.'
-      : e.name === 'NotFoundError' ? 'No microphone found. Type your question instead.'
-      : e.name === 'NotSupportedError' ? 'The microphone is not available in this browser. Type your question instead.' : `Could not start the microphone: ${e.message}`, 'warn');
-  }
-  const mime = pickMime();
-  voice.chunks = [];
-  voice.rec = new MediaRecorder(voice.stream, mime ? {mimeType: mime} : undefined);
-  voice.rec.ondataavailable = e => { if (e.data.size) voice.chunks.push(e.data); };
-  voice.rec.onstop = finishRecording;
-  voice.rec.start(); voice.started = Date.now(); voice.starting = false; micUI(true);
-  const tick = () => { const s = Math.floor((Date.now() - voice.started) / 1000); voiceStatus(`Recording 0:${String(s).padStart(2, '0')}. Release or tap Send when you finish.`, 'rec'); if (s >= 60) stopRecording(); };
-  tick(); voice.timer = setInterval(tick, 250);
-}
-function stopRecording() {
-  clearInterval(voice.timer);
-  if (voice.rec?.state === 'recording') voice.rec.stop();
-  voice.stream?.getTracks().forEach(t => t.stop()); voice.stream = null; micUI(false);
-}
-async function finishRecording() {
+// Development-only voice timing (localStorage mmDebugPerf=1); never shown to users.
+const perfDebug = (() => { try { return localStorage.getItem('mmDebugPerf') === '1'; } catch { return false; } })();
+let voiceT0 = null;
+function closeCapture() {
+  clearInterval(voice.timer); voice.timer = null;
   const rec = voice.rec; voice.rec = null;
-  const blob = new Blob(voice.chunks, {type: rec?.mimeType || 'audio/webm'});
-  if (Date.now() - voice.started < 600 || blob.size < 1000) return voiceStatus('That was too short. Hold Talk while you speak, or tap it once to start.', 'warn');
-  voice.busy = true; $('#mic').disabled = true; voiceStatus('Turning your question into text...');
+  if (rec?.state === 'recording') rec.stop();
+  voice.stream?.getTracks().forEach(t => t.stop()); voice.stream = null;
+  voice.context?.close().catch(() => {}); voice.context = null; voice.analyser = null;
+}
+function endConversation(message = 'Voice conversation ended.') {
+  voice.active = false; voice.session++;++voice.epoch;
+  closeCapture(); stopPlayback(); micUI(); voiceStatus(message);
+}
+async function startListening(session) {
+  if (!voice.active || session !== voice.session || voice.starting || voice.rec) return;
+  voice.starting = true; voiceStatus('Opening microphone...');
+  let stream;
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({audio: {echoCancellation: true, noiseSuppression: true, autoGainControl: true}});
+    if (!voice.active || session !== voice.session) { stream.getTracks().forEach(t => t.stop()); return; }
+    voice.stream = stream;
+    const Context = window.AudioContext || window.webkitAudioContext;
+    voice.context = new Context();
+    if (voice.context.state === 'suspended') await voice.context.resume();
+    if (!voice.active || session !== voice.session) { stream.getTracks().forEach(t => t.stop()); return; }
+    const source = voice.context.createMediaStreamSource(stream);
+    voice.analyser = voice.context.createAnalyser();
+    voice.analyser.fftSize = 2048;
+    source.connect(voice.analyser);
+    const samples = new Uint8Array(voice.analyser.fftSize);
+    const mime = pickMime(), rec = new MediaRecorder(stream, mime ? {mimeType: mime} : undefined);
+    voice.rec = rec;
+    const chunks = [], started = Date.now();
+    let heardSpeech = false, speakingMs = 0, silenceSince = 0, previous = started;
+    rec.ondataavailable = e => { if (e.data.size) chunks.push(e.data); };
+    rec.onerror = () => {
+      if (voice.active && session === voice.session) {
+        endConversation('');
+        voiceStatus('Microphone recording failed. Try again or type your question.', 'warn');
+      }
+    };
+    rec.onstop = () => {
+      if (voice.rec === rec) voice.rec = null;
+      if (voice.active && session === voice.session) {
+        if (heardSpeech) finishUtterance(session, new Blob(chunks, {type: rec.mimeType || 'audio/webm'}), Date.now() - started);
+        else startListening(session);
+      }
+    };
+    rec.start(); voiceStatus('Listening… Speak naturally. Pause when you finish.', 'rec');
+    voice.timer = setInterval(() => {
+      if (!voice.active || session !== voice.session || rec.state !== 'recording') return;
+      voice.analyser.getByteTimeDomainData(samples);
+      let power = 0;
+      for (const sample of samples) power += ((sample - 128) / 128) ** 2;
+      const speaking = Math.sqrt(power / samples.length) > 0.025;
+      const now = Date.now();
+      if (speaking) { speakingMs += now - previous; silenceSince = 0; if (speakingMs >= 250) heardSpeech = true; }
+      else { speakingMs = 0; if (heardSpeech) silenceSince ||= now; }
+      previous = now;
+      if ((heardSpeech && silenceSince && now - silenceSince >= 1100) || now - started >= 60000) {
+        voiceStatus('Thinking…');
+        closeCapture();
+      }
+    }, 100);
+  } catch (e) {
+    if (session === voice.session) {
+      endConversation('');
+      voiceStatus(['NotAllowedError', 'SecurityError'].includes(e.name) ? 'Microphone access is blocked. Allow it in your browser settings, or type your question.'
+        : e.name === 'NotFoundError' ? 'No microphone found. Type your question instead.'
+        : `Could not start the microphone: ${e.message}`, 'warn');
+    }
+    stream?.getTracks().forEach(t => t.stop());
+  } finally {
+    voice.starting = false;
+    if (voice.active && voice.session !== session && !voice.rec) startListening(voice.session);
+  }
+}
+async function finishUtterance(session, blob, duration) {
+  if (!voice.active || session !== voice.session) return;
+  if (duration < 600 || blob.size < 1000) return startListening(session);
+  voiceT0 = performance.now();
+  voiceStatus('Turning your words into text…');
   try {
     const res = await fetch('/api/voice/transcribe', {method: 'POST', headers: {'Content-Type': blob.type.split(';')[0], 'X-Session-Id': sid}, body: blob});
     const data = await res.json().catch(() => ({}));
+    if (!voice.active || session !== voice.session) return;
     if (!res.ok) throw new Error(data.error || 'We could not hear that. Try again or type your question.');
-    voiceStatus('');
-    await send(data.text, {spoken: true});
-  } catch (e) { voiceStatus(e.message, 'warn'); }
-  finally { voice.busy = false; $('#mic').disabled = false; }
+    voiceStatus('Dave is thinking…');
+    await send(data.text, {spoken: true, voiceSession: session});
+  } catch (e) {
+    if (voice.active && session === voice.session) voiceStatus(e.message, 'warn');
+  } finally {
+    if (voice.active && session === voice.session) startListening(session);
+  }
 }
 
 const playback = new VoicePlayback();
 function stopPlayback(reason = 'user') { playback.stop(typeof reason === 'string' ? reason : 'user'); }
-async function speakReply(el, r) {
+async function speakReply(el, r, session = null) {
   const box = el.querySelector('.voice-player'), btn = el.querySelector('[data-listen]'), audio = box?.querySelector('audio');
-  if (!box) return;
+  if (!box || (session && (!voice.active || session !== voice.session))) return false;
+  if (!session && voice.active) endConversation();
+  let settle;const completed = new Promise(resolve => settle = resolve);
+  let played = false;
   await playback.start(audio, async (signal, requestId) => {
     const res = await fetch('/api/voice/speak', {method:'POST', signal,
       headers:{'Content-Type':'application/json','X-Session-Id':sid,'X-Voice-Request-Id':requestId},
-      body:JSON.stringify({turnId:r.turnId,personaId:r.personaId,voiceReplyId:r.voiceReplyId})});
+      body:JSON.stringify({turnId:r.voiceTurnId || r.turnId,personaId:r.personaId,voiceReplyId:r.voiceReplyId})});
     if (!res.ok) throw Error((await res.json().catch(()=>({}))).error || 'Audio is unavailable. Your written answer is above.');
     return res.blob();
   }, (status,error) => {
+    if (['ended','stopped','error','blocked'].includes(status)) settle(status === 'ended');
+    if (session && status === 'blocked') endConversation('Playback needs a click. Use Listen to retry.');
+    if (status === 'playing') {played = true;if (session && voice.active && voice.session === session) voiceStatus('Dave is speaking…');}
     box.hidden = false;
     btn.disabled = status === 'loading'; btn.hidden = ['playing','ended','blocked'].includes(status);
     btn.textContent = status === 'loading' ? 'Preparing audio…' : 'Listen';
@@ -418,27 +515,22 @@ async function speakReply(el, r) {
     if (status === 'blocked') box.querySelector('.fine').textContent = 'Press play to listen. AI-generated voice, not the real person.';
     if (error) note(error.message);
   });
+  return session ? completed : played;
 }
-window.addEventListener('pagehide', () => {++voice.epoch;stopPlayback('navigation');});
+window.addEventListener('pagehide', () => {endConversation('');});
 
 function setupVoice() {
   const mic = $('#mic');
   mic.hidden = !state.config.voice; $('#voice-status').hidden = !state.config.voice;
   if (!state.config.voice) return;
-  // Hold to talk (release sends) or tap to start and tap again to send.
-  const down = e => {
-    if ((e.button ?? 0) > 0 || voice.busy) return;
-    e.preventDefault();
-    if (voice.rec) return stopRecording();
-    try { mic.setPointerCapture?.(e.pointerId); } catch {} // release is delivered here even if the finger drifts
-    voice.pressAt = Date.now(); startRecording();
-  };
-  const up = () => { if (voice.rec?.state === 'recording' && voice.pressAt && Date.now() - voice.pressAt > 500) stopRecording(); voice.pressAt = 0; };
-  mic.addEventListener('pointerdown', down);
-  mic.addEventListener('pointerup', up);
-  mic.addEventListener('pointercancel', up);
-  mic.addEventListener('keydown', e => { if ((e.key === ' ' || e.key === 'Enter') && !e.repeat) down(e); });
-  mic.addEventListener('keyup', e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); up(); } });
+  micUI();
+  mic.addEventListener('click', () => {
+    if (voice.active) return endConversation();
+    if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder || !(window.AudioContext || window.webkitAudioContext))
+      return voiceStatus('Live voice is unavailable in this browser. Type your question instead.', 'warn');
+    stopPlayback(); voice.active = true; voice.session++; micUI();
+    startListening(voice.session);
+  });
 }
 
 // ---------- boot ----------
@@ -463,7 +555,7 @@ async function boot() {
   $('#chat-upload-document').onclick = () => $('#document-file').click();
   $('#portfolio-file').onchange = async e => { const file = e.target.files?.[0]; if (!file) return; try { if (state.profile) await uploadPortfolio(file); else { state.pendingPortfolio = file; uploadNote(`${file.name} will be added when you start chatting.`); } } catch (err) { uploadNote(err.message); } e.target.value = ''; };
   $('#document-file').onchange = async e => { const file = e.target.files?.[0]; if (!file) return; try { if (state.profile) await uploadDocument(file); else { state.pendingDocument = file; uploadNote(`${file.name} will be added when you start chatting.`); } } catch (err) { uploadNote(err.message); } e.target.value = ''; };
-  $('#composer').onsubmit = e => { e.preventDefault(); send($('#msg').value); };
+  $('#composer').onsubmit = e => { e.preventDefault(); if (voice.active) endConversation('Voice conversation ended.'); send($('#msg').value); };
   setupVoice();
   $('#restart').onclick = async () => { if (!confirm('Start over? Your answers and chat will be cleared.')) return; await api('/api/session', {method: 'DELETE'}).catch(() => {}); location.href = '/'; };
   await handleCheckoutReturn();
