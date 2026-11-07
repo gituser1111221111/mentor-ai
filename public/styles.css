@@ -783,3 +783,16 @@ body.chat-open #composer { margin:0; padding:6px 0 0; flex:0 0 auto; }
 @media(max-width:800px) { .evidence-grid { grid-template-columns:1fr; } }
 #pricing .plan .price { font-size:1.8rem; font-weight:600; letter-spacing:-.03em; }
 #pricing .plan .price span { font-size:.8rem; font-weight:400; }
+/* Evergreen navigation and hero, with warm imagery retained beneath. */
+body:not(.chat-open) header.site { background:#153b33; color:#f6f2e9; border-bottom:1px solid #ffffff18; }
+body:not(.chat-open) header.site .wordmark,body:not(.chat-open) header.site .links a { color:#f6f2e9; }
+body:not(.chat-open) header.site #head-start { background:#e5edda; color:#173b32; border-color:#e5edda; }
+#v-landing .hero { background-image:linear-gradient(105deg,rgba(12,37,32,.96) 0%,rgba(22,61,49,.88) 48%,rgba(17,40,35,.62) 100%),url('/img/research-library.png'); color:#f7f4eb; }
+.hero h1,.hero .lead,.hero .hero-eyebrow,.hero-catalog { color:#f7f4eb; }
+.hero h1 em { color:#bad3ad; }
+.hero-catalog-note { color:#d3dfd1; }
+.hero .eyebrow-dot { background:#bad3ad; }
+#v-landing .hero::before { background:radial-gradient(ellipse,rgba(139,174,116,.65),transparent 65%); opacity:.28; }
+#v-landing .hero::after { background:radial-gradient(ellipse,rgba(199,187,143,.5),transparent 65%); opacity:.25; }
+.hero-actions .btn.primary { background:#e5edda; color:#183b32; border-color:#e5edda; box-shadow:0 4px 0 #0a291f; }
+.hero-actions .btn.primary:hover { background:#f7f8ef; color:#183b32; box-shadow:0 6px 0 #0a291f; }
