@@ -952,3 +952,18 @@ body.chat-open .header-context { display:none; }
 #live-data .api-logos img { grid-row:auto; }
 #live-data .api-logos a:hover { background:#edf2e8; }
 #personas .portrait > p:last-of-type { margin-bottom:12px; }
+/* Stronger specialist cards with a quiet integration directory. */
+#agents .agent-card { background:#fffefa; border:1px solid #bccdbb; box-shadow:0 4px 12px #17332b0c; padding:22px; gap:20px; }
+#agents .agent-card-top { align-items:center; min-height:42px; }
+#agents .agent-card-top strong { font-size:1rem; line-height:1.35; }
+#agents .agent-card-job { color:#40574b; line-height:1.55; }
+#agents .agent-symbol { background:#194b3b; color:#f6f5e9; border:0; border-radius:12px; width:48px; height:48px; }
+#agents .agent-card:hover { background:#fff; border-color:#155c49; box-shadow:0 10px 26px #17332b20; transform:translateY(-3px); }
+#agents .agent-card:focus-visible { outline:3px solid #6c9774; outline-offset:3px; }
+#live-data .api-group { border-top:1px solid #e4e9e0; padding-top:18px; margin-top:18px; }
+#live-data .api-group h3 { font-size:.8rem; padding-top:12px; }
+#live-data .api-group:last-child h3 { color:#623b87; }
+#live-data .api-logos { gap:10px; }
+#live-data .api-logos a { background:#fff; border-color:#dce3d8; padding:10px 14px; border-radius:10px; box-shadow:0 2px 4px #17332b05; }
+#live-data .api-logos a:hover { border-color:#92ad96; background:#f5f8f1; }
+#live-data .api-logos span { font-size:.84rem; }
