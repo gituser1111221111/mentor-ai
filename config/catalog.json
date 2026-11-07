@@ -297,7 +297,8 @@
       ],
       "tier": "free",
       "status": "live",
-      "env": "finnhub"
+      "env": "finnhub",
+      "logo": "/img/providers/finnhub.webp"
     },
     {
       "id": "fred",
@@ -311,7 +312,8 @@
       ],
       "tier": "free",
       "status": "live",
-      "env": "fred"
+      "env": "fred",
+      "logo": "/img/providers/fred.ico"
     },
     {
       "id": "sec-edgar",
@@ -324,7 +326,8 @@
       ],
       "tier": "free",
       "status": "live",
-      "env": "secEdgar"
+      "env": "secEdgar",
+      "logo": "/img/providers/sec-edgar.ico"
     },
     {
       "id": "coingecko",
@@ -337,7 +340,8 @@
       ],
       "tier": "free",
       "status": "live",
-      "env": "coingecko"
+      "env": "coingecko",
+      "logo": "/img/providers/coingecko.png"
     },
     {
       "id": "quartr",
@@ -349,7 +353,8 @@
         "investing"
       ],
       "tier": "plus",
-      "status": "planned"
+      "status": "planned",
+      "logo": "/img/providers/quartr.ico"
     },
     {
       "id": "financial-datasets",
@@ -360,7 +365,8 @@
         "equity"
       ],
       "tier": "plus",
-      "status": "planned"
+      "status": "planned",
+      "logo": "/img/providers/financial-datasets.png"
     },
     {
       "id": "alpha-vantage",
@@ -372,7 +378,8 @@
         "equity"
       ],
       "tier": "plus",
-      "status": "planned"
+      "status": "planned",
+      "logo": "/img/providers/alpha-vantage.ico"
     },
     {
       "id": "plaid",
@@ -386,7 +393,8 @@
         "debt"
       ],
       "tier": "plus",
-      "status": "planned"
+      "status": "planned",
+      "logo": "/img/providers/plaid.png"
     },
     {
       "id": "lunarcrush",
@@ -397,7 +405,8 @@
         "investing"
       ],
       "tier": "plus",
-      "status": "planned"
+      "status": "planned",
+      "logo": "/img/providers/lunarcrush.png"
     },
     {
       "id": "fdic",
@@ -408,7 +417,8 @@
         "savings"
       ],
       "tier": "plus",
-      "status": "planned"
+      "status": "planned",
+      "logo": "/img/providers/fdic.ico"
     },
     {
       "id": "irs",
@@ -420,7 +430,8 @@
         "retirement"
       ],
       "tier": "plus",
-      "status": "planned"
+      "status": "planned",
+      "logo": "/img/providers/irs.ico"
     },
     {
       "id": "attom",
@@ -431,7 +442,8 @@
         "real_estate"
       ],
       "tier": "plus",
-      "status": "planned"
+      "status": "planned",
+      "logo": "/img/providers/attom.png"
     }
   ]
 }

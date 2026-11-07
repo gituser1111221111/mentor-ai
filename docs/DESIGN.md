@@ -34,17 +34,16 @@ Always describe them as AI-generated likenesses. Every card names the real figur
 **Agents** have a specialty, such as debt consolidation, portfolio review, equity research, tax, or business coaching. A **mentor** brings a distinct public-teaching perspective to that specialty. All agent cards use a simple `+` badge. Ramsey-inspired guidance with budgeting support is the sole working flagship; other agents and mentors belong to the planned Plus library. If selected, they explain that they are being built. The long-term corpus and hundreds-of-agents language must be framed as a vision until implemented. The context hub must distinguish document and link previews from the functional CSV import.
 
 
-## Homepage clarity update (Nov 7)
+## Mentor-first homepage (Nov 7, current)
 
-Lead with the mentor/agent method, then the source directory, mentor library,
-and specialist library. Remove decorative numbered steps, including intake labels.
-Use evergreen for data, sage for the method and agents, and warm sand for mentors.
-Header and hero context buttons open the existing document/holdings hub.
-A desktop section rail becomes a horizontally scrollable bottom navigation on mobile.
-It tracks the active section and is contained in the landing view.
+The first screen is the mentor library, followed by how mentors are built,
+the specialist library, how agents are built, a compact API directory, and pricing.
+Conversation examples, evidence, context, and FAQ follow pricing.
+No section rail or custom scroll navigation. Keep the native browser scrollbar.
+Header and mentor-library actions open the existing context hub.
 
-Source groups render from `catalog.dataSources`, open by default and collapsible.
-Refresh connections re-reads server configuration while preserving collapsed groups.
-Configured is not a successful fetch; planned connections retain their status.
-Keep descriptions short and put agent mappings under each source's “Used by” disclosure.
-The 21st CLI was unavailable; this update reuses the existing project components and tokens.
+Free mentor and agent cards use sage green; Plus uses warm gold with text badges.
+API names, provider marks, and short status labels render from catalog.dataSources.
+Provider logos/site icons are hosted locally; provenance is in public/img/providers/SOURCES.md.
+The thousands-of-hours research library is an ambition, not a claim about processed material.
+Use existing project components and tokens; the 21st CLI is unavailable on this host.
