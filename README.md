@@ -39,7 +39,7 @@ Switch mentor ──► step ③ only: same options, same numbers, different pic
 - **Coaching** = a specialist bot (Budget, Debt, Savings & Emergency Fund) that does the work and the math.
 - **Mentor** = a money philosophy that directs the coach by choosing among its verified options. Mentors are built from summaries of public teachings and labeled *"inspired by; not affiliated or endorsed."* No mentor claims to be a real person, and there are no cloned voices.
 
-**Free tier:** 3 mentors (Debt-Free, from Dave Ramsey's public work; Hustle, from Grant Cardone's; Conscious Spender, from Ramit Sethi's) and 3 coaches (Budget, Debt, Savings). **Plus ($4.99/month, mocked in this prototype):** all 10 mentors and 10 coaches.
+**Free tier:** 2 mentors (Debt-Free, from Dave Ramsey's public work; Conscious Spender, from Ramit Sethi's) and 3 coaches (Budget, Debt, Savings). **Plus ($4.99/month, mocked in this prototype):** all 10 mentors and 10 coaches.
 
 ## What actually works (and what doesn't)
 
@@ -114,14 +114,14 @@ docs/                     business plan, build plan, strategy, Devpost text
 - **Single-instance, anonymous, in-memory store.** No accounts, and data resets when the server restarts. Fictional data only.
 - **No real bank or brokerage connection, and no real payments.**
 - **The number check matches exact values.** It can't catch wrong reasoning that uses correct numbers, and it can reject a valid rephrasing (for example, a rounded number).
-- Not affiliated with or endorsed by Dave Ramsey, Ramsey Solutions, Grant Cardone, Ramit Sethi or anyone else named.
+- Not affiliated with or endorsed by Dave Ramsey, Ramsey Solutions, Ramit Sethi or anyone else named.
 
 ## Credits
 
 - **RedHawk Builds starter kit v1.1:** exact-cents finance library (`lib/finance.js`), CSV parser, synthetic portfolio data, server skeleton, tests
 - **Anthropic Claude API:** Claude Sonnet 5.5 (coaching), Claude Haiku 5.5 (mentors), `@anthropic-ai/sdk`
 - **Render:** hosting
-- **Mentor sources:** public summaries of *The Total Money Makeover* (Dave Ramsey), *The 10X Rule* (Grant Cardone) and *I Will Teach You to Be Rich* (Ramit Sethi). Each citation chip names its source.
+- **Mentor sources:** public summaries of *The Total Money Makeover* (Dave Ramsey) and *I Will Teach You to Be Rich* (Ramit Sethi). Each citation chip names its source.
 - Built with help from Claude Code.
 
 The original starter-kit README is kept in [README.txt](README.txt).
