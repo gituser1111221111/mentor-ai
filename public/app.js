@@ -136,7 +136,7 @@ function calcCard(c) {
 function botMessage(r, note) {
   const el = document.createElement('div'); el.className = 'msg bot';
   const picked = r.candidates?.find(c => c.id === r.pick?.pickId);
-  el.innerHTML = `<div class="who">${esc(r.personaName || r.personaId)}${note ? ` <span class="muted">· ${esc(note)}</span>` : ''}${r.mode === 'mock' ? ' <span class="pill">mock engine</span>' : ''}</div>
+  el.innerHTML = `<div class="who">${esc(r.personaName || r.personaId)}${note ? ` <span class="muted">· ${esc(note)}</span>` : ''}${r.mode === 'mock' ? ' <span class="pill">mock engine</span>' : r.mode === 'mock-fallback' ? ' <span class="pill" title="Live AI failed; answered by the rule-based engine">offline fallback</span>' : ' <span class="pill">live AI</span>'}</div>
     <div>${esc(r.text)}</div>
     ${(picked?.calculations || r.calculations || []).slice(1).map(calcCard).join('')}
     <div class="chips">${(r.citations || []).map(c => `<span class="chip" title="${esc(c.ref)}">📖 ${esc(c.title)}</span>`).join('')}</div>
@@ -147,7 +147,9 @@ function botMessage(r, note) {
 }
 
 function openDrawer(r) {
-  $('#drawer-body').innerHTML = r.candidates.map(c => `<div class="opt-card ${c.id === r.pick?.pickId ? 'picked' : ''}"><strong>${esc(c.title)}</strong>${c.id === r.pick?.pickId ? ' <span class="badge">Picked</span>' : r.pick?.runnersUp?.includes(c.id) ? ' <span class="pill">Runner-up</span>' : ''}<div class="small">${esc(c.summary)}</div><div class="small muted">Tradeoff: ${esc(c.tradeoffs)} · Risk: ${esc(c.risk)}${c.timeToGoal ? ` · ${esc(c.timeToGoal)} months` : ''}</div></div>`).join('');
+  const v = r.validation;
+  const check = v ? `<p class="small"><strong>Number check:</strong> the agent proposed ${v.generated} options; ${v.kept} passed, ${v.dropped.length} were dropped.${v.replyVerified === false ? ' The mentor\'s wording used an unverified number, so we showed the option\'s own text instead.' : ''}</p>${v.dropped.length ? `<details class="small muted"><summary>Dropped options</summary><ul>${v.dropped.map(d => `<li>${esc(d.title)}: ${esc(d.reason)}</li>`).join('')}</ul></details>` : ''}` : '';
+  $('#drawer-body').innerHTML = check + r.candidates.map(c => `<div class="opt-card ${c.id === r.pick?.pickId ? 'picked' : ''}"><strong>${esc(c.title)}</strong>${c.id === r.pick?.pickId ? ' <span class="badge">Picked</span>' : r.pick?.runnersUp?.includes(c.id) ? ' <span class="pill">Runner-up</span>' : ''}<div class="small">${esc(c.summary)}</div><div class="small muted">Tradeoff: ${esc(c.tradeoffs)} · Risk: ${esc(c.risk)}${c.timeToGoal ? ` · ${esc(c.timeToGoal)} months` : ''}</div></div>`).join('');
   $('#drawer').showModal();
 }
 
