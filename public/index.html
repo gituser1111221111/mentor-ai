@@ -17,15 +17,21 @@
     <!-- Landing -->
     <section id="v-landing" class="view">
       <h1>Budget around income that changes every month.</h1>
-      <p class="lead">Our AI mentors can't make up numbers. The agent computes every option in code, and the mentor you pick just chooses one and explains why.</p>
+      <p class="lead">Your coach does the work and computes every option in code. The mentor you pick directs it: it chooses the option that fits its philosophy and explains why. Mentors can't make up numbers.</p>
       <div class="row">
         <button id="start" class="primary">Take the 2-minute quiz</button>
         <button id="demo" class="ghost">Use demo profile (Jordan, 22)</button>
       </div>
-      <h3>Mentors</h3>
+      <div class="how card">
+        <div><span class="step">1</span><strong>Coaching does the work.</strong> <span class="muted" id="ex-coaching"></span></div>
+        <div><span class="step">2</span><strong>Your mentor directs it.</strong> <span class="muted" id="ex-mentors"></span></div>
+        <div><span class="step">3</span><strong>Switch mentors anytime.</strong> <span class="muted">Same facts, same math, a different point of view.</span></div>
+      </div>
+      <h3>Mentors <span class="muted small">how to think</span></h3>
       <div id="personas" class="grid"></div>
-      <h3>Coaches</h3>
+      <h3>Coaching <span class="muted small">the professional</span></h3>
       <div id="agents" class="grid"></div>
+      <p class="small muted">Free: 3 mentors and 3 coaches. Plus ($4.99/month): all 10 mentors and all 10 coaches.</p>
     </section>
 
     <!-- Quiz -->
@@ -46,15 +52,15 @@
     <section id="v-snap" class="view" hidden>
       <h2>Your money snapshot</h2>
       <div id="snap"></div>
-      <button id="to-chat" class="primary">Talk to the Budget Coach</button>
+      <button id="to-chat" class="primary">Start coaching</button>
     </section>
 
     <!-- Chat -->
     <section id="v-chat" class="view chat" hidden>
       <aside>
-        <h4>Mentor</h4>
+        <h4>Mentor <span class="small">directs</span></h4>
         <div id="persona-switch"></div>
-        <h4>Coaches</h4>
+        <h4>Coaching <span class="small">does the work</span></h4>
         <div id="agent-list"></div>
         <h4>What I remember</h4>
         <ul id="memory" class="small"></ul>
@@ -64,15 +70,15 @@
         <div id="log"></div>
         <div class="chips" id="suggest"></div>
         <form id="composer">
-          <input id="msg" autocomplete="off" placeholder="Ask about your budget…" maxlength="2000">
+          <input id="msg" autocomplete="off" placeholder="Ask your coach…" maxlength="2000">
           <button class="primary">Send</button>
         </form>
       </div>
     </section>
   </main>
 
-  <dialog id="drawer"><form method="dialog"><h3>All options the agent generated</h3><p class="small muted">The mentor picked one of these by id. It couldn't change the numbers.</p><div id="drawer-body"></div><button class="primary">Close</button></form></dialog>
-  <dialog id="unlock"><form method="dialog"><h3>Unlock every coach and mentor</h3><p>One plan: <strong>$4.99/month</strong>. All 10 coaches, all 10 mentors, shared memory.</p><p id="unlock-msg" class="small muted"></p><div class="row"><button id="unlock-go" class="primary" value="go">Unlock (demo)</button><button class="ghost">Not now</button></div></form></dialog>
+  <dialog id="drawer"><form method="dialog"><h3>All options your coach generated</h3><p class="small muted">The mentor picked one of these by id. It couldn't change the numbers.</p><div id="drawer-body"></div><button class="primary">Close</button></form></dialog>
+  <dialog id="unlock"><form method="dialog"><h3>Unlock every mentor and coach</h3><p>Free gets you 3 mentors and 3 coaches. One plan, <strong>$4.99/month</strong>, unlocks all 10 mentors and all 10 coaches, with shared memory across them.</p><p id="unlock-msg" class="small muted"></p><div class="row"><button id="unlock-go" class="primary" value="go">Unlock (demo)</button><button class="ghost">Not now</button></div></form></dialog>
 
   <footer class="small muted">
     Educational opinion, not advice from a licensed financial adviser, CPA, or attorney. Mentors are inspired by public teachings and not affiliated with or endorsed by the people named. Prototype: fictional data, single-user store, payments mocked.

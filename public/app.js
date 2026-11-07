@@ -19,7 +19,9 @@ const show = id => { document.querySelectorAll('.view').forEach(v => v.hidden = 
 // ---------- Landing ----------
 function renderCatalog() {
   const {personas, agents} = state.config.catalog;
-  const card = (x, sub) => `<div class="card ${x.status === 'locked' ? 'locked' : ''}"><div class="row" style="margin:0;justify-content:space-between"><strong>${esc(x.name)}</strong><span class="badge">${x.status === 'locked' ? 'Locked' : 'Live'}</span></div><div class="small muted">${esc(sub)}</div></div>`;
+  const card = (x, sub) => `<div class="card ${x.tier === 'plus' ? 'locked' : ''}"><div class="row" style="margin:0;justify-content:space-between"><strong>${esc(x.name)}</strong><span class="badge ${x.tier === 'plus' ? 'plus' : ''}">${x.tier === 'plus' ? '$4.99' : 'Free'}</span></div><div class="small muted">${esc(sub)}</div></div>`;
+  $('#ex-coaching').textContent = state.config.catalog.explainer.coaching;
+  $('#ex-mentors').textContent = state.config.catalog.explainer.mentors;
   $('#personas').innerHTML = personas.map(p => card(p, `${p.philosophy}. Inspired by the public work of ${p.inspiredBy}.`)).join('');
   $('#agents').innerHTML = agents.map(a => card(a, a.job)).join('');
 }
@@ -121,7 +123,7 @@ function renderSidebar() {
   $('#persona-switch').innerHTML = personas.map(p => `<button data-p="${p.id}" class="${p.id === state.personaId ? 'on' : ''}" ${p.status === 'locked' ? 'data-locked="1"' : ''}>${esc(p.name)}${p.status === 'locked' ? ' 🔒' : ''}</button>`).join('');
   $('#agent-list').innerHTML = agents.map(a => `<button data-a="${a.id}" class="${a.id === state.agentId ? 'on' : ''}" ${a.status === 'locked' ? 'data-locked="1"' : ''}>${esc(a.name)}${a.status === 'locked' ? ' 🔒' : ''}</button>`).join('');
   document.querySelectorAll('#persona-switch button').forEach(b => b.onclick = () => b.dataset.locked ? openUnlock() : switchPersona(b.dataset.p));
-  document.querySelectorAll('#agent-list button').forEach(b => b.onclick = () => b.dataset.locked && openUnlock());
+  document.querySelectorAll('#agent-list button').forEach(b => b.onclick = () => b.dataset.locked ? openUnlock() : switchAgent(b.dataset.a));
   const s = state.snapshot;
   $('#snap-mini').textContent = s?.status === 'ok' ? `Lowest month ${usd(s.lowestMonth)} · essentials ${usd(s.essentialsTotal)} · ${Number(s.lowestMonthShortfall) > 0 ? `short ${usd(s.lowestMonthShortfall)}` : `left ${usd(s.lowestMonthLeftover)}`}` : '';
   $('#suggest').innerHTML = ['How should I budget with my income swinging?', 'Should I pay off debt or save first?', 'What do I do in my slow months?'].map(t => `<button class="chip" type="button">${esc(t)}</button>`).join('');
@@ -136,7 +138,7 @@ function calcCard(c) {
 function botMessage(r, note) {
   const el = document.createElement('div'); el.className = 'msg bot';
   const picked = r.candidates?.find(c => c.id === r.pick?.pickId);
-  el.innerHTML = `<div class="who">${esc(r.personaName || r.personaId)}${note ? ` <span class="muted">· ${esc(note)}</span>` : ''}${r.mode === 'mock' ? ' <span class="pill">mock engine</span>' : r.mode === 'mock-fallback' ? ' <span class="pill" title="Live AI failed; answered by the rule-based engine">offline fallback</span>' : ' <span class="pill">live AI</span>'}</div>
+  el.innerHTML = `<div class="who">${esc(r.personaName || r.personaId)}${r.agentName ? ` <span class="muted">directing ${esc(r.agentName)}</span>` : ''}${note ? ` <span class="muted">· ${esc(note)}</span>` : ''}${r.mode === 'mock' ? ' <span class="pill">mock engine</span>' : r.mode === 'mock-fallback' ? ' <span class="pill" title="Live AI failed; answered by the rule-based engine">offline fallback</span>' : ' <span class="pill">live AI</span>'}</div>
     <div>${esc(r.text)}</div>
     ${(picked?.calculations || r.calculations || []).slice(1).map(calcCard).join('')}
     <div class="chips">${(r.citations || []).map(c => `<span class="chip" title="${esc(c.ref)}">📖 ${esc(c.title)}</span>`).join('')}</div>
@@ -161,6 +163,13 @@ async function send(text) {
   try { const r = await api('/api/chat', {method: 'POST', body: {message: text, personaId: state.personaId, agentId: state.agentId}}); state.lastTurn = r.turnId; botMessage(r); refreshMemory(); }
   catch (e) { const el = document.createElement('div'); el.className = 'msg bot error'; el.textContent = e.message; $('#log').append(el); }
   finally { btn.disabled = false; wait.remove(); }
+}
+
+function switchAgent(id) {
+  if (id === state.agentId) return;
+  state.agentId = id; state.lastTurn = null; renderSidebar();
+  const name = state.config.catalog.agents.find(a => a.id === id)?.name;
+  const el = document.createElement('div'); el.className = 'msg bot muted small'; el.textContent = `Switched to ${name}. Ask your next question.`; $('#log').append(el);
 }
 
 async function switchPersona(id) {

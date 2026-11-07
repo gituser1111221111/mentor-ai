@@ -1,5 +1,7 @@
 # Strategy & Structure (v0.4, Sat Nov 7)
 
+> **v0.5 (Sat Nov 7, afternoon):** Free tier = **3 mentors + 3 coaches**, all working: mentors Debt-Free Mentor, Hustle Mentor, Conscious Spender; coaching Budget, Debt, Savings & Emergency Fund. $4.99 unlocks all 10 + 10. Vocabulary: **Coaching** = the professional bot that does the work and the math; **Mentor** = the philosophy that directs it by picking among verified options. Persona display names dropped "Coach" to avoid confusion (ids unchanged).
+
 > This file decides **what we build and how it fits together**. It supersedes any conflicting detail in BUILD_PLAN.md. Design and naming are out of scope for now.
 
 ## 1. The one-line strategy

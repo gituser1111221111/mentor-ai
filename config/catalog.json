@@ -1,28 +1,166 @@
 {
-  "version": 1,
+  "version": 2,
   "disclaimer": "Personas are inspired by public teachings; not affiliated with or endorsed by the people named. Educational opinion, not advice from a licensed financial adviser, CPA, or attorney.",
   "agents": [
-    { "id": "budget", "name": "Budget Coach", "job": "Plan around variable income", "status": "live" },
-    { "id": "debt", "name": "Debt Coach", "job": "Payoff order and timelines", "status": "locked" },
-    { "id": "savings", "name": "Savings & Emergency Fund", "job": "How much and how fast", "status": "locked" },
-    { "id": "investing", "name": "Investing Coach", "job": "Portfolio mix and fees (education)", "status": "locked" },
-    { "id": "retirement", "name": "Retirement Coach", "job": "401k/IRA growth projections", "status": "locked" },
-    { "id": "tax", "name": "Tax Education", "job": "Withholding and 1099 basics for gig income", "status": "locked" },
-    { "id": "credit", "name": "Credit Coach", "job": "Utilization and score factors", "status": "locked" },
-    { "id": "income", "name": "Income & Side Hustle", "job": "Raise your lowest month", "status": "locked" },
-    { "id": "life", "name": "Life Planning", "job": "Big goals: car, move, school", "status": "locked" },
-    { "id": "business", "name": "Business Coach", "job": "Freelancer and self-employed basics", "status": "locked" }
+    {
+      "id": "budget",
+      "name": "Budget Coaching",
+      "job": "Plan around variable income",
+      "status": "live",
+      "tier": "free"
+    },
+    {
+      "id": "debt",
+      "name": "Debt Coaching",
+      "job": "Payoff order and timelines",
+      "status": "live",
+      "tier": "free"
+    },
+    {
+      "id": "savings",
+      "name": "Savings & Emergency Fund Coaching",
+      "job": "How much and how fast",
+      "status": "live",
+      "tier": "free"
+    },
+    {
+      "id": "investing",
+      "name": "Investing Coaching",
+      "job": "Portfolio mix and fees (education)",
+      "status": "locked",
+      "tier": "plus"
+    },
+    {
+      "id": "retirement",
+      "name": "Retirement Coaching",
+      "job": "401k/IRA growth projections",
+      "status": "locked",
+      "tier": "plus"
+    },
+    {
+      "id": "tax",
+      "name": "Tax Education Coaching",
+      "job": "Withholding and 1099 basics for gig income",
+      "status": "locked",
+      "tier": "plus"
+    },
+    {
+      "id": "credit",
+      "name": "Credit Coaching",
+      "job": "Utilization and score factors",
+      "status": "locked",
+      "tier": "plus"
+    },
+    {
+      "id": "income",
+      "name": "Income & Side Hustle Coaching",
+      "job": "Raise your lowest month",
+      "status": "locked",
+      "tier": "plus"
+    },
+    {
+      "id": "life",
+      "name": "Life Planning Coaching",
+      "job": "Big goals: car, move, school",
+      "status": "locked",
+      "tier": "plus"
+    },
+    {
+      "id": "business",
+      "name": "Business Coaching",
+      "job": "Freelancer and self-employed basics",
+      "status": "locked",
+      "tier": "plus"
+    }
   ],
   "personas": [
-    { "id": "debt-free-coach", "name": "Debt-Free Coach", "inspiredBy": "Dave Ramsey", "philosophy": "Debt is the enemy; baby steps; cash only", "status": "live" },
-    { "id": "hustle-coach", "name": "Hustle Coach", "inspiredBy": "Grant Cardone", "philosophy": "Raise income; don't over-save", "status": "live-thin" },
-    { "id": "conscious-spender", "name": "Conscious Spender", "inspiredBy": "Ramit Sethi", "philosophy": "Spend big on what you love, cut the rest", "status": "locked" },
-    { "id": "index-investor", "name": "Index Investor", "inspiredBy": "John Bogle", "philosophy": "Low-cost index funds; stay the course", "status": "locked" },
-    { "id": "money-psychology", "name": "Money Psychology", "inspiredBy": "Morgan Housel", "philosophy": "Behavior over spreadsheets; room for error", "status": "locked" },
-    { "id": "frugal-fire", "name": "Frugal FIRE", "inspiredBy": "Mr. Money Mustache", "philosophy": "Cut spending hard, retire early", "status": "locked" },
-    { "id": "asset-builder", "name": "Asset Builder", "inspiredBy": "Robert Kiyosaki", "philosophy": "Buy assets, not liabilities", "status": "locked" },
-    { "id": "protect-first", "name": "Protect First", "inspiredBy": "Suze Orman", "philosophy": "Emergency fund and protection before anything", "status": "locked" },
-    { "id": "value-investor", "name": "Value Investor", "inspiredBy": "Warren Buffett", "philosophy": "Patience and a margin of safety", "status": "locked" },
-    { "id": "principles", "name": "Principles", "inspiredBy": "Ray Dalio", "philosophy": "Diversify across uncorrelated bets", "status": "locked" }
-  ]
+    {
+      "id": "debt-free-coach",
+      "name": "Debt-Free Mentor",
+      "inspiredBy": "Dave Ramsey",
+      "philosophy": "Debt is the enemy; baby steps; cash only",
+      "status": "live",
+      "tier": "free"
+    },
+    {
+      "id": "hustle-coach",
+      "name": "Hustle Mentor",
+      "inspiredBy": "Grant Cardone",
+      "philosophy": "Raise income; don't over-save",
+      "status": "live",
+      "tier": "free"
+    },
+    {
+      "id": "conscious-spender",
+      "name": "Conscious Spender",
+      "inspiredBy": "Ramit Sethi",
+      "philosophy": "Spend big on what you love, cut the rest",
+      "status": "live",
+      "tier": "free"
+    },
+    {
+      "id": "index-investor",
+      "name": "Index Investor",
+      "inspiredBy": "John Bogle",
+      "philosophy": "Low-cost index funds; stay the course",
+      "status": "locked",
+      "tier": "plus"
+    },
+    {
+      "id": "money-psychology",
+      "name": "Money Psychology",
+      "inspiredBy": "Morgan Housel",
+      "philosophy": "Behavior over spreadsheets; room for error",
+      "status": "locked",
+      "tier": "plus"
+    },
+    {
+      "id": "frugal-fire",
+      "name": "Frugal FIRE",
+      "inspiredBy": "Mr. Money Mustache",
+      "philosophy": "Cut spending hard, retire early",
+      "status": "locked",
+      "tier": "plus"
+    },
+    {
+      "id": "asset-builder",
+      "name": "Asset Builder",
+      "inspiredBy": "Robert Kiyosaki",
+      "philosophy": "Buy assets, not liabilities",
+      "status": "locked",
+      "tier": "plus"
+    },
+    {
+      "id": "protect-first",
+      "name": "Protect First",
+      "inspiredBy": "Suze Orman",
+      "philosophy": "Emergency fund and protection before anything",
+      "status": "locked",
+      "tier": "plus"
+    },
+    {
+      "id": "value-investor",
+      "name": "Value Investor",
+      "inspiredBy": "Warren Buffett",
+      "philosophy": "Patience and a margin of safety",
+      "status": "locked",
+      "tier": "plus"
+    },
+    {
+      "id": "principles",
+      "name": "Principles",
+      "inspiredBy": "Ray Dalio",
+      "philosophy": "Diversify across uncorrelated bets",
+      "status": "locked",
+      "tier": "plus"
+    }
+  ],
+  "explainer": {
+    "mentors": "Mentors decide how to think. Each one is built from a well-known money philosophy and directs the coach: it reviews the coach's options and picks the one that fits its worldview.",
+    "coaching": "Coaching is the professional. Each coach is a specialist bot (budget, debt, savings and more) that does the work and all the math, then hands the mentor a set of verified options."
+  },
+  "tiers": {
+    "free": "3 mentors + 3 coaches, free",
+    "plus": "All 10 mentors + all 10 coaches for $4.99/month"
+  }
 }
