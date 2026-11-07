@@ -55,6 +55,13 @@ test('voice env var names are derived from the mentor id', () => {
   assert.equal(voiceEnvVar('step-by-step-planner'), 'ELEVENLABS_VOICE_STEP_BY_STEP_PLANNER');
 });
 
+test('saved-voice policy cannot reuse cache keys from fixed delivery overrides', async () => {
+  const {ttsConfigKey, ttsModel, textNormalization} = await import('../lib/voice.js');
+  const {NUMBER_WORDS_VERSION} = await import('../lib/speech-numbers.js');
+  const previousKey = JSON.stringify({model:ttsModel(),settings:{stability:0.45,similarity_boost:0.8,style:0.15,use_speaker_boost:true},format:'mp3_44100_128',normalization:textNormalization(),numberWords:NUMBER_WORDS_VERSION});
+  assert.notEqual(ttsConfigKey(), previousKey);
+});
+
 test('config reports voice on, lists only mentors with a voice, and never exposes the key', async () => {
   const c = await (await fetch(base + '/api/config')).json();
   assert.equal(c.voice, true);
@@ -109,7 +116,8 @@ test('full voice workflow: speak -> transcript -> same /api/chat answer -> exact
   assert.ok(!/\d/.test(sent.text), `no digits reach ElevenLabs: ${sent.text}`);
   assert.equal(sent.model_id, 'eleven_flash_v2_5');
   assert.equal(sent.apply_text_normalization, 'auto'); // Enterprise-only 'on' is never sent to flash by default
-  assert.deepEqual(sent.voice_settings, {stability: 0.45, similarity_boost: 0.8, style: 0.15, use_speaker_boost: true}); // voice unchanged
+  assert.equal(Object.hasOwn(sent, 'voice_settings'), false); // honor ElevenLabs' saved voice delivery
+  assert.equal(Object.hasOwn(sent, 'speed'), false);
   assert.equal(a.headers.get('x-amount-check'), 'ok');
   const hist = await (await fetch(base + '/api/history', {headers: H(s)})).json();
   assert.equal(hist.history.at(-1).response.text, spoken.text); // displayed text keeps its digits
