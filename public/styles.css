@@ -823,3 +823,7 @@ body:not(.chat-open) header.site #head-start { background:#e5edda; color:#173b32
 /* Dark header (every view except chat): header controls were ink-on-evergreen and nearly invisible. */
 body:not(.chat-open) header.site #restart, body:not(.chat-open) header.site #engine { color: #f6f2e9; }
 body:not(.chat-open) header.site #engine { border-color: #ffffff40; }
+/* Clear, coordinated library count badges. */
+.hero-catalog { display:flex; flex-wrap:wrap; gap:10px; margin:22px 0 0; }
+.hero-catalog span { display:inline-flex; align-items:center; gap:8px; padding:10px 14px; border:1px solid rgba(224,235,215,.25); border-radius:12px; background:rgba(221,234,209,.13); color:#f7f4eb; font-size:.88rem; line-height:1.4; }
+.hero-catalog strong { font-size:1.12rem; color:#e1edcf; }
