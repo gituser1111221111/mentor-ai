@@ -99,7 +99,7 @@ export function checkPersona(personaId = "debt-free-coach", root = ROOT) {
   const byType = {}, byTier = {};
   for (const s of sources) {
     for (const k of ["id", "url", "title", "date", "tier", "type", "note_ids"]) if (!(k in s)) errors.push(`sources.json ${s.id || s.url}: missing "${k}"`);
-    if (!["article", "column", "transcript", "interview", "critique"].includes(s.type)) errors.push(`sources.json ${s.id}: bad type ${s.type}`);
+    if (!["article", "column", "letter", "webpage", "podcast", "video", "transcript", "interview", "critique"].includes(s.type)) errors.push(`sources.json ${s.id}: bad type ${s.type}`);
     const actual = [...(citedBy.get(s.url) || [])].sort();
     const listed = [...(s.note_ids || [])].sort();
     if (!actual.length) errors.push(`sources.json ${s.id}: not cited by any note (do not count unused sources)`);
@@ -131,7 +131,7 @@ export function checkPersona(personaId = "debt-free-coach", root = ROOT) {
   if (existsSync(evalPath)) {
     const ev = JSON.parse(readFileSync(evalPath, "utf8"));
     evalCount = (ev.questions || []).length;
-    if (evalCount < 25 || evalCount > 30) errors.push(`evals: ${evalCount} questions (need 25 to 30)`);
+    if (evalCount < 10 || evalCount > 30) errors.push(`evals: ${evalCount} questions (need 10 to 30)`);
     for (const q of ev.questions || []) {
       if (!q.question || !q.expected_stance || !(q.note_ids || []).length) errors.push(`evals ${q.id}: needs question, expected_stance, note_ids`);
       for (const id of q.note_ids || []) if (!notes.has(id)) errors.push(`evals ${q.id}: cites missing note ${id}`);

@@ -115,9 +115,15 @@ test('Plus gating: locked mentor -> 402, demo unlock without Stripe, unbuilt -> 
     assert.equal((await (await post('/api/checkout')).json()).mode, 'demo');
     assert.equal((await (await post('/api/checkout/demo')).json()).tier, 'plus');
     assert.equal((await (await fetch(base + '/api/me', {headers: h})).json()).tier, 'plus');
-    const soon = await post('/api/chat', {message: 'hi', personaId: 'value-investor'});
-    assert.equal(soon.status, 409);
-    assert.match((await soon.json()).error, /coming soon/);
+    // A built Plus mentor answers once unlocked; a Plus mentor without persona files is "coming soon".
+    const cat = (await (await fetch(base + '/api/config')).json()).catalog.personas;
+    const builtPlus = cat.find(p => p.tier === 'plus' && p.built), unbuiltPlus = cat.find(p => p.tier === 'plus' && !p.built);
+    if (builtPlus) assert.equal((await post('/api/chat', {message: 'hi', personaId: builtPlus.id})).status, 200);
+    if (unbuiltPlus) {
+      const soon = await post('/api/chat', {message: 'hi', personaId: unbuiltPlus.id});
+      assert.equal(soon.status, 409);
+      assert.match((await soon.json()).error, /coming soon/);
+    }
     await fetch(base + '/api/session', {method: 'DELETE', headers: h});
     assert.equal((await (await fetch(base + '/api/me', {headers: h})).json()).tier, 'plus'); // start over keeps Plus
   } finally { await new Promise(r => server.close(r)); }
