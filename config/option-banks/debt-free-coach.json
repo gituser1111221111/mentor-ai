@@ -1,0 +1,305 @@
+{
+  "persona": "debt-free-coach",
+  "source": "Dave Ramsey Deep Research.md (repo root). Finding numbers refer to that file.",
+  "note": "Option ideas the coach may use when relevant. They contain no numbers; every number in an option must still come from the app's calculations.",
+  "ideas": [
+    {
+      "id": "r01",
+      "title": "Build a starter emergency fund before anything else",
+      "findings": [
+        2
+      ]
+    },
+    {
+      "id": "r02",
+      "title": "Pay all non-mortgage debt with the debt snowball, smallest balance first",
+      "findings": [
+        3,
+        27,
+        74
+      ]
+    },
+    {
+      "id": "r03",
+      "title": "Pay debts from the highest interest rate down (avalanche)",
+      "findings": [
+        39
+      ]
+    },
+    {
+      "id": "r04",
+      "title": "Build a full emergency fund of three to six months of expenses after the debt is gone",
+      "findings": [
+        4,
+        45
+      ]
+    },
+    {
+      "id": "r05",
+      "title": "Pause all retirement investing, including the employer match, until consumer debt is gone",
+      "findings": [
+        31,
+        57,
+        76
+      ]
+    },
+    {
+      "id": "r06",
+      "title": "Invest fifteen percent of gross income once debt-free with a full emergency fund",
+      "findings": [
+        5,
+        46
+      ]
+    },
+    {
+      "id": "r07",
+      "title": "Write a zero-based budget before the month begins",
+      "findings": [
+        11,
+        12
+      ]
+    },
+    {
+      "id": "r08",
+      "title": "Budget from your lowest recent monthly income",
+      "findings": [
+        15
+      ]
+    },
+    {
+      "id": "r09",
+      "title": "Use a realistic income floor and a written priority list for commission months",
+      "findings": [
+        16
+      ]
+    },
+    {
+      "id": "r10",
+      "title": "Build the budget on the predictable paycheck first, then add the variable income",
+      "findings": [
+        17
+      ]
+    },
+    {
+      "id": "r11",
+      "title": "Save in a peak-and-valley or offseason fund for slow months you know are coming",
+      "findings": [
+        16,
+        18
+      ]
+    },
+    {
+      "id": "r12",
+      "title": "Set up sinking funds for known future expenses",
+      "findings": [
+        19
+      ]
+    },
+    {
+      "id": "r13",
+      "title": "Spread annual and irregular bills into monthly amounts using last year's statements",
+      "findings": [
+        20
+      ]
+    },
+    {
+      "id": "r14",
+      "title": "Protect the Four Walls first: food, utilities, shelter and transportation",
+      "findings": [
+        13,
+        23
+      ]
+    },
+    {
+      "id": "r15",
+      "title": "Cut nonessentials until the budget balances in a short month",
+      "findings": [
+        23
+      ]
+    },
+    {
+      "id": "r16",
+      "title": "Use cash envelopes for the categories you overspend",
+      "findings": [
+        24
+      ]
+    },
+    {
+      "id": "r17",
+      "title": "Keep a miscellaneous line and send leftovers to the current Baby Step",
+      "findings": [
+        25
+      ]
+    },
+    {
+      "id": "r18",
+      "title": "Keep a small fun money line so the budget lasts",
+      "findings": [
+        26
+      ]
+    },
+    {
+      "id": "r19",
+      "title": "Send every dollar above the plan to the current Baby Step",
+      "findings": [
+        14,
+        25
+      ]
+    },
+    {
+      "id": "r20",
+      "title": "Sell a financed car you cannot pay off in about two years",
+      "findings": [
+        32,
+        62,
+        77
+      ]
+    },
+    {
+      "id": "r21",
+      "title": "Skip debt consolidation and attack the debts directly",
+      "findings": [
+        33
+      ]
+    },
+    {
+      "id": "r22",
+      "title": "Do not cash out retirement accounts to pay debt",
+      "findings": [
+        34
+      ]
+    },
+    {
+      "id": "r23",
+      "title": "Cut up the credit cards and switch to debit and cash",
+      "findings": [
+        37
+      ]
+    },
+    {
+      "id": "r24",
+      "title": "Stop chasing a credit score and build savings instead",
+      "findings": [
+        38
+      ]
+    },
+    {
+      "id": "r25",
+      "title": "Use the emergency fund only for unexpected, necessary and urgent costs",
+      "findings": [
+        40,
+        41
+      ]
+    },
+    {
+      "id": "r26",
+      "title": "Keep the emergency fund in a plain savings or money market account, not investments",
+      "findings": [
+        42
+      ]
+    },
+    {
+      "id": "r27",
+      "title": "Refill the emergency fund right after using it before resuming other goals",
+      "findings": [
+        43
+      ]
+    },
+    {
+      "id": "r28",
+      "title": "Pause the snowball and stack cash ahead of a baby, job loss or health crisis",
+      "findings": [
+        10
+      ]
+    },
+    {
+      "id": "r29",
+      "title": "Take extra hours or a second job for a season to speed up debt payoff",
+      "findings": [
+        69,
+        71
+      ]
+    },
+    {
+      "id": "r30",
+      "title": "Sell things you do not need and put the cash toward the current Baby Step",
+      "findings": [
+        69
+      ]
+    },
+    {
+      "id": "r31",
+      "title": "Live on a bare-bones budget for a short season to clear debt faster",
+      "findings": [
+        69
+      ]
+    },
+    {
+      "id": "r32",
+      "title": "Rent until you are debt-free with a full emergency fund before buying a home",
+      "findings": [
+        58,
+        60
+      ]
+    },
+    {
+      "id": "r33",
+      "title": "If buying a home, use a fifteen-year fixed mortgage with a payment no more than a quarter of take-home pay",
+      "findings": [
+        58,
+        59
+      ]
+    },
+    {
+      "id": "r34",
+      "title": "Pay cash for cars and never lease",
+      "findings": [
+        62
+      ]
+    },
+    {
+      "id": "r35",
+      "title": "Choose an affordable school and avoid student loans",
+      "findings": [
+        65
+      ]
+    },
+    {
+      "id": "r36",
+      "title": "Get level term life insurance if anyone depends on your income",
+      "findings": [
+        66
+      ]
+    },
+    {
+      "id": "r37",
+      "title": "Keep basic insurance in place at every Baby Step",
+      "findings": [
+        67
+      ]
+    },
+    {
+      "id": "r38",
+      "title": "Hold a monthly budget meeting with your spouse or an accountability partner",
+      "findings": [
+        73
+      ]
+    },
+    {
+      "id": "r39",
+      "title": "Give generously as a planned line in the budget",
+      "findings": [
+        14,
+        72
+      ]
+    },
+    {
+      "id": "r40",
+      "title": "Save for kids' college only after retirement investing is underway",
+      "findings": [
+        6,
+        78
+      ]
+    }
+  ]
+}
