@@ -157,9 +157,10 @@ async function send(text) {
   text = text.trim(); if (!text) return;
   const u = document.createElement('div'); u.className = 'msg user'; u.textContent = text; $('#log').append(u);
   $('#msg').value = ''; const btn = $('#composer button'); btn.disabled = true;
+  const wait = document.createElement('div'); wait.className = 'msg bot muted'; wait.textContent = 'Building your options and checking every number…'; $('#log').append(wait);
   try { const r = await api('/api/chat', {method: 'POST', body: {message: text, personaId: state.personaId, agentId: state.agentId}}); state.lastTurn = r.turnId; botMessage(r); refreshMemory(); }
   catch (e) { const el = document.createElement('div'); el.className = 'msg bot error'; el.textContent = e.message; $('#log').append(el); }
-  finally { btn.disabled = false; }
+  finally { btn.disabled = false; wait.remove(); }
 }
 
 async function switchPersona(id) {
