@@ -5,9 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Money Mentor</title>
   <meta name="description" content="A budget built around your worst month. Coaching does the math in code; a mentor you trust picks the plan.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2317191c'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-family='Arial' font-size='38' font-weight='bold' fill='white'%3EM%3C/text%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
@@ -33,38 +34,32 @@
     <section id="v-landing" class="view">
       <div class="hero">
         <div class="hero-copy">
-          <p class="kicker">For paychecks that change every month</p>
-          <h1>A budget built around your worst month.</h1>
-          <p class="lead">Pick a money philosophy you already trust. Our coaching does every calculation in code, and your mentor chooses the plan that fits how you think. Mentors can't make up numbers. They can only choose.</p>
-          <div class="row">
-            <button id="start" class="btn primary">Start the 2-minute quiz</button>
-            <button id="demo" class="btn">Try a sample profile</button>
+          <div class="hero-icon" aria-hidden="true"><span>M</span></div>
+          <p class="hero-label">Money Mentor</p>
+          <h1>Make money make sense.</h1>
+          <p class="lead">A plan for real life, even when your paycheck changes. See the math, choose a mentor, and move forward with confidence.</p>
+          <div class="row hero-actions">
+            <button id="start" class="btn primary">Build my plan <span aria-hidden="true">→</span></button>
+            <button id="demo" class="btn secondary">Explore the demo</button>
           </div>
-          <p class="fine">Free to start. No bank login. Not licensed financial advice.</p>
+          <p class="fine">Free to start · No bank login · Takes about 2 minutes</p>
         </div>
-        <figure class="sample" aria-label="Real output from the live app using the sample profile">
-          <figcaption class="sample-head"><span>Jordan, 22</span><span>part-time and delivery apps</span></figcaption>
-          <dl class="ledger">
-            <div><dt>Lowest month</dt><dd>$1,780.00</dd></div>
-            <div><dt>Monthly essentials</dt><dd>$1,955.00</dd></div>
-            <div class="short"><dt>Short in a low month</dt><dd>$175.00</dd></div>
-          </dl>
-          <blockquote>
-            <p>"Hours getting cut is exactly why you need a cushion first. Build the $1,000 starter fund before you go hard after the card."</p>
-            <footer><strong>Debt-Free Mentor</strong> directing Budget Coaching</footer>
-          </blockquote>
-          <p class="check">Number check: 9 of 9 options passed</p>
-          <p class="fine">Real output from the live app, sample profile.</p>
-        </figure>
+        <div class="preview-gallery" aria-label="Preview of the mentor, money snapshot, and coaching screens">
+          <div class="phone phone-edge" aria-hidden="true"><div class="phone-screen"><div class="phone-top">9:41 <span>●●●</span></div><div class="phone-pad"><div class="phone-mini-mark">M</div><h3>Start with your numbers.</h3><p>A better plan begins with the full picture.</p><div class="phone-option">Income that changes <span>→</span></div><div class="phone-option">Bills and essentials <span>→</span></div></div></div></div>
+          <div class="phone phone-mentor" aria-hidden="true"><div class="phone-screen"><div class="phone-top">9:41 <span>●●●</span></div><div class="phone-art"><span>DF</span><small>YOUR MENTOR</small><strong>Debt-Free Mentor</strong></div><div class="phone-pad"><p class="phone-eyebrow">A point of view you choose</p><h3>Advice with a philosophy.</h3><p>Built from public teachings. Always clear about the source.</p><div class="phone-option">Explore mentor <span>→</span></div></div></div></div>
+          <div class="phone phone-balance" aria-hidden="true"><div class="phone-screen"><div class="phone-top">9:41 <span>●●●</span></div><div class="phone-pad"><p class="phone-eyebrow">YOUR NUMBERS</p><h3>Know your lowest month.</h3><p>Jordan's sample profile</p><div class="phone-total">$1,780<small>lowest monthly income</small></div><div class="phone-dark-list"><div>Essentials <strong>$1,955</strong></div><div>Gap to cover <strong>$175</strong></div><div>Number check <strong>9 of 9</strong></div></div><p class="phone-footnote">Every number is calculated in code.</p></div></div></div>
+          <div class="phone phone-chat" aria-hidden="true"><div class="phone-screen"><div class="phone-top">9:41 <span>●●●</span></div><div class="phone-art chat-art"><span>✳</span><small>BUDGET COACHING</small><strong>Make a plan that holds up.</strong></div><div class="phone-pad"><p class="phone-eyebrow">YOUR COACH</p><h3>Same facts. Your mentor's call.</h3><p>See the plan, the calculations, and the other options.</p><div class="phone-option">Start coaching <span>→</span></div></div></div></div>
+          <div class="phone phone-edge" aria-hidden="true"><div class="phone-screen"><div class="phone-top">9:41 <span>●●●</span></div><div class="phone-pad"><p class="phone-eyebrow">YOUR PLAN</p><h3>A clearer next move.</h3><div class="phone-option">Starter cushion <span>$1,000</span></div><div class="phone-option">Your next step <span>→</span></div></div></div></div>
+        </div>
       </div>
 
       <section id="how" class="band">
-        <h2>How it works</h2>
+        <p class="section-eyebrow">GET STARTED</p>
+        <h2>Get started<br>in 3 simple steps.</h2>
         <ol class="steps">
-          <li><span class="n">1</span><div><h3>Tell us about a few months of pay</h3><p>Two minutes: take-home pay, bills, debts, savings. We find your lowest month and what it has to cover.</p></div></li>
-          <li><span class="n">2</span><div><h3>Coaching does the work</h3><p id="ex-coaching"></p></div></li>
-          <li><span class="n">3</span><div><h3>Your mentor directs it</h3><p id="ex-mentors"></p></div></li>
-          <li><span class="n">4</span><div><h3>Switch mentors anytime</h3><p>Same facts, same math, a different point of view. See every option and why your mentor passed on the others.</p></div></li>
+          <li><span class="n">01</span><div><h3>Share your numbers</h3><p>Tell us about your income, essentials, debts, and savings. We find your lowest month and what it needs to cover.</p></div></li>
+          <li><span class="n">02</span><div><h3>See your options</h3><p id="ex-coaching"></p></div></li>
+          <li><span class="n">03</span><div><h3>Choose your point of view</h3><p id="ex-mentors"></p></div></li>
         </ol>
       </section>
 
@@ -107,6 +102,13 @@
           <li>Ask for your bank or brokerage password.</li>
           <li>Call this licensed advice. It's education to help you decide.</li>
         </ul>
+      </section>
+
+      <section class="band faq" aria-labelledby="faq-title">
+        <h2 id="faq-title">Common questions.</h2>
+        <details><summary>What if my income changes every month?</summary><p>The plan uses your lowest reported month to check whether your essentials are covered. You can review the calculation before starting coaching.</p></details>
+        <details><summary>Can I switch mentors?</summary><p>Yes. A different mentor can choose from the same verified options, so the facts and calculations stay the same.</p></details>
+        <details><summary>Do I need to connect a bank account?</summary><p>No. You can enter your numbers yourself and upload a portfolio CSV if you want to include investments.</p></details>
       </section>
     </section>
 

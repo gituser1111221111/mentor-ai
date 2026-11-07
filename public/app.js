@@ -21,6 +21,7 @@ function show(id) {
   views.forEach(v => { $('#' + v).hidden = v !== id; });
   const landing = id === 'v-landing';
   $('#nav').hidden = !landing; $('#head-start').hidden = !landing; $('#restart').hidden = landing;
+  $('#engine').hidden = landing;
   window.scrollTo(0, 0);
 }
 function banner(text, warn = false) { const b = $('#banner'); b.textContent = text; b.className = 'banner' + (warn ? ' warn' : ''); b.hidden = !text; }
