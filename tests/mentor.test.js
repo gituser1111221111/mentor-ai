@@ -7,6 +7,11 @@ const {chat, repick} = await import('../lib/mentor/chat.js');
 const {calcLibrary} = await import('../lib/mentor/tools.js');
 const {unverifiedNumbers, validateCandidates} = await import('../lib/mentor/validate.js');
 const {normalizeProfile} = await import('../lib/profile.js');
+const {dollars} = await import('../lib/mentor/chat.mock.js');
+
+test('display formatting leaves APR percentages alone', () => {
+  assert.equal(dollars('24.90 percent APR and 7.90% APR; save 580.00'), '24.90 percent APR and 7.90% APR; save $580.00');
+});
 
 const {profile} = normalizeProfile({
   incomeHistory: [{month: '2026-08', amount: '2950'}, {month: '2026-09', amount: '1780'}, {month: '2026-10', amount: '2410'}],
