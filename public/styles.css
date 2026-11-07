@@ -728,3 +728,58 @@ body.chat-open #composer { margin:0; padding:6px 0 0; flex:0 0 auto; }
  background:radial-gradient(ellipse,rgba(184,203,165,.65),transparent 65%);
  opacity:.3; filter:blur(55px);
 }
+/* Suede editorial palette */
+#v-landing .hero { background-image:linear-gradient(105deg,#dfd2c2f5 0%,#d2c0a9e6 48%,#baa68c99 100%),url('/img/research-library.png'); color:#302a23; }
+.hero h1,.hero .lead,.hero .hero-eyebrow { color:#302a23; }
+.hero h1 em { color:#66503c; }
+.hero .eyebrow-dot { background:#765f46; }
+#v-landing .hero::before { background:radial-gradient(ellipse,#fff7e0,transparent 65%); opacity:.35; }
+#v-landing .hero::after { background:radial-gradient(ellipse,#a18c72,transparent 65%); opacity:.25; }
+.hero-catalog { margin:24px 0 6px; font-weight:700; font-size:.95rem; }
+.hero-catalog span { padding:0 10px; }
+.hero-catalog-note { font-size:.8rem; max-width:50ch; color:#51473b; margin:0; }
+.hero-actions .btn.primary { background:#302d29; color:#fff9ef; border-color:#302d29; box-shadow:0 5px 0 #a3947e; }
+.hero-actions .btn.primary:hover { background:#4b4034; color:white; transform:translateY(-2px); box-shadow:0 7px 0 #a3947e; }
+.hero-actions .btn.primary:active { transform:translateY(2px); box-shadow:0 2px 0 #a3947e; }
+.btn { transition:transform .2s ease,background-color .2s ease,box-shadow .2s ease; }
+.btn:hover { transform:translateY(-1px); }
+.hero-actions .btn span { display:inline-block; transition:transform .2s; }
+.hero-actions .btn:hover span { transform:translate(3px,-3px); }
+.agent-image { width:100%; height:110px; object-fit:cover; border-radius:10px; }
+.agent-card { min-height:230px; gap:10px; }
+#agent-list .coach-item { grid-template-columns:40px minmax(0,1fr) auto; gap:10px; }
+.agent-thumb { width:40px; height:40px; object-fit:cover; border-radius:9px; }
+#v-landing #pricing { background:#e9dfd1; border-radius:16px; padding:32px!important; margin-block:28px; }
+#pricing > h2 { font-size:2rem; margin:0 0 18px; }
+#pricing .plans { max-width:920px; margin:0 auto; gap:16px; }
+#pricing .plan { padding:22px; background:#faf6ee; }
+#pricing .plan.plus { background:#e4ddd0; border:1px solid #a89a82; }
+#pricing .plan h3 { margin:0; }
+#pricing .price { font-size:2.2rem; margin:10px 0!important; }
+#pricing .plan p,#pricing .plan li { font-size:.85rem; line-height:1.5; }
+#pricing .plan p { margin-bottom:10px; }
+#pricing .plan-features { margin:12px 0; }
+#pricing .plan-features li { padding:2px 0; }
+.site-foot { background:#e7ddd0; border:0; border-radius:16px 16px 0 0; padding:28px!important; margin-top:24px; }
+.site-foot .footer-brand { font-size:1.2rem; margin-bottom:12px; }
+.site-foot p { font-size:.8rem; line-height:1.6; }
+.full-disclosures { margin-bottom:12px; padding:4px 0; }
+@media(max-width:640px) { #v-landing #pricing { padding:20px!important; } .agent-image { height:95px; } .hero-catalog { line-height:1.7; } }
+@media(prefers-reduced-motion:reduce) { .btn:hover,.btn:active,.hero-actions .btn:hover span { transform:none; } }
+#v-landing .hero { padding-block:44px; }
+.hero h1 { font-size:clamp(2.6rem,4.7vw,4.5rem); line-height:1.05; }
+.hero .lead { margin-top:22px; }
+.hero-catalog { margin-top:18px; }
+.hero-actions { margin-top:22px; }
+@media(max-width:640px) { #v-landing .hero { padding-block:32px; } }
+.evidence-band { background:#f0e9dd; padding-inline:28px!important; border-radius:16px; }
+.evidence-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:20px; }
+.evidence-grid article { background:#faf7f0; border:1px solid #ded5c5; border-radius:12px; padding:24px; }
+.evidence-label { font-size:.65rem; letter-spacing:.07em; color:#66513c; font-weight:700; }
+.evidence-grid h3 { font-size:1.15rem; margin:20px 0 12px; }
+.evidence-grid p { font-size:.9rem; line-height:1.65; color:#514b42; }
+.evidence-detail { margin-top:22px; font-size:.85rem; }
+.evidence-detail p { max-width:90ch; line-height:1.65; }
+@media(max-width:800px) { .evidence-grid { grid-template-columns:1fr; } }
+#pricing .plan .price { font-size:1.8rem; font-weight:600; letter-spacing:-.03em; }
+#pricing .plan .price span { font-size:.8rem; font-weight:400; }

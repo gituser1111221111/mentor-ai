@@ -9,11 +9,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,500;1,6..72,500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/styles.css?v=hero-depth-6">
+  <link rel="stylesheet" href="/styles.css?v=suede-agents-7">
 </head>
 <body>
   <header class="site">
-    <a href="/" class="wordmark" id="home"><img src="/img/mentor-logo-ml.png" width="38" height="38" alt="">Mentor Labs</a>
+    <a href="/" class="wordmark" id="home"><img src="/img/mentor-logo-suede.webp" width="38" height="38" alt="">Mentor Labs</a>
     <nav class="links" id="nav">
       <a href="#how">How it works</a>
       <a href="#mentors">Mentors</a>
@@ -39,6 +39,7 @@
           <p class="hero-eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span> MEET MENTOR LABS</p>
           <h1>AI agents do the analysis.<em> Mentors guide your next step.</em></h1>
           <p class="lead">Bring your money questions to specialist AI agents. They work through your numbers and options; a mentor-inspired perspective helps explain what to do next. Start with the free Ramsey-inspired budget conversation.</p>
+          <p class="hero-catalog">10 mentor perspectives <span aria-hidden="true">·</span> 16 specialist agents</p><p class="hero-catalog-note">Explore the library. The Ramsey budget conversation is live; other pairings are planned.</p>
           <div class="row hero-actions">
             <button id="try-chat" class="btn primary">Try Ramsey Free <span aria-hidden="true">↗</span></button>
           </div>
@@ -72,6 +73,11 @@
         <div class="method-list"><div><span class="method-number">01</span><span>SOURCE</span><strong>Start with public teaching</strong><p>Map ideas to named sources so the perspective stays recognizable.</p></div><div><span class="method-number">02</span><span>SPECIALIZE</span><strong>Give each agent a job</strong><p>From debt consolidation and equity research to business strategy, every agent tackles a specific task.</p></div><div><span class="method-number">03</span><span>GUIDE</span><strong>Let the mentor direct</strong><p>The mentor brings a trusted point of view to the agent's work. The Ramsey budget starter demonstrates the approach today.</p></div></div>
       </section>
 
+      <section class="band evidence-band" id="why-mentor-labs">
+        <div class="band-head"><div><p class="section-eyebrow">WHY THIS APPROACH</p><h2>Your inputs. Checked calculations.<br>A perspective you can question.</h2></div><p>Good financial guidance needs more than a convincing answer. Our budgeting workflow combines your financial inputs, calculations performed in code, and a mentor perspective that explains the choices.</p></div>
+        <div class="evidence-grid"><article><span class="evidence-label">01 / GROUNDED IN YOUR NUMBERS</span><h3>Model the situation you actually have.</h3><p>Your income, bills, debt, and savings shape the options. You can inspect the supporting calculations and update your inputs when your situation changes.</p></article><article><span class="evidence-label">02 / CHECKED BEFORE DELIVERY</span><h3>Test the math—and the failure cases.</h3><p>Our automated tests cover exact-cent budgeting, debt payoff reconciliation, unsupported amounts, mismatched time periods, and stale answers after inputs change.</p></article><article><span class="evidence-label">03 / EXPLAINED THROUGH A PERSPECTIVE</span><h3>Understand the reasoning.</h3><p>The mentor selects from checked options and explains the tradeoffs. Follow-up questions help you understand the recommendation before deciding what to do.</p></article></div>
+        <details class="evidence-detail"><summary>What our testing establishes</summary><p>The current repository passes 107 automated tests across calculations, API behavior, financial validation, and voice handling. These are engineering checks, including simulated model and speech-provider responses. They are not an independent comparison with other products, a guarantee of accuracy, or evidence of better investment returns. The financial verifier has documented limits; review the inputs and calculations yourself.</p></details>
+      </section>
       <section id="mentors" class="band">
         <div class="band-head"><div><p class="section-eyebrow">THE MENTOR LIBRARY</p><h2>Choose a perspective you know.</h2></div><p>Ramsey-inspired guidance is the free working demo. The other nine perspectives belong to the Plus lineup.</p></div>
         <div id="personas" class="portraits"></div>
@@ -82,7 +88,7 @@
         <div id="agents" class="agent-groups"></div>
       </section>
 
-      <section class="band context-band"><div><p class="section-eyebrow">BRING YOUR CONTEXT</p><h2>Your documents and portfolio, in one place.</h2><p>Add a document, save a portfolio link for reference, or import a holdings CSV. The document and link fields are showcase previews; CSV holdings can be summarized now.</p></div><button class="btn primary" data-context>Open context hub</button></section>
+      <section class="band context-band"><div><p class="section-eyebrow">BRING YOUR CONTEXT</p><h2>Your documents and portfolio, in one place.</h2><p>Upload a document for chat context or import a holdings CSV for a portfolio summary. Saved portfolio links are references; they do not connect to your brokerage.</p></div><button class="btn primary" data-context>Open context hub</button></section>
 
       <section id="pricing" class="band">
         <h2>Pricing</h2>
@@ -191,10 +197,10 @@
   </dialog>
   <dialog id="feature-preview"><div class="context-dialog-head"><div><p class="section-eyebrow">PLUS LIBRARY</p><h3 id="feature-title"></h3></div><button id="feature-close" type="button" class="btn text">Close</button></div><p id="feature-text"></p><div class="row"><button type="button" class="btn primary" id="feature-plus">Explore Plus</button></div></dialog>
   <footer class="site-foot"><strong class="footer-brand">Mentor Labs</strong>
-<details class="full-disclosures"><summary>Read full AI &amp; financial disclosures</summary><p>Mentor Labs is an independent educational prototype. Responses are generated by AI and can be inaccurate. Named public figures do not participate in these conversations, provide these answers, endorse this service, or have an affiliation with it. Portraits are AI-generated likenesses and sample chats are illustrative.</p><p>Content is general education, not personalized financial, investment, tax, or legal advice. Verify information before acting and consult a qualified professional where appropriate. No outcome or investment return is guaranteed.</p><p>The Ramsey budget starter is interactive. Other mentor and agent listings preview planned Plus features. Checkout uses test mode and does not create a real charge.</p></details>
-    <p>Educational opinion, not advice from a licensed financial adviser, CPA, or attorney. Mentor portraits are AI-generated likenesses. Mentors are inspired by public teachings and are not affiliated with or endorsed by the people named.</p>
-    <p><a href="/terms.html">Terms</a> · <a href="/privacy.html">Privacy</a> · <a href="https://github.com/gituser1111221111/mentor-ai">Source</a> · Built for RedHawk Builds 2026</p>
+<details class="full-disclosures"><summary>Read full AI &amp; financial disclosures</summary><p>Mentor Labs is an independent educational prototype. Responses are generated by AI and can be inaccurate. Named public figures do not participate in these conversations, provide these answers, endorse this service, or have an affiliation with it. Portraits and agent artwork are AI-generated; sample chats are illustrative. Voices are synthetic and do not represent participation by the named people.</p><p>Content is general education, not personalized financial, investment, tax, or legal advice. Verify information before acting and consult a qualified professional where appropriate. No outcome or investment return is guaranteed.</p><p>The Ramsey budget starter is interactive. Other mentor and agent listings preview planned Plus features. Checkout uses test mode and does not create a real charge.</p></details>
+    <p class="footer-note">Independent AI perspectives for education. No affiliation or endorsement. AI can make mistakes.</p>
+    <p><a href="/terms.html">Terms</a> · <a href="/privacy.html">Privacy</a> · <a href="https://github.com/gituser1111221111/mentor-ai">Source</a> · © 2026 Mentor Labs</p>
   </footer>
-  <script type="module" src="/app.js?v=polish-4"></script>
+  <script type="module" src="/app.js?v=suede-agents-7"></script>
 </body>
 </html>
