@@ -1,3 +1,4 @@
+import {VoicePlayback} from './voice-playback.js';
 // Mentor Labs SPA: free starter chat, short intake, specialist catalog, and coaching chat.
 // Vanilla JS, no build step. All money shown here comes from the server's exact-cents math.
 const $ = s => document.querySelector(s);
@@ -193,7 +194,7 @@ function botMessage(r) {
     ${r.turnId ? `<div class="meta"><button class="btn text" type="button" data-compare>Compare mentors</button>${r.canExpand ? '<button class="btn text" type="button" data-expand>Show more options</button>' : ''}</div><div class="more-options" hidden></div>` : ''}
     ${r.conversational ? '' : `<p class="disclose">${esc(r.disclosure || '')}</p>`}`;
   el.querySelector('[data-listen]')?.addEventListener('click', () => speakReply(el, r));
-  el.querySelector('[data-stop]')?.addEventListener('click', stopPlayback);
+  el.querySelector('[data-stop]')?.addEventListener('click', () => {++voice.epoch;if(voice.active)endConversation();else stopPlayback();});
   el.querySelector('[data-compare]')?.addEventListener('click', () => openCompare(r));
   el.querySelector('[data-expand]')?.addEventListener('click', e => expandOptions(el, r, e.currentTarget));
   $('#log').append(el); el.scrollIntoView({behavior: 'smooth', block: 'start'});
@@ -255,6 +256,8 @@ async function openCompare(r) {
 async function send(text, {spoken = false, voiceSession = null} = {}) {
   text = text.trim(); if (!text) return;
   if (!voiceSession && voice.active) endConversation();
+  stopPlayback('new-question');
+  const speechEpoch = ++voice.epoch;
   const u = document.createElement('div'); u.className = 'msg user'; u.textContent = text; $('#log').append(u);
   if (spoken) u.insertAdjacentHTML('afterbegin', '<span class="via">You said</span>');
   $('#msg').value = ''; const btn = $('#composer button[type="submit"]'); btn.disabled = true;
@@ -262,7 +265,7 @@ async function send(text, {spoken = false, voiceSession = null} = {}) {
   try {
     const r = await api('/api/chat', {method: 'POST', body: {message: text, personaId: state.personaId, agentId: state.agentId}}); state.lastTurn = r.turnId;
     const el = botMessage(r); refreshMemory();
-    if (canSpeak(r) && (!voiceSession || (voice.active && voice.session === voiceSession))) {
+    if (canSpeak(r) && speechEpoch === voice.epoch && (!voiceSession || (voice.active && voice.session === voiceSession))) {
       if (voiceSession) await speakReply(el, r, voiceSession);
       else speakReply(el, r);
     }
@@ -379,7 +382,7 @@ const DEMO = {
 // One tap starts a hands-free, turn-taking conversation. ElevenLabs transcribes each
 // utterance and speaks the exact Claude answer stored on the server. The key stays there.
 const voice = {active: false, session: 0, rec: null, stream: null, context: null, analyser: null,
-  timer: null, starting: false, audio: null, audioDone: null};
+  timer: null, starting: false, epoch: 0};
 const canSpeak = r => Boolean((r?.voiceTurnId || r?.turnId) && state.config?.voice && state.config.voicePersonas?.includes(r.personaId));
 function voiceStatus(text, kind = '') { const s = $('#voice-status'); s.textContent = text; s.className = 'voice-status ' + kind; }
 function micUI() {
@@ -401,10 +404,11 @@ function closeCapture() {
   voice.context?.close().catch(() => {}); voice.context = null; voice.analyser = null;
 }
 function endConversation(message = 'Voice conversation ended.') {
-  voice.active = false; voice.session++;
+  voice.active = false; voice.session++;++voice.epoch;
   closeCapture(); stopPlayback(); micUI(); voiceStatus(message);
 }
 async function startListening(session) {
+  if (playback.active && !playback.active.audio.ended) return; // Never capture speaker output while a reply is loading or playing.
   if (!voice.active || session !== voice.session || voice.starting || voice.rec) return;
   voice.starting = true; voiceStatus('Opening microphone...');
   let stream;
@@ -487,53 +491,34 @@ async function finishUtterance(session, blob, duration) {
   }
 }
 
-function stopPlayback() {
-  if (!voice.audio) return;
-  const a = voice.audio, done = voice.audioDone;
-  voice.audio = null; voice.audioDone = null;
-  a.pause(); a.currentTime = 0;
-  a.closest('.msg')?.classList.remove('speaking');
-  done?.(false);
-}
+const playback = new VoicePlayback();
+function stopPlayback(reason = 'user') { playback.stop(typeof reason === 'string' ? reason : 'user'); }
 async function speakReply(el, r, session = null) {
-  const box = el.querySelector('.voice-player'), btn = el.querySelector('[data-listen]'), a = box?.querySelector('audio');
-  if (!box) return false;
-  stopPlayback();
-  if (!a.src) {
-    btn.disabled = true; btn.textContent = 'Preparing audio...';
-    try {
-      if (session) voiceStatus('Dave is replying…');
-      const res = await fetch('/api/voice/speak', {method: 'POST', headers: {'Content-Type': 'application/json', 'X-Session-Id': sid}, body: JSON.stringify({turnId: r.voiceTurnId || r.turnId, personaId: r.personaId})});
-      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || 'Audio is unavailable right now. The written answer is above.');
-      a.src = URL.createObjectURL(await res.blob());
-    } catch (e) { btn.disabled = false; btn.textContent = 'Listen'; note(e.message); return false; }
-  }
-  btn.disabled = false; btn.textContent = 'Listen';
-  if (session && (!voice.active || session !== voice.session)) return false;
-  btn.hidden = true; box.hidden = false; el.classList.add('speaking'); voice.audio = a;
-  a.onplay = () => { if (voice.audio && voice.audio !== a) stopPlayback(); voice.audio = a; el.classList.add('speaking'); };
-  box.scrollIntoView({behavior: 'smooth', block: 'nearest'});
-  return new Promise(resolve => {
-    const done = played => {
-      el.classList.remove('speaking');
-      if (voice.audio === a) voice.audio = null;
-      if (voice.audioDone === done) voice.audioDone = null;
-      resolve(played);
-    };
-    voice.audioDone = done;
-    a.onended = () => done(true);
-    a.onpause = () => { if (!a.ended) done(false); };
-    a.onerror = () => done(false);
-    a.play().then(() => {
-      if (session && voice.active && session === voice.session) voiceStatus('Dave is speaking…');
-      if (perfDebug && voiceT0 !== null) console.debug(`[perf] voice end-to-end ${Math.round(performance.now() - voiceT0)}ms`);
-      voiceT0 = null;
-    }).catch(() => {
-      box.querySelector('.fine').textContent = 'Press play to listen. The disclosure below applies.';
-      done(false);
-    });
+  const box = el.querySelector('.voice-player'), btn = el.querySelector('[data-listen]'), audio = box?.querySelector('audio');
+  if (!box || (session && (!voice.active || session !== voice.session))) return false;
+  if (!session && voice.active) endConversation();
+  let settle;const completed = new Promise(resolve => settle = resolve);
+  let played = false;
+  await playback.start(audio, async (signal, requestId) => {
+    const res = await fetch('/api/voice/speak', {method:'POST', signal,
+      headers:{'Content-Type':'application/json','X-Session-Id':sid,'X-Voice-Request-Id':requestId},
+      body:JSON.stringify({turnId:r.voiceTurnId || r.turnId,personaId:r.personaId,voiceReplyId:r.voiceReplyId})});
+    if (!res.ok) throw Error((await res.json().catch(()=>({}))).error || 'Audio is unavailable. Your written answer is above.');
+    return res.blob();
+  }, (status,error) => {
+    if (['ended','stopped','error','blocked'].includes(status)) settle(status === 'ended');
+    if (session && status === 'blocked') endConversation('Playback needs a click. Use Listen to retry.');
+    if (status === 'playing') {played = true;if (session && voice.active && voice.session === session) voiceStatus('Dave is speaking…');}
+    box.hidden = false;
+    btn.disabled = status === 'loading'; btn.hidden = ['playing','ended','blocked'].includes(status);
+    btn.textContent = status === 'loading' ? 'Preparing audio…' : 'Listen';
+    el.classList.toggle('speaking',status === 'playing');
+    if (status === 'blocked') box.querySelector('.fine').textContent = 'Press play to listen. AI-generated voice, not the real person.';
+    if (error) note(error.message);
   });
+  return session ? completed : played;
 }
+window.addEventListener('pagehide', () => {endConversation('');});
 
 function setupVoice() {
   const mic = $('#mic');

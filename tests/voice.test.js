@@ -179,3 +179,29 @@ test('voice is optional: without a key the routes say so and text chat still wor
     assert.equal((await post('/api/voice/speak', s, {turnId: (await r.json()).turnId, personaId: 'debt-free-coach'})).status, 503);
   } finally { process.env.ELEVENLABS_API_KEY = key; }
 });
+
+test('versioned replies and model-specific cache cannot replay stale speech', async()=>{
+  const s=await withProfile();const r=await (await post('/api/chat',s,{message:'help'})).json();
+  assert.match(r.voiceReplyId,/^[a-f0-9]{64}$/);
+  const store=await import('../lib/store.js');store.update(s,x=>{x.replies[`${r.turnId}:${r.personaId}`]={text:'Another verified answer.'};});
+  const n=calls.length;
+  assert.equal((await post('/api/voice/speak',s,{turnId:r.turnId,personaId:r.personaId,voiceReplyId:r.voiceReplyId})).status,200);
+  assert.equal(JSON.parse(calls[n].body).text,r.text);
+  const before=process.env.ELEVENLABS_TTS_MODEL;process.env.ELEVENLABS_TTS_MODEL='test-other-model';
+  try{assert.equal((await post('/api/voice/speak',s,{turnId:r.turnId,personaId:r.personaId,voiceReplyId:r.voiceReplyId})).headers.get('x-voice-cached'),'0');}
+  finally{if(before)process.env.ELEVENLABS_TTS_MODEL=before;else delete process.env.ELEVENLABS_TTS_MODEL;}
+});
+
+test('synthesis rejects nonaudio and empty responses and accepts cancellation',async()=>{
+ const {synthesize}=await import('../lib/voice.js');
+ const original=global.fetch;
+ try{
+  for(const [body,type] of [['<html>upstream error</html>','text/html'],['','audio/mpeg']]){
+   global.fetch=async()=>new Response(body,{headers:{'Content-Type':type}});
+   await assert.rejects(synthesize('Verified text','VoiceDebtFree0001'),/audio/);
+  }
+  const abort=new AbortController();let observed;
+  global.fetch=async(_u,options)=>{observed=options.signal;abort.abort();throw new DOMException('Aborted','AbortError');};
+  await assert.rejects(synthesize('Verified text','VoiceDebtFree0001',{signal:abort.signal}));assert.equal(observed.aborted,true);
+ }finally{global.fetch=original;}
+});
