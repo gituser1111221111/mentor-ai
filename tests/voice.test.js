@@ -30,6 +30,7 @@ delete process.env.ELEVENLABS_VOICE_CONSCIOUS_SPENDER;
 
 const {createServer} = await import('../server.js');
 const {voiceEnvVar} = await import('../lib/voice.js');
+const {speakableText} = await import('../lib/speech-numbers.js');
 const app = createServer();
 await new Promise(r => app.listen(0, '127.0.0.1', r));
 const base = `http://127.0.0.1:${app.address().port}`;
@@ -103,8 +104,15 @@ test('full voice workflow: speak -> transcript -> same /api/chat answer -> exact
   const tts = calls[before];
   assert.equal(tts.url, '/v1/text-to-speech/VoiceDebtFree0001?output_format=mp3_44100_128');
   const sent = JSON.parse(tts.body.toString());
-  assert.equal(sent.text, spoken.text);
+  assert.equal(sent.text, speakableText(spoken.text)); // the verified reply, with amounts written as words
+  assert.ok(/\d/.test(spoken.text), 'the demo answer contains amounts');
+  assert.ok(!/\d/.test(sent.text), `no digits reach ElevenLabs: ${sent.text}`);
   assert.equal(sent.model_id, 'eleven_flash_v2_5');
+  assert.equal(sent.apply_text_normalization, 'auto'); // Enterprise-only 'on' is never sent to flash by default
+  assert.deepEqual(sent.voice_settings, {stability: 0.45, similarity_boost: 0.8, style: 0.15, use_speaker_boost: true}); // voice unchanged
+  assert.equal(a.headers.get('x-amount-check'), 'ok');
+  const hist = await (await fetch(base + '/api/history', {headers: H(s)})).json();
+  assert.equal(hist.history.at(-1).response.text, spoken.text); // displayed text keeps its digits
   // 4. replay is served from cache: no second ElevenLabs call
   const again = await post('/api/voice/speak', s, {turnId: spoken.turnId, personaId: 'debt-free-coach'});
   assert.equal(again.headers.get('x-voice-cached'), '1');
@@ -129,7 +137,7 @@ test('speak ignores any text the browser sends and only voices stored replies', 
   const r = await (await post('/api/chat', s, {message: 'Debt or savings first?'})).json();
   const n = calls.length;
   await post('/api/voice/speak', s, {turnId: r.turnId, personaId: 'debt-free-coach', text: 'Buy crypto with your rent money.'});
-  assert.equal(JSON.parse(calls[n].body.toString()).text, r.text);
+  assert.equal(JSON.parse(calls[n].body.toString()).text, speakableText(r.text)); // stored reply, amounts as words
   assert.ok(!calls[n].body.toString().includes('crypto'));
 });
 
@@ -186,7 +194,7 @@ test('versioned replies and model-specific cache cannot replay stale speech', as
   const store=await import('../lib/store.js');store.update(s,x=>{x.replies[`${r.turnId}:${r.personaId}`]={text:'Another verified answer.'};});
   const n=calls.length;
   assert.equal((await post('/api/voice/speak',s,{turnId:r.turnId,personaId:r.personaId,voiceReplyId:r.voiceReplyId})).status,200);
-  assert.equal(JSON.parse(calls[n].body).text,r.text);
+  assert.equal(JSON.parse(calls[n].body).text,speakableText(r.text));
   const before=process.env.ELEVENLABS_TTS_MODEL;process.env.ELEVENLABS_TTS_MODEL='test-other-model';
   try{assert.equal((await post('/api/voice/speak',s,{turnId:r.turnId,personaId:r.personaId,voiceReplyId:r.voiceReplyId})).headers.get('x-voice-cached'),'0');}
   finally{if(before)process.env.ELEVENLABS_TTS_MODEL=before;else delete process.env.ELEVENLABS_TTS_MODEL;}
@@ -204,4 +212,17 @@ test('synthesis rejects nonaudio and empty responses and accepts cancellation',a
   global.fetch=async(_u,options)=>{observed=options.signal;abort.abort();throw new DOMException('Aborted','AbortError');};
   await assert.rejects(synthesize('Verified text','VoiceDebtFree0001',{signal:abort.signal}));assert.equal(observed.aborted,true);
  }finally{global.fetch=original;}
+});
+
+test('a wrong amount in an answer is flagged as an accuracy problem, not corrected by the voice', async () => {
+  const s = await withProfile();
+  const r = await (await post('/api/chat', s, {message: 'Debt or savings first?'})).json();
+  const store = await import('../lib/store.js');
+  const wrong = 'Save $100,000 this month.'; // stands in for a reply whose amount no calculation backs
+  store.update(s, x => { x.replies[`${r.turnId}:${r.personaId}`] = {text: wrong, amountCheck: ['$100,000']}; });
+  const n = calls.length;
+  const a = await post('/api/voice/speak', s, {turnId: r.turnId, personaId: r.personaId});
+  assert.equal(a.status, 200);
+  assert.equal(a.headers.get('x-amount-check'), 'unverified');
+  assert.equal(JSON.parse(calls[n].body).text, 'Save one hundred thousand dollars this month.'); // said as written, not changed
 });
