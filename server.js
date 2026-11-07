@@ -6,7 +6,7 @@ import {analyzeInvoices,runway} from './lib/finance.js';
 import {authenticate,checked,importRows} from './lib/supabase.js';
 import {uploadDocument,startParse,getParse,saveText} from './lib/documents.js';
 import {searchEvidence} from './lib/citations.js';
-import {mentorRoutes,serveStatic} from './lib/routes.js';
+import {mentorRoutes,serveStatic,voiceRoutes} from './lib/routes.js';
 const uuid=x=>typeof x==='string'&&/^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(x);
 async function body(req){let size=0;const chunks=[];for await(const c of req){size+=c.length;if(size>7_100_000)throw Error('Request exceeds 7 MB');chunks.push(c);}return JSON.parse(Buffer.concat(chunks).toString()||'{}');}
 export function createServer(){return http.createServer(async(req,res)=>{
@@ -19,6 +19,7 @@ export function createServer(){return http.createServer(async(req,res)=>{
   if(req.method==='GET'&&p==='/api/sample')return send(200,analyzeInvoices(parseCSV(await fs.readFile(new URL('./data/invoices.csv',import.meta.url),'utf8'))));
   if(req.method==='POST'&&p==='/api/analyze'){const b=await body(req);return send(200,analyzeInvoices(parseCSV(b.csv),{asOf:b.asOf||'2026-09-30'}));}
   if(req.method==='POST'&&p==='/api/runway')return send(200,runway(await body(req)));
+  if(await voiceRoutes(req,res,p))return;
   const mine=await mentorRoutes(req,p,body);if(mine)return send(mine[0],mine[1]);
   if(!p.startsWith('/api/')&&await serveStatic(req,res,p))return;
   if(!p.startsWith('/api/'))return send(404,{error:'API-only starter. See README.txt.'});

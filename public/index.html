@@ -63,7 +63,7 @@
           <li><span class="n">1</span><div><h3>Tell us about a few months of pay</h3><p>Two minutes: take-home pay, bills, debts, savings. We find your lowest month and what it has to cover.</p></div></li>
           <li><span class="n">2</span><div><h3>Coaching does the work</h3><p id="ex-coaching"></p></div></li>
           <li><span class="n">3</span><div><h3>Your mentor directs it</h3><p id="ex-mentors"></p></div></li>
-          <li><span class="n">4</span><div><h3>Switch mentors anytime</h3><p>Keep the same facts and explore a different point of view in the conversation.</p></div></li>
+          <li><span class="n">4</span><div><h3>Talk it through</h3><p>Type or speak naturally. Hear the mentor-guided answer and keep the conversation going.</p></div></li>
         </ol>
       </section>
 
@@ -83,8 +83,8 @@
           <div class="plan">
             <h3>Free</h3>
             <p class="price">$0</p>
-            <p>Debt-Free and Conscious Spender are available now. More mentors are in development.</p>
-            <p>3 coaches: Budget, Debt, and Savings &amp; Emergency Fund.</p>
+            <p>Try the Dave Ramsey–inspired mentor with the Budget Coach.</p>
+            <p>Type or talk, and hear the answer spoken back.</p>
             <p>Conversational answers with sources and checkable calculations.</p>
           </div>
           <div class="plan plus">
@@ -129,12 +129,12 @@
       <p class="kicker">Your numbers</p>
       <h2 id="snap-title" class="q"></h2>
       <div id="snap"></div>
-      <h3 class="sub">Choose your mentor</h3>
-      <p class="why">They decide which plan fits. You can switch in the middle of a conversation.</p>
+      <h3 class="sub">Your mentor</h3>
+      <p class="why">The Dave Ramsey–inspired perspective guides this demo.</p>
       <div id="pick-mentor" class="choice-grid"></div>
-      <h3 class="sub">Choose your coaching</h3>
+      <h3 class="sub">Your agent</h3>
       <div id="pick-coach" class="choice-list"></div>
-      <div class="row"><button id="to-chat" class="btn primary">Start coaching</button></div>
+      <div class="row"><button id="to-chat" class="btn primary">Start conversation</button></div>
     </section>
 
     <!-- CHAT -->
@@ -153,8 +153,10 @@
         <div class="chips" id="suggest"></div>
         <form id="composer">
           <label for="msg" class="sr">Your question</label>
-          <input id="msg" autocomplete="off" placeholder="Ask your coach anything about your money" maxlength="2000">
-          <button class="btn primary">Send</button>
+          <p id="voice-status" class="voice-status" role="status" aria-live="polite" hidden></p>
+          <input id="msg" autocomplete="off" placeholder="Ask about your budget" maxlength="2000">
+          <button type="button" id="mic" class="btn mic" hidden aria-pressed="false" title="Hold to talk and release to send, or tap to start and tap again to send"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg><span id="mic-label">Talk</span></button>
+          <button type="submit" class="btn primary">Send</button>
         </form>
       </div>
     </section>
@@ -162,7 +164,7 @@
 
   <dialog id="unlock"><form method="dialog">
     <h3>Plus, $4.99 a month</h3>
-    <p>Free currently includes 2 mentors and 3 coaches. More mentors and coaches are in development. This checkout is a test-mode preview with no real charge.</p>
+    <p>This demo features the Dave Ramsey–inspired mentor and Budget Coach. More mentors and agents are in development. This checkout is a test-mode preview with no real charge.</p>
     <p id="unlock-test" class="fine" hidden>Stripe test mode. Use card 4242 4242 4242 4242, any future date, any CVC. No real charge.</p>
     <p id="unlock-msg" class="error" role="alert"></p>
     <div class="row"><button id="unlock-go" class="btn primary" value="go">Continue to checkout</button><button class="btn">Not now</button></div>

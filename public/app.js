@@ -15,6 +15,8 @@ async function api(path, {method = 'GET', body} = {}) {
 }
 
 const state = {config: null, tier: 'free', answers: {}, i: 0, profile: null, snapshot: null, personaId: 'debt-free-coach', agentId: 'budget', lastTurn: null};
+const DEMO_PERSONA = 'debt-free-coach';
+const DEMO_AGENT = 'budget';
 const views = ['v-landing', 'v-quiz', 'v-snap', 'v-chat'];
 function show(id) {
   views.forEach(v => { $('#' + v).hidden = v !== id; });
@@ -41,9 +43,9 @@ function renderLanding() {
   const c = state.config.catalog;
   $('#ex-coaching').textContent = c.explainer.coaching;
   $('#ex-mentors').textContent = c.explainer.mentors;
-  $('#personas').innerHTML = personas().filter(p => p.built).map(p => `<div class="portrait ${usable(p) ? '' : 'locked'}">${art(p)}<span class="tag ${p.tier === 'plus' ? 'plus' : ''}">${p.tier === 'plus' ? 'Plus' : 'Free'}</span></div>
+  $('#personas').innerHTML = personas().filter(p => p.id === DEMO_PERSONA).map(p => `<div class="portrait">${art(p)}<span class="tag">Free</span>
     <h3>${esc(p.name)}</h3><p>${esc(p.philosophy)}.</p><p>From the public work of ${esc(p.inspiredBy)}.</p></div>`).join('');
-  $('#agents').innerHTML = agents().filter(a => a.built).map(a => `<div class="tr"><strong>${esc(a.name)}</strong><span>${esc(a.job)}</span><span class="tag ${a.tier === 'plus' ? 'plus' : ''}">${a.tier === 'plus' ? 'Plus' : 'Free'}</span></div>`).join('');
+  $('#agents').innerHTML = agents().filter(a => a.id === DEMO_AGENT).map(a => `<div class="tr"><strong>${esc(a.name)}</strong><span>${esc(a.job)}</span><span class="tag ${a.tier === 'plus' ? 'plus' : ''}">${a.tier === 'plus' ? 'Plus' : 'Free'}</span></div>`).join('');
 }
 
 // ---------- quiz ----------
@@ -124,7 +126,8 @@ async function submitQuiz(answers = state.answers) {
     const r = await api('/api/profile', {method: 'POST', body: {answers}});
     state.profile = r.profile; state.snapshot = r.snapshot;
     const hint = persona(r.profile.personaHint);
-    state.personaId = hint && usable(hint) ? hint.id : 'debt-free-coach';
+    state.personaId = DEMO_PERSONA;
+    state.agentId = DEMO_AGENT;
     renderSnapshot(); show('v-snap');
   } catch (e) { show('v-quiz'); $('#q-error').textContent = e.message; }
 }
@@ -155,8 +158,8 @@ function renderSnapshot() {
 
 function renderSetup() {
   const hint = state.profile?.personaHint;
-  $('#pick-mentor').innerHTML = personas().filter(p => p.built && allowed(p)).map(p => `<button type="button" class="choice ${p.id === state.personaId ? 'on' : ''}" data-p="${p.id}">${art(p)}</div><strong>${esc(p.name)}</strong><small>${esc(p.philosophy)}.</small>${p.id === hint ? '<small class="hint">Suggested from your quiz</small>' : ''}</button>`).join('');
-  $('#pick-coach').innerHTML = agents().filter(usable).map(a => `<button type="button" class="choice ${a.id === state.agentId ? 'on' : ''}" data-a="${a.id}"><span><strong>${esc(a.name)}</strong><small>${esc(a.job)}</small></span><span class="tag ${a.tier === 'plus' ? 'plus' : ''}">${statusLabel(a)}</span></button>`).join('');
+  $('#pick-mentor').innerHTML = personas().filter(p => p.id === DEMO_PERSONA).map(p => `<div class="choice on">${art(p)}<strong>${esc(p.name)}</strong><small>${esc(p.philosophy)}.</small></div>`).join('');
+  $('#pick-coach').innerHTML = agents().filter(a => a.id === DEMO_AGENT).map(a => `<div class="choice on"><span><strong>${esc(a.name)}</strong><small>${esc(a.job)}</small></span><span class="tag">Free</span></div>`).join('');
   document.querySelectorAll('#pick-mentor [data-p]').forEach(b => b.onclick = () => { state.personaId = b.dataset.p; renderSetup(); });
   document.querySelectorAll('#pick-coach [data-a]').forEach(b => b.onclick = () => { state.agentId = b.dataset.a; renderSetup(); });
   document.querySelectorAll('#pick-mentor [data-unlock]').forEach(b => b.onclick = openUnlock);
@@ -166,8 +169,8 @@ function renderSetup() {
 function renderChatChrome() {
   const p = persona(state.personaId), a = agent(state.agentId), s = state.snapshot;
   $('#chat-head').innerHTML = `${thumb(p)}<div><strong>${esc(p.name)}</strong><small>directing ${esc(a.name)}</small></div>${s?.status === 'ok' ? `<div class="snap-mini">lowest ${usd(s.lowestMonth)}<br>essentials ${usd(s.essentialsTotal)}</div>` : ''}`;
-  $('#persona-switch').innerHTML = personas().filter(x => x.built && allowed(x)).map(x => `<button class="rail-item ${x.id === state.personaId ? 'on' : ''}" data-p="${x.id}">${thumb(x)}<span>${esc(x.name)}</span></button>`).join('');
-  $('#agent-list').innerHTML = agents().filter(x => x.built && allowed(x)).map(x => `<button class="rail-item coach-item ${x.id === state.agentId ? 'on' : ''}" data-a="${x.id}"><span>${esc(x.name.replace(/ Coaching$/, ''))}</span></button>`).join('');
+  $('#persona-switch').innerHTML = personas().filter(x => x.id === DEMO_PERSONA).map(x => `<div class="rail-item on">${thumb(x)}<span>${esc(x.name)}</span></div>`).join('');
+  $('#agent-list').innerHTML = agents().filter(x => x.id === DEMO_AGENT).map(x => `<div class="rail-item coach-item on"><span>${esc(x.name.replace(/ Coaching$/, ''))}</span></div>`).join('');
   document.querySelectorAll('#persona-switch [data-p]').forEach(b => b.onclick = () => pickPersona(b.dataset.p));
   document.querySelectorAll('#agent-list [data-a]').forEach(b => b.onclick = () => pickAgent(b.dataset.a));
   const prompts = {budget: ['How should I budget when my pay keeps changing?', 'What do I do in my slow months?', 'Where should extra money go in a good month?'], debt: ['How fast can I get rid of my debt?', 'Which debt should I pay first?', 'Should I pay off debt or save first?'], savings: ['How big should my emergency fund be?', 'How do I save when my income drops?', 'Should I stop investing until I have savings?']};
@@ -217,17 +220,27 @@ function botMessage(r) {
   const calcs = (r.calculations || []).slice(1);
   el.innerHTML = `<div class="who"><strong>${esc(r.personaName || '')}</strong>${r.agentName ? ` · ${esc(r.agentName)}` : ''}</div>
     <p class="say">${esc(r.text)}</p>
+    ${canSpeak(r) ? '<button class="btn text" type="button" data-listen>Listen</button><div class="voice-player" hidden><audio controls preload="none"></audio><button class="btn text" type="button" data-stop>Stop</button><p class="fine">AI-generated voice, not the real person.</p></div>' : ''}
     ${calcs.length || r.citations?.length ? `<details class="answer-details"><summary>Sources and calculations</summary>${calcs.map(calcCard).join('')}${r.citations?.length ? `<p class="sources">${r.citations.map(c => `${sourceLink(c)} <span>(${esc(c.ref)})</span>`).join('; ')}</p>` : ''}</details>` : ''}
     <p class="disclose">${esc(r.disclosure || '')}</p>`;
+  el.querySelector('[data-listen]')?.addEventListener('click', () => speakReply(el, r));
+  el.querySelector('[data-stop]')?.addEventListener('click', stopPlayback);
   $('#log').append(el); el.scrollIntoView({behavior: 'smooth', block: 'start'});
+  return el;
 }
 
-async function send(text) {
+async function send(text, {spoken = false} = {}) {
   text = text.trim(); if (!text) return;
   const u = document.createElement('div'); u.className = 'msg user'; u.textContent = text; $('#log').append(u);
-  $('#msg').value = ''; const btn = $('#composer button'); btn.disabled = true;
+  if (spoken) u.insertAdjacentHTML('afterbegin', '<span class="via">You said</span>');
+  $('#msg').value = ''; const btn = $('#composer button[type="submit"]'); btn.disabled = true;
   const sk = skeleton();
-  try { const r = await api('/api/chat', {method: 'POST', body: {message: text, personaId: state.personaId, agentId: state.agentId}}); state.lastTurn = r.turnId; botMessage(r); refreshMemory(); }
+  try {
+    const r = await api('/api/chat', {method: 'POST', body: {message: text, personaId: state.personaId, agentId: state.agentId}}); state.lastTurn = r.turnId;
+    const el = botMessage(r); refreshMemory();
+    if (canSpeak(r)) speakReply(el, r);
+    else if (spoken) note('Voice is unavailable right now. The written answer is above.');
+  }
   catch (e) { handleError(e); }
   finally { sk.stop(); btn.disabled = false; $('#msg').focus(); }
 }
@@ -249,7 +262,7 @@ async function restoreChat(history) {
 function startChat() {
   $('#log').innerHTML = ''; state.lastTurn = null; renderChatChrome(); refreshMemory(); show('v-chat');
   const p = persona(state.personaId), a = agent(state.agentId);
-  note(`${p.name} is directing ${a.name}. Ask anything, or start with a suggestion below.`);
+  note(`${p.name} is guiding ${a.name}. Type a budget question or tap Talk.`);
   $('#msg').focus();
 }
 
@@ -299,6 +312,101 @@ const DEMO = {
   trust: {priorAdvisor: 'couldnt_afford', aiTrust: 2, needs: ['show_the_math', 'known_philosophy']}, personaHint: 'debt-free-coach',
 };
 
+// ---------- voice ----------
+// Push-to-talk -> /api/voice/transcribe (ElevenLabs STT) -> the normal /api/chat pipeline.
+// "Listen" -> /api/voice/speak, which reads the server's stored copy of that verified answer
+// (ElevenLabs TTS). The browser never sends text to be spoken and never sees the ElevenLabs key.
+const voice = {rec: null, stream: null, chunks: [], started: 0, pressAt: 0, timer: null, starting: false, busy: false, audio: null};
+const canSpeak = r => Boolean(r?.turnId && state.config?.voice && state.config.voicePersonas?.includes(r.personaId));
+// The status row keeps its height while voice is on, so the mic button never moves under the user's finger.
+function voiceStatus(text, kind = '') { const s = $('#voice-status'); s.textContent = text; s.className = 'voice-status ' + kind; }
+function micUI(on) { const m = $('#mic'); m.classList.toggle('rec', on); m.setAttribute('aria-pressed', String(on)); $('#mic-label').textContent = on ? 'Send' : 'Talk'; }
+const pickMime = () => ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/ogg;codecs=opus', 'audio/ogg'].find(t => window.MediaRecorder?.isTypeSupported?.(t)) || '';
+
+async function startRecording() {
+  if (voice.busy || voice.rec || voice.starting) return;
+  if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) return voiceStatus('This browser cannot record audio here. Type your question instead.', 'warn');
+  stopPlayback(); voice.starting = true;
+  try { voice.stream = await navigator.mediaDevices.getUserMedia({audio: {echoCancellation: true, noiseSuppression: true}}); }
+  catch (e) {
+    voice.starting = false;
+    return voiceStatus(['NotAllowedError', 'SecurityError'].includes(e.name) ? 'Microphone access is blocked. Allow it in your browser settings, or type your question.'
+      : e.name === 'NotFoundError' ? 'No microphone found. Type your question instead.'
+      : e.name === 'NotSupportedError' ? 'The microphone is not available in this browser. Type your question instead.' : `Could not start the microphone: ${e.message}`, 'warn');
+  }
+  const mime = pickMime();
+  voice.chunks = [];
+  voice.rec = new MediaRecorder(voice.stream, mime ? {mimeType: mime} : undefined);
+  voice.rec.ondataavailable = e => { if (e.data.size) voice.chunks.push(e.data); };
+  voice.rec.onstop = finishRecording;
+  voice.rec.start(); voice.started = Date.now(); voice.starting = false; micUI(true);
+  const tick = () => { const s = Math.floor((Date.now() - voice.started) / 1000); voiceStatus(`Recording 0:${String(s).padStart(2, '0')}. Release or tap Send when you finish.`, 'rec'); if (s >= 60) stopRecording(); };
+  tick(); voice.timer = setInterval(tick, 250);
+}
+function stopRecording() {
+  clearInterval(voice.timer);
+  if (voice.rec?.state === 'recording') voice.rec.stop();
+  voice.stream?.getTracks().forEach(t => t.stop()); voice.stream = null; micUI(false);
+}
+async function finishRecording() {
+  const rec = voice.rec; voice.rec = null;
+  const blob = new Blob(voice.chunks, {type: rec?.mimeType || 'audio/webm'});
+  if (Date.now() - voice.started < 600 || blob.size < 1000) return voiceStatus('That was too short. Hold Talk while you speak, or tap it once to start.', 'warn');
+  voice.busy = true; $('#mic').disabled = true; voiceStatus('Turning your question into text...');
+  try {
+    const res = await fetch('/api/voice/transcribe', {method: 'POST', headers: {'Content-Type': blob.type.split(';')[0], 'X-Session-Id': sid}, body: blob});
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || 'We could not hear that. Try again or type your question.');
+    voiceStatus('');
+    await send(data.text, {spoken: true});
+  } catch (e) { voiceStatus(e.message, 'warn'); }
+  finally { voice.busy = false; $('#mic').disabled = false; }
+}
+
+function stopPlayback() {
+  if (!voice.audio) return;
+  voice.audio.pause(); voice.audio.currentTime = 0;
+  voice.audio.closest('.msg')?.classList.remove('speaking'); voice.audio = null;
+}
+async function speakReply(el, r) {
+  const box = el.querySelector('.voice-player'), btn = el.querySelector('[data-listen]'), a = box?.querySelector('audio');
+  if (!box) return;
+  stopPlayback();
+  if (!a.src) {
+    btn.disabled = true; btn.textContent = 'Preparing audio...';
+    try {
+      const res = await fetch('/api/voice/speak', {method: 'POST', headers: {'Content-Type': 'application/json', 'X-Session-Id': sid}, body: JSON.stringify({turnId: r.turnId, personaId: r.personaId})});
+      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || 'Audio is unavailable right now. The written answer is above.');
+      a.src = URL.createObjectURL(await res.blob());
+    } catch (e) { btn.disabled = false; btn.textContent = 'Listen'; return note(e.message); }
+  }
+  btn.hidden = true; box.hidden = false; el.classList.add('speaking'); voice.audio = a;
+  a.onended = () => { el.classList.remove('speaking'); if (voice.audio === a) voice.audio = null; };
+  a.onplay = () => { if (voice.audio && voice.audio !== a) stopPlayback(); voice.audio = a; el.classList.add('speaking'); };
+  box.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+  try { await a.play(); } catch { box.querySelector('.fine').textContent = 'Press play to listen. The disclosure below applies.'; }
+}
+
+function setupVoice() {
+  const mic = $('#mic');
+  mic.hidden = !state.config.voice; $('#voice-status').hidden = !state.config.voice;
+  if (!state.config.voice) return;
+  // Hold to talk (release sends) or tap to start and tap again to send.
+  const down = e => {
+    if ((e.button ?? 0) > 0 || voice.busy) return;
+    e.preventDefault();
+    if (voice.rec) return stopRecording();
+    try { mic.setPointerCapture?.(e.pointerId); } catch {} // release is delivered here even if the finger drifts
+    voice.pressAt = Date.now(); startRecording();
+  };
+  const up = () => { if (voice.rec?.state === 'recording' && voice.pressAt && Date.now() - voice.pressAt > 500) stopRecording(); voice.pressAt = 0; };
+  mic.addEventListener('pointerdown', down);
+  mic.addEventListener('pointerup', up);
+  mic.addEventListener('pointercancel', up);
+  mic.addEventListener('keydown', e => { if ((e.key === ' ' || e.key === 'Enter') && !e.repeat) down(e); });
+  mic.addEventListener('keyup', e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); up(); } });
+}
+
 // ---------- boot ----------
 async function boot() {
   state.config = await api('/api/config');
@@ -316,6 +424,7 @@ async function boot() {
   $('#q-body').addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.tagName === 'INPUT') { e.preventDefault(); next(); } });
   $('#to-chat').onclick = startChat;
   $('#composer').onsubmit = e => { e.preventDefault(); send($('#msg').value); };
+  setupVoice();
   $('#restart').onclick = async () => { if (!confirm('Start over? Your answers and chat will be cleared.')) return; await api('/api/session', {method: 'DELETE'}).catch(() => {}); location.href = '/'; };
   await handleCheckoutReturn();
   try { const r = await api('/api/profile'); if (r.profile?.incomeHistory?.length) { state.profile = r.profile; state.snapshot = r.snapshot; const h = persona(r.profile.personaHint); if (h && usable(h)) state.personaId = h.id; const {history} = await api('/api/history'); if (history.length) await restoreChat(history); else { renderSnapshot(); show('v-snap'); } return; } } catch {}
