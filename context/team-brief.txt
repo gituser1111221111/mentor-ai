@@ -1,0 +1,14 @@
+TEAM PROJECT BRIEF
+Team name: TBD
+Challenge number: 21 (Variable-income budgeting, Student and Campus Finance track). MVP option 1: plan expenses around variable monthly income
+User and job role: Young adult (18-25, student or first job) who cannot afford or make time for a financial advisor and does not trust generic AI with money advice
+Pain point: One-on-one advice from a trusted mentor costs too much and generic chatbots feel untrustworthy
+One workflow we will improve: Getting a personalized budget and debt-payoff plan grounded in a trusted, cited philosophy
+Inputs and data sources: Trust quiz profile (fictional demo user); curated notes on Dave Ramsey's public teachings with citations; starter-kit exact-money utilities
+Output or decision supported: Monthly budget and debt-snowball payoff plan, with cited reasoning and a disclosure
+Three features in scope: (1) persona-guided Budget and Debt agents with citations and code-computed calculations; (2) live voice via ElevenLabs; (3) shared memory across agents, plus a $4.99 Stripe test unlock
+What we will leave out: Real accounts or Plaid, real payments, build-your-own persona, multiple personas, roundtable mode
+Demo acceptance criteria: Valid profile gives a cited plan with a calc card; missing income makes the agent ask for it; snowball totals reconcile with cents math and every citation resolves to a stored note
+Tools and integrations: Claude API (Sonnet 5.5, Haiku 5.5), ElevenLabs STT/TTS, Stripe test mode, starter Node backend
+Source and permission notes: Persona built from summaries of public content with short attributed quotes; not affiliated with or endorsed by Dave Ramsey or Ramsey Solutions; no cloned voice; fictional user data only
+Known limitations: Educational opinions, not licensed advice; one persona; small curated source set; single-user local store; persona fidelity measured by a small self-made eval

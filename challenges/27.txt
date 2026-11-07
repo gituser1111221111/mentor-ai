@@ -1,0 +1,15 @@
+CHALLENGE 27: Crypto cost-basis ledger. Reconcile exchange and wallet activity; compute FIFO versus HIFO gains.
+Track: Blockchain and Crypto
+
+THREE POSSIBLE MVPS — choose one first
+1. Reconcile exchange and wallet activity into one ledger.
+2. Compute gains with FIFO lot selection.
+3. Compute gains with HIFO lot selection on the same activity.
+
+STARTING DATA
+No exchange or wallet history is included. Create an explicitly synthetic trade and transfer fixture.
+Six dataset cases are supplied. Where fields are missing, create a small explicitly synthetic fixture; do not pretend that a source contains it.
+
+BUILD PROMPT
+Help our team build Challenge 27. First ask which of the three MVPs fits our intended user. Use the existing backend, CSV parser, exact-money utilities and Supabase team model. Work from the indicated data and identify any missing inputs. Create deterministic calculations and source-linked evidence before explanatory prose. Do not implement UI, an LLM provider or a reference app unless we explicitly request that extension. No app LLM service is included. Our coding assistant can still write and explain code.
+Define three acceptance checks: one valid input, one missing/invalid input and one financial/source reconciliation. Preserve source rows, reporting periods, asset units and stated assumptions. Produce runnable changes, tests and a brief demo procedure. Use local data first; set up live APIs only when needed.

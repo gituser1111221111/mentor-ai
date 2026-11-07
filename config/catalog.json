@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "disclaimer": "Personas are inspired by public teachings; not affiliated with or endorsed by the people named. Educational opinion, not advice from a licensed financial adviser, CPA, or attorney.",
+  "agents": [
+    { "id": "budget", "name": "Budget Coach", "job": "Plan around variable income", "status": "live" },
+    { "id": "debt", "name": "Debt Coach", "job": "Payoff order and timelines", "status": "locked" },
+    { "id": "savings", "name": "Savings & Emergency Fund", "job": "How much and how fast", "status": "locked" },
+    { "id": "investing", "name": "Investing Coach", "job": "Portfolio mix and fees (education)", "status": "locked" },
+    { "id": "retirement", "name": "Retirement Coach", "job": "401k/IRA growth projections", "status": "locked" },
+    { "id": "tax", "name": "Tax Education", "job": "Withholding and 1099 basics for gig income", "status": "locked" },
+    { "id": "credit", "name": "Credit Coach", "job": "Utilization and score factors", "status": "locked" },
+    { "id": "income", "name": "Income & Side Hustle", "job": "Raise your lowest month", "status": "locked" },
+    { "id": "life", "name": "Life Planning", "job": "Big goals: car, move, school", "status": "locked" },
+    { "id": "business", "name": "Business Coach", "job": "Freelancer and self-employed basics", "status": "locked" }
+  ],
+  "personas": [
+    { "id": "debt-free-coach", "name": "Debt-Free Coach", "inspiredBy": "Dave Ramsey", "philosophy": "Debt is the enemy; baby steps; cash only", "status": "live" },
+    { "id": "hustle-coach", "name": "Hustle Coach", "inspiredBy": "Grant Cardone", "philosophy": "Raise income; don't over-save", "status": "live-thin" },
+    { "id": "conscious-spender", "name": "Conscious Spender", "inspiredBy": "Ramit Sethi", "philosophy": "Spend big on what you love, cut the rest", "status": "locked" },
+    { "id": "index-investor", "name": "Index Investor", "inspiredBy": "John Bogle", "philosophy": "Low-cost index funds; stay the course", "status": "locked" },
+    { "id": "money-psychology", "name": "Money Psychology", "inspiredBy": "Morgan Housel", "philosophy": "Behavior over spreadsheets; room for error", "status": "locked" },
+    { "id": "frugal-fire", "name": "Frugal FIRE", "inspiredBy": "Mr. Money Mustache", "philosophy": "Cut spending hard, retire early", "status": "locked" },
+    { "id": "asset-builder", "name": "Asset Builder", "inspiredBy": "Robert Kiyosaki", "philosophy": "Buy assets, not liabilities", "status": "locked" },
+    { "id": "protect-first", "name": "Protect First", "inspiredBy": "Suze Orman", "philosophy": "Emergency fund and protection before anything", "status": "locked" },
+    { "id": "value-investor", "name": "Value Investor", "inspiredBy": "Warren Buffett", "philosophy": "Patience and a margin of safety", "status": "locked" },
+    { "id": "principles", "name": "Principles", "inspiredBy": "Ray Dalio", "philosophy": "Diversify across uncorrelated bets", "status": "locked" }
+  ]
+}

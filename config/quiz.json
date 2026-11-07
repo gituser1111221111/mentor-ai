@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "note": "Screening quiz spec. UI renders one question per screen. Money values are USD decimal strings parsed with minor(). APR entered in percent, stored as basis points (rateBps).",
+  "questions": [
+    { "id": "priorAdvisor", "section": "trust", "field": "trust.priorAdvisor", "type": "single", "prompt": "Have you ever paid for financial advice?", "options": ["yes", "no", "couldnt_afford"], "required": false },
+    { "id": "aiTrust", "section": "trust", "field": "trust.aiTrust", "type": "scale", "min": 1, "max": 5, "prompt": "How much do you trust AI with money questions?", "required": false },
+    { "id": "trustNeeds", "section": "trust", "field": "trust.needs", "type": "multi", "prompt": "What would make you trust an answer?", "options": ["show_the_math", "show_sources", "known_philosophy", "a_human"], "required": false },
+    { "id": "incomeVaries", "section": "income", "field": "incomeVaries", "type": "boolean", "prompt": "Does your income change month to month?", "required": true },
+    { "id": "incomeHistory", "section": "income", "field": "incomeHistory", "type": "money_series", "months": 6, "prompt": "What did you take home each of the last 6 months?", "allowUnknown": true, "required": true },
+    { "id": "incomeSources", "section": "income", "field": "incomeSources", "type": "multi", "prompt": "Where does your income come from?", "options": ["hourly_job", "tips", "gig_delivery", "freelance", "stipend_aid", "family"], "required": false },
+    { "id": "bills", "section": "bills", "field": "bills", "type": "rows", "columns": [{ "key": "name", "type": "text" }, { "key": "amount", "type": "money" }, { "key": "dueDay", "type": "int", "min": 1, "max": 31 }], "prompt": "List your fixed monthly bills (rent, phone, car, insurance, subscriptions).", "required": false },
+    { "id": "expenses", "section": "spending", "field": "expenses", "type": "rows", "fixedRows": ["food", "gas_transport", "fun"], "columns": [{ "key": "name", "type": "text" }, { "key": "amount", "type": "money" }], "prompt": "Roughly how much do you spend each month on food, gas, and fun?", "required": false },
+    { "id": "debts", "section": "debt", "field": "debts", "type": "rows", "columns": [{ "key": "name", "type": "text" }, { "key": "balance", "type": "money" }, { "key": "aprPercent", "type": "percent", "storeAs": "rateBps" }, { "key": "minPayment", "type": "money" }], "prompt": "Any debts? (credit cards, car loan, student loans, BNPL)", "required": false },
+    { "id": "savings", "section": "savings", "field": "savings", "type": "money", "prompt": "How much cash could you reach today?", "required": false },
+    { "id": "portfolio", "section": "portfolio", "field": "portfolio", "type": "single", "prompt": "Do you invest?", "options": ["upload_csv", "connect_brokerage_sandbox", "skip"], "required": false },
+    { "id": "goals", "section": "goals", "field": "goals", "type": "multi", "maxSelect": 2, "prompt": "Top goal for the next 12 months?", "options": ["stop_paycheck_to_paycheck", "pay_off_debt", "emergency_fund", "start_investing", "big_purchase"], "required": false },
+    { "id": "personaHint", "section": "style", "field": "personaHint", "type": "single", "prompt": "Which statement do you agree with most?", "options": [
+      { "value": "debt-free-coach", "label": "Debt is the enemy. Get out and stay out." },
+      { "value": "hustle-coach", "label": "You can't save your way rich. Earn more." },
+      { "value": "conscious-spender", "label": "Spend on what I love, cut what I don't." },
+      { "value": "index-investor", "label": "Keep it simple and let time do the work." }
+    ], "required": false }
+  ],
+  "snapshot": {
+    "note": "Computed in code after the quiz, never by the model.",
+    "fields": ["lowestMonth", "averageMonth", "swing", "fixedBillsTotal", "lowestMonthShortfall", "portfolioValue"]
+  }
+}
