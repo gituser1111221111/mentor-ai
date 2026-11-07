@@ -223,10 +223,41 @@ function botMessage(r, noteText) {
     <p class="say">${esc(r.text)}</p>
     ${calcs.map(calcCard).join('')}
     ${r.citations?.length ? `<p class="sources"><span>Sources:</span> ${r.citations.map(c => `${sourceLink(c)} <span>(${esc(c.ref)})</span>`).join('; ')}</p>` : ''}
-    <div class="meta">${r.candidates?.length ? `<button class="btn text" data-drawer>See all ${r.candidates.length} options</button>` : ''}${v ? `<span class="mono">number check: ${v.kept} of ${v.generated} passed</span>` : ''}</div>
+    <div class="meta">${r.candidates?.length ? `<button class="btn text" data-drawer>See all ${r.candidates.length} options</button>` : ''}${r.turnId && r.candidates?.length ? '<button class="btn text" data-compare>Compare mentors</button>' : ''}${v ? `<span class="mono">number check: ${v.kept} of ${v.generated} passed</span>` : ''}</div>
     <p class="disclose">${esc(r.disclosure || '')}</p>`;
   el.querySelector('[data-drawer]')?.addEventListener('click', () => openDrawer(r));
+  el.querySelector('[data-compare]')?.addEventListener('click', () => openCompare(r));
   $('#log').append(el); el.scrollIntoView({behavior: 'smooth', block: 'start'});
+}
+
+// ---------- compare mentors (same verified options, only the pick changes) ----------
+async function openCompare(r) {
+  const body = $('#compare-body');
+  body.innerHTML = '<p class="why">Asking each mentor to judge the same options...</p>';
+  $('#compare').showModal();
+  let c;
+  try { c = await api('/api/compare', {method: 'POST', body: {turnId: r.turnId}}); }
+  catch (e) { body.innerHTML = `<p class="error">${esc(e.message)}</p>`; return; }
+  const name = id => c.mentors.find(m => m.personaId === id)?.name || id;
+  const card = m => {
+    const head = `<h4>${esc(m.name)}</h4><p class="fine">${esc(m.affiliation || `Inspired by ${m.inspiredBy}'s public teachings. Not affiliated or endorsed.`)}</p>`;
+    if (m.status === 'locked') return `<div class="cmp-card muted">${head}<p>Part of Plus. <button type="button" class="btn text" data-unlock>Unlock to compare</button></p></div>`;
+    if (m.status === 'coming-soon') return `<div class="cmp-card muted">${head}<p>Coming soon.</p></div>`;
+    if (m.status === 'error') return `<div class="cmp-card muted">${head}<p class="error">Could not answer: ${esc(m.error || 'error')}</p></div>`;
+    const agree = m.agreesWith?.length ? `<p class="fine">Agrees with ${m.agreesWith.map(x => esc(x.name)).join(', ')}.</p>` : '';
+    const dis = m.disagreesWith?.length ? `<p class="fine">Disagrees with ${m.disagreesWith.map(x => `${esc(x.name)} (picked "${esc(x.pickTitle)}")`).join(', ')}.</p>` : '';
+    const risk = [m.optionRisk?.risk ? `Option risk: ${esc(m.optionRisk.risk)}.` : '', m.optionRisk?.tradeoffs ? esc(m.optionRisk.tradeoffs) : '', m.riskNote ? esc(m.riskNote) : ''].filter(Boolean).join(' ');
+    return `<div class="cmp-card">${head}
+      <p><strong>Picked:</strong> ${esc(m.pickTitle)}</p>
+      <p class="say">${esc(m.text || m.rationale)}</p>
+      ${m.citations?.length ? `<p class="sources"><span>Sources:</span> ${m.citations.map(x => `${esc(x.title)}${x.ref ? ` <span>(${esc(x.ref)})</span>` : ''}`).join('; ')}</p>` : ''}
+      ${risk ? `<p class="fine"><strong>Risks:</strong> ${risk}</p>` : ''}${agree}${dis}</div>`;
+  };
+  body.innerHTML = `<p class="cmp-summary">${esc(c.summary)}</p>
+    <p class="fine">${c.factsUnchanged ? 'Every mentor judged the same options with the same numbers. Nothing was recalculated.' : 'Warning: the options changed between mentors, so this comparison is not reliable.'}</p>
+    ${c.mentors.map(card).join('')}
+    <p class="disclose">${esc(c.disclosure || '')}</p>`;
+  body.querySelectorAll('[data-unlock]').forEach(b => b.onclick = () => { $('#compare').close(); openUnlock(); });
 }
 
 function openDrawer(r) {
