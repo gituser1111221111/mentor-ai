@@ -57,7 +57,7 @@ Each category is scored 1–5, and points = weight × (score ÷ 5).
 
 ---
 
-## Our Devpost draft (fill in the blanks)
+## Our Devpost draft (superseded: use [DEVPOST.md](DEVPOST.md))
 
 **Project name:** ___
 **Tagline:** AI money mentors that can't make up facts. They can only choose.

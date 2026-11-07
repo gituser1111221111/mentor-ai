@@ -4,6 +4,7 @@ Start every session by reading:
 - `docs/STRATEGY_AND_STRUCTURE.md`: **v0.4, newest, wins on conflicts.** Quiz, 10 agents/10 personas (1 live each), portfolio upload, deploy, repo layout. Specs: `config/quiz.json`, `config/catalog.json`
 - `docs/BUILD_PLAN.md`: architecture, the A/B chat-module contract, the two builder sections, timeline, acceptance checks
 - `docs/BUSINESS_PLAN.md`: business context (the v0.3 box at the top supersedes older sections)
+- `docs/DEVPOST.md`: paste-ready Devpost text, pitch script, Q&A. `README.md`: public repo README
 - `docs/SUBMISSION.md`: Devpost requirements, schedule, Devpost draft, final checklist
 - `context/team-brief.txt` and `LLM-STARTER-PACK.txt`: starter-kit rules
 
