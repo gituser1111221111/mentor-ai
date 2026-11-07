@@ -135,5 +135,6 @@ test('Stripe confirm checks session ownership and completion (fake Stripe)', asy
   assert.equal(sent.get('mode'), 'subscription');
   assert.equal(sent.get('line_items[0][price_data][unit_amount]'), '499');
   assert.equal(sent.get('client_reference_id'), 'me');
+  assert.equal(sent.get('payment_method_types[0]'), 'card');
   delete process.env.STRIPE_TEST_SECRET_KEY;
 });
