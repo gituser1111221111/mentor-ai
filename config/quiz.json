@@ -16,9 +16,9 @@
     { "id": "goals", "section": "goals", "field": "goals", "type": "multi", "maxSelect": 2, "prompt": "Top goal for the next 12 months?", "options": ["stop_paycheck_to_paycheck", "pay_off_debt", "emergency_fund", "start_investing", "big_purchase"], "required": false },
     { "id": "personaHint", "section": "style", "field": "personaHint", "type": "single", "prompt": "Which statement do you agree with most?", "options": [
       { "value": "debt-free-coach", "label": "Debt is the enemy. Get out and stay out." },
-      { "value": "hustle-coach", "label": "You can't save your way rich. Earn more." },
+      { "value": "asset-builder", "label": "Buy things that pay me, not things that cost me." },
       { "value": "conscious-spender", "label": "Spend on what I love, cut what I don't." },
-      { "value": "index-investor", "label": "Keep it simple and let time do the work." }
+      { "value": "value-investor", "label": "Keep it simple and let time do the work." }
     ], "required": false }
   ],
   "snapshot": {

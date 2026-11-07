@@ -61,7 +61,7 @@ test('pick integrity: persona picks an existing candidate; repick keeps the same
   assert.equal(new Set(ids).size, ids.length);
   assert.ok(ids.includes(r.pick.pickId));
   assert.equal(r.pick.pickId, 'starter-ef'); // savings < $1,000
-  const h = await repick({turnId: r.turnId, personaId: 'hustle-coach'});
+  const h = await repick({turnId: r.turnId, personaId: 'conscious-spender'});
   assert.deepEqual(h.candidates, r.candidates);
   assert.notEqual(h.pick.pickId, r.pick.pickId);
   assert.match(r.disclosure, /not advice from a licensed/);
@@ -96,7 +96,7 @@ test('API: quiz -> chat -> repick, static UI, and traversal blocked', async () =
     assert.equal(bad.status, 422);
     const c = await (await fetch(base + '/api/chat', {method: 'POST', headers: h, body: JSON.stringify({message: 'How do I budget?'})})).json();
     assert.ok(c.turnId);
-    const r = await (await fetch(base + '/api/repick', {method: 'POST', headers: h, body: JSON.stringify({turnId: c.turnId, personaId: 'hustle-coach'})})).json();
+    const r = await (await fetch(base + '/api/repick', {method: 'POST', headers: h, body: JSON.stringify({turnId: c.turnId, personaId: 'conscious-spender'})})).json();
     assert.equal(r.candidates.length, c.candidates.length);
     assert.equal((await fetch(base + '/api/profile')).status, 400); // no session header
   } finally { await new Promise(r => server.close(r)); }

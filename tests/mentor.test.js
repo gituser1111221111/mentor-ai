@@ -22,7 +22,7 @@ function fakeClient({generated, picks}) {
   const create = async params => {
     calls.push(params);
     if (params.model.includes('sonnet')) return textRes({needsInfo: null, candidates: generated});
-    const persona = params.system[0].text.includes('Hustle') ? 'hustle' : 'debt';
+    const persona = params.system[0].text.includes('Conscious Spender') ? 'conscious' : 'debt';
     return textRes(picks[persona]);
   };
   return {calls, messages: {create}, beta: {messages: {create}}};
@@ -59,7 +59,7 @@ test('validateCandidates drops invented numbers, duplicates and unknown calcs', 
 test('live chat: structured outputs, cached prompts, persona picks by id, repick keeps options', async () => {
   const fake = fakeClient({generated: GOOD, picks: {
     debt: {pickId: 'c1', runnersUp: ['c2', 'c9'], rationale: 'Protect the bad month first.', reply: 'Get that $580.00 saved, then go after the card.', whyNotOthers: 'Income is slower.', noteIds: ['029', 'fake-note'], memoryFacts: ['Wants to pay off the card']},
-    hustle: {pickId: 'c3', runnersUp: ['c1'], rationale: 'Grow income.', reply: 'You need $5,000.00 more a month. Go get it.', whyNotOthers: 'Cutting is small.', noteIds: ['expand-income'], memoryFacts: []},
+    conscious: {pickId: 'c3', runnersUp: ['c1'], rationale: 'Big wins beat small cuts.', reply: 'You need $5,000.00 more a month. Go get it.', whyNotOthers: 'Cutting is small.', noteIds: ['big-wins'], memoryFacts: []},
   }});
   setClient(fake);
   const r = await chat({personaId: 'debt-free-coach', agentId: 'budget', messages: [{role: 'user', content: 'Debt or savings first?'}], profile});
@@ -79,11 +79,11 @@ test('live chat: structured outputs, cached prompts, persona picks by id, repick
   assert.equal(fake.calls[0].model, 'claude-sonnet-5-5');
   assert.equal(fake.calls[1].model, 'claude-haiku-5-5');
 
-  const h = await repick({turnId: r.turnId, personaId: 'hustle-coach'});
+  const h = await repick({turnId: r.turnId, personaId: 'conscious-spender'});
   assert.deepEqual(h.candidates, r.candidates);
   assert.equal(h.pick.pickId, 'c3');
   assert.equal(fake.calls.length, 3); // repick = one pick call, no regeneration
-  // hustle reply invented $5,000.00 -> replaced with the option's own verified text
+  // conscious-spender reply invented $5,000.00 -> replaced with the option's own verified text
   assert.equal(h.validation.replyVerified, false);
   assert.ok(!h.text.includes('5,000'));
   assert.match(h.text, /Raise your floor/);
