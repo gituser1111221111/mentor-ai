@@ -19,6 +19,7 @@ const DEMO_PERSONA = 'debt-free-coach';
 const DEMO_AGENT = 'budget';
 const views = ['v-landing', 'v-quiz', 'v-chat'];
 function show(id) {
+  if (id !== 'v-chat' && voice.active) endConversation();
   views.forEach(v => { $('#' + v).hidden = v !== id; });
   const landing = id === 'v-landing';
   $('#nav').hidden = !landing; $('#head-start').hidden = !landing; $('#restart').hidden = landing;
@@ -146,6 +147,7 @@ function pickAgent(id) {
 }
 async function pickPersona(id) {
   const p = persona(id); if (id === state.personaId || blocked(p)) return;
+  if (voice.active) endConversation();
   state.personaId = id; renderChatChrome();
   if (!state.lastTurn) return note(`${p.name} is now directing your coach.`);
   const sk = skeleton();
@@ -250,8 +252,9 @@ async function openCompare(r) {
   body.querySelectorAll('[data-unlock]').forEach(b => b.onclick = () => { $('#compare').close(); openUnlock(); });
 }
 
-async function send(text, {spoken = false} = {}) {
+async function send(text, {spoken = false, voiceSession = null} = {}) {
   text = text.trim(); if (!text) return;
+  if (!voiceSession && voice.active) endConversation();
   const u = document.createElement('div'); u.className = 'msg user'; u.textContent = text; $('#log').append(u);
   if (spoken) u.insertAdjacentHTML('afterbegin', '<span class="via">You said</span>');
   $('#msg').value = ''; const btn = $('#composer button[type="submit"]'); btn.disabled = true;
@@ -259,11 +262,14 @@ async function send(text, {spoken = false} = {}) {
   try {
     const r = await api('/api/chat', {method: 'POST', body: {message: text, personaId: state.personaId, agentId: state.agentId}}); state.lastTurn = r.turnId;
     const el = botMessage(r); refreshMemory();
-    if (canSpeak(r)) speakReply(el, r);
-    else if (spoken) note('Voice is unavailable right now. The written answer is above.');
+    if (canSpeak(r) && (!voiceSession || (voice.active && voice.session === voiceSession))) {
+      if (voiceSession) await speakReply(el, r, voiceSession);
+      else speakReply(el, r);
+    }
+    else if (spoken && voice.active && voice.session === voiceSession) note('Voice is unavailable right now. The written answer is above.');
   }
   catch (e) { handleError(e); }
-  finally { sk.stop(); btn.disabled = false; $('#msg').focus(); }
+  finally { sk.stop(); btn.disabled = false; if (!voice.active) $('#msg').focus(); }
 }
 async function refreshMemory() { try { const {memory} = await api('/api/memory'); $('#memory').innerHTML = memory.length ? memory.map((m, i) => `<li>${esc(m.fact)} <button class="btn text" type="button" data-memory="${i}" aria-label="Forget ${esc(m.fact)}">Forget</button></li>`).join('') : '<li>Nothing yet. Tell me about your goals.</li>'; $('#memory').querySelectorAll('[data-memory]').forEach(b => b.onclick = async () => { await api('/api/memory', {method: 'DELETE', body: {fact: memory[Number(b.dataset.memory)].fact}}); refreshMemory(); }); } catch {} }
 
@@ -370,102 +376,177 @@ const DEMO = {
 };
 
 // ---------- voice ----------
-// Push-to-talk -> /api/voice/transcribe (ElevenLabs STT) -> the normal /api/chat pipeline.
-// "Listen" -> /api/voice/speak, which reads the server's stored copy of that verified answer
-// (ElevenLabs TTS). The browser never sends text to be spoken and never sees the ElevenLabs key.
-const voice = {rec: null, stream: null, chunks: [], started: 0, pressAt: 0, timer: null, starting: false, busy: false, audio: null};
-const canSpeak = r => Boolean(r?.turnId && state.config?.voice && state.config.voicePersonas?.includes(r.personaId));
-// The status row keeps its height while voice is on, so the mic button never moves under the user's finger.
+// One tap starts a hands-free, turn-taking conversation. ElevenLabs transcribes each
+// utterance and speaks the exact Claude answer stored on the server. The key stays there.
+const voice = {active: false, session: 0, rec: null, stream: null, context: null, analyser: null,
+  timer: null, starting: false, audio: null, audioDone: null};
+const canSpeak = r => Boolean((r?.voiceTurnId || r?.turnId) && state.config?.voice && state.config.voicePersonas?.includes(r.personaId));
 function voiceStatus(text, kind = '') { const s = $('#voice-status'); s.textContent = text; s.className = 'voice-status ' + kind; }
-function micUI(on) { const m = $('#mic'); m.classList.toggle('rec', on); m.setAttribute('aria-pressed', String(on)); $('#mic-label').textContent = on ? 'Send' : 'Talk'; }
+function micUI() {
+  const m = $('#mic'); m.classList.toggle('rec', voice.active);
+  m.setAttribute('aria-pressed', String(voice.active));
+  m.setAttribute('aria-label', voice.active ? 'End voice conversation' : 'Start voice conversation');
+  $('#mic-label').textContent = voice.active ? 'End call' : 'Talk live';
+}
 const pickMime = () => ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/ogg;codecs=opus', 'audio/ogg'].find(t => window.MediaRecorder?.isTypeSupported?.(t)) || '';
 
-async function startRecording() {
-  if (voice.busy || voice.rec || voice.starting) return;
-  if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) return voiceStatus('This browser cannot record audio here. Type your question instead.', 'warn');
-  stopPlayback(); voice.starting = true;
-  try { voice.stream = await navigator.mediaDevices.getUserMedia({audio: {echoCancellation: true, noiseSuppression: true}}); }
-  catch (e) {
-    voice.starting = false;
-    return voiceStatus(['NotAllowedError', 'SecurityError'].includes(e.name) ? 'Microphone access is blocked. Allow it in your browser settings, or type your question.'
-      : e.name === 'NotFoundError' ? 'No microphone found. Type your question instead.'
-      : e.name === 'NotSupportedError' ? 'The microphone is not available in this browser. Type your question instead.' : `Could not start the microphone: ${e.message}`, 'warn');
-  }
-  const mime = pickMime();
-  voice.chunks = [];
-  voice.rec = new MediaRecorder(voice.stream, mime ? {mimeType: mime} : undefined);
-  voice.rec.ondataavailable = e => { if (e.data.size) voice.chunks.push(e.data); };
-  voice.rec.onstop = finishRecording;
-  voice.rec.start(); voice.started = Date.now(); voice.starting = false; micUI(true);
-  const tick = () => { const s = Math.floor((Date.now() - voice.started) / 1000); voiceStatus(`Recording 0:${String(s).padStart(2, '0')}. Release or tap Send when you finish.`, 'rec'); if (s >= 60) stopRecording(); };
-  tick(); voice.timer = setInterval(tick, 250);
-}
-function stopRecording() {
-  clearInterval(voice.timer);
-  if (voice.rec?.state === 'recording') voice.rec.stop();
-  voice.stream?.getTracks().forEach(t => t.stop()); voice.stream = null; micUI(false);
-}
 // Development-only voice timing (localStorage mmDebugPerf=1); never shown to users.
 const perfDebug = (() => { try { return localStorage.getItem('mmDebugPerf') === '1'; } catch { return false; } })();
 let voiceT0 = null;
-async function finishRecording() {
-  voiceT0 = performance.now();
+function closeCapture() {
+  clearInterval(voice.timer); voice.timer = null;
   const rec = voice.rec; voice.rec = null;
-  const blob = new Blob(voice.chunks, {type: rec?.mimeType || 'audio/webm'});
-  if (Date.now() - voice.started < 600 || blob.size < 1000) return voiceStatus('That was too short. Hold Talk while you speak, or tap it once to start.', 'warn');
-  voice.busy = true; $('#mic').disabled = true; voiceStatus('Turning your question into text...');
+  if (rec?.state === 'recording') rec.stop();
+  voice.stream?.getTracks().forEach(t => t.stop()); voice.stream = null;
+  voice.context?.close().catch(() => {}); voice.context = null; voice.analyser = null;
+}
+function endConversation(message = 'Voice conversation ended.') {
+  voice.active = false; voice.session++;
+  closeCapture(); stopPlayback(); micUI(); voiceStatus(message);
+}
+async function startListening(session) {
+  if (!voice.active || session !== voice.session || voice.starting || voice.rec) return;
+  voice.starting = true; voiceStatus('Opening microphone...');
+  let stream;
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({audio: {echoCancellation: true, noiseSuppression: true, autoGainControl: true}});
+    if (!voice.active || session !== voice.session) { stream.getTracks().forEach(t => t.stop()); return; }
+    voice.stream = stream;
+    const Context = window.AudioContext || window.webkitAudioContext;
+    voice.context = new Context();
+    if (voice.context.state === 'suspended') await voice.context.resume();
+    if (!voice.active || session !== voice.session) { stream.getTracks().forEach(t => t.stop()); return; }
+    const source = voice.context.createMediaStreamSource(stream);
+    voice.analyser = voice.context.createAnalyser();
+    voice.analyser.fftSize = 2048;
+    source.connect(voice.analyser);
+    const samples = new Uint8Array(voice.analyser.fftSize);
+    const mime = pickMime(), rec = new MediaRecorder(stream, mime ? {mimeType: mime} : undefined);
+    voice.rec = rec;
+    const chunks = [], started = Date.now();
+    let heardSpeech = false, speakingMs = 0, silenceSince = 0, previous = started;
+    rec.ondataavailable = e => { if (e.data.size) chunks.push(e.data); };
+    rec.onerror = () => {
+      if (voice.active && session === voice.session) {
+        endConversation('');
+        voiceStatus('Microphone recording failed. Try again or type your question.', 'warn');
+      }
+    };
+    rec.onstop = () => {
+      if (voice.rec === rec) voice.rec = null;
+      if (voice.active && session === voice.session) {
+        if (heardSpeech) finishUtterance(session, new Blob(chunks, {type: rec.mimeType || 'audio/webm'}), Date.now() - started);
+        else startListening(session);
+      }
+    };
+    rec.start(); voiceStatus('Listening… Speak naturally. Pause when you finish.', 'rec');
+    voice.timer = setInterval(() => {
+      if (!voice.active || session !== voice.session || rec.state !== 'recording') return;
+      voice.analyser.getByteTimeDomainData(samples);
+      let power = 0;
+      for (const sample of samples) power += ((sample - 128) / 128) ** 2;
+      const speaking = Math.sqrt(power / samples.length) > 0.025;
+      const now = Date.now();
+      if (speaking) { speakingMs += now - previous; silenceSince = 0; if (speakingMs >= 250) heardSpeech = true; }
+      else { speakingMs = 0; if (heardSpeech) silenceSince ||= now; }
+      previous = now;
+      if ((heardSpeech && silenceSince && now - silenceSince >= 1100) || now - started >= 60000) {
+        voiceStatus('Thinking…');
+        closeCapture();
+      }
+    }, 100);
+  } catch (e) {
+    if (session === voice.session) {
+      endConversation('');
+      voiceStatus(['NotAllowedError', 'SecurityError'].includes(e.name) ? 'Microphone access is blocked. Allow it in your browser settings, or type your question.'
+        : e.name === 'NotFoundError' ? 'No microphone found. Type your question instead.'
+        : `Could not start the microphone: ${e.message}`, 'warn');
+    }
+    stream?.getTracks().forEach(t => t.stop());
+  } finally {
+    voice.starting = false;
+    if (voice.active && voice.session !== session && !voice.rec) startListening(voice.session);
+  }
+}
+async function finishUtterance(session, blob, duration) {
+  if (!voice.active || session !== voice.session) return;
+  if (duration < 600 || blob.size < 1000) return startListening(session);
+  voiceT0 = performance.now();
+  voiceStatus('Turning your words into text…');
   try {
     const res = await fetch('/api/voice/transcribe', {method: 'POST', headers: {'Content-Type': blob.type.split(';')[0], 'X-Session-Id': sid}, body: blob});
     const data = await res.json().catch(() => ({}));
+    if (!voice.active || session !== voice.session) return;
     if (!res.ok) throw new Error(data.error || 'We could not hear that. Try again or type your question.');
-    voiceStatus('');
-    await send(data.text, {spoken: true});
-  } catch (e) { voiceStatus(e.message, 'warn'); }
-  finally { voice.busy = false; $('#mic').disabled = false; }
+    voiceStatus('Dave is thinking…');
+    await send(data.text, {spoken: true, voiceSession: session});
+  } catch (e) {
+    if (voice.active && session === voice.session) voiceStatus(e.message, 'warn');
+  } finally {
+    if (voice.active && session === voice.session) startListening(session);
+  }
 }
 
 function stopPlayback() {
   if (!voice.audio) return;
-  voice.audio.pause(); voice.audio.currentTime = 0;
-  voice.audio.closest('.msg')?.classList.remove('speaking'); voice.audio = null;
+  const a = voice.audio, done = voice.audioDone;
+  voice.audio = null; voice.audioDone = null;
+  a.pause(); a.currentTime = 0;
+  a.closest('.msg')?.classList.remove('speaking');
+  done?.(false);
 }
-async function speakReply(el, r) {
+async function speakReply(el, r, session = null) {
   const box = el.querySelector('.voice-player'), btn = el.querySelector('[data-listen]'), a = box?.querySelector('audio');
-  if (!box) return;
+  if (!box) return false;
   stopPlayback();
   if (!a.src) {
     btn.disabled = true; btn.textContent = 'Preparing audio...';
     try {
-      const res = await fetch('/api/voice/speak', {method: 'POST', headers: {'Content-Type': 'application/json', 'X-Session-Id': sid}, body: JSON.stringify({turnId: r.turnId, personaId: r.personaId})});
+      if (session) voiceStatus('Dave is replying…');
+      const res = await fetch('/api/voice/speak', {method: 'POST', headers: {'Content-Type': 'application/json', 'X-Session-Id': sid}, body: JSON.stringify({turnId: r.voiceTurnId || r.turnId, personaId: r.personaId})});
       if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || 'Audio is unavailable right now. The written answer is above.');
       a.src = URL.createObjectURL(await res.blob());
-    } catch (e) { btn.disabled = false; btn.textContent = 'Listen'; return note(e.message); }
+    } catch (e) { btn.disabled = false; btn.textContent = 'Listen'; note(e.message); return false; }
   }
+  btn.disabled = false; btn.textContent = 'Listen';
+  if (session && (!voice.active || session !== voice.session)) return false;
   btn.hidden = true; box.hidden = false; el.classList.add('speaking'); voice.audio = a;
-  a.onended = () => { el.classList.remove('speaking'); if (voice.audio === a) voice.audio = null; };
   a.onplay = () => { if (voice.audio && voice.audio !== a) stopPlayback(); voice.audio = a; el.classList.add('speaking'); };
   box.scrollIntoView({behavior: 'smooth', block: 'nearest'});
-  try { await a.play(); if (perfDebug && voiceT0 !== null) { console.debug(`[perf] voice end-to-end ${Math.round(performance.now() - voiceT0)}ms`); voiceT0 = null; } } catch { box.querySelector('.fine').textContent = 'Press play to listen. The disclosure below applies.'; }
+  return new Promise(resolve => {
+    const done = played => {
+      el.classList.remove('speaking');
+      if (voice.audio === a) voice.audio = null;
+      if (voice.audioDone === done) voice.audioDone = null;
+      resolve(played);
+    };
+    voice.audioDone = done;
+    a.onended = () => done(true);
+    a.onpause = () => { if (!a.ended) done(false); };
+    a.onerror = () => done(false);
+    a.play().then(() => {
+      if (session && voice.active && session === voice.session) voiceStatus('Dave is speaking…');
+      if (perfDebug && voiceT0 !== null) console.debug(`[perf] voice end-to-end ${Math.round(performance.now() - voiceT0)}ms`);
+      voiceT0 = null;
+    }).catch(() => {
+      box.querySelector('.fine').textContent = 'Press play to listen. The disclosure below applies.';
+      done(false);
+    });
+  });
 }
 
 function setupVoice() {
   const mic = $('#mic');
   mic.hidden = !state.config.voice; $('#voice-status').hidden = !state.config.voice;
   if (!state.config.voice) return;
-  // Hold to talk (release sends) or tap to start and tap again to send.
-  const down = e => {
-    if ((e.button ?? 0) > 0 || voice.busy) return;
-    e.preventDefault();
-    if (voice.rec) return stopRecording();
-    try { mic.setPointerCapture?.(e.pointerId); } catch {} // release is delivered here even if the finger drifts
-    voice.pressAt = Date.now(); startRecording();
-  };
-  const up = () => { if (voice.rec?.state === 'recording' && voice.pressAt && Date.now() - voice.pressAt > 500) stopRecording(); voice.pressAt = 0; };
-  mic.addEventListener('pointerdown', down);
-  mic.addEventListener('pointerup', up);
-  mic.addEventListener('pointercancel', up);
-  mic.addEventListener('keydown', e => { if ((e.key === ' ' || e.key === 'Enter') && !e.repeat) down(e); });
-  mic.addEventListener('keyup', e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); up(); } });
+  micUI();
+  mic.addEventListener('click', () => {
+    if (voice.active) return endConversation();
+    if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder || !(window.AudioContext || window.webkitAudioContext))
+      return voiceStatus('Live voice is unavailable in this browser. Type your question instead.', 'warn');
+    stopPlayback(); voice.active = true; voice.session++; micUI();
+    startListening(voice.session);
+  });
 }
 
 // ---------- boot ----------
@@ -490,7 +571,7 @@ async function boot() {
   $('#chat-upload-document').onclick = () => $('#document-file').click();
   $('#portfolio-file').onchange = async e => { const file = e.target.files?.[0]; if (!file) return; try { if (state.profile) await uploadPortfolio(file); else { state.pendingPortfolio = file; uploadNote(`${file.name} will be added when you start chatting.`); } } catch (err) { uploadNote(err.message); } e.target.value = ''; };
   $('#document-file').onchange = async e => { const file = e.target.files?.[0]; if (!file) return; try { if (state.profile) await uploadDocument(file); else { state.pendingDocument = file; uploadNote(`${file.name} will be added when you start chatting.`); } } catch (err) { uploadNote(err.message); } e.target.value = ''; };
-  $('#composer').onsubmit = e => { e.preventDefault(); send($('#msg').value); };
+  $('#composer').onsubmit = e => { e.preventDefault(); if (voice.active) endConversation('Voice conversation ended.'); send($('#msg').value); };
   setupVoice();
   $('#restart').onclick = async () => { if (!confirm('Start over? Your answers and chat will be cleared.')) return; await api('/api/session', {method: 'DELETE'}).catch(() => {}); location.href = '/'; };
   await handleCheckoutReturn();

@@ -60,7 +60,7 @@ Submit intake ──► Ramsey-inspired chat opens immediately
 | Additional mentors and agents | Nine mentors and fifteen more agent specialties are shown in the gallery, selector, and chat rail as planned Plus entries; they cannot be used as if live |
 | Document picker and portfolio URL | Documents upload to the session for chat context; URL is a browser-session reference, with no brokerage connection |
 | Direct brokerage connection (Plaid) | **Not built**; the portfolio link is reference-only |
-| Voice (ElevenLabs) | Optional on the Ramsey starter when server keys and a voice are configured; text chat works without it |
+| Voice (ElevenLabs) | Tap **Talk live** once for hands-free turns: microphone silence ends your question, ElevenLabs transcribes it, Claude answers, ElevenLabs speaks the answer, and listening resumes. Tap **End call** to stop. Requires the server-side key and a configured voice; text chat works without them. |
 
 ## Run it locally
 
