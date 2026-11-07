@@ -499,3 +499,9 @@ dialog { border: 0; border-radius: 22px; box-shadow: 0 28px 80px rgb(0 0 0 / .2)
   .rail-item small { display: none; }
   .context-dialog-head h3 { font-size: 1.6rem; }
 }
+
+/* ---------- progressive options ---------- */
+.reviewed { margin: 6px 0 0; }
+.more-options { margin-top: 8px; }
+.opt-list { margin: 6px 0; padding-left: 18px; font-size: .92rem; }
+.opt-list li { margin: 4px 0; }
