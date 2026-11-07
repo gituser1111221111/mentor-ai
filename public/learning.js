@@ -1,22 +1,46 @@
 const root = document.querySelector('#learning-modules');
 const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 if (root) {
+  const style = document.createElement('link');
+  style.rel = 'stylesheet'; style.href = '/academy/host.css?v=1'; document.head.append(style);
   fetch('/learning-modules.json').then(r => {if (!r.ok) throw Error('Lessons could not load.');return r.json();}).then(data => {
-    let completed = [];
+    let completed = [], selected = data.modules[0];
     try { completed = JSON.parse(localStorage.getItem('mentor-learning-completed') || '[]'); if (!Array.isArray(completed)) completed = []; } catch {}
-    root.innerHTML = '<p class="fine">Lessons from Barone Investment Group. Original educational material; examples, rates and tax rules may need updating. Progress stays in this browser.</p><p id="learning-progress" role="status"></p>' + data.modules.map(m => `<details class="specialist-group" id="lesson-${esc(m.id)}"><summary>${esc(m.title)}</summary><p>${esc(m.summary)}</p><ul>${(m.outcomes || []).map(o => `<li>${esc(o)}</li>`).join('')}</ul>${(m.sections || []).map(s => `<details><summary>${esc(s.title)}</summary><p>${esc(s.body)}</p></details>`).join('')}<details><summary>Practice checklist</summary><ul>${(m.checklist || []).map(c => `<li>${esc(c)}</li>`).join('')}</ul></details><div class="row"><button type="button" class="btn" data-teach="${esc(m.id)}">Discuss with my teacher</button><a href="${esc(m.url)}" target="_blank" rel="noopener noreferrer">Original lesson &amp; tools ↗</a></div><label><input type="checkbox" data-complete="${esc(m.id)}" ${completed.includes(m.id) ? 'checked' : ''}> I have reviewed this lesson</label></details>`).join('');
-    const progress = () => { document.querySelector('#learning-progress').textContent = `${completed.filter(id => data.modules.some(m => m.id === id)).length} of ${data.modules.length} lessons reviewed`; };
-    progress();
-    root.addEventListener('change', e => {
-      const id = e.target.dataset.complete; if (!id) return;
-      completed = completed.filter(x => x !== id); if (e.target.checked) completed.push(id);
+    root.innerHTML = `<div class="learning-toolbar"><label for="learning-select">Choose a learning module<select id="learning-select">${data.modules.map((m,i)=>`<option value="${esc(m.id)}">${String(i+1).padStart(2,'0')} · ${esc(m.title)}</option>`).join('')}</select></label><div class="learning-tools"><button type="button" class="btn primary" id="learning-teacher">Discuss with my teacher</button><label><input type="checkbox" id="learning-complete"> Lesson reviewed</label></div></div><div class="learning-meter"><progress id="learning-meter" max="${data.modules.length}" value="0" aria-label="Lessons reviewed"></progress><span id="learning-progress" role="status"></span></div><iframe class="learning-frame" id="learning-frame" title="${esc(selected.title)} — interactive lesson" src="/academy/lesson.html?topic=${encodeURIComponent(selected.id)}" loading="lazy"></iframe><div class="learning-footer"><div class="learning-nav"><button class="btn" type="button" id="learning-prev">← Previous</button><button class="btn" type="button" id="learning-next">Next →</button></div><a id="learning-original" href="https://www.baroneinvestment.site/lesson.html?topic=${encodeURIComponent(selected.id)}" target="_blank" rel="noopener noreferrer">Original lesson ↗</a></div><p class="learning-source">Barone Investment Group lessons and interactive tools, adapted for Mentor Labs. Educational examples and estimates; progress stays in this browser.</p>`;
+    const select = root.querySelector('#learning-select'), frame = root.querySelector('#learning-frame'), check = root.querySelector('#learning-complete');
+    const progress = () => {
+      const count = completed.filter(id => data.modules.some(m => m.id === id)).length;
+      root.querySelector('#learning-progress').textContent = `${count} of ${data.modules.length} lessons reviewed`;
+      root.querySelector('#learning-meter').value = count;
+      check.checked = completed.includes(selected.id);
+      const index = data.modules.indexOf(selected);
+      root.querySelector('#learning-prev').disabled = index === 0;
+      root.querySelector('#learning-next').disabled = index === data.modules.length - 1;
+      root.querySelector('#learning-original').href = `https://www.baroneinvestment.site/lesson.html?topic=${encodeURIComponent(selected.id)}`;
+    };
+    const show = id => {
+      const lesson = data.modules.find(m => m.id === id); if (!lesson) return;
+      selected = lesson; select.value = id;
+      frame.title = `${lesson.title} — interactive lesson`;
+      frame.src = `/academy/lesson.html?topic=${encodeURIComponent(id)}`;
+      progress();
+    };
+    select.addEventListener('change', () => show(select.value));
+    root.querySelector('#learning-prev').onclick = () => show(data.modules[data.modules.indexOf(selected)-1]?.id);
+    root.querySelector('#learning-next').onclick = () => show(data.modules[data.modules.indexOf(selected)+1]?.id);
+    check.addEventListener('change', () => {
+      completed = completed.filter(x => x !== selected.id); if (check.checked) completed.push(selected.id);
       try {localStorage.setItem('mentor-learning-completed',JSON.stringify(completed));} catch {}
       progress();
     });
-    root.addEventListener('click', e => {
-      const id = e.target.closest('[data-teach]')?.dataset.teach;
-      const lesson = data.modules.find(m => m.id === id); if (!lesson) return;
-      document.dispatchEvent(new CustomEvent('mentor:learn', {detail:{title:lesson.title}}));
+    root.querySelector('#learning-teacher').onclick = () => document.dispatchEvent(new CustomEvent('mentor:learn', {detail:{title:selected.title}}));
+    frame.addEventListener('load', () => {
+      try {
+        const page = new URL(frame.contentWindow.location.href);
+        const lesson = page.pathname.endsWith('/lesson.html') && data.modules.find(m => m.id === page.searchParams.get('topic'));
+        if (lesson) {selected=lesson;select.value=lesson.id;frame.title=`${lesson.title} — interactive lesson`;progress();}
+      } catch {}
     });
-  }).catch(() => {root.textContent = 'Lessons could not load. Please refresh to try again.';});
+    progress();
+  }).catch(() => {root.innerHTML = '<p role="status">Lessons could not load. Please refresh to try again.</p>';});
 }

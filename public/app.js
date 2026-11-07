@@ -652,7 +652,11 @@ async function boot() {
   try { const r = await api('/api/profile'); state.profile = r.profile; state.snapshot = r.snapshot; const {history} = await api('/api/history'); if (history.length) { await restoreChat(history); return; } if (r.profile?.incomeHistory?.length) { startChat(); return; } } catch {}
   show('v-landing');
 }
-boot().catch(e => banner(`The app could not load: ${e.message}`, true));
+boot().then(() => {
+  const preview = new URLSearchParams(location.search);
+  if (preview.get('view') === 'workspace') openWorkspace(preview.get('tab') === 'portfolio' ? 'portfolio' : 'budget');
+  if (preview.get('view') === 'learning') openLearning();
+}).catch(e => banner(`The app could not load: ${e.message}`, true));
 // Animate each landing section once as it enters view, without hiding content.
 if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
   const sections = new IntersectionObserver(entries => {

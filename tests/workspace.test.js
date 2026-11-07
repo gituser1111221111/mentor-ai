@@ -4,6 +4,7 @@ process.env.NODE_ENV='test';process.env.MENTOR_ENGINE='mock';process.env.MARKET_
 const {saveBudget,budgetOverview,portfolioWatch}=await import('../lib/workspace.js');
 const {draftGuideline,reviewPortfolio,simulatePortfolio}=await import('../lib/guidelines.js');
 const {marketCalcs}=await import('../lib/market/review.js');
+const {clearMarketCache,snapshot:marketSnapshot}=await import('../lib/market/providers.js');
 const {createServer}=await import('../server.js');
 const store=await import('../lib/store.js');
 const inputs={month:'2026-11',income:'2000.01',bills:'1000',spending:'500',savings:'200',cashCushion:'600'};
@@ -36,6 +37,34 @@ test('teacher market calculations use saved personal limits instead of illustrat
  const p={portfolio:{securities:[{name:'NVDA',value:'90'},{name:'AAPL',value:'10'}]},portfolioGuidelines:{version:7,maxPositionPercent:95,earningsWindowDays:7}};
  const r=await marketCalcs(p,'investing');const c=r.calcs.find(c=>c.id==='pf_concentration');assert.equal(c.result.singlePositionLimitPercent,'95');assert.equal(c.result.sectorLimitPercent,null);assert.deepEqual(c.result.positionsOverLimit,[]);assert.equal(c.result.guidelineVersion,7);
  assert.equal(r.calcs.find(c=>c.id==='pf_earnings').inputs.windowDays,7);
+});
+
+test('dashboard context keeps snapshot sector/news dates separate from fresh quotes',async()=>{
+ const previous={live:process.env.MARKET_LIVE,key:process.env.FINNHUB_API_KEY};
+ process.env.MARKET_LIVE='1';process.env.FINNHUB_API_KEY='dashboard-test-key';clearMarketCache();
+ const fetcher=async url=>({ok:true,json:async()=>{
+  const path=new URL(url).pathname;
+  if(path.endsWith('/quote'))return {c:123.45,t:Date.parse('2026-11-07T12:00:00Z')/1000};
+  if(path.endsWith('/company-news'))return ['https://example.com/news','javascript:alert(1)','data:text/html,unsafe'].map(url=>({headline:'Source-backed headline',source:'Example publisher',url,datetime:Date.parse('2026-11-07T10:00:00Z')/1000}));
+  return {};
+ }});
+ try{
+  const portfolio={snapshotId:'dated-dashboard',securities:[{name:'NVDA',value:'999.00'},{name:'UNLISTED',value:'1.00'}]};
+  const result=await portfolioWatch(portfolio,null,{today:'2026-11-07',fetcher});
+  const holding=result.holdings.find(h=>h.symbol==='NVDA');
+  assert.equal(holding.priceSource,'Finnhub');assert.equal(holding.priceAsOf,'2026-11-07');
+  assert.equal(holding.sectorSource,'snapshot');assert.equal(holding.sectorAsOf,marketSnapshot().asOf);
+  assert.equal(result.holdings.find(h=>h.symbol==='UNLISTED').sector,null);
+  assert.equal(result.news[0].provider,'Finnhub');assert.equal(result.news[0].date,'2026-11-07');
+  assert.equal(result.news[0].source,'Example publisher');
+  assert.equal(holding.news.length,1);assert.ok(result.news.every(n=>new URL(n.url).protocol==='https:'));
+  assert.equal(result.macro.snapshotAsOf,marketSnapshot().asOf);assert.ok(result.macro.asOfNotes.cpiYoY);
+  assert.ok(result.economicEvents.every(e=>e.date>='2026-11-07'&&e.source==='snapshot'&&e.sourceAsOf===marketSnapshot().asOf));
+  assert.equal(portfolio.securities[0].value,'999.00');
+ }finally{
+  for(const [key,value]of [['MARKET_LIVE',previous.live],['FINNHUB_API_KEY',previous.key]])if(value===undefined)delete process.env[key];else process.env[key]=value;
+  clearMarketCache();
+ }
 });
 test('workspace API saves only to its session and routes earnings questions behind the single chat',async()=>{
  const server=createServer();await new Promise(r=>server.listen(0,'127.0.0.1',r));const base='http://127.0.0.1:'+server.address().port;

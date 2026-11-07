@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Start Here: Your Money Roadmap | Barone Investment Group</title>
+    <meta name="description" content="A free 7-step money roadmap for students and young professionals: know your numbers, budget, build a safety net, handle debt, understand pay, invest, plan ahead." />
+    <meta property="og:title" content="Start Here: Your Money Roadmap | Barone Investment Group" />
+    <meta property="og:description" content="A free 7-step money roadmap with a lesson, a calculator and a quiz for every step." />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="stylesheet" href="styles.css?v=20261105v4" />
+    <style>
+      .path-wrap { max-width: 900px; margin: 0 auto; padding: 0 24px 80px; }
+      .path-summary { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; margin: 0 0 28px; padding: 16px 20px; border: 1px solid rgba(215,181,109,.3); border-radius: 14px; background: rgba(215,181,109,.06); }
+      .path-bar { flex: 1 1 160px; height: 8px; border-radius: 99px; background: rgba(255,255,255,.12); overflow: hidden; }
+      .path-bar span { display: block; height: 100%; width: 0; background: #d7b56d; transition: width .4s; }
+      .path-step { position: relative; display: grid; grid-template-columns: 52px 1fr; gap: 18px; padding: 22px; margin-bottom: 16px; border: 1px solid rgba(255,255,255,.12); border-radius: 16px; background: rgba(255,255,255,.03); }
+      .path-step.is-next { border-color: #d7b56d; background: rgba(215,181,109,.07); }
+      .path-step.is-done { opacity: .85; }
+      .path-num { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; border: 1px solid rgba(215,181,109,.5); color: #d7b56d; }
+      .path-step.is-done .path-num { background: #d7b56d; color: #111; }
+      .path-step h2 { margin: 0 0 4px; font-size: 1.3rem; }
+      .path-why { margin: 0 0 12px; color: rgba(255,255,255,.78); }
+      .path-links { display: flex; flex-wrap: wrap; gap: 8px; }
+      .path-links a { padding: 8px 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,.18); color: inherit; text-decoration: none; font-size: .92rem; }
+      .path-links a:hover, .path-links a:focus-visible { border-color: #d7b56d; outline: none; }
+      .path-links .tag { color: #d7b56d; font-size: .75rem; margin-right: 6px; text-transform: uppercase; letter-spacing: .05em; }
+      .path-status { margin-top: 10px; font-size: .88rem; color: rgba(255,255,255,.65); }
+      @media (max-width: 560px) { .path-step { grid-template-columns: 1fr; } }
+    </style>
+      <link rel="stylesheet" href="mentor-theme.css?v=1" />
+  </head>
+  <body class="subpage">
+    <div class="ambient-bg" aria-hidden="true"><span></span><span></span><span></span></div>
+    <header class="site-header is-scrolled">
+      <a class="brand" href="index.html#top"><span class="brand-mark">M</span><span><strong>Mentor Labs</strong><small>Learning studio</small></span></a>
+      <nav class="site-nav subpage-nav">
+        <a href="index.html#chapters">Chapters</a>
+        <a href="index.html#tools">Tools</a>
+      </nav>
+    </header>
+    <main class="detail-page">
+      <section class="detail-hero">
+        <p class="eyebrow">Start here</p>
+        <h1>Your money roadmap in 7 steps.</h1>
+        <p>Do them in order. Each step has a short lesson, a calculator to run your own numbers, and a quick check. Free, no login, and your progress stays in your browser.</p>
+        <p id="path-type" class="path-why" hidden></p>
+      </section>
+      <div class="path-wrap">
+        <div class="path-summary" id="path-summary">
+          <strong id="path-count">0 of 7 steps done</strong>
+          <div class="path-bar" aria-hidden="true"><span id="path-fill"></span></div>
+          <a class="button primary" id="path-next" href="#step-1">Start step 1</a>
+        </div>
+        <div id="path-steps"></div>
+        <p class="path-status">A step counts as done when you score at least 3 out of 4 on the knowledge check at the end of each of its lessons. Educational only, not financial advice. <a href="method.html">How we calculate things</a>.</p>
+      </div>
+    </main>
+    <script src="tools-meta.js?v=20261105v4"></script>
+    <script src="content.js?v=20261105v4"></script>
+    <script>
+      (function () {
+        var STEPS = [
+          { t: "Know your numbers", why: "You can't steer without a map. Find out what you own, what you owe and where your money goes.", ch: ["reset"], tools: ["net_worth"] },
+          { t: "Build a budget that works", why: "A realistic plan beats a strict one. Find leaks like forgotten subscriptions.", ch: ["budgeting"], tools: ["budget", "subscriptions"] },
+          { t: "Start a safety net", why: "A small cushion keeps one bad month from becoming debt.", ch: ["insurance_risk"], tools: ["emergency", "savings_goal"] },
+          { t: "Tackle credit and debt", why: "High-interest debt is a guaranteed loss. Pay it down on purpose, and build credit the right way.", ch: ["credit", "debt_payoff"], tools: ["credit", "debt_planner", "student_loan"] },
+          { t: "Understand your pay and taxes", why: "Know what a salary really means in your pocket before you sign a lease or an offer.", ch: ["taxes_paychecks"], tools: ["paycheck", "salary"] },
+          { t: "Start investing", why: "Time does the heavy lifting. Learn the basics, then let small amounts grow.", ch: ["investing"], tools: ["compound", "roth_vs_trad", "inflation"] },
+          { t: "Plan ahead and grow your income", why: "Look at retirement, careers and how to use AI tools safely for money tasks.", ch: ["careers", "ai"], tools: ["retirement_number", "afford"] }
+        ];
+        var C = window.BIG_CONTENT || { lessons: {}, tools: {} };
+        var scores = {}, opened = [];
+        try { scores = JSON.parse(localStorage.getItem("chapterScores") || "{}"); } catch (e) {}
+        try { opened = JSON.parse(localStorage.getItem("completedChapters") || "[]"); } catch (e) {}
+        try { var p = JSON.parse(localStorage.getItem("bigProfile") || "null"); if (p && p.name) { var el = document.getElementById("path-type"); el.textContent = "Your money type: " + p.name + ". The path is the same for everyone; use your type as a hint for where to slow down."; el.hidden = false; } } catch (e) {}
+        function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+        var done = STEPS.map(function (s) { return s.ch.every(function (k) { return (scores[k] || 0) >= 3; }); });
+        var nextIdx = done.indexOf(false);
+        var doneCount = done.filter(Boolean).length;
+        document.getElementById("path-count").textContent = doneCount + " of " + STEPS.length + " steps done";
+        document.getElementById("path-fill").style.width = Math.round(doneCount / STEPS.length * 100) + "%";
+        var nextBtn = document.getElementById("path-next");
+        if (nextIdx === -1) { nextBtn.textContent = "All done: explore the tools"; nextBtn.href = "index.html#tools"; }
+        else { nextBtn.textContent = (doneCount ? "Continue with step " : "Start step ") + (nextIdx + 1); nextBtn.href = "#step-" + (nextIdx + 1); }
+        document.getElementById("path-steps").innerHTML = STEPS.map(function (s, i) {
+          var links = s.ch.map(function (k) { var l = C.lessons[k]; if (!l) return ""; var sc = scores[k]; return '<a href="lesson.html?topic=' + k + '"><span class="tag">Lesson</span>' + esc(l.title) + (sc != null ? " (" + sc + "/4)" : "") + "</a>"; }).join("") +
+            s.tools.map(function (k) { var t = C.tools[k]; if (!t) return ""; return '<a href="tool.html?tool=' + k + '"><span class="tag">Tool</span>' + esc(t.title) + "</a>"; }).join("");
+          var cls = "path-step" + (done[i] ? " is-done" : "") + (i === nextIdx ? " is-next" : "");
+          var status = done[i] ? "Done" : (i === nextIdx ? "Up next" : "");
+          return '<article class="' + cls + '" id="step-' + (i + 1) + '"><div class="path-num" aria-hidden="true">' + (done[i] ? "&#10003;" : i + 1) + '</div><div><h2>' + esc(s.t) + '</h2><p class="path-why">' + esc(s.why) + '</p><div class="path-links">' + links + "</div>" + (status ? '<p class="path-status">' + status + "</p>" : "") + "</div></article>";
+        }).join("");
+      })();
+    </script>
+      <script src="quick.js?v=20261105v4"></script>
+  </body>
+</html>

@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Interactive Tool | Barone Investment Group</title>
+    <meta name="description" content="Free interactive money calculator. Runs in your browser, no login. Educational estimates only." />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="stylesheet" href="styles.css?v=20261105v4" />
+      <link rel="stylesheet" href="mentor-theme.css?v=1" />
+  </head>
+  <body class="subpage">
+    <div class="ambient-bg" aria-hidden="true"><span></span><span></span><span></span></div>
+    <header class="site-header is-scrolled">
+      <a class="brand" href="index.html#top"><span class="brand-mark">M</span><span><strong>Mentor Labs</strong><small>Learning studio</small></span></a>
+      <nav class="site-nav subpage-nav">
+        <a href="index.html#tools">Tools</a>
+        <a href="index.html#chapters">Chapters</a>
+      </nav>
+    </header>
+    <main class="detail-page" data-detail-type="tool">
+      <section class="detail-hero">
+        <p class="eyebrow">Interactive tool</p>
+        <h1 id="detail-title">Tool</h1>
+        <p id="detail-summary"></p>
+      </section>
+      <section class="tool-lab">
+        <article class="detail-panel">
+          <h2>Inputs</h2>
+          <ul id="tool-inputs"></ul>
+          <h2>Use cases</h2>
+          <ul id="tool-use-cases"></ul>
+        </article>
+        <article class="detail-panel graph-panel">
+          <h2>Active graph</h2>
+          <div id="tool-page-controls"></div>
+          <canvas id="tool-page-chart" width="760" height="360"></canvas>
+          <div class="result-box"><span>Current result</span><strong id="tool-page-result">$0</strong><small id="tool-page-note">Adjust inputs to update the chart.</small></div>
+        </article>
+      </section>
+      <section class="related-section">
+        <h2>Related tools</h2>
+        <div class="related-grid" id="related-links"></div>
+      </section>
+    </main>
+    <script src="calc.js?v=20261105v4"></script>
+    <script src="tools-meta.js?v=20261105v4"></script>
+    <script src="content.js?v=20261105v4"></script>
+    <script src="checks.js?v=20261105v4"></script>
+    <script src="states.js?v=20261105v4"></script>
+    <script src="detail.js?v=20261105v4"></script>
+  <script>
+(function() {
+  try {
+    var stored = localStorage.getItem('bigProfile');
+    if (!stored) return;
+    var p = JSON.parse(stored);
+    if (!p || !p.name) return;
+    var shortName = p.name.replace(/^The\s+/, '');
+    var badge = document.createElement('a');
+    badge.href = 'index.html#quiz';
+    badge.className = 'money-type-badge';
+    badge.setAttribute('aria-label', 'Your money type: ' + p.name);
+    badge.innerHTML = '<span class="badge-emoji">' + p.emoji + '</span><span class="badge-name">' + shortName + '</span><span class="badge-retake">retake</span>';
+    document.body.appendChild(badge);
+  } catch(e) {}
+})();
+</script>
+    <script src="quick.js?v=20261105v4"></script>
+  </body>
+</html>
+

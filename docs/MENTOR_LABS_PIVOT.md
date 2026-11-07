@@ -19,9 +19,9 @@ Market context supports on-demand and optional five-minute foreground refresh us
 
 ## Source provenance and limits
 
-Learning content: `gituser1111221111/barone-investment-group`, commit `b8b165e3266cad4532ec9a1bbb3f49b81535b63f`, `content.js`. Reused at the founder's express request. Existing lesson text is preserved as educational source material; rates, historical claims, tax details and examples have not received a new methodology audit. Product recommendations from the source's app directory are not imported. Lesson discussion currently passes the topic into chat, not the full lesson text as a verified research source.
+Learning content: `gituser1111221111/barone-investment-group`, commit `b8b165e3266cad4532ec9a1bbb3f49b81535b63f`, `content.js`. Reused at the founder's express request. Existing lesson text is preserved as educational source material; rates, historical claims, tax details and examples have not received a new methodology audit. The integrated academy now copies the lesson layouts, interactive calculator tools, and knowledge checks from that revision. Copied tool pages use Mentor colors and remain educational estimates; source app links retain their original labels. Lesson discussion currently passes the topic into chat, not the full lesson text as a verified research source.
 
-Sentinel: inspected `gituser1111221111/demo-/app.js`. The implemented concentration workflow uses Mentor Labs' exact-cent utilities rather than copying its standalone dashboard, historical statistics or default analyst rule. This is not the full thirteen-rule Sentinel integration.
+Sentinel: dashboard layout adapted from `gituser1111221111/demo-`, revision `c50a6af8ab60af9f34d5d5b45b364f33d47ee1ed`. Its sidebar navigation, KPI cards, allocation panels, holdings, calendar, news and guideline views are adapted to Mentor's saved portfolio and budgeting APIs. Portfolio checks retain Mentor's exact-cent utilities. Imported values remain separate from market quotes; unsupported historical performance and risk statistics are not fabricated. This does not implement Sentinel's complete thirteen-rule engine.
 
 ## What remains future work
 
