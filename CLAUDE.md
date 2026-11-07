@@ -15,6 +15,13 @@ Start every session by reading:
 - Stack: starter Node 22 backend (`server.js`, `lib/`), Claude API (`claude-sonnet-5-5` to generate, `claude-haiku-5-5` to pick and for memory), ElevenLabs STT/TTS, Stripe test mode, static UI in `public/`.
 - All money is a USD decimal string, with math in exact cents via `lib/finance.js`. The model never does arithmetic.
 
+## What's built (Section B, Sat Nov 7)
+- `npm run dev` → http://127.0.0.1:4180 (landing → quiz → snapshot → chat). "Use demo profile" skips the quiz.
+- `lib/profile.js` (quiz → profile + snapshot, cents), `lib/portfolio.js` (CSV → `portfolioSummary`), `lib/store.js` (anonymous session store, `.data/`), `lib/routes.js` (all `/api/*` app routes + static `public/`), `public/` (vanilla JS UI).
+- `lib/mentor/chat.mock.js` implements the A/B contract with code-computed candidates and rule-based picks; responses say `mode: "mock"`.
+- **Engine switch:** when `lib/mentor/chat.js` exists AND `ANTHROPIC_API_KEY` is set, routes use the real engine automatically (`MENTOR_ENGINE=mock` forces mock). Section A only has to export `chat()` and `repick()` with the contract shape.
+- Deploy: set `HOST=0.0.0.0`, `ANTHROPIC_API_KEY`, optional `CHAT_LIMIT_PER_HOUR` (default 40/IP).
+
 ## Ownership
 - Section A (teammate): `lib/mentor/`, `personas/`, `agents/`, `evals/`, `tests/mentor.test.js`
 - Section B (Ryan): `server.js` routes, `public/`, `lib/store.js`, voice, Stripe, `docs/`, Devpost
