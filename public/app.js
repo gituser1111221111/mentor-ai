@@ -152,10 +152,22 @@ function renderChatChrome() {
   $('#agent-list').innerHTML = agents().map((x,i) => `<button type="button" class="rail-item coach-item tone-${i%4} ${x.id === state.agentId ? 'on' : ''}" data-a="${esc(x.id)}">${agentSymbol(x.id)}<span>${esc(displayName(x.name))}</span><small>${railStatus(x)}</small></button>`).join('');
   document.querySelectorAll('#persona-switch [data-p]').forEach(b => b.onclick = () => pickPersona(b.dataset.p));
   document.querySelectorAll('#agent-list [data-a]').forEach(b => b.onclick = () => pickAgent(b.dataset.a));
-  const prompts = {budget: ['How should I budget when my pay keeps changing?', 'What do I do in my slow months?', 'Where should extra money go in a good month?'], debt: ['How fast can I get rid of my debt?', 'Which debt should I pay first?', 'Should I pay off debt or save first?'], savings: ['How big should my emergency fund be?', 'How do I save when my income drops?', 'Should I stop investing until I have savings?']};
-  $('#suggest').innerHTML = (prompts[state.agentId] || prompts.budget).map(t => `<button class="chip" type="button">${esc(t)}</button>`).join('');
+  $('#suggest').innerHTML = starterPrompts().map(t => `<button class="chip" type="button">${esc(t)}</button>`).join('');
   document.querySelectorAll('#suggest .chip').forEach(c => c.onclick = () => send(c.textContent));
 }
+function starterPrompts() {
+  const prompts = {budget: ['How should I budget when my pay keeps changing?', 'What do I do in my slow months?', 'Where should extra money go in a good month?'], debt: ['How fast can I get rid of my debt?', 'Which debt should I pay first?', 'Should I pay off debt or save first?'], savings: ['How big should my emergency fund be?', 'How do I save when my income drops?', 'Should I stop investing until I have savings?'], investing: ['Review my portfolio', 'Which earnings calls are coming up for my holdings?', 'What are the biggest risks in my portfolio?'], equity: ['What should I listen for on NVIDIA’s next earnings call?', 'How did my largest holdings do last quarter?', 'What do analysts and recent filings say about what I own?']};
+  return prompts[state.agentId] || prompts.budget;
+}
+// Empty-state starters: visible questions instead of a blank log. Removed on the first send.
+function showStarters() {
+  const el = document.createElement('div'); el.className = 'starter';
+  el.innerHTML = `<p class="fine">Try one of these, or ask your own.</p><div class="chips">${starterPrompts().map(t => `<button class="chip" type="button">${esc(t)}</button>`).join('')}</div>${state.profile?.incomeHistory?.length ? '' : '<button class="btn text" type="button" data-add-numbers>Add my numbers for a personal plan</button>'}`;
+  el.querySelectorAll('.chip').forEach(c => c.onclick = () => send(c.textContent));
+  el.querySelector('[data-add-numbers]')?.addEventListener('click', renderIntake);
+  $('#log').append(el);
+}
+const asksForNumbers = r => !r.turnId && /financial details|update your (?:numbers|details)|add your numbers/i.test(r.text || '');
 function showFeature(x) {
   $('#feature-title').textContent = x.name;
   $('#feature-text').textContent = `${x.name} is in the Plus library. This feature is not available yet.`;
@@ -213,7 +225,9 @@ function botMessage(r) {
     ${calcs.length || r.citations?.length ? `<details class="answer-details"><summary>Sources and calculations</summary>${calcs.map(calcCard).join('')}${r.citations?.length ? `<p class="sources">${r.citations.map(c => `${sourceLink(c)} <span>(${esc(c.ref)})</span>`).join('; ')}</p>` : ''}</details>` : ''}
     ${r.optionsReviewed ? `<p class="fine reviewed">${esc(displayName(r.personaName || 'Your mentor'))} chose from ${r.optionsReviewed} verified options.</p>` : ''}
     ${r.turnId ? `<div class="meta"><button class="btn text" type="button" data-compare>Compare mentors</button>${r.canExpand ? '<button class="btn text" type="button" data-expand>Show more options</button>' : ''}</div><div class="more-options" hidden></div>` : ''}
+    ${asksForNumbers(r) ? '<div class="meta"><button class="btn primary" type="button" data-add-numbers>Add my numbers</button></div>' : ''}
     ${r.conversational ? '' : `<p class="disclose">${esc(r.disclosure || '')}</p>`}`;
+  el.querySelector('[data-add-numbers]')?.addEventListener('click', renderIntake);
   el.querySelector('[data-listen]')?.addEventListener('click', () => speakReply(el, r));
   el.querySelector('[data-stop]')?.addEventListener('click', () => {++voice.epoch;if(voice.active)endConversation();else stopPlayback();});
   el.querySelector('[data-compare]')?.addEventListener('click', () => openCompare(r));
@@ -276,6 +290,7 @@ async function openCompare(r) {
 
 async function send(text, {spoken = false, voiceSession = null} = {}) {
   text = text.trim(); if (!text) return;
+  document.querySelector('#log .starter')?.remove();
   if (!voiceSession && voice.active) endConversation();
   stopPlayback('new-question');
   const speechEpoch = ++voice.epoch;
@@ -313,6 +328,7 @@ function startChat() {
   $('#log').innerHTML = ''; state.lastTurn = null; renderChatChrome(); refreshMemory(); show('v-chat');
   const p = persona(state.personaId), a = agent(state.agentId);
   note(state.profile?.incomeHistory?.length ? `${p.name} is ready to talk through your plan. Ask anything below.` : `Say hello, ask a question, or choose Talk live for a voice conversation. Add your numbers anytime for a personal plan.`);
+  showStarters();
   $('#msg').focus();
 }
 

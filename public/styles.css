@@ -807,3 +807,19 @@ body:not(.chat-open) header.site #head-start { background:#e5edda; color:#173b32
 #pricing,.site-foot,.evidence-band { background:#e7ecdf!important; }
 #pricing .plan,#pricing .plan.plus,.evidence-grid article { background:#f8f8ef; border-color:#ccd7c4; }
 .evidence-label { color:#285446; }
+
+/* UI/UX pass (Nov 7): readable muted text, chat empty state, roomier mobile composer. */
+:root { --muted: #52665b; } /* was #65796e: 3.9:1 on the sage bands, below WCAG AA for small text */
+.site-foot, .site-foot p, .site-foot summary, .site-foot a { color: var(--ink-2); }
+.starter { margin: 4px 0 8px; }
+.starter .chips { margin-top: 8px; }
+.starter > .btn.text { margin-top: 10px; }
+#pricing .plan-links { justify-content: flex-start; padding: 0; margin-top: 18px; gap: 12px; }
+@media (max-width: 640px) {
+  #mic #mic-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  #mic { min-width: 44px; justify-content: center; padding-inline: 12px; }
+  #composer input { flex: 1 1 0; min-width: 0; }
+}
+/* Dark header (every view except chat): header controls were ink-on-evergreen and nearly invisible. */
+body:not(.chat-open) header.site #restart, body:not(.chat-open) header.site #engine { color: #f6f2e9; }
+body:not(.chat-open) header.site #engine { border-color: #ffffff40; }
