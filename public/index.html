@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,500;1,6..72,500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/styles.css?v=mentor-first-15">
+  <link rel="stylesheet" href="/styles.css?v=restore-design-16">
 </head>
 <body>
   <header class="site">
@@ -35,27 +35,40 @@
   <main>
     <!-- LANDING -->
     <section id="v-landing" class="view">
+      <div class="hero" id="overview">
+        <div class="hero-copy">
+          <p class="hero-eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span> MEET MENTOR LABS</p>
+          <h1>AI agents do the analysis.<em> Mentors guide your next step.</em></h1>
+          <p class="lead">Your numbers. Current market context. A clear next step, explained through a mentor’s financial philosophy.</p>
+          <p class="hero-catalog"><span>Budgeting</span><span>Portfolio review</span><span>Equity research</span></p>
+          <div class="row hero-actions">
+            <button id="try-chat" class="btn primary">Try Ramsey Free <span aria-hidden="true">↗</span></button>
+            <button class="btn hero-context" data-context>Add portfolio or documents</button>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <figure class="featured-mentor">
+            <img src="/img/mentors/debt-free-coach.webp" alt="AI-generated likeness inspired by Dave Ramsey" width="640" height="800">
+            <figcaption><span>THE FREE FLAGSHIP</span><strong>Dave Ramsey</strong><small>Inspired AI mentor</small></figcaption>
+          </figure>
+
+        </div>
+      </div>
+
+
       <section id="mentors" class="band">
-        <div class="band-head"><div><p class="section-eyebrow">THE MENTOR LIBRARY</p><h1>Find your money mentor.</h1></div><p>Familiar philosophies. Independent AI perspectives. Choose who guides your next step.</p></div>
-        <div class="mentor-start"><button id="try-chat" class="btn primary">Try Ramsey Free</button><button class="btn" data-context>Add portfolio or documents</button><span class="tier-key"><span class="tag">Free</span><span class="tag plus">Plus</span></span></div>
+        <div class="band-head"><div><p class="section-eyebrow">THE MENTOR LIBRARY</p><h2>Choose a perspective you know.</h2></div><p>Choose a philosophy for your conversation. Explore each mentor’s focus and availability below.</p></div>
         <div id="personas" class="portraits"></div>
       </section>
 
-      <section id="method" class="band build-band">
-        <p class="section-eyebrow">HOW WE BUILD MENTORS</p><h2>Public teachings. A distinct perspective.</h2>
-        <div class="build-grid"><article><h3>Research the source</h3><p>Books, interviews, podcasts, and articles become curated research notes.</p></article><article><h3>Map the philosophy</h3><p>We organize principles, priorities, and tradeoffs into a mentor’s instructions.</p></article><article><h3>Test the perspective</h3><p>We check how the mentor explains options across different financial situations.</p></article></div>
-        <details class="research-goal"><summary>Our research ambition</summary><p>Our goal is a library spanning thousands of hours of public material. Today’s mentors use curated teachings and source notes; that larger library is still being built.</p></details>
-      </section>
+      <section id="method" class="band method-band"><div class="method-intro"><p class="section-eyebrow">HOW WE BUILD MENTORS</p><h2>Public teachings. A distinct perspective.</h2><details class="research-goal"><summary>Our research ambition</summary><p>Our goal is a library spanning thousands of hours of public material. Today’s mentors use curated teachings and source notes; that larger library is still being built.</p></details></div><div class="method-list"><div><strong>Research the source</strong><p>Books, interviews, podcasts, and articles become curated research notes.</p></div><div><strong>Map the philosophy</strong><p>We organize principles, priorities, and tradeoffs into a mentor’s instructions.</p></div><div><strong>Test the perspective</strong><p>We check how the mentor explains options across different financial situations.</p></div></div></section>
 
       <section id="specialists" class="band">
         <div class="band-head"><div><p class="section-eyebrow">THE SPECIALIST LIBRARY</p><h2>An agent for every money decision.</h2></div><p>Choose the job you need done. Budgeting, portfolio review, and equity research are built; each card shows what is available or planned.</p></div>
         <div id="agents" class="agent-groups"></div>
       </section>
 
-      <section id="agent-method" class="band build-band">
-        <p class="section-eyebrow">HOW WE BUILD AGENTS</p><h2>A focused job. Tools to do it.</h2>
-        <div class="build-grid"><article><h3>Define the task</h3><p>Each specialist focuses on a money decision, from budgeting to company research.</p></article><article><h3>Connect the context</h3><p>Your numbers, documents, holdings, and available data feed the agent’s tools.</p></article><article><h3>Check the options</h3><p>Code calculates and validates. The mentor selects an option and explains why.</p></article></div>
-      </section>
+      <section id="agent-method" class="band method-band"><div class="method-intro"><p class="section-eyebrow">HOW WE BUILD AGENTS</p><h2>A focused job. Tools to do it.</h2></div><div class="method-list"><div><strong>Define the task</strong><p>Each specialist focuses on a money decision, from budgeting to company research.</p></div><div><strong>Connect the context</strong><p>Your numbers, documents, holdings, and available data feed the agent’s tools.</p></div><div><strong>Check the options</strong><p>Code calculates and validates. The mentor selects an option and explains why.</p></div></div></section>
 
       <section id="live-data" class="band compact-data">
         <div class="api-heading"><div><p class="section-eyebrow">LIVE DATA &amp; CONNECTIONS</p><h2>Research, connected.</h2></div><p>Market prices, filings, and economic context.</p></div>
@@ -183,6 +196,6 @@
     <p class="footer-note">Independent AI perspectives for education. No affiliation or endorsement. AI can make mistakes.</p>
     <p><a href="/terms.html">Terms</a> · <a href="/privacy.html">Privacy</a> · <a href="https://github.com/gituser1111221111/mentor-ai">Source</a> · © 2026 Mentor Labs</p>
   </footer>
-  <script type="module" src="/app.js?v=mentor-first-15"></script>
+  <script type="module" src="/app.js?v=restore-design-16"></script>
 </body>
 </html>

@@ -34,16 +34,13 @@ Always describe them as AI-generated likenesses. Every card names the real figur
 **Agents** have a specialty, such as debt consolidation, portfolio review, equity research, tax, or business coaching. A **mentor** brings a distinct public-teaching perspective to that specialty. All agent cards use a simple `+` badge. Ramsey-inspired guidance with budgeting support is the sole working flagship; other agents and mentors belong to the planned Plus library. If selected, they explain that they are being built. The long-term corpus and hundreds-of-agents language must be framed as a vision until implemented. The context hub must distinguish document and link previews from the functional CSV import.
 
 
-## Mentor-first homepage (Nov 7, current)
+## Homepage order and restored design (Nov 7, current)
 
-The first screen is the mentor library, followed by how mentors are built,
-the specialist library, how agents are built, a compact API directory, and pricing.
-Conversation examples, evidence, context, and FAQ follow pricing.
-No section rail or custom scroll navigation. Keep the native browser scrollbar.
-Header and mentor-library actions open the existing context hub.
-
-Free mentor and agent cards use sage green; Plus uses warm gold with text badges.
-API names, provider marks, and short status labels render from catalog.dataSources.
-Provider logos/site icons are hosted locally; provenance is in public/img/providers/SOURCES.md.
-The thousands-of-hours research library is an ambition, not a claim about processed material.
-Use existing project components and tokens; the 21st CLI is unavailable on this host.
+Preserve the original evergreen hero, portrait cards, agent cards, and typography.
+After the hero: mentors, mentor process, agents, agent process, compact API logos,
+then pricing. Examples, evidence, context, and FAQ follow.
+Use the established split method sections. Paid options use the small purple Plus badge;
+do not recolor whole cards by tier. No section rail or custom scroll navigation.
+Header and hero retain their existing context-hub buttons.
+Provider logos are local; provenance is in public/img/providers/SOURCES.md.
+The thousands-of-hours source library is a research ambition, not a completed corpus.

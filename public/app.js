@@ -54,9 +54,9 @@ const agentSymbol = id => {
 
 // ---------- landing ----------
 function renderLanding() {
-  $('#personas').innerHTML = personas().map(p => `<div class="portrait tier-${p.tier} ${usable(p) ? '' : 'locked'}">${art(p)}${p.tier === 'plus' ? `<button type="button" class="tag plus portrait-plus" data-unlock aria-label="Explore Plus for ${esc(p.name)}">Plus</button>` : badge(p)}
+  $('#personas').innerHTML = personas().map(p => `<div class="portrait ${usable(p) ? '' : 'locked'}">${art(p)}${p.tier === 'plus' ? `<button type="button" class="tag plus portrait-plus" data-unlock aria-label="Explore Plus for ${esc(p.name)}">Plus</button>` : badge(p)}
     <h3>${esc(p.name)}</h3><p class="portrait-source">${p.textOnly ? 'AI perspective · Text chat' : 'AI-inspired perspective'}</p><p>${esc(p.philosophy)}.</p>${usable(p) ? `<button class="btn outline" type="button" data-chat-mentor="${esc(p.id)}">Chat with ${esc(displayName(p.name).split(' ')[0])}</button>` : ''}</div>`).join('');
-  $('#agents').innerHTML = `<div class="agent-grid">${agents().map((a,i) => `<button type="button" class="agent-card tier-${statusLabel(a).toLowerCase()}" data-a="${a.id}">${agentSymbol(a.id)}<span class="agent-card-top"><strong>${esc(a.name)}</strong>${badge(a)}</span><span class="agent-card-job">${esc(a.job)}</span><span class="agent-availability">${a.built ? "Available" : "Planned"}</span></button>`).join('')}</div>`;
+  $('#agents').innerHTML = `<div class="agent-grid">${agents().map((a,i) => `<button type="button" class="agent-card tone-${i%4}" data-a="${a.id}">${agentSymbol(a.id)}<span class="agent-card-top"><strong>${esc(a.name)}</strong>${badge(a)}</span><span class="agent-card-job">${esc(a.job)}</span><span class="agent-availability">${a.built ? "Available" : "Planned"}</span></button>`).join('')}</div>`;
   document.querySelectorAll('#agents [data-a]').forEach(b => b.onclick = () => { const a = agent(b.dataset.a); if (a.id === 'budget') renderIntake(); else showAgent(a); });
   document.querySelectorAll('#personas [data-unlock]').forEach(b => b.onclick = openUnlock);
   document.querySelectorAll('[data-chat-mentor]').forEach(b => b.onclick = () => { state.personaId = b.dataset.chatMentor; state.agentId = 'budget'; startChat(); });
