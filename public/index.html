@@ -70,23 +70,23 @@
         <ol class="steps">
           <li><span class="n">01</span><div><h3>Talk to a mentor</h3><p>Ask the Ramsey-inspired flagship a question right away. No quiz is required to begin.</p></div></li>
           <li><span class="n">02</span><div><h3>Add your context</h3><p>Answer a short intake for a personal snapshot. You can also bring a document or a portfolio reference.</p></div></li>
-          <li><span class="n">03</span><div><h3>Explore the lab</h3><p>See the specialist agents and mentor perspectives in the Plus preview. Available features are marked clearly.</p></div></li>
+          <li><span class="n">03</span><div><h3>Explore the lab</h3><p>See where the Plus library is headed. The Ramsey starter is the working MVP; more mentor-agent pairings will follow.</p></div></li>
         </ol>
       </section>
 
       <section id="method" class="band method-band">
         <div class="method-intro"><p class="section-eyebrow">THE FLAGSHIP</p><h2>How we built the Ramsey-inspired point of view.</h2><p>We organize publicly available ideas from books, shows, interviews and writing into a practical set of principles. For this MVP, the working mentor draws on a curated set of Ramsey themes: a written budget, a starter emergency fund, and paying down debt with momentum.</p><p class="fine">Our long-term goal is a research library spanning thousands of hours of public material. Today's mentor uses a focused set of source notes. It is an AI interpretation, not Dave Ramsey or a product endorsed by him.</p></div>
-        <div class="method-list"><div><span>01 / SOURCE</span><strong>Start with public teaching</strong><p>Map ideas to named sources so the perspective stays recognizable.</p></div><div><span>02 / SPECIALIZE</span><strong>Give each agent a job</strong><p>Budgeting, debt and savings work today. Portfolio, business and other specialties are visible as Plus previews.</p></div><div><span>03 / GUIDE</span><strong>Let the mentor direct</strong><p>The mentor frames the options through its philosophy, while the app keeps the underlying numbers inspectable.</p></div></div>
+        <div class="method-list"><div><span>01 / SOURCE</span><strong>Start with public teaching</strong><p>Map ideas to named sources so the perspective stays recognizable.</p></div><div><span>02 / SPECIALIZE</span><strong>Give each agent a job</strong><p>From debt consolidation and equity research to business strategy, every agent tackles a specific task.</p></div><div><span>03 / GUIDE</span><strong>Let the mentor direct</strong><p>The mentor brings a trusted point of view to the agent's work. The Ramsey budget starter demonstrates the approach today.</p></div></div>
       </section>
 
       <section id="mentors" class="band">
-        <div class="band-head"><div><p class="section-eyebrow">THE MENTOR LIBRARY</p><h2>Choose a perspective you know.</h2></div><p>Ramsey-inspired guidance is free. The other nine perspectives are Plus previews. The portraits are AI-generated likenesses; the people shown are not affiliated with this app.</p></div>
+        <div class="band-head"><div><p class="section-eyebrow">THE MENTOR LIBRARY</p><h2>Choose a perspective you know.</h2></div><p>Ramsey-inspired guidance is the free working demo. The other nine perspectives belong to the Plus lineup. Portraits are AI-generated likenesses; the people shown are not affiliated with this app.</p></div>
         <div id="personas" class="portraits"></div>
       </section>
 
       <section id="specialists" class="band">
-        <div class="band-head"><div><p class="section-eyebrow">THE SPECIALIST LIBRARY</p><h2>One job for every agent.</h2></div><p>Ten specialties are on the board, from budgeting and debt to portfolio reviews and business. The Ramsey starter includes budgeting support; standalone agents are in Plus.</p></div>
-        <div id="agents" class="table"></div>
+        <div class="band-head"><div><p class="section-eyebrow">THE SPECIALIST LIBRARY</p><h2>An agent for every money decision.</h2></div><p>Sixteen specialties show the range: consolidate debt, review a portfolio, research an equity, or work through business cash flow. In the full product, you choose the agent and the mentor that guides its approach. The Ramsey budget starter is the working MVP.</p></div>
+        <div id="agents" class="agent-groups"></div>
       </section>
 
       <section class="band context-band"><div><p class="section-eyebrow">BRING YOUR CONTEXT</p><h2>Your documents and portfolio, in one place.</h2><p>Add a document, save a portfolio link for reference, or import a holdings CSV. The document and link fields are showcase previews; CSV holdings can be summarized now.</p></div><button class="btn primary" data-context>Open context hub</button></section>
@@ -104,10 +104,10 @@
           <div class="plan plus">
             <h3>Plus</h3>
             <p class="price">$4.99<span>/month</span></p>
-            <p>Explore nine more mentor perspectives and ten specialist agents.</p>
-            <p>Built features can be tried in demo mode. Unbuilt specialties are clearly marked as previews.</p>
+            <p>Nine more mentor perspectives and sixteen specialist agents in the Plus lineup.</p>
+            <p>The Ramsey starter is the working demo. More pairings will be built as Mentor Labs grows.</p>
             <p>Test checkout only; no real charge in this prototype.</p>
-            <button class="btn primary" data-unlock>Preview Plus</button>
+            <button class="btn primary" data-unlock>Explore Plus</button>
           </div>
         </div>
       </section>
@@ -115,7 +115,7 @@
       <section class="band never">
         <h2>What we will never do</h2>
         <ul class="plain">
-          <li>Present a showcase feature as live. Preview specialties are labeled before you try them.</li>
+          <li>Claim that a planned agent is already giving live advice. The Ramsey starter is the interactive MVP.</li>
           <li>Pretend a mentor is the real person. Mentors are inspired by public teachings and not affiliated with or endorsed by anyone.</li>
           <li>Ask for your bank or brokerage password.</li>
           <li>Call this licensed advice. It's education to help you decide.</li>
@@ -186,7 +186,7 @@
 
   <dialog id="unlock"><form method="dialog">
     <h3>Explore Mentor Labs Plus</h3>
-    <p>The Ramsey-inspired starter is free. Plus previews the other mentor perspectives and specialist agents. Features still in development are marked before you try them. This prototype uses test checkout only.</p>
+    <p>The Ramsey-inspired starter is the free working demo. Plus is the growing library of additional mentor perspectives and specialist agents. The other pairings are planned; this prototype uses test checkout only.</p>
     <p id="unlock-test" class="fine" hidden>Stripe test mode. Use card 4242 4242 4242 4242, any future date, any CVC. No real charge.</p>
     <p id="unlock-msg" class="error" role="alert"></p>
     <div class="row"><button id="unlock-go" class="btn primary" value="go">Continue to checkout</button><button class="btn">Not now</button></div>
@@ -198,7 +198,7 @@
     <label class="context-field"><strong>Holdings CSV</strong><span>For a working demo, import a CSV with symbol, sector and market_value columns.</span><input id="context-csv" type="file" accept=".csv,text/csv"><small id="context-csv-status" role="status">No holdings imported.</small></label></div>
     <div class="row"><button id="portfolio-save" type="button" class="btn primary">Save portfolio reference</button><button id="context-sample" type="button" class="btn">Use sample holdings</button></div>
   </dialog>
-  <dialog id="feature-preview"><div class="context-dialog-head"><div><p class="section-eyebrow">PLUS LIBRARY</p><h3 id="feature-title"></h3></div><button id="feature-close" type="button" class="btn text">Close</button></div><p id="feature-text"></p><div class="row"><button type="button" class="btn primary" id="feature-plus">Preview Plus</button></div></dialog>
+  <dialog id="feature-preview"><div class="context-dialog-head"><div><p class="section-eyebrow">PLUS LIBRARY</p><h3 id="feature-title"></h3></div><button id="feature-close" type="button" class="btn text">Close</button></div><p id="feature-text"></p><div class="row"><button type="button" class="btn primary" id="feature-plus">Explore Plus</button></div></dialog>
 
   <footer class="site-foot">
     <p>Educational opinion, not advice from a licensed financial adviser, CPA, or attorney. Mentor portraits are AI-generated likenesses. Mentors are inspired by public teachings and are not affiliated with or endorsed by the people named.</p>

@@ -1,9 +1,9 @@
 # Mentor Labs (RedHawk Builds 2026, Challenge #21)
 
-Current product direction (Nov 7): free Ramsey-inspired starter chat, optional six-screen intake, ten visible mentors and ten visible specialist agents. Only Ramsey is a free mentor. Standalone agents and all other mentors are Plus; unbuilt entries remain clearly labeled previews. The context hub previews document selection and portfolio URLs; holdings CSV import works. Do not claim a thousands-of-hours source corpus has already been processed.
+Current product direction (Nov 7): free Ramsey-inspired starter chat, optional six-screen intake, ten visible mentors and sixteen visible specialist agents. Only the Ramsey budgeting starter is interactive. All agent cards show `+`; all other mentor and agent entries belong to the planned Plus library and explain their status when selected. The context hub previews document selection and portfolio URLs; holdings CSV import works. Do not claim a thousands-of-hours source corpus has already been processed.
 
 Start every session by reading:
-- `docs/STRATEGY_AND_STRUCTURE.md`: **v0.4, newest, wins on conflicts.** Quiz, 10 agents/10 personas (1 live each), portfolio upload, deploy, repo layout. Specs: `config/quiz.json`, `config/catalog.json`
+- `docs/STRATEGY_AND_STRUCTURE.md`: historical v0.4 plan. Use the current catalog and this file for the 16-agent, single-demo MVP. Specs: `config/quiz.json`, `config/catalog.json`
 - `docs/BUILD_PLAN.md`: architecture, the A/B chat-module contract, the two builder sections, timeline, acceptance checks
 - `docs/BUSINESS_PLAN.md`: business context (the v0.3 box at the top supersedes older sections)
 - `docs/DEVPOST.md`: paste-ready Devpost text, pitch script, Q&A. `README.md`: public repo README
@@ -13,7 +13,7 @@ Start every session by reading:
 ## Locked decisions
 - Challenge 21, Variable-income budgeting, MVP option 1: plan expenses around variable monthly income. User: young adult with uneven income who can't afford an advisor and doesn't trust AI.
 - **Generate, then pick:** agents (persona-neutral) produce ~12 candidate options with all numbers from code tools. Code validates them. The persona only picks one by id (enum) and explains. `repick()` swaps the persona without changing the facts.
-- MVP persona: Debt-Free Coach, built from Dave Ramsey's public teachings and labeled "not affiliated." Conscious Spender (built-in, from Ramit Sethi's public teachings) is the second live persona for the switch demo. Hustle Coach (Grant Cardone) was removed in v0.6. Never "I am Dave Ramsey." No voice clone.
+- MVP persona: Debt-Free Coach, built from Dave Ramsey's public teachings and labeled "not affiliated." Conscious Spender (built-in, from Ramit Sethi's public teachings) remains prototype code but is not launched. Hustle Coach (Grant Cardone) was removed in v0.6. Never "I am Dave Ramsey." No voice clone.
 - Mentor portraits are AI-generated editorial likenesses of the public figures who inspire each philosophy. Label them as generated and maintain clear non-affiliation language; the figures do not speak for or endorse the app.
 - Business model: free Ramsey-inspired starter; one $4.99/mo test-mode tier previews the Plus library. Only built features are interactive. Specific answers include a disclosure (not licensed advice).
 - Stack: starter Node 22 backend (`server.js`, `lib/`), Claude API (`claude-sonnet-5-5` to generate, `claude-haiku-5-5` to pick and for memory), ElevenLabs STT/TTS, Stripe test mode, static UI in `public/`.

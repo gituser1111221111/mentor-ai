@@ -1,76 +1,134 @@
 {
-  "version": 3,
+  "version": 4,
   "disclaimer": "Personas are inspired by public teachings; not affiliated with or endorsed by the people named. Educational opinion, not advice from a licensed financial adviser, CPA, or attorney.",
   "agents": [
     {
       "id": "budget",
-      "name": "Budget Coaching",
-      "job": "Plan around variable income",
+      "name": "Budget Agent",
+      "job": "Build a plan for variable pay and spending",
+      "category": "Everyday money",
       "status": "live",
       "tier": "plus",
       "includedWithFlagship": true
     },
     {
       "id": "debt",
-      "name": "Debt Coaching",
-      "job": "Payoff order and timelines",
-      "status": "live",
+      "name": "Debt Consolidation Agent",
+      "job": "Compare payoff and consolidation paths",
+      "category": "Everyday money",
+      "status": "planned",
       "tier": "plus"
     },
     {
       "id": "savings",
-      "name": "Savings & Emergency Fund Coaching",
-      "job": "How much and how fast",
-      "status": "live",
+      "name": "Emergency Fund Agent",
+      "job": "Plan cash reserves and surprise expenses",
+      "category": "Everyday money",
+      "status": "planned",
+      "tier": "plus"
+    },
+    {
+      "id": "tax",
+      "name": "Tax Agent",
+      "job": "Organize tax questions and planning topics",
+      "category": "Everyday money",
+      "status": "planned",
+      "tier": "plus"
+    },
+    {
+      "id": "credit",
+      "name": "Credit Agent",
+      "job": "Review credit habits and borrowing costs",
+      "category": "Everyday money",
+      "status": "planned",
+      "tier": "plus"
+    },
+    {
+      "id": "retirement",
+      "name": "Retirement Agent",
+      "job": "Map retirement goals and account choices",
+      "category": "Everyday money",
+      "status": "planned",
+      "tier": "plus"
+    },
+    {
+      "id": "insurance",
+      "name": "Insurance Review Agent",
+      "job": "Spot coverage questions and tradeoffs",
+      "category": "Everyday money",
+      "status": "planned",
       "tier": "plus"
     },
     {
       "id": "investing",
       "name": "Portfolio Review Agent",
-      "job": "Review holdings, allocation and fees",
-      "status": "locked",
+      "job": "Review allocation, concentration and fees",
+      "category": "Investing & property",
+      "status": "planned",
       "tier": "plus"
     },
     {
-      "id": "retirement",
-      "name": "Retirement Coaching",
-      "job": "401k/IRA growth projections",
-      "status": "locked",
+      "id": "equity",
+      "name": "Equity Research Agent",
+      "job": "Study companies and investment theses",
+      "category": "Investing & property",
+      "status": "planned",
       "tier": "plus"
     },
     {
-      "id": "tax",
-      "name": "Tax Education Coaching",
-      "job": "Withholding and 1099 basics for gig income",
-      "status": "locked",
-      "tier": "plus"
-    },
-    {
-      "id": "credit",
-      "name": "Credit Coaching",
-      "job": "Utilization and score factors",
-      "status": "locked",
-      "tier": "plus"
-    },
-    {
-      "id": "income",
-      "name": "Income & Side Hustle Coaching",
-      "job": "Raise your lowest month",
-      "status": "locked",
+      "id": "real_estate",
+      "name": "Real Estate Agent",
+      "job": "Explore property decisions and cash flow",
+      "category": "Investing & property",
+      "status": "planned",
       "tier": "plus"
     },
     {
       "id": "life",
-      "name": "Life Planning Coaching",
-      "job": "Big goals: car, move, school",
-      "status": "locked",
+      "name": "Life Planning Agent",
+      "job": "Plan for moves, school and major purchases",
+      "category": "Investing & property",
+      "status": "planned",
       "tier": "plus"
     },
     {
       "id": "business",
-      "name": "Business Coach Agent",
-      "job": "Business cash flow and self-employed basics",
-      "status": "locked",
+      "name": "Business Coaching Agent",
+      "job": "Explore ownership and operating decisions",
+      "category": "Business building",
+      "status": "planned",
+      "tier": "plus"
+    },
+    {
+      "id": "biz_cash",
+      "name": "Business Cash Flow Agent",
+      "job": "Review runway, receivables and expenses",
+      "category": "Business building",
+      "status": "planned",
+      "tier": "plus"
+    },
+    {
+      "id": "biz_strategy",
+      "name": "Business Strategy Agent",
+      "job": "Test growth plans and tradeoffs",
+      "category": "Business building",
+      "status": "planned",
+      "tier": "plus"
+    },
+    {
+      "id": "pricing",
+      "name": "Pricing & Revenue Agent",
+      "job": "Explore pricing and revenue models",
+      "category": "Business building",
+      "status": "planned",
+      "tier": "plus"
+    },
+    {
+      "id": "income",
+      "name": "Income Growth Agent",
+      "job": "Find income, freelance and side-hustle options",
+      "category": "Business building",
+      "status": "planned",
       "tier": "plus"
     }
   ],
@@ -93,7 +151,7 @@
       "philosophy": "Long-term investing in good businesses, low-cost index funds for most people",
       "risk": "moderate",
       "audience": "Young investors building long-term wealth",
-      "status": "locked",
+      "status": "planned",
       "tier": "plus",
       "image": "/img/mentors/value-investor.webp"
     },
@@ -104,7 +162,7 @@
       "philosophy": "Buy assets, not liabilities. Real estate, entrepreneurship and cash flow",
       "risk": "aggressive",
       "audience": "Aspiring entrepreneurs and people seeking financial independence",
-      "status": "locked",
+      "status": "planned",
       "tier": "plus",
       "reviewNote": "Leverage and wealth-creation claims need independent evaluation in contested fields before this persona goes live.",
       "image": "/img/mentors/asset-builder.webp"
@@ -116,7 +174,7 @@
       "philosophy": "Concentrated long-term bets on emerging technologies like AI",
       "risk": "very aggressive",
       "audience": "Younger investors interested in technology and high-growth companies",
-      "status": "locked",
+      "status": "planned",
       "tier": "plus",
       "reviewNote": "Public material is mostly fund research on specific companies. The picker must never steer users toward individual stocks or funds.",
       "image": "/img/mentors/disruptive-growth.webp"
@@ -128,7 +186,7 @@
       "philosophy": "Use credit on purpose, negotiate your pay, and start investing early",
       "risk": "moderate",
       "audience": "Gen Z, college students, young professionals",
-      "status": "locked",
+      "status": "planned",
       "tier": "plus",
       "image": "/img/mentors/credit-smart.webp"
     },
@@ -139,7 +197,7 @@
       "philosophy": "Spend big on what you love, cut the rest",
       "risk": "moderate",
       "audience": "Young professionals who want to enjoy their money while building wealth",
-      "status": "live",
+      "status": "planned",
       "tier": "plus",
       "image": "/img/mentors/conscious-spender.webp"
     },
@@ -150,7 +208,7 @@
       "philosophy": "Behavior over spreadsheets; room for error",
       "risk": "moderate",
       "audience": "Users interested in the psychology behind financial decisions",
-      "status": "locked",
+      "status": "planned",
       "tier": "plus",
       "image": "/img/mentors/money-psychology.webp"
     },
@@ -161,7 +219,7 @@
       "philosophy": "Save hard, invest early, and build toward real estate and financial independence",
       "risk": "moderate to aggressive",
       "audience": "Gen Z and younger millennials interested in investing and real estate",
-      "status": "locked",
+      "status": "planned",
       "tier": "plus",
       "image": "/img/mentors/real-estate-saver.webp"
     },
@@ -172,7 +230,7 @@
       "philosophy": "Plain-language investing, taxes and compound interest for beginners",
       "risk": "moderate",
       "audience": "College students and beginning investors",
-      "status": "locked",
+      "status": "planned",
       "tier": "plus",
       "image": "/img/mentors/money-basics.webp"
     },
@@ -183,18 +241,18 @@
       "philosophy": "Take financial steps in a set order, from employer match to retirement",
       "risk": "moderate",
       "audience": "Users seeking a structured financial plan",
-      "status": "locked",
+      "status": "planned",
       "tier": "plus",
       "image": "/img/mentors/step-by-step-planner.webp"
     }
   ],
   "explainer": {
-    "mentors": "A mentor's perspective guides the answer. The Ramsey-inspired flagship is ready to try; the rest of the mentor library is a Plus preview.",
-    "coaching": "Specialist agents focus on budgeting, debt, portfolios, business and more. The free Ramsey starter uses our budgeting engine; the expanded agent library is a Plus preview."
+    "mentors": "A mentor's perspective guides the answer. The Ramsey-inspired flagship is ready to try; nine more perspectives are planned for Plus.",
+    "coaching": "A specialist agent reviews a money, investing, or business question through the mentor's perspective. The Ramsey budgeting starter works today; the wider Plus library is planned."
   },
   "tiers": {
-    "free": "Ramsey-inspired starter chat, with budgeting support",
-    "plus": "Preview access to the mentor and specialist-agent library; only built features are interactive"
+    "free": "Ramsey-inspired starter chat with budgeting support",
+    "plus": "Sixteen specialist agents and nine additional mentor perspectives in the future Plus library"
   },
   "imageNote": "All mentor portraits are AI-generated editorial likenesses of the public figures whose teachings inspire them. The figures are not affiliated with or endorsing this product."
 }

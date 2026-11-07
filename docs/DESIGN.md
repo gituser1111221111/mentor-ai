@@ -4,7 +4,7 @@
 
 Mentor Labs takes broad cues from investing sites such as Autopilot, Betterment, Wealthfront, and Public: prominent product context, confident typography, and clear next steps. It has its own editorial look with warm paper, evergreen, and mentor portraits.
 
-The hero leads with trust and the free Ramsey-inspired chat. The landing page explains the three-step flow, the sourced-method idea, ten visible mentor perspectives, ten agent specialties, and the context hub. The intake is optional and six screens. The chat opens immediately for general questions; a personal snapshot follows the intake.
+The hero leads with trust and the free Ramsey-inspired chat. The landing page explains the three-step flow, the sourced-method idea, ten visible mentor perspectives, sixteen agent specialties, and the context hub. The intake is optional and six screens. The chat opens immediately for general questions; a personal snapshot follows the intake.
 
 ## System
 
@@ -31,4 +31,4 @@ Always describe them as AI-generated likenesses. Every card names the real figur
 
 ## Product language
 
-**Agents** have a specialty. A **mentor** brings a distinct public-teaching perspective. Ramsey-inspired guidance is the free flagship, with budgeting support. Plus built features can be tried in test mode; unbuilt entries are labeled previews. The long-term corpus and hundreds-of-agents language must be framed as a vision until implemented. The context hub must distinguish document and link previews from the functional CSV import.
+**Agents** have a specialty, such as debt consolidation, portfolio review, equity research, tax, or business coaching. A **mentor** brings a distinct public-teaching perspective to that specialty. All agent cards use a simple `+` badge. Ramsey-inspired guidance with budgeting support is the sole working flagship; other agents and mentors belong to the planned Plus library. If selected, they explain that they are being built. The long-term corpus and hundreds-of-agents language must be framed as a vision until implemented. The context hub must distinguish document and link previews from the functional CSV import.

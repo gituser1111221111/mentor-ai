@@ -390,6 +390,18 @@ dialog { border: 0; border-radius: 22px; box-shadow: 0 28px 80px rgb(0 0 0 / .2)
 }
 
 /* Mentor Labs product story and showcase interactions */
+.agent-groups { display: grid; gap: 34px; }
+.agent-group h3 { margin: 0 0 14px; font: 700 .8rem/1.2 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--green); }
+.agent-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.agent-card { display: flex; flex-direction: column; gap: 18px; min-height: 150px; width: 100%; padding: 20px; text-align: left; border: 1px solid var(--rule); border-radius: 16px; background: #fff; color: var(--ink); cursor: pointer; transition: border-color .2s ease, transform .2s ease, box-shadow .2s ease; }
+.agent-card:hover { border-color: var(--green); transform: translateY(-2px); box-shadow: 0 8px 24px rgb(22 62 47 / .08); }
+.agent-card:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+.agent-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+.agent-card-top strong { font: 700 1.03rem/1.25 var(--sans); letter-spacing: -.03em; }
+.agent-card .tag.plus { flex: none; display: grid; place-items: center; width: 27px; height: 27px; padding: 0; border-radius: 50%; font: 700 1.1rem/1 var(--sans); }
+.agent-card-job { margin-top: auto; color: var(--ink-2); font-size: .84rem; line-height: 1.4; }
+@media (max-width: 900px) { .agent-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) { .agent-groups { gap: 28px; } .agent-grid { gap: 8px; } .agent-card { min-height: 166px; padding: 15px; } .agent-card-top strong { font-size: .9rem; } .agent-card-job { font-size: .76rem; } }
 .hero-actions { gap: 10px; }
 .hero-vision { margin: 22px 0 0; max-width: 51ch; padding-left: 15px; border-left: 2px solid #b4dc88; color: #d8e9dd; font-size: .88rem; }
 .hero-actions .btn.secondary { color: #f4f7f1; border-color: #83a69b; }

@@ -1,6 +1,6 @@
 # Mentor Labs
 
-**The vision: hundreds of specialist AI agents, guided by mentor perspectives people already trust.** This demo starts with a free Ramsey-inspired chat and a visible Plus library of ten mentors and ten agent specialties.
+**The vision: hundreds of specialist AI agents, guided by mentor perspectives people already trust.** This demo starts with a free Ramsey-inspired chat and a visible Plus library of ten mentors and sixteen agent specialties.
 
 RedHawk Builds 2026 · Challenge #21, Variable-income budgeting (Student and Campus Finance track), MVP option 1: plan expenses around variable monthly income.
 
@@ -41,7 +41,7 @@ No intake ──► general Ramsey-inspired chat, without a personalized plan
 - **Coaching** = a specialist bot (Budget, Debt, Savings & Emergency Fund) that does the work and the math.
 - **Mentor** = a money philosophy that directs the coach by choosing among its verified options. Mentors are built from summaries of public teachings and labeled *"inspired by; not affiliated or endorsed."* No mentor claims to be a real person, and there are no cloned voices.
 
-**Available now:** Ramsey-inspired starter chat with budgeting support is free. Ramit Sethi–inspired mentoring and standalone Debt and Savings coaching are working Plus demonstrations. The other eight mentors and seven specialists are visible Plus previews and are not interactive yet. Checkout is test mode only; no real charge is made.
+**Available now:** Ramsey-inspired starter chat with budgeting support is free and is the sole interactive mentor and agent pairing. The other nine mentors and fifteen agent specialties are visible as the planned Plus library. Every agent card has a `+` badge. Checkout is test mode only; no real charge is made.
 
 ## What actually works (and what doesn't)
 
@@ -50,13 +50,13 @@ No intake ──► general Ramsey-inspired chat, without a personalized plan
 | 6-screen optional intake → money snapshot (lowest month, swing, essentials, shortfall) | Works |
 | Portfolio CSV upload → value, sector mix, fees (`portfolioSummary`) | Works. No brokerage login; the sample file is synthetic |
 | Free Ramsey-inspired starter chat without an intake | Works with Claude when configured; explicit local mock mode is available for testing |
-| Personalized chat: generate → validate → pick, for built mentors and agents | Works when allowed by tier |
-| Persona switch on the same options (`repick`) | Works |
+| Personalized chat: generate → validate → pick | Works for the Ramsey budgeting starter |
+| Persona switch on the same options (`repick`) | Engine support exists; additional mentor pairings are not launched |
 | Internal number check | Checks money, percentages, dates and other numeric claims against calculations; the public chat shows the answer and optional source/calculation details |
 | Conversation and memory | Restores after refresh on the same server instance; users can remove remembered facts |
 | Claude unavailable | Chat returns a clear retry message; the rule-based engine runs only when `MENTOR_ENGINE=mock` is explicitly set for local testing |
 | $4.99/month Plus (Stripe Checkout) | Works in **Stripe test mode**: a real hosted checkout and subscription, verified on the server before Plus unlocks. Use card 4242 4242 4242 4242. Live keys are refused in code |
-| Additional mentors and agents | Shown in the gallery, selector, and chat rail as Plus previews; unbuilt entries cannot be used as if live |
+| Additional mentors and agents | Nine mentors and fifteen more agent specialties are shown in the gallery, selector, and chat rail as planned Plus entries; they cannot be used as if live |
 | Document picker and portfolio URL | Showcase only: documents stay in the browser; URL is session-only reference, with no brokerage connection |
 | Direct brokerage connection (Plaid) | **Not built**; the portfolio link is reference-only |
 | Voice (ElevenLabs) | **Not built yet** |

@@ -92,10 +92,13 @@ test('API: quiz -> chat -> repick, static UI, and traversal blocked', async () =
     assert.equal(starter.status, 200);
     assert.match((await starter.json()).text, /written budget/i);
     const cfg = await (await fetch(base + '/api/config')).json();
-    assert.equal(cfg.catalog.agents.length, 10);
+    assert.equal(cfg.catalog.agents.length, 16);
     assert.equal(cfg.catalog.personas.length, 10);
     assert.equal(cfg.quiz.questions.length, 6);
     assert.deepEqual(cfg.catalog.personas.filter(p => p.tier === 'free').map(p => p.id), ['debt-free-coach']);
+    assert.deepEqual(cfg.catalog.personas.filter(p => p.built).map(p => p.id), ['debt-free-coach']);
+    assert.deepEqual(cfg.catalog.agents.filter(a => a.built).map(a => a.id), ['budget']);
+    assert.ok(cfg.catalog.agents.every(a => a.tier === 'plus' && a.name.endsWith('Agent')));
     const p = await fetch(base + '/api/profile', {method: 'POST', headers: h, body: JSON.stringify({answers})});
     assert.equal(p.status, 200);
     const bad = await fetch(base + '/api/profile', {method: 'POST', headers: h, body: JSON.stringify({answers: {incomeHistory: [{amount: '-5'}]}})});
@@ -108,13 +111,14 @@ test('API: quiz -> chat -> repick, static UI, and traversal blocked', async () =
     assert.equal(c.personaName, 'Dave Ramsey–inspired');
     assert.equal('candidates' in c, false);
     assert.equal('validation' in c, false);
-    const r = await (await fetch(base + '/api/repick', {method: 'POST', headers: h, body: JSON.stringify({turnId: c.turnId, personaId: 'conscious-spender'})})).json();
-    assert.equal(r.personaName, 'Ramit Sethi–inspired');
+    assert.equal((await fetch(base + '/api/repick', {method: 'POST', headers: h, body: JSON.stringify({turnId: c.turnId, personaId: 'conscious-spender'})})).status, 409);
+    const r = await (await fetch(base + '/api/repick', {method: 'POST', headers: h, body: JSON.stringify({turnId: c.turnId, personaId: 'debt-free-coach'})})).json();
+    assert.equal(r.personaName, 'Dave Ramsey–inspired');
     assert.equal('candidates' in r, false);
     const history = await (await fetch(base + '/api/history', {headers: h})).json();
     assert.deepEqual(history.history.map(x => x.role), ['user', 'assistant', 'assistant']);
     assert.equal(history.history[1].response.turnId, c.turnId);
-    assert.equal(history.history[2].response.personaId, 'conscious-spender');
+    assert.equal(history.history[2].response.personaId, 'debt-free-coach');
     const other = {'X-Session-Id': 'test-session-0000000002', 'Content-Type': 'application/json'};
     assert.equal((await fetch(base + '/api/repick', {method: 'POST', headers: other, body: JSON.stringify({turnId: c.turnId, personaId: 'debt-free-coach'})})).status, 404);
     assert.deepEqual((await (await fetch(base + '/api/history', {headers: other})).json()).history, []);
@@ -142,6 +146,7 @@ test('Plus gating: locked mentor -> 402, demo unlock without Stripe, unbuilt -> 
     const soon = await post('/api/chat', {message: 'hi', personaId: 'value-investor'});
     assert.equal(soon.status, 409);
     assert.match((await soon.json()).error, /coming soon/);
+    assert.equal((await post('/api/chat', {message: 'hi', agentId: 'debt'})).status, 409);
     await fetch(base + '/api/session', {method: 'DELETE', headers: h});
     assert.equal((await (await fetch(base + '/api/me', {headers: h})).json()).tier, 'plus'); // start over keeps Plus
   } finally { await new Promise(r => server.close(r)); }

@@ -33,16 +33,19 @@ const agent = id => agents().find(a => a.id === id);
 const allowed = x => x.tier === 'free' || state.tier === 'plus';
 const starterCoach = x => x?.id === 'budget' && state.personaId === 'debt-free-coach';
 const usable = x => x?.built && (allowed(x) || starterCoach(x));
-const statusLabel = x => x?.tier === 'free' ? 'Free' : !x?.built ? 'Plus · preview' : starterCoach(x) && state.tier !== 'plus' ? 'Included' : 'Plus';
+const statusLabel = x => x?.tier === 'free' ? 'Free' : '+';
+const badge = x => `<span class="tag ${x.tier === 'plus' ? 'plus' : ''}" ${x.tier === 'plus' ? 'title="Mentor Labs Plus" aria-label="Mentor Labs Plus"' : ''}>${statusLabel(x)}</span>`;
 const initials = name => name.replace(/^The /, '').split(/[\s-]+/).map(w => w[0]).join('').slice(0, 2).toUpperCase();
 const art = (p, cls = 'frame') => `<div class="${cls}">${p.image ? `<img src="${esc(p.image)}" alt="AI-generated likeness inspired by ${esc(p.inspiredBy)}" width="640" height="800" loading="lazy" decoding="async">` : `<span class="mono-gram">${esc(initials(p.name))}</span>`}</div>`;
 const thumb = p => `<span class="thumb">${p.image ? `<img src="${esc(p.image)}" alt="">` : esc(initials(p.name))}</span>`;
 
 // ---------- landing ----------
 function renderLanding() {
-  $('#personas').innerHTML = personas().map(p => `<div class="portrait ${usable(p) ? '' : 'locked'}">${art(p)}<span class="tag ${p.tier === 'plus' ? 'plus' : ''}">${statusLabel(p)}</span>
+  $('#personas').innerHTML = personas().map(p => `<div class="portrait ${usable(p) ? '' : 'locked'}">${art(p)}${badge(p)}
     <h3>${esc(p.name)}</h3><p class="portrait-source">AI-inspired perspective</p><p>${esc(p.philosophy)}.</p></div>`).join('');
-  $('#agents').innerHTML = agents().map(a => `<div class="tr"><strong>${esc(a.name)}</strong><span>${esc(a.job)}</span><span class="tag plus">${a.id === 'budget' ? 'Ramsey starter + Plus' : statusLabel(a)}</span></div>`).join('');
+  const groups = ['Everyday money', 'Investing & property', 'Business building'];
+  $('#agents').innerHTML = groups.map(group => `<section class="agent-group"><h3>${esc(group)}</h3><div class="agent-grid">${agents().filter(a => a.category === group).map(a => `<button type="button" class="agent-card" data-a="${a.id}"><span class="agent-card-top"><strong>${esc(a.name)}</strong>${badge(a)}</span><span class="agent-card-job">${esc(a.job)}</span></button>`).join('')}</div></section>`).join('');
+  document.querySelectorAll('#agents [data-a]').forEach(b => b.onclick = () => { const a = agent(b.dataset.a); if (a.id === 'budget') startChat(); else blocked(a); });
 }
 
 // ---------- quiz ----------
@@ -154,8 +157,8 @@ function renderSnapshot() {
 
 function renderSetup() {
   const hint = state.profile?.personaHint;
-  $('#pick-mentor').innerHTML = personas().map(p => `<button type="button" class="choice ${p.id === state.personaId ? 'on' : ''}" data-p="${p.id}">${art(p)}<strong>${esc(p.name)}</strong><small>${esc(p.philosophy)}.</small><span class="tag ${p.tier === 'plus' ? 'plus' : ''}">${statusLabel(p)}</span>${p.id === hint ? '<small class="hint">Suggested from your answers</small>' : ''}</button>`).join('');
-  $('#pick-coach').innerHTML = agents().map(a => `<button type="button" class="choice ${a.id === state.agentId ? 'on' : ''}" data-a="${a.id}"><span><strong>${esc(a.name)}</strong><small>${esc(a.job)}</small></span><span class="tag ${a.tier === 'plus' ? 'plus' : ''}">${statusLabel(a)}</span></button>`).join('');
+  $('#pick-mentor').innerHTML = personas().map(p => `<button type="button" class="choice ${p.id === state.personaId ? 'on' : ''}" data-p="${p.id}">${art(p)}<strong>${esc(p.name)}</strong><small>${esc(p.philosophy)}.</small>${badge(p)}${p.id === hint ? '<small class="hint">Suggested from your answers</small>' : ''}</button>`).join('');
+  $('#pick-coach').innerHTML = agents().map(a => `<button type="button" class="choice ${a.id === state.agentId ? 'on' : ''}" data-a="${a.id}"><span><strong>${esc(a.name)}</strong><small>${esc(a.job)}</small>${a.id === 'budget' && state.personaId === 'debt-free-coach' ? '<small class="hint">Included in the Ramsey starter</small>' : ''}</span>${badge(a)}</button>`).join('');
   $('#to-chat').textContent = `Chat with ${persona(state.personaId)?.name || 'your mentor'}`;
   document.querySelectorAll('#pick-mentor [data-p]').forEach(b => b.onclick = () => { const p = persona(b.dataset.p); if (blocked(p)) return; state.personaId = p.id; renderSetup(); });
   document.querySelectorAll('#pick-coach [data-a]').forEach(b => b.onclick = () => { const a = agent(b.dataset.a); if (blocked(a)) return; state.agentId = a.id; renderSetup(); });
@@ -165,8 +168,8 @@ function renderSetup() {
 function renderChatChrome() {
   const p = persona(state.personaId), a = agent(state.agentId), s = state.snapshot;
   $('#chat-head').innerHTML = `${thumb(p)}<div><strong>${esc(p.name)}</strong><small>${state.profile?.incomeHistory?.length ? `With ${esc(a.name)}` : 'Start with any money question'} · AI-inspired, not affiliated</small></div>${s?.status === 'ok' ? `<div class="snap-mini">lowest ${usd(s.lowestMonth)}<br>essentials ${usd(s.essentialsTotal)}</div>` : ''}`;
-  $('#persona-switch').innerHTML = personas().map(x => `<button class="rail-item ${x.id === state.personaId ? 'on' : ''}" data-p="${x.id}">${thumb(x)}<span>${esc(x.name)}</span><small>${statusLabel(x)}</small></button>`).join('');
-  $('#agent-list').innerHTML = agents().map(x => `<button class="rail-item coach-item ${x.id === state.agentId ? 'on' : ''}" data-a="${x.id}"><span>${esc(x.name.replace(/ Coaching$/, ''))}</span><small>${statusLabel(x)}</small></button>`).join('');
+  $('#persona-switch').innerHTML = personas().map(x => `<button class="rail-item ${x.id === state.personaId ? 'on' : ''}" data-p="${x.id}">${thumb(x)}<span>${esc(x.name)}</span><small ${x.tier === 'plus' ? 'title="Mentor Labs Plus" aria-label="Mentor Labs Plus"' : ''}>${statusLabel(x)}</small></button>`).join('');
+  $('#agent-list').innerHTML = agents().map(x => `<button class="rail-item coach-item ${x.id === state.agentId ? 'on' : ''}" data-a="${x.id}"><span>${esc(x.name)}</span><small title="Mentor Labs Plus" aria-label="Mentor Labs Plus">+</small></button>`).join('');
   document.querySelectorAll('#persona-switch [data-p]').forEach(b => b.onclick = () => pickPersona(b.dataset.p));
   document.querySelectorAll('#agent-list [data-a]').forEach(b => b.onclick = () => pickAgent(b.dataset.a));
   const prompts = {budget: ['How should I budget when my pay keeps changing?', 'What do I do in my slow months?', 'Where should extra money go in a good month?'], debt: ['How fast can I get rid of my debt?', 'Which debt should I pay first?', 'Should I pay off debt or save first?'], savings: ['How big should my emergency fund be?', 'How do I save when my income drops?', 'Should I stop investing until I have savings?']};
@@ -175,11 +178,11 @@ function renderChatChrome() {
 }
 function showFeature(x) {
   $('#feature-title').textContent = x.name;
-  $('#feature-text').textContent = `${x.job || x.philosophy}. This ${x.inspiredBy ? 'mentor perspective' : 'specialist agent'} is on the Mentor Labs roadmap. It is visible in the Plus library but is not interactive yet.`;
+  $('#feature-text').textContent = `${x.job || x.philosophy}. This ${x.inspiredBy ? 'mentor perspective' : 'specialist agent'} is part of the Mentor Labs Plus lineup. The Ramsey starter is the interactive MVP today; more mentor-agent pairings are being created.`;
   $('#feature-plus').hidden = state.tier === 'plus';
   $('#feature-preview').showModal();
 }
-function blocked(x) { if (!x) return true; if (!allowed(x) && !starterCoach(x)) { openUnlock(); return true; } if (!x.built) { showFeature(x); return true; } return false; }
+function blocked(x) { if (!x) return true; if (!x.built) { showFeature(x); return true; } if (!allowed(x) && !starterCoach(x)) { openUnlock(); return true; } return false; }
 function pickAgent(id) {
   const a = agent(id); if (id === state.agentId || blocked(a)) return;
   state.agentId = id; state.lastTurn = null; renderChatChrome(); note(`Switched to ${a.name}. Ask your next question.`);
@@ -288,7 +291,7 @@ async function handleCheckoutReturn() {
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
   window.scrollTo(0, 0);
   if (status === 'cancel') return banner('Checkout canceled. You are still on the free plan.', true);
-  try { await api('/api/checkout/confirm', {method: 'POST', body: {checkoutId: q.get('cs')}}); await setPlus('Welcome to Plus. Every mentor and coach is unlocked as it launches. (Stripe test mode, no real charge.)'); }
+  try { await api('/api/checkout/confirm', {method: 'POST', body: {checkoutId: q.get('cs')}}); await setPlus('Plus test access is active. More mentor-agent pairings will launch as they are built. No real charge.'); }
   catch (e) { banner(`We could not confirm that checkout: ${e.message}`, true); }
 }
 
