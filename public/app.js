@@ -57,8 +57,41 @@ function renderLanding() {
   $('#personas').innerHTML = personas().map(p => `<div class="portrait ${usable(p) ? '' : 'locked'}">${art(p)}${p.tier === 'plus' ? `<button type="button" class="tag plus portrait-plus" data-unlock aria-label="Explore Plus for ${esc(p.name)}">Plus</button>` : badge(p)}
     <h3>${esc(p.name)}</h3><p class="portrait-source">AI-inspired perspective</p><p>${esc(p.philosophy)}.</p></div>`).join('');
   $('#agents').innerHTML = `<div class="agent-grid">${agents().map((a,i) => `<button type="button" class="agent-card tone-${i%4}" data-a="${a.id}">${agentSymbol(a.id)}<span class="agent-card-top"><strong>${esc(a.name)}</strong>${badge(a)}</span><span class="agent-card-job">${esc(a.job)}</span></button>`).join('')}</div>`;
-  document.querySelectorAll('#agents [data-a]').forEach(b => b.onclick = () => { const a = agent(b.dataset.a); if (a.id === 'budget') renderIntake(); else blocked(a); });
+  document.querySelectorAll('#agents [data-a]').forEach(b => b.onclick = () => { const a = agent(b.dataset.a); if (a.id === 'budget') renderIntake(); else showAgent(a); });
   document.querySelectorAll('#personas [data-unlock]').forEach(b => b.onclick = openUnlock);
+  renderSources();
+}
+
+// ---------- live data connections ----------
+const sources = () => state.config.catalog.dataSources || [];
+const sourcesFor = id => sources().filter(d => d.agents.includes(id));
+const agentNames = ids => ids.map(id => agent(id)?.name.replace(/ Agent$/, '')).filter(Boolean).join(', ');
+const sourceState = d => d.status === 'live' ? (d.connected ? 'Live · connected' : 'Live · using dated snapshot') : 'Planned';
+function sourceCard(d) {
+  return `<article class="source-card ${esc(d.status)}"><div class="source-top"><a href="${esc(d.url)}" target="_blank" rel="noopener noreferrer"><strong>${esc(d.name)}</strong></a><span class="tag ${d.tier === 'plus' ? 'plus' : ''}">${d.tier === 'plus' ? 'Plus' : 'Free'}</span></div>
+    <p>${esc(d.provides)}</p><small><span class="dot ${d.status === 'live' ? (d.connected ? 'on' : 'half') : ''}" aria-hidden="true"></span>${esc(sourceState(d))}${d.refresh ? ` · refreshes ${esc(d.refresh.toLowerCase())}` : ''}</small><small>Feeds: ${esc(agentNames(d.agents))}</small></article>`;
+}
+function renderSources() {
+  const el = $('#data-sources'); if (!el) return;
+  const free = sources().filter(d => d.tier === 'free'), plus = sources().filter(d => d.tier === 'plus');
+  el.innerHTML = `<h3 class="source-group">Free · live now</h3><div class="source-grid">${free.map(sourceCard).join('')}</div>
+    <h3 class="source-group">Plus · planned connections</h3><div class="source-grid">${plus.map(sourceCard).join('')}</div>`;
+}
+function sourceList(id) {
+  const list = sourcesFor(id);
+  if (!list.length) return '<p class="fine">This agent works from your own inputs and code-checked calculations. No market feed is attached yet.</p>';
+  return `<p class="section-eyebrow">DATA THIS AGENT READS</p><ul class="source-list">${list.map(d => `<li><strong>${esc(d.name)}</strong> <span class="tag ${d.tier === 'plus' ? 'plus' : ''}">${d.tier === 'plus' ? 'Plus · planned' : esc(sourceState(d))}</span><br><small>${esc(d.provides)}</small></li>`).join('')}</ul>`;
+}
+function showAgent(a) {
+  const ready = a.built && usable(a);
+  $('#feature-eyebrow').textContent = ready ? 'SPECIALIST AGENT · FREE' : 'PLUS LIBRARY';
+  $('#feature-title').textContent = a.name;
+  $('#feature-text').textContent = ready ? `${a.job}. Every number it quotes comes from these sources and is checked in code before you see it.` : a.built ? `${a.name} is part of Plus.` : `${a.name} is in the Plus library. This feature is not available yet.`;
+  $('#feature-sources').innerHTML = sourceList(a.id);
+  $('#feature-plus').hidden = ready || state.tier === 'plus';
+  $('#feature-try').hidden = !ready;
+  $('#feature-try').onclick = async () => { $('#feature-preview').close(); state.agentId = a.id; await api('/api/portfolio/upload', {method: 'POST', body: {sample: true}}).catch(() => {}); submitQuiz(DEMO); };
+  $('#feature-preview').showModal();
 }
 
 // ---------- intake ----------
@@ -171,13 +204,18 @@ const asksForNumbers = r => !r.turnId && /financial details|update your (?:numbe
 function showFeature(x) {
   $('#feature-title').textContent = x.name;
   $('#feature-text').textContent = `${x.name} is in the Plus library. This feature is not available yet.`;
+  $('#feature-eyebrow').textContent = 'PLUS LIBRARY';
+  $('#feature-sources').innerHTML = agent(x.id) ? sourceList(x.id) : '';
+  $('#feature-try').hidden = true;
   $('#feature-plus').hidden = state.tier === 'plus';
   $('#feature-preview').showModal();
 }
 function blocked(x) { if (!x) return true; if (!allowed(x) && !starterCoach(x)) { openUnlock(); return true; } if (!x.built) { showFeature(x); return true; } return false; }
 function pickAgent(id) {
   const a = agent(id); if (id === state.agentId || blocked(a)) return;
-  state.agentId = id; state.lastTurn = null; renderChatChrome(); note(`Switched to ${a.name}. Ask your next question.`);
+  state.agentId = id; state.lastTurn = null; renderChatChrome();
+  const feeds = sourcesFor(id).filter(d => d.status === 'live');
+  note(`Switched to ${a.name}.${feeds.length ? ` It reads live data from ${feeds.map(d => d.name).join(', ')}.` : ''} Ask your next question.`);
 }
 async function pickPersona(id) {
   const p = persona(id); if (id === state.personaId || blocked(p)) return;

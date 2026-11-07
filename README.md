@@ -59,6 +59,7 @@ Submit intake ──► Ramsey-inspired chat opens immediately
 | $4.99/month Plus (Stripe Checkout) | Works in **Stripe test mode**: a real hosted checkout and subscription, verified on the server before Plus unlocks. Use card 4242 4242 4242 4242. Live keys are refused in code |
 | Additional mentors and agents | Nine mentors and fifteen more agent specialties are shown in the gallery, selector, and chat rail as planned Plus entries; they cannot be used as if live |
 | Document picker and portfolio URL | Documents upload to the session for chat context; URL is a browser-session reference, with no brokerage connection |
+| Portfolio Review + Equity Research agents (Plus) | Work with live market data when `FINNHUB_API_KEY` / `FRED_API_KEY` / `SEC_USER_AGENT` are set (CoinGecko needs no key), else a dated Nov 6 snapshot. Every price, earnings date, EPS estimate, analyst count and weight is computed in code and number-checked; answers name their sources |
 | Direct brokerage connection (Plaid) | **Not built**; the portfolio link is reference-only |
 | Voice (ElevenLabs) | Tap **Talk live** once for hands-free turns: microphone silence ends your question, ElevenLabs transcribes it, Claude answers, ElevenLabs speaks the answer, and listening resumes. Tap **End call** to stop. Requires the server-side key and a configured voice; text chat works without them. |
 

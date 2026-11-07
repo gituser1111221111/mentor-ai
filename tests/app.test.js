@@ -96,9 +96,11 @@ test('API: quiz -> chat -> repick, static UI, and traversal blocked', async () =
     assert.equal(cfg.catalog.personas.length, 10);
     assert.equal(cfg.quiz.questions.length, 6);
     assert.deepEqual(cfg.catalog.personas.filter(p => p.tier === 'free').map(p => p.id), ['debt-free-coach']);
-    assert.deepEqual(cfg.catalog.personas.filter(p => p.built).map(p => p.id), ['debt-free-coach']);
-    assert.deepEqual(cfg.catalog.agents.filter(a => a.built).map(a => a.id), ['budget']);
-    assert.ok(cfg.catalog.agents.every(a => a.tier === 'plus' && a.name.endsWith('Agent')));
+    assert.deepEqual(cfg.catalog.personas.filter(p => p.built).map(p => p.id), ['debt-free-coach', 'value-investor', 'disruptive-growth']);
+    assert.deepEqual(cfg.catalog.agents.filter(a => a.built).map(a => a.id), ['budget', 'investing', 'equity']);
+    assert.ok(cfg.catalog.agents.every(a => a.tier === (['investing', 'equity'].includes(a.id) ? 'free' : 'plus') && a.name.endsWith('Agent')));
+    assert.deepEqual(cfg.catalog.dataSources.filter(d => d.tier === 'free').map(d => d.id), ['finnhub', 'fred', 'sec-edgar', 'coingecko']);
+    assert.ok(cfg.catalog.dataSources.every(d => !('key' in d) && typeof d.connected === 'boolean'));
     const p = await fetch(base + '/api/profile', {method: 'POST', headers: h, body: JSON.stringify({answers})});
     assert.equal(p.status, 200);
     const attachment = await fetch(base + '/api/attachment', {method: 'POST', headers: h, body: JSON.stringify({name: 'statement.txt', base64: Buffer.from('Monthly statement for review').toString('base64')})});
@@ -147,7 +149,7 @@ test('Plus gating: locked mentor -> 402, demo unlock without Stripe, unbuilt -> 
     assert.equal((await (await post('/api/checkout')).json()).mode, 'demo');
     assert.equal((await (await post('/api/checkout/demo')).json()).tier, 'plus');
     assert.equal((await (await fetch(base + '/api/me', {headers: h})).json()).tier, 'plus');
-    const soon = await post('/api/chat', {message: 'hi', personaId: 'value-investor'});
+    const soon = await post('/api/chat', {message: 'hi', personaId: 'money-psychology'});
     assert.equal(soon.status, 409);
     assert.match((await soon.json()).error, /coming soon/);
     assert.equal((await post('/api/chat', {message: 'hi', agentId: 'debt'})).status, 409);

@@ -827,3 +827,18 @@ body:not(.chat-open) header.site #engine { border-color: #ffffff40; }
 .hero-catalog { display:flex; flex-wrap:wrap; gap:10px; margin:22px 0 0; }
 .hero-catalog span { display:inline-flex; align-items:center; gap:8px; padding:10px 14px; border:1px solid rgba(224,235,215,.25); border-radius:12px; background:rgba(221,234,209,.13); color:#f7f4eb; font-size:.88rem; line-height:1.4; }
 .hero-catalog strong { font-size:1.12rem; color:#e1edcf; }
+
+/* Live data connections */
+.source-group { font: 600 .78rem/1 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 26px 0 12px; }
+.source-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px; }
+.source-card { background: var(--card); border: 1px solid var(--rule); border-radius: 12px; padding: 16px; display: grid; gap: 8px; align-content: start; }
+.source-card.planned { background: transparent; border-style: dashed; }
+.source-card p { margin: 0; font-size: .86rem; color: var(--ink-2); line-height: 1.45; }
+.source-card small { font-size: .74rem; color: var(--muted); }
+.source-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.source-top a { color: var(--ink); text-decoration: none; } .source-top a:hover { text-decoration: underline; }
+.dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--rule); margin-right: 6px; vertical-align: 1px; }
+.dot.on { background: var(--green-2); box-shadow: 0 0 0 3px var(--green-soft); } .dot.half { background: var(--ochre); }
+.source-list { list-style: none; padding: 0; margin: 0 0 14px; display: grid; gap: 10px; }
+.source-list li { font-size: .88rem; } .source-list small { color: var(--muted); }
+.source-list .tag { font-size: .62rem; padding: 3px 7px; margin-left: 4px; }

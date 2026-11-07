@@ -17,3 +17,12 @@ services:
         value: "40"
       - key: MENTOR_API_KEY
         sync: false
+      # Market data for the investing agents. Set values in Render > Environment; never commit them.
+      - key: FINNHUB_API_KEY
+        sync: false
+      - key: FRED_API_KEY
+        sync: false
+      - key: SEC_USER_AGENT
+        sync: false
+      - key: ALPHA_VANTAGE_API_KEY
+        sync: false
