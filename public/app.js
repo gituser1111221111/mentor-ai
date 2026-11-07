@@ -512,7 +512,7 @@ async function startListening(session) {
       if (speaking) { speakingMs += now - previous; silenceSince = 0; if (speakingMs >= 250) heardSpeech = true; }
       else { speakingMs = 0; if (heardSpeech) silenceSince ||= now; }
       previous = now;
-      if ((heardSpeech && silenceSince && now - silenceSince >= 1100) || now - started >= 60000) {
+      if ((heardSpeech && silenceSince && now - silenceSince >= 2500) || now - started >= 60000) {
         voiceStatus('Thinking…');
         closeCapture();
       }
