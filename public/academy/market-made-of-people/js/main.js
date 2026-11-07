@@ -9,7 +9,7 @@
   document.documentElement.classList.add("has-js");
 
   // Palette tokens for the canvas figures (rgb triplets, used in rgba() strings).
-  var GOLD = "201,162,75";       // #c9a24b
+  var GOLD = "201,162,75";       // #7fbf9c
   var GOLD_SOFT = "217,189,124";
   var BLUE = "91,143,199";
 
@@ -419,7 +419,7 @@
       var p = document.createElementNS(ns, "path");
       p.setAttribute("d", d);
       p.setAttribute("fill", "none");
-      p.setAttribute("stroke", "#c9a24b");
+      p.setAttribute("stroke", "#7fbf9c");
       p.setAttribute("stroke-width", (0.7 + i * 0.05).toFixed(2));
       p.setAttribute("stroke-opacity", Math.min(0.08 + i * 0.018, 0.55).toFixed(3));
       svg.appendChild(p);

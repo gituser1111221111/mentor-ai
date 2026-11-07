@@ -21,9 +21,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&amp;display=swap" rel="stylesheet">
-    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="icon" type="image/webp" href="/img/mentor-logo-suede.webp">
     <link rel="stylesheet" href="styles.css?v=20261105v4">
-      <link rel="stylesheet" href="mentor-theme.css?v=1" />
+      <link rel="stylesheet" href="mentor-theme.css?v=2" />
   </head>
   <body>
 
@@ -61,11 +61,11 @@
 
     <!-- ── Header ─────────────────────────────────────────────────────────── -->
     <header class="site-header" data-header="">
-      <a class="brand" href="#top" aria-label="Barone Investment Group home">
-        <span class="brand-mark"><span class="bm-letter">B</span></span>
+      <a class="brand" href="#top" aria-label="Mentor Labs learning home">
+        <img class="mentor-brand-logo" src="/img/mentor-logo-suede.webp" alt="" width="44" height="44">
         <span>
-          <strong class="bm-wordmark">Barone</strong>
-          <small>Investment Group</small>
+          <strong class="bm-wordmark">Mentor Labs</strong>
+          <small>Learning studio</small>
         </span>
       </a>
 
@@ -193,7 +193,7 @@
           ctx.beginPath();
           ctx.moveTo(p.x, p.y);
           ctx.lineTo(q.x, q.y);
-          ctx.strokeStyle = 'rgba(215,181,109,' + ((1 - d / LINK) * 0.22) + ')';
+          ctx.strokeStyle = 'rgba(127,191,156,' + ((1 - d / LINK) * 0.22) + ')';
           ctx.lineWidth   = 0.7;
           ctx.stroke();
         }
@@ -206,7 +206,7 @@
         ctx.beginPath();
         ctx.moveTo(p.x, p.y);
         ctx.lineTo(mouse.x, mouse.y);
-        ctx.strokeStyle = 'rgba(242,217,144,' + ((1 - md / MOUSE_LINK) * 0.55) + ')';
+        ctx.strokeStyle = 'rgba(183,219,194,' + ((1 - md / MOUSE_LINK) * 0.55) + ')';
         ctx.lineWidth   = 0.9;
         ctx.stroke();
       }
@@ -214,7 +214,7 @@
       /* gold dot */
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(215,181,109,0.65)';
+      ctx.fillStyle = 'rgba(127,191,156,0.65)';
       ctx.fill();
     }
 
@@ -822,7 +822,7 @@
         <div class="insight-track"><i style="width:82%; background:linear-gradient(90deg,#38bdf8,#2563eb)"></i></div>
       </div><div class="insight-row">
         <div class="insight-row-top"><span>Investment growth</span><strong>$73,270</strong></div>
-        <div class="insight-track"><i style="width:100%; background:linear-gradient(90deg,#f2d990,#d7b56d)"></i></div>
+        <div class="insight-track"><i style="width:100%; background:linear-gradient(90deg,#b7dbc2,#7fbf9c)"></i></div>
       </div></div>
       <div class="tool-metric-grid">
         <div><span>Total value</span><strong id="growth-total">$134,270</strong></div>
@@ -901,8 +901,8 @@
         <div class="founder-card reveal">
           <figure class="founder-photo">
             <img src="founder-ryan-barone.jpg" alt="Ryan Barone, founder of Barone Investment Group" loading="lazy" onerror="this.style.display='none';this.parentElement.querySelector('.founder-initials').style.display='grid';">
-            <div class="founder-initials" style="display:none;width:100%;height:100%;min-height:460px;place-items:center;background:linear-gradient(145deg,rgba(215,181,109,0.12),rgba(215,181,109,0.04));border-radius:18px;">
-              <span style="font-size:clamp(4rem,8vw,7rem);font-weight:900;color:rgba(215,181,109,0.35);letter-spacing:-0.04em;">RB</span>
+            <div class="founder-initials" style="display:none;width:100%;height:100%;min-height:460px;place-items:center;background:linear-gradient(145deg,rgba(127,191,156,0.12),rgba(127,191,156,0.04));border-radius:18px;">
+              <span style="font-size:clamp(4rem,8vw,7rem);font-weight:900;color:rgba(127,191,156,0.35);letter-spacing:-0.04em;">RB</span>
             </div>
           </figure>
           <div class="founder-text">
@@ -937,9 +937,9 @@
       <!-- ── Footer ──────────────────────────────────────────────────────────── -->
       <footer class="site-footer" id="contact">
         <div>
-          <a class="brand footer-brand" href="#top" aria-label="Barone Investment Group home">
-            <span class="brand-mark">B</span>
-            <span><strong>Barone</strong><small>Investment Group</small></span>
+          <a class="brand footer-brand" href="#top" aria-label="Mentor Labs learning home">
+            <img class="mentor-brand-logo" src="/img/mentor-logo-suede.webp" alt="" width="44" height="44">
+            <span><strong>Mentor Labs</strong><small>Learning studio</small></span>
           </a>
           <p>Educational content only. Not personalized financial, investment, legal, or tax advice. Do not paste private account numbers or sensitive information into AI tools.</p>
         </div>
@@ -1021,7 +1021,7 @@
           var prog = card.querySelector('.chapter-progress');
           if (prog) {
             prog.classList.add('is-done');
-            prog.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#d7b56d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>';
+            prog.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#7fbf9c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>';
           }
         }
       });

@@ -14,11 +14,12 @@ async function api(path, {method = 'GET', body} = {}) {
   const r = await fetch(path, {method, headers: {'Content-Type': 'application/json', 'X-Session-Id': sid}, body: body ? JSON.stringify(body) : undefined});
   const data = await r.json().catch(() => ({}));
   if (!r.ok) { const e = new Error(data.error || (data.errors || []).map(x => x.error).join('; ') || 'Something went wrong. Try again.'); e.status = r.status; e.data = data; throw e; }
+  if (method === 'POST' && path === '/api/portfolio/upload') document.dispatchEvent(new CustomEvent('mentor:inputs-updated'));
   return data;
 }
 
 const state = {config: null, tier: 'free', answers: {}, i: 0, profile: null, snapshot: null, personaId: null, agentId: 'budget', need: 'question', lastTurn: null};
-const views = ['v-landing', 'v-quiz', 'v-chat', 'v-workspace'];
+const views = ['v-landing', 'v-quiz', 'v-chat', 'v-workspace', 'v-learning'];
 function show(id) {
   if (id !== 'v-chat' && voice.active) endConversation();
   views.forEach(v => { $('#' + v).hidden = v !== id; });
@@ -26,6 +27,11 @@ function show(id) {
   const landing = id === 'v-landing';
   $('#nav').hidden = !landing; $('#head-start').hidden = !landing; $('#restart').hidden = landing;
   $('#engine').hidden = landing;
+  document.body.classList.toggle('app-open', !landing);
+  document.body.classList.toggle('onboarding-open', id === 'v-quiz');
+  $('#app-nav').hidden = landing || id === 'v-quiz';
+  document.querySelectorAll('#app-nav button').forEach(b => b.setAttribute('aria-current', (b.hasAttribute('data-return-chat') ? id === 'v-chat' : b.hasAttribute('data-open-learning') ? id === 'v-learning' : id === 'v-workspace') ? 'page' : 'false'));
+  document.querySelectorAll('.header-context').forEach(b => b.hidden = landing || id === 'v-quiz');
   window.scrollTo(0, 0);
 }
 function banner(text, warn = false) { const b = $('#banner'); b.textContent = text; b.className = 'banner' + (warn ? ' warn' : ''); b.hidden = !text; }
@@ -36,6 +42,7 @@ const agents = () => state.config.catalog.agents;
 const persona = id => personas().find(p => p.id === id);
 const agent = id => agents().find(a => a.id === id);
 const usable = x => Boolean(x?.built);
+const orderedPersonas = () => personas().slice().sort((a,b) => Number(usable(b)) - Number(usable(a)));
 const statusLabel = x => usable(x) ? 'Available' : 'Preview';
 const badge = x => `<span class="tag ${usable(x) ? 'free' : 'plus'}">${statusLabel(x)}</span>`;
 const initials = name => name.replace(/^The /, '').split(/[\s-]+/).map(w => w[0]).join('').slice(0, 2).toUpperCase();
@@ -49,8 +56,10 @@ const agentSymbol = id => {
 
 // ---------- landing ----------
 function renderLanding() {
-  $('#personas').innerHTML = personas().map(p => `<div class="portrait">${art(p)}${badge(p)}
-    <h3>${esc(p.name)}</h3><p class="portrait-source">${p.textOnly ? 'AI perspective · Text chat' : 'AI-inspired perspective'}</p><p>${esc(p.philosophy)}.</p><button class="btn outline" type="button" data-chat-mentor="${esc(p.id)}">${usable(p) ? 'Choose perspective' : 'Explore preview'}</button></div>`).join('');
+  const portrait = p => `<article class="portrait">${art(p)}${badge(p)}<h3>${esc(p.name)}</h3><p class="portrait-source">${usable(p) ? (p.textOnly ? 'Text chat' : 'Voice & text chat') : 'Not available yet'}</p><p>${esc(p.philosophy)}.</p><button class="btn outline" type="button" data-chat-mentor="${esc(p.id)}">${usable(p) ? 'Choose teacher' : 'Explore preview'}</button></article>`;
+  const ready = personas().filter(usable), previews = personas().filter(p => !usable(p));
+  $('#personas').innerHTML = `<h3 class="teacher-group-label">Available now</h3><div class="available-portraits">${ready.map(portrait).join('')}</div><details class="teacher-previews"><summary>Explore ${previews.length} upcoming perspectives <span class="tag quiet">Preview</span></summary><div class="preview-portraits">${previews.map(portrait).join('')}</div></details>`;
+  $('#hero-perspectives').innerHTML = orderedPersonas().map(p => `<div class="collection-portrait">${p.image ? `<img src="${esc(p.image)}" alt="AI-generated portrait inspired by ${esc(p.inspiredBy)}" width="160" height="200" loading="eager">` : `<span>${esc(initials(p.name))}</span>`}<strong>${esc(p.inspiredBy || p.name)}</strong><small>${usable(p) ? 'Available' : 'Preview'}</small></div>`).join('');
   const groups = [...new Set(agents().map(a => a.category || 'Other specialties'))];
   $('#agents').innerHTML = groups.map(category => `<details class="specialist-group"><summary>${esc(category)} <span class="fine">${agents().filter(a => a.category === category).length} specialties</span></summary><div class="agent-grid">${agents().filter(a => (a.category || 'Other specialties') === category).map((a,i) => `<button type="button" class="agent-card tone-${i%4}" data-a="${esc(a.id)}">${agentSymbol(a.id)}<span class="agent-card-top"><strong>${esc(a.name)}</strong>${badge(a)}</span><span class="agent-card-job">${esc(a.job)}</span></button>`).join('')}</div></details>`).join('');
   document.querySelectorAll('#agents [data-a]').forEach(b => b.onclick = () => showAgent(agent(b.dataset.a)));
@@ -62,10 +71,11 @@ function renderLanding() {
 let pendingAgent = null;
 function openStartChoice({personaId = state.personaId, need = state.need, agentId = null} = {}) {
   pendingAgent = agentId;
-  $('#start-personas').innerHTML = '<option value="">Choose a perspective</option>' + personas().map(p => `<option value="${esc(p.id)}" ${usable(p) ? '' : 'disabled'}>${esc(p.name)}${usable(p) ? '' : ' · Preview'}</option>`).join('');
+  $('#start-personas').innerHTML = '<option value="">Choose a perspective</option>' + personas().slice().sort((a,b) => Number(usable(b)) - Number(usable(a))).map(p => `<option value="${esc(p.id)}" ${usable(p) ? '' : 'disabled'}>${esc(p.name)}${usable(p) ? '' : ' · Preview'}</option>`).join('');
   $('#start-personas').value = usable(persona(personaId)) ? personaId : '';
   $('#start-need').value = ['question','everyday','future','retirement'].includes(need) ? need : 'question';
   $('#start-choice-error').textContent = '';
+  $('#start-step').value = (state.profile || $('#v-landing').hidden !== false) ? 'chat' : 'snapshot';
   $('#start-choice').showModal();
 }
 function submitStartChoice(e) {
@@ -74,7 +84,8 @@ function submitStartChoice(e) {
   if (!usable(selected)) { $('#start-choice-error').textContent = 'Choose an available perspective to start.'; return; }
   state.personaId = selected.id; state.need = $('#start-need').value;
   state.agentId = pendingAgent || (state.need === 'future' && usable(agent('investing')) ? 'investing' : 'budget');
-  rememberChoice(); $('#start-choice').close(); startChat();
+  rememberChoice(); $('#start-choice').close();
+  if ($('#start-step').value === 'snapshot' && !learningQuestion) renderIntake(); else startChat();
 }
 function rememberChoice() {
   try { localStorage.setItem('mentor-labs-choice', JSON.stringify({personaId:state.personaId,agentId:state.agentId,need:state.need})); } catch {}
@@ -124,6 +135,8 @@ async function submitQuiz(answers) {
 }
 
 function renderIntake() {
+  if (!usable(persona(state.personaId))) return openStartChoice();
+  $('#intake-teacher').textContent = 'Getting started with ' + persona(state.personaId).name;
   $('#income-months').innerHTML = lastMonths(6).map(m => `<label class="f">${esc(new Date(m + '-15T12:00:00Z').toLocaleString('en-US', {month: 'short', year: 'numeric', timeZone: 'UTC'}))}<input inputmode="decimal" data-month="${m}" placeholder="0.00"></label>`).join('');
   const p = state.profile;
   if (p) {
@@ -199,7 +212,7 @@ function connectPortfolio() { uploadNote('Direct brokerage connections are not a
 function renderChatChrome() {
   const p = persona(state.personaId), a = agent(state.agentId), s = state.snapshot;
   $('#chat-head').innerHTML = `${thumb(p)}<div><strong>${esc(p.name)}</strong><small>${p.textOnly ? 'Text conversation · Your AI teacher' : 'Your AI teacher · Learn along the way'} · AI-inspired, not affiliated</small></div>${s?.status === 'ok' ? `<div class="snap-mini">lowest ${usd(s.lowestMonth)}<br>essentials ${usd(s.essentialsTotal)}</div>` : ''}`;
-  $('#persona-switch').innerHTML = personas().map(x => `<button type="button" class="rail-item ${x.id === state.personaId ? 'on' : ''}" data-p="${esc(x.id)}">${thumb(x)}<span>${esc(displayName(x.name))}</span>${badge(x)}</button>`).join('');
+  $('#persona-switch').innerHTML = orderedPersonas().map(x => `<button type="button" class="rail-item ${x.id === state.personaId ? 'on' : ''}" data-p="${esc(x.id)}">${thumb(x)}<span>${esc(displayName(x.name))}</span>${badge(x)}</button>`).join('');
   $('#agent-list').innerHTML = agents().map((x,i) => `<button type="button" class="rail-item coach-item tone-${i%4} ${x.id === state.agentId ? 'on' : ''}" data-a="${esc(x.id)}">${agentSymbol(x.id)}<span>${esc(displayName(x.name))}</span>${badge(x)}</button>`).join('');
   document.querySelectorAll('#persona-switch [data-p]').forEach(b => b.onclick = () => pickPersona(b.dataset.p));
   document.querySelectorAll('#agent-list [data-a]').forEach(b => b.onclick = () => pickAgent(b.dataset.a));
@@ -626,7 +639,8 @@ async function boot() {
   $('#engine').textContent = state.config.engine === 'live' ? 'Live AI' : state.config.engine === 'mock' ? 'Local test mode' : 'AI unavailable';
   renderLanding();
   $('#home').onclick = e => { e.preventDefault(); show('v-landing'); };
-  $('#start').onclick = renderIntake;
+  $('#start').onclick = () => openStartChoice();
+  $('#intake-skip').onclick = startChat;
   $('#head-start').onclick = () => openStartChoice(); $('#try-chat').onclick = () => openStartChoice();
   $('#start-choice-form').onsubmit = submitStartChoice;
   $('#start-choice-close').onclick = () => $('#start-choice').close();
@@ -654,6 +668,7 @@ async function boot() {
 }
 boot().then(() => {
   const preview = new URLSearchParams(location.search);
+  if (preview.get('view') === 'landing') show('v-landing');
   if (preview.get('view') === 'workspace') openWorkspace(preview.get('tab') === 'portfolio' ? 'portfolio' : 'budget');
   if (preview.get('view') === 'learning') openLearning();
 }).catch(e => banner(`The app could not load: ${e.message}`, true));
@@ -680,7 +695,7 @@ document.querySelector('#start-choice')?.addEventListener('submit', () => {
 
 // One teacher conversation, shared with the learning and planning workspace.
 function openWorkspace(tab) {show('v-workspace');document.dispatchEvent(new CustomEvent('mentor:workspace-open'));if(tab)document.querySelector('[data-workspace-tab="'+tab+'"]')?.click();}
-function openLearning() {show('v-landing');document.querySelector('#learn > details').open=true;document.querySelector('#learn').scrollIntoView({block:'start'});}
+function openLearning() {show('v-learning');}
 document.querySelectorAll('[data-open-workspace]').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();openWorkspace(b.dataset.openWorkspace);}));
 document.querySelectorAll('[data-open-learning]').forEach(b=>b.addEventListener('click',openLearning));
 document.querySelectorAll('[data-return-chat]').forEach(b=>b.addEventListener('click',()=>{if(state.personaId)startChat();else openStartChoice();}));

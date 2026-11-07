@@ -460,7 +460,7 @@ Object.assign(toolData, {
         renderInsightChart(document.querySelector("#growth-chart"), [
           { label: "Starting money", value: start, display: formatCurrency(start), color: "linear-gradient(90deg,#94a3b8,#cbd5e1)" },
           { label: "Monthly contributions", value: monthly * months, display: formatCurrency(monthly * months), color: "linear-gradient(90deg,#38bdf8,#2563eb)" },
-          { label: "Investment growth", value: earned, display: formatCurrency(earned), color: "linear-gradient(90deg,#f2d990,#d7b56d)" },
+          { label: "Investment growth", value: earned, display: formatCurrency(earned), color: "linear-gradient(90deg,#b7dbc2,#7fbf9c)" },
         ]);
       };
       ["growth-monthly", "growth-start", "growth-years", "growth-rate"].forEach((id) => document.querySelector(`#${id}`).addEventListener("input", update));
@@ -503,7 +503,7 @@ Object.assign(toolData, {
           { label: "Food + transport", value: values["budget-basics"], display: formatCurrency(values["budget-basics"]), color: "linear-gradient(90deg,#2dd4bf,#0f766e)" },
           { label: "Debt minimums", value: values["budget-debt"], display: formatCurrency(values["budget-debt"]), color: "linear-gradient(90deg,#fb7185,#be123c)" },
           { label: "Subscriptions + fun", value: values["budget-flex"], display: formatCurrency(values["budget-flex"]), color: "linear-gradient(90deg,#c084fc,#7c3aed)" },
-          { label: "Leftover", value: Math.max(0, leftover), display: formatCurrency(leftover), color: "linear-gradient(90deg,#f2d990,#d7b56d)" },
+          { label: "Leftover", value: Math.max(0, leftover), display: formatCurrency(leftover), color: "linear-gradient(90deg,#b7dbc2,#7fbf9c)" },
         ]);
       };
       ids.forEach((id) => document.querySelector(`#${id}`).addEventListener("input", update));
@@ -547,7 +547,7 @@ Object.assign(toolData, {
         renderInsightChart(document.querySelector("#debt-chart"), [
           { label: "Minimum only", value: baseMonths === Infinity ? 120 : baseMonths, display: baseMonths === Infinity ? "No payoff" : `${baseMonths} mo`, color: "linear-gradient(90deg,#fb7185,#be123c)" },
           { label: "With extra payment", value: optMonths === Infinity ? 120 : optMonths, display: optMonths === Infinity ? "No payoff" : `${optMonths} mo`, color: "linear-gradient(90deg,#22c55e,#15803d)" },
-          { label: "Interest cost", value: interest === Infinity ? b : interest, display: interest === Infinity ? "Too low" : formatCurrency(interest), color: "linear-gradient(90deg,#f2d990,#d7b56d)" },
+          { label: "Interest cost", value: interest === Infinity ? b : interest, display: interest === Infinity ? "Too low" : formatCurrency(interest), color: "linear-gradient(90deg,#b7dbc2,#7fbf9c)" },
         ]);
       };
       ids.forEach((id) => document.querySelector(`#${id}`).addEventListener("input", update));
@@ -762,9 +762,9 @@ function drawMarketCanvas() {
   ctx.clearRect(0, 0, width, height);
 
   const gradient = ctx.createLinearGradient(0, 0, width, height);
-  gradient.addColorStop(0, "rgba(215,181,109,0.18)");
+  gradient.addColorStop(0, "rgba(127,191,156,0.18)");
   gradient.addColorStop(0.5, "rgba(255,255,255,0.05)");
-  gradient.addColorStop(1, "rgba(215,181,109,0.12)");
+  gradient.addColorStop(1, "rgba(127,191,156,0.12)");
   ctx.fillStyle = gradient;
   ctx.fillRect(0, 0, width, height);
 
@@ -786,8 +786,8 @@ function drawMarketCanvas() {
   ctx.lineWidth = 5;
   const lineGradient = ctx.createLinearGradient(0, 0, width, 0);
   lineGradient.addColorStop(0, "rgba(255,255,255,0.7)");
-  lineGradient.addColorStop(0.45, "rgba(242,217,144,0.95)");
-  lineGradient.addColorStop(1, "rgba(215,181,109,0.55)");
+  lineGradient.addColorStop(0.45, "rgba(183,219,194,0.95)");
+  lineGradient.addColorStop(1, "rgba(127,191,156,0.55)");
   ctx.strokeStyle = lineGradient;
   ctx.beginPath();
   for (let x = 0; x <= width; x += 16) {
@@ -802,7 +802,7 @@ function drawMarketCanvas() {
   for (let i = 0; i < 42; i += 1) {
     const x = ((i * 83 + tick * 0.7) % (width + 80)) - 40;
     const y = height * 0.16 + Math.sin(i * 1.7 + tick / 34) * 185 + i * 9;
-    ctx.fillStyle = i % 4 === 0 ? "rgba(242,217,144,0.66)" : "rgba(255,255,255,0.25)";
+    ctx.fillStyle = i % 4 === 0 ? "rgba(183,219,194,0.66)" : "rgba(255,255,255,0.25)";
     ctx.beginPath();
     ctx.arc(x, y, i % 4 === 0 ? 3.5 : 2, 0, Math.PI * 2);
     ctx.fill();
@@ -873,7 +873,7 @@ drawMarketCanvas();
     }
 
     for (const p of pts) {
-      bgCtx.fillStyle = p.gold ? "rgba(215,181,109,0.3)" : "rgba(255,255,255,0.18)";
+      bgCtx.fillStyle = p.gold ? "rgba(127,191,156,0.3)" : "rgba(255,255,255,0.18)";
       bgCtx.beginPath();
       bgCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
       bgCtx.fill();
@@ -949,8 +949,8 @@ drawMarketCanvas();
     /* data: three scenarios */
     var lines = [
       { rate: 0.04, color: 'rgba(255,255,255,0.22)', width: 1.5*dpr, label: '4%' },
-      { rate: 0.07, color: '#d7b56d',               width: 3*dpr,   label: '7%' },
-      { rate: 0.10, color: 'rgba(242,217,144,0.55)', width: 1.5*dpr, label: '10%' },
+      { rate: 0.07, color: '#7fbf9c',               width: 3*dpr,   label: '7%' },
+      { rate: 0.10, color: 'rgba(183,219,194,0.55)', width: 1.5*dpr, label: '10%' },
     ];
 
     var maxVal = fv(monthly, 0.10, YEARS) * 1.1;
@@ -1011,12 +1011,12 @@ drawMarketCanvas();
         /* outer glow */
         ctx.beginPath();
         ctx.arc(x, y, 7*dpr, 0, Math.PI*2);
-        ctx.fillStyle = 'rgba(215,181,109,0.18)';
+        ctx.fillStyle = 'rgba(127,191,156,0.18)';
         ctx.fill();
         /* inner dot */
         ctx.beginPath();
         ctx.arc(x, y, 4*dpr, 0, Math.PI*2);
-        ctx.fillStyle = '#f2d990';
+        ctx.fillStyle = '#b7dbc2';
         ctx.fill();
       });
     }
@@ -1025,8 +1025,8 @@ drawMarketCanvas();
     var lx = W - pad.r - 2*dpr;
     var ly = pad.t + 8*dpr;
     [{ color:'rgba(255,255,255,0.35)', label:'4% conservative' },
-     { color:'#d7b56d',               label:'7% moderate' },
-     { color:'rgba(242,217,144,0.55)', label:'10% optimistic' }].forEach(function(item, i) {
+     { color:'#7fbf9c',               label:'7% moderate' },
+     { color:'rgba(183,219,194,0.55)', label:'10% optimistic' }].forEach(function(item, i) {
       var y = ly + i * 16*dpr;
       ctx.strokeStyle = item.color;
       ctx.lineWidth   = 2*dpr;

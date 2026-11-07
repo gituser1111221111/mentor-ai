@@ -4,7 +4,7 @@ November 7, 2026. The founder's direct request supersedes historical flagship, a
 
 ## This branch
 
-Latest clarification: one chatbot guided by the selected teacher, optional learning modules, and a personal Budget/Portfolio workspace. Specialist tools are internal implementation details, not a bot catalog to navigate. Pricing remains one free month, then $2.99/month for everything.
+Latest clarification: a concise teacher-first landing showcases all ten perspectives, with available teachers grouped first and previews separate. Teacher selection leads to an optional money snapshot and holdings/document import, then chat. Teacher chat, Dashboard, and the 13-step Learning guide have distinct app tabs; dashboard and lesson content are not embedded on the marketing page. Specialist tools are internal implementation details, not a bot catalog to navigate. Pricing remains one free month, then $2.99/month for everything.
 
 The workspace now includes an exact-cent monthly budget builder and cash-cushion goal, holdings import, personal single-security/sector/top-five/count metrics, an earnings review window, and explanation pop-ups for each metric. Values are drafted and explicitly approved before taking effect. Changing guidelines invalidates prior cached analysis. Missing sector data remains unknown. What-if scenarios recheck supported constraints and disclose unsatisfied/unknown conditions.
 
@@ -21,14 +21,14 @@ Market context supports on-demand and optional five-minute foreground refresh us
 
 Learning content: `gituser1111221111/barone-investment-group`, commit `b8b165e3266cad4532ec9a1bbb3f49b81535b63f`, `content.js`. Reused at the founder's express request. Existing lesson text is preserved as educational source material; rates, historical claims, tax details and examples have not received a new methodology audit. The integrated academy now copies the lesson layouts, interactive calculator tools, and knowledge checks from that revision. Copied tool pages use Mentor colors and remain educational estimates; source app links retain their original labels. Lesson discussion currently passes the topic into chat, not the full lesson text as a verified research source.
 
-Sentinel: dashboard layout adapted from `gituser1111221111/demo-`, revision `c50a6af8ab60af9f34d5d5b45b364f33d47ee1ed`. Its sidebar navigation, KPI cards, allocation panels, holdings, calendar, news and guideline views are adapted to Mentor's saved portfolio and budgeting APIs. Portfolio checks retain Mentor's exact-cent utilities. Imported values remain separate from market quotes; unsupported historical performance and risk statistics are not fabricated. This does not implement Sentinel's complete thirteen-rule engine.
+Sentinel: dashboard layout adapted from `gituser1111221111/demo-`, revision `c50a6af8ab60af9f34d5d5b45b364f33d47ee1ed`. Its sidebar navigation, KPI cards, allocation panels, holdings, calendar, news and guideline views are adapted to Mentor's saved portfolio and budgeting APIs. Portfolio checks retain Mentor's exact-cent utilities. Imported values remain separate from market quotes; unsupported historical performance and risk statistics are not fabricated. The expanded review now includes all thirteen Sentinel parameter families, per-ticker/sector exceptions, exclusions and custom rules. Historical metrics use the current imported mix and dated, aligned weekly closes as a constant-holdings illustration, not actual account returns. Unknown history, cost basis, sector and provider coverage remain explicit.
 
 ## What remains future work
 
 1. Authenticated durable accounts, migration, retention/deletion, backup and cross-device context. Existing anonymous session storage remains a prototype.
 2. Document fact review with source evidence, units and period confirmation before calculation.
 3. Retirement scenarios with explicit assumptions and evaluated source coverage across all teacher perspectives.
-4. Expanded Sentinel rules, exceptions, conflicts, tax-lot and historical-methodology review.
+4. Professional methodology review of expanded Sentinel rules and historical illustrations; tax-lot accounting and real transaction/performance history remain future work.
 5. Supported read-only account connections, actual freshness, event reconciliation and opt-in notifications. No trade or money-movement execution.
 6. Billing specification: calendar versus fixed trial duration, payment-method collection, conversion consent/notices, cancellation and post-cancellation data behavior.
 7. Professional review of actual service outputs, identity/content rights, privacy and paid-service scope before production launch.

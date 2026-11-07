@@ -2,6 +2,7 @@ const params = new URLSearchParams(window.location.search);
 const key = params.get("topic") || params.get("workflow") || params.get("tool") || "investing";
 const type = document.querySelector("[data-detail-type]")?.dataset.detailType;
 const content = window.BIG_CONTENT;
+const GUIDE_ORDER = ['reset','budgeting','credit','debt_payoff','taxes_paychecks','insurance_risk','investing','stocks','etfs','diversification','careers','entrepreneurship','ai'];
 const lessonToolMap = {
   investing: ["compound", "roth_vs_trad", "inflation"],
   credit: ["credit"],
@@ -263,7 +264,7 @@ function renderLesson() {
   } catch(e) {}
   document.title = `${item.title} | Mentor Labs`;
   setPageMeta(document.title, item.summary);
-  document.querySelector("#detail-eyebrow").textContent = item.eyebrow;
+  document.querySelector("#detail-eyebrow").textContent = `STEP ${GUIDE_ORDER.indexOf(key) + 1} OF ${GUIDE_ORDER.length}`;
   document.querySelector("#detail-title").textContent = item.title;
   document.querySelector("#detail-summary").textContent = item.summary;
   document.querySelector("#detail-audience").textContent = item.audience;
@@ -302,7 +303,7 @@ function renderLesson() {
   renderKnowledgeCheck(key);
 
   // Next chapter guide path
-  const CHAPTER_ORDER = ['reset','budgeting','credit','debt_payoff','investing','ai','careers','taxes_paychecks','insurance_risk'];
+  const CHAPTER_ORDER = GUIDE_ORDER;
   const CHAPTER_LABELS = {
     reset: 'Money Reset', budgeting: 'Budgeting', credit: 'Credit', debt_payoff: 'Debt Payoff',
     investing: 'Investing', ai: 'AI & Finance', careers: 'Careers', taxes_paychecks: 'Taxes & Paychecks', insurance_risk: 'Insurance'
@@ -319,7 +320,7 @@ function renderLesson() {
     el.innerHTML = `
       <div class="next-chapter-inner">
         <div class="next-chapter-copy">
-          <p class="eyebrow">Chapter ${chapterNum + 1} of ${CHAPTER_ORDER.length} &mdash; Up next</p>
+          <p class="eyebrow">Step ${chapterNum + 1} of ${CHAPTER_ORDER.length} &mdash; Up next</p>
           <h2>${nextItem.title}</h2>
           <p>${nextItem.summary}</p>
         </div>
@@ -333,7 +334,7 @@ function renderLesson() {
     el.innerHTML = `
       <div class="next-chapter-inner">
         <div class="next-chapter-copy">
-          <p class="eyebrow">You finished all ${CHAPTER_ORDER.length} chapters</p>
+          <p class="eyebrow">Step ${CHAPTER_ORDER.length} of ${CHAPTER_ORDER.length} &mdash; Keep practicing</p>
           <h2>Now put it into practice.</h2>
           <p>Use the interactive tools to run real numbers on your own situation and build the habit of thinking before you spend.</p>
         </div>
@@ -372,7 +373,7 @@ function renderLesson() {
         if (p.y < -6) { p.y = cv.height + 6; p.x = Math.random() * cv.width; }
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(215,181,109,${p.a})`;
+        ctx.fillStyle = `rgba(127,191,156,${p.a})`;
         ctx.fill();
       }
       raf = requestAnimationFrame(draw);
@@ -464,7 +465,7 @@ function renderWorkflow() {
   renderRelated(content.workflows, key, "workflow.html?workflow=");
 }
 
-function drawChart(values, labels, colors = ["#60a5fa", "#f2d990", "#22c55e", "#fb7185", "#a78bfa"]) {
+function drawChart(values, labels, colors = ["#60a5fa", "#b7dbc2", "#22c55e", "#fb7185", "#a78bfa"]) {
   const canvas = document.querySelector("#tool-page-chart");
   const ctx = canvas.getContext("2d");
   const width = canvas.width;
@@ -533,7 +534,7 @@ const toolRenderers = {
         const months = Math.min(year, y) * 12;
         return s * (1 + r) ** months + (r === 0 ? m * months : m * (((1 + r) ** months - 1) / r));
       });
-      drawChart(values, ["5y", "10y", "15y", "20y", "30y"], ["#38bdf8", "#60a5fa", "#f2d990", "#22c55e", "#a78bfa"]);
+      drawChart(values, ["5y", "10y", "15y", "20y", "30y"], ["#38bdf8", "#60a5fa", "#b7dbc2", "#22c55e", "#a78bfa"]);
       const months = y * 12;
       const total = s * (1 + r) ** months + (r === 0 ? m * months : m * (((1 + r) ** months - 1) / r));
       const contributed = s + m * months;
@@ -579,7 +580,7 @@ const toolRenderers = {
       const flex = Number(document.querySelector("#p-flex").value);
       ["p-income", "p-housing", "p-basics", "p-budget-debt", "p-flex"].forEach((id) => setPageControlValue(id, Number(document.querySelector(`#${id}`).value), "$"));
       const leftover = income - housing - basics - debt - flex;
-      drawChart([housing, basics, debt, flex, Math.max(0, leftover)], ["home", "basics", "debt", "fun", "left"], ["#60a5fa", "#2dd4bf", "#fb7185", "#a78bfa", "#f2d990"]);
+      drawChart([housing, basics, debt, flex, Math.max(0, leftover)], ["home", "basics", "debt", "fun", "left"], ["#60a5fa", "#2dd4bf", "#fb7185", "#a78bfa", "#b7dbc2"]);
       const status = leftover / Math.max(income, 1) >= 0.15 ? "Healthy" : leftover / Math.max(income, 1) >= 0.03 ? "Tight" : "Risky";
       document.querySelector("#tool-page-result").textContent = status;
       document.querySelector("#tool-page-note").textContent = `${money(leftover)} leftover, about ${money(Math.max(0, leftover / 4.33))}/week flexible`;
@@ -670,7 +671,7 @@ const toolRenderers = {
       setPageControlValue("p-debt-extra", extraPay, "$");
       const base = monthsToPayoff(b, apr, pay);
       const optimized = monthsToPayoff(b, apr, pay + extraPay);
-      drawChart([Math.min(base, 120), Math.min(optimized, 120), Math.max(0, Math.min(base - optimized, 120))], ["min", "extra", "saved"], ["#fb7185", "#22c55e", "#f2d990"]);
+      drawChart([Math.min(base, 120), Math.min(optimized, 120), Math.max(0, Math.min(base - optimized, 120))], ["min", "extra", "saved"], ["#fb7185", "#22c55e", "#b7dbc2"]);
       document.querySelector("#tool-page-result").textContent = optimized >= 999 ? "Won't pay off" : `${optimized} months`;
       document.querySelector("#tool-page-note").textContent = optimized < 999 && base < 999 ? `${Math.max(0, base - optimized)} months faster than minimum-only` : "Increase monthly payment above interest charge";
     };
@@ -869,7 +870,7 @@ const toolRenderers = {
       const monthly = gap === 0 ? 0 : mr === 0 ? gap / n : (gap * mr) / ((1 + mr) ** n - 1);
       const canvas = document.querySelector("#tool-page-chart");
       canvas.style.display = "block";
-      drawChart([target, haveGrown, gap], ["target", "savings", "gap"], ["#f2d990", "#22c55e", "#fb7185"]);
+      drawChart([target, haveGrown, gap], ["target", "savings", "gap"], ["#b7dbc2", "#22c55e", "#fb7185"]);
       document.querySelector("#tool-page-result").textContent = `${money(monthly)}/mo to save`;
       document.querySelector("#tool-page-note").textContent = `Target nest egg about ${money(target)} at age ${ret} (spending ${money(futureSpend / 12)}/month after ${years} years of inflation, using the common 4% withdrawal guideline). Your current savings could grow to ${money(haveGrown)}. Estimates only; Social Security and taxes are not included.`;
     };
@@ -1013,7 +1014,7 @@ const toolRenderers = {
       const diff = Math.abs(rothAfterTax - tradAfterTax);
       const canvas = document.querySelector("#tool-page-chart");
       canvas.style.display = "block";
-      drawChart([tradAfterTax, rothAfterTax], ["Traditional", "Roth"], ["#60a5fa", "#f2d990"]);
+      drawChart([tradAfterTax, rothAfterTax], ["Traditional", "Roth"], ["#60a5fa", "#b7dbc2"]);
       const winner = diff < 1 ? "It's a tie" : rothAfterTax > tradAfterTax ? "Roth wins" : "Traditional wins";
       document.querySelector("#tool-page-result").textContent = winner;
       document.querySelector("#tool-page-note").textContent = `Traditional ${money(tradAfterTax)} vs Roth ${money(rothAfterTax)} after tax (${money(diff)} difference). Rule of thumb: lower tax rate now than in retirement favors Roth; higher now favors Traditional. Assumes the same take-home cost either way and no early withdrawals.`;
@@ -1050,7 +1051,7 @@ const toolRenderers = {
       const canvas = document.querySelector("#tool-page-chart");
       canvas.style.display = "block";
       const pts = [0, 0.25, 0.5, 0.75, 1].map((f) => path[Math.round((path.length - 1) * f)]);
-      drawChart(pts, ["start", "25%", "50%", "75%", "goal"], ["#38bdf8", "#60a5fa", "#f2d990", "#22c55e", "#a78bfa"]);
+      drawChart(pts, ["start", "25%", "50%", "75%", "goal"], ["#38bdf8", "#60a5fa", "#b7dbc2", "#22c55e", "#a78bfa"]);
       const resultEl = document.querySelector("#tool-page-result");
       const noteEl = document.querySelector("#tool-page-note");
       if (have >= goal) {
@@ -1087,7 +1088,7 @@ const toolRenderers = {
       const nw = assets - debts;
       const canvas = document.querySelector("#tool-page-chart");
       canvas.style.display = "block";
-      drawChart([assets, debts, Math.max(0, nw)], ["assets", "debts", "net worth"], ["#22c55e", "#fb7185", "#f2d990"]);
+      drawChart([assets, debts, Math.max(0, nw)], ["assets", "debts", "net worth"], ["#22c55e", "#fb7185", "#b7dbc2"]);
       document.querySelector("#tool-page-result").textContent = money(nw);
       document.querySelector("#tool-page-note").textContent = `${money(assets)} owned minus ${money(debts)} owed. ${nw < 0 ? "Negative is normal early on, especially with student loans. The goal is to move it up each quarter." : "Update this every quarter and watch the trend, not the single number."}`;
     };

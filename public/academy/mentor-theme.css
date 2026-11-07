@@ -1,25 +1,10 @@
-/* Mentor palette; the Barone module layout and tools remain intact. */
-:root{--black:#10251e;--ink:#17382b;--panel:#183b2e;--panel-2:#214a39;--white:#f4f1ea;--muted:#c5d4c9;--soft:#ebe6da;--line:rgba(183,219,194,.22);--gold:#7fbf9c;--gold-2:#b7dbc2;--gray:#a8bcae;--shadow:0 14px 40px rgba(0,0,0,.14)}
-body{background:var(--black);color:var(--white)}
-body::before,.ambient-bg{display:none}
-.site-header,.site-header.is-scrolled{background:#10251e;border-bottom-color:var(--line)}
-.detail-page{padding:38px clamp(16px,3vw,40px) 48px;max-width:1440px;margin:auto}
-.detail-hero{margin-bottom:28px;gap:12px}
-.detail-hero h1{font-family:Georgia,serif;font-size:clamp(2.2rem,5vw,4rem);line-height:1.08}
-.detail-hero p:not(.eyebrow){font-size:1rem}
-.module-shell{grid-template-columns:minmax(190px,240px) minmax(0,1fr);gap:18px}
-.module-sidebar-card,.module-nav,.module-card,.module-lesson-card,.lesson-lab,.knowledge-check,.detail-panel{border-radius:12px;background:var(--panel);box-shadow:none}
-.module-card h2,.module-lesson-card h2{font-size:clamp(1.35rem,2.5vw,1.9rem)}
-.module-overview,.module-action-grid{grid-template-columns:1fr 1fr}
-.module-sidebar{top:85px}
-.button.primary,.copy-button,.brand-mark{background:var(--gold-2);color:#10251e}
-.button.secondary{background:transparent;color:var(--white);border-color:var(--line)}
-.module-card-primary,.module-card-quick,.prompt-panel,.lesson-lab{border-color:rgba(183,219,194,.35)}
-.kc-opt{color:var(--white)}
+/* Original Barone layout and charcoal surfaces; only gold accents become green. */
+:root{--gold:#7fbf9c;--gold-2:#b7dbc2}
+.mentor-brand-logo{display:block;width:44px;height:44px;object-fit:contain;border-radius:10px;flex:none}
 .module-main,.module-main>*,.lab-grid,.lab-grid>*,#tool-page-controls,#tool-page-controls label{min-width:0}
 #tool-page-controls input,#tool-page-controls select{min-width:0;max-width:100%;width:100%;box-sizing:border-box}
 #tool-page-controls select{white-space:normal}
+.app-copy,.app-copy>*{min-width:0;max-width:100%;overflow-wrap:anywhere}
+.app-copy small{white-space:normal}
 a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--gold-2);outline-offset:3px}
-@media(max-width:900px){.module-shell{grid-template-columns:1fr}.module-sidebar{position:static}.module-nav{grid-template-columns:repeat(2,minmax(0,1fr))}.module-audience{display:none}.module-overview,.module-action-grid{grid-template-columns:1fr}}
-@media(max-width:560px){.module-nav{grid-template-columns:1fr}.site-header{padding:12px 16px}.site-nav{gap:12px}.detail-page{padding-top:24px}.module-lesson-card{grid-template-columns:1fr;gap:12px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
