@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 process.env.NODE_ENV='test';process.env.MENTOR_ENGINE='live';process.env.MENTOR_API_KEY='test-only';
-const {applyProfileUpdates,extractProfileUpdates}=await import('../lib/profile-chat.js');
+const {applyProfileUpdates,extractProfileUpdates,partialProfileReply}=await import('../lib/profile-chat.js');
 const {normalizeProfile,snapshot}=await import('../lib/profile.js');
 const {setClient}=await import('../lib/mentor/llm.js');
 const {createServer}=await import('../server.js');
@@ -15,9 +15,9 @@ test('corrections replace exact fields, preserve attachments and recalculate sna
  assert.equal(snapshot(r.profile).lowestMonthLeftover,'1500.00');assert.equal(r.profile.savings,'900.00');
  assert.deepEqual(r.profile.documents,p.documents);assert.deepEqual(r.profile.portfolio,p.portfolio);assert.equal(p.bills[0].amount,'1000.00');
 });
-test('invalid, unsupported and incomplete updates fail atomically',()=>{
+test('invalid and unsupported updates fail atomically',()=>{
  const p=baseProfile();
- for(const u of [update('bills','Rent','-1','change'),update('savings','','5','not in message'),update('tier','','plus','change'),update('debts.balance','Card','100','change')]) assert.throws(()=>applyProfileUpdates(p,[u],'change'));
+ for(const u of [update('bills','Rent','-1','change'),update('savings','','5','not in message'),update('tier','','plus','change')]) assert.throws(()=>applyProfileUpdates(p,[u],'change'));
  assert.equal(p.savings,'500.00');
 });
 test('month corrections preserve other months; explicit removal clears derived income',()=>{
@@ -59,3 +59,16 @@ test('HTTP chat saves corrections before generation, survives reload, and protec
 });
 
 test('new ongoing take-home replaces the obsolete planning baseline',()=>{ const r=applyProfileUpdates(baseProfile(),[update('monthlyTakeHome','','4200','My take-home is now 4200 monthly')],'My take-home is now 4200 monthly'); assert.equal(r.profile.incomeMonthly,'4200.00'); assert.equal(snapshot(r.profile).lowestMonth,'4200.00'); });
+
+test('fresh spoken intake saves partial debt and converts annual net income without guessing APR',async()=>{
+ const message='I have $2500 debt, payment $100, ten percent monthly APY. I make $65000 a year after tax.';
+ const updates=[update('debts.balance','Debt 1','2500',message),update('debts.minPayment','Debt 1','100',message),update('annualTakeHome','','65000',message)];
+ const r=await extractProfileUpdates({profile:null,message,call:async()=>({data:{updates,clarification:'Annual APR or monthly?'}})});
+ assert.equal(r.profile.incomeMonthly,'5416.67'); assert.equal(r.profile.pendingDebts[0].balance,'2500.00');assert.equal(r.profile.pendingDebts[0].rateBps,undefined);assert.equal(r.profile.debts.length,0);
+ assert.equal(snapshot(r.profile).status,'incomplete');
+ const answer=partialProfileReply(r.profile,r);assert.match(answer.text,/5,416.67/);assert.doesNotMatch(answer.text,/need a name|monthly take-home pay.*share/);
+ const {unverifiedNumbers}=await import('../lib/mentor/validate.js');assert.deepEqual(unverifiedNumbers(answer.text,answer.calculations),[],'spoken reply amounts are verified');
+ const second=await extractProfileUpdates({profile:r.profile,message:'It is 10% annual APR.',call:async()=>({data:{updates:[update('debts.rateBps','Debt 1','1000','10% annual APR')],clarification:''}})});
+ assert.equal(second.profile.pendingDebts.length,0);assert.equal(second.profile.debts[0].balance,'2500.00');assert.equal(second.profile.debts[0].rateBps,1000);
+ const follow=partialProfileReply(second.profile,second);assert.match(follow.text,/months, with/);assert.deepEqual(unverifiedNumbers(follow.text,follow.calculations),[]);
+});

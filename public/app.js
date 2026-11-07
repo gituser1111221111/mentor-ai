@@ -173,7 +173,7 @@ async function uploadDocument(file) {
   if (file.size > 2_000_000) throw Error('Choose a document under 2 MB.');
   const base64 = await new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(String(reader.result).split(',')[1]); reader.onerror = () => reject(Error('Could not read file')); reader.readAsDataURL(file); });
   const result = await api('/api/attachment', {method: 'POST', body: {name: file.name, base64}});
-  uploadNote(`Document added: ${result.name}. Its text can guide the chat; only quiz numbers are used in calculations.`);
+  uploadNote(`Document added: ${result.name}. Its text can guide the chat; saved financial inputs are used in calculations.`);
   state.pendingDocument = null;
 }
 
