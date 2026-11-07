@@ -20,7 +20,7 @@ Start every session by reading:
 - All money is a USD decimal string, with math in exact cents via `lib/finance.js`. The model never does arithmetic.
 
 ## What's built (Section B, Sat Nov 7)
-- `npm run dev` → http://127.0.0.1:4180 (landing → quiz → snapshot → chat). "Use demo profile" skips the quiz.
+- `npm run dev` → http://127.0.0.1:4180 (landing → free chat, or optional intake → snapshot → chat). "See a sample plan" skips the intake.
 - `lib/profile.js` (quiz → profile + snapshot, cents), `lib/portfolio.js` (CSV → `portfolioSummary`), `lib/store.js` (anonymous session store, `.data/`), `lib/routes.js` (all `/api/*` app routes + static `public/`), `public/` (vanilla JS UI).
 - `lib/mentor/chat.mock.js` implements the A/B contract with code-computed candidates and rule-based picks; responses say `mode: "mock"`.
 - **Live engine (`lib/mentor/chat.js`, written by Ryan's session):** `tools.js` builds the calc library in code → `generate.js` (Sonnet 5.5, JSON-schema output, server-side refusal fallback) proposes ≤12 options citing calc ids → `validate.js` drops any option with a number not in the calcs, duplicates, unknown calcs → `pick.js` (Haiku 5.5, persona notes cached, `pickId` enum c1..c12) picks + replies; an unverified number in the reply swaps in the option's own text → `repick()` reruns only the pick. No forced `tool_choice` (400s on Sonnet 5.5).

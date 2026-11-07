@@ -4,7 +4,7 @@
 
 RedHawk Builds 2026 · Challenge #21, Variable-income budgeting (Student and Campus Finance track), MVP option 1: plan expenses around variable monthly income.
 
-**Live demo:** https://mentor-ai-ahjs.onrender.com. The Render free service may take time to wake after idling. Use **Try Ramsey free** for chat without a quiz, or **See a sample plan** for the full money snapshot.
+**Live demo on main:** https://mentor-ai-ahjs.onrender.com. The current PR branch contains the Mentor Labs redesign; the hosted main demo may lag until that PR is merged and deployed.
 
 ---
 
@@ -17,7 +17,7 @@ We fix one workflow: **getting a budget plan that's built around the lowest mont
 ## How it works
 
 ```
-quiz answers ──► code computes every number (exact cents)
+optional intake ──► code computes every number (exact cents)
                      │  lowest month, shortfall, emergency-fund gap,
                      │  snowball/avalanche payoff, income gap, splits…
                      ▼
@@ -31,9 +31,11 @@ quiz answers ──► code computes every number (exact cents)
        picks ONE option by id (a fixed enum), explains it in its voice, cites its notes.
        If its reply contains an unverified number, the app shows the option's own text instead.
                      ▼
-   answer + calc card + citation chips + "See all options" (with the number-check results)
+   conversational answer + expandable sources and calculations
 
 Switch mentor ──► step ③ only: same options, same numbers, different pick (~2.5 s)
+
+No intake ──► general Ramsey-inspired chat, without a personalized plan
 ```
 
 - **Coaching** = a specialist bot (Budget, Debt, Savings & Emergency Fund) that does the work and the math.
@@ -50,13 +52,13 @@ Switch mentor ──► step ③ only: same options, same numbers, different pic
 | Free Ramsey-inspired starter chat without an intake | Works with Claude when configured; explicit local mock mode is available for testing |
 | Personalized chat: generate → validate → pick, for built mentors and agents | Works when allowed by tier |
 | Persona switch on the same options (`repick`) | Works |
-| Number check visible in the UI ("proposed N, kept K, dropped D: reason") | Checks money, percentages, dates and other numeric claims against calculations; it cannot prove the reasoning is sound |
+| Internal number check | Checks money, percentages, dates and other numeric claims against calculations; the public chat shows the answer and optional source/calculation details |
 | Conversation and memory | Restores after refresh on the same server instance; users can remove remembered facts |
 | Claude unavailable | Chat returns a clear retry message; the rule-based engine runs only when `MENTOR_ENGINE=mock` is explicitly set for local testing |
 | $4.99/month Plus (Stripe Checkout) | Works in **Stripe test mode**: a real hosted checkout and subscription, verified on the server before Plus unlocks. Use card 4242 4242 4242 4242. Live keys are refused in code |
 | Additional mentors and agents | Shown in the gallery, selector, and chat rail as Plus previews; unbuilt entries cannot be used as if live |
 | Document picker and portfolio URL | Showcase only: documents stay in the browser; URL is session-only reference, with no brokerage connection |
-| "Connect brokerage" (Plaid) | **Not built**: shown as sandbox-only text |
+| Direct brokerage connection (Plaid) | **Not built**; the portfolio link is reference-only |
 | Voice (ElevenLabs) | **Not built yet** |
 
 ## Run it locally
