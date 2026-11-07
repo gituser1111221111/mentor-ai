@@ -142,10 +142,13 @@ label.f { display: grid; gap: 4px; font-size: .8rem; color: var(--muted); }
 .meta { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; font-size: .82rem; color: var(--muted); }
 .meta .btn.text { font-size: .82rem; }
 .disclose { font-size: .74rem; color: var(--muted); margin-top: 6px; }
-.skeleton { display: grid; gap: 8px; max-width: 620px; }
-.skeleton i { display: block; height: 12px; background: var(--paper-2); border-radius: 2px; animation: pulse 1.4s ease-in-out infinite; }
-.skeleton i:nth-child(3) { width: 85%; } .skeleton i:nth-child(4) { width: 60%; }
-.skeleton .stage { font: .78rem var(--mono); color: var(--green); }
+.skeleton { display: flex; gap: 9px; align-items: center; }
+.skeleton .stage { font: .85rem var(--sans); color: var(--ink-2); }
+.typing { display: flex; gap: 4px; align-items: center; }
+.typing i { display: block; width: 5px; height: 5px; background: var(--green); border-radius: 50%; animation: pulse 1.4s ease-in-out infinite; }
+.typing i:nth-child(2) { animation-delay: .2s; } .typing i:nth-child(3) { animation-delay: .4s; }
+.answer-details { margin-top: 10px; font-size: .82rem; color: var(--ink-2); }
+.answer-details summary { cursor: pointer; }
 @keyframes pulse { 50% { opacity: .45; } }
 @media (prefers-reduced-motion: reduce) { .skeleton i { animation: none; } html { scroll-behavior: auto; } }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
