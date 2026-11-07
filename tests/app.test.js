@@ -101,3 +101,39 @@ test('API: quiz -> chat -> repick, static UI, and traversal blocked', async () =
     assert.equal((await fetch(base + '/api/profile')).status, 400); // no session header
   } finally { await new Promise(r => server.close(r)); }
 });
+
+test('Plus gating: locked mentor -> 402, demo unlock without Stripe, unbuilt -> coming soon', async () => {
+  delete process.env.STRIPE_TEST_SECRET_KEY;
+  const server = createServer(); await new Promise(r => server.listen(0, '127.0.0.1', r));
+  const base = `http://127.0.0.1:${server.address().port}`;
+  const h = {'Content-Type': 'application/json', 'X-Session-Id': 'test-session-plus-000001'};
+  const post = (p, b) => fetch(base + p, {method: 'POST', headers: h, body: JSON.stringify(b || {})});
+  try {
+    await post('/api/profile', {answers});
+    assert.equal((await post('/api/chat', {message: 'hi', personaId: 'index-investor'})).status, 402);
+    assert.equal((await post('/api/chat', {message: 'hi', agentId: 'tax'})).status, 402);
+    assert.equal((await (await post('/api/checkout')).json()).mode, 'demo');
+    assert.equal((await (await post('/api/checkout/demo')).json()).tier, 'plus');
+    assert.equal((await (await fetch(base + '/api/me', {headers: h})).json()).tier, 'plus');
+    const soon = await post('/api/chat', {message: 'hi', personaId: 'index-investor'});
+    assert.equal(soon.status, 409);
+    assert.match((await soon.json()).error, /coming soon/);
+    await fetch(base + '/api/session', {method: 'DELETE', headers: h});
+    assert.equal((await (await fetch(base + '/api/me', {headers: h})).json()).tier, 'plus'); // start over keeps Plus
+  } finally { await new Promise(r => server.close(r)); }
+});
+
+test('Stripe confirm checks session ownership and completion (fake Stripe)', async () => {
+  process.env.STRIPE_TEST_SECRET_KEY = 'sk_test_fake';
+  const {confirmCheckout, createCheckout} = await import('../lib/billing.js');
+  const fake = body => async () => ({ok: true, json: async () => body});
+  assert.equal((await confirmCheckout('me', 'cs_test_abc', {fetcher: fake({client_reference_id: 'me', status: 'complete', subscription: 'sub_1'})})).ok, true);
+  assert.match((await confirmCheckout('me', 'cs_test_abc', {fetcher: fake({client_reference_id: 'other', status: 'complete'})})).reason, /different session/);
+  assert.match((await confirmCheckout('me', 'cs_test_abc', {fetcher: fake({client_reference_id: 'me', status: 'open'})})).reason, /open/);
+  assert.equal((await confirmCheckout('me', 'cs_live_abc')).ok, false);
+  let sent; await createCheckout('me', 'https://x.example', {fetcher: async (u, o) => (sent = o.body, {ok: true, json: async () => ({url: 'https://checkout.stripe.com/x', id: 'cs_test_1'})})});
+  assert.equal(sent.get('mode'), 'subscription');
+  assert.equal(sent.get('line_items[0][price_data][unit_amount]'), '499');
+  assert.equal(sent.get('client_reference_id'), 'me');
+  delete process.env.STRIPE_TEST_SECRET_KEY;
+});

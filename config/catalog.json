@@ -80,7 +80,8 @@
       "inspiredBy": "Dave Ramsey",
       "philosophy": "Debt is the enemy; baby steps; cash only",
       "status": "live",
-      "tier": "free"
+      "tier": "free",
+      "image": null
     },
     {
       "id": "hustle-coach",
@@ -88,7 +89,8 @@
       "inspiredBy": "Grant Cardone",
       "philosophy": "Raise income; don't over-save",
       "status": "live",
-      "tier": "free"
+      "tier": "free",
+      "image": null
     },
     {
       "id": "conscious-spender",
@@ -96,7 +98,8 @@
       "inspiredBy": "Ramit Sethi",
       "philosophy": "Spend big on what you love, cut the rest",
       "status": "live",
-      "tier": "free"
+      "tier": "free",
+      "image": null
     },
     {
       "id": "index-investor",
@@ -104,7 +107,8 @@
       "inspiredBy": "John Bogle",
       "philosophy": "Low-cost index funds; stay the course",
       "status": "locked",
-      "tier": "plus"
+      "tier": "plus",
+      "image": null
     },
     {
       "id": "money-psychology",
@@ -112,7 +116,8 @@
       "inspiredBy": "Morgan Housel",
       "philosophy": "Behavior over spreadsheets; room for error",
       "status": "locked",
-      "tier": "plus"
+      "tier": "plus",
+      "image": null
     },
     {
       "id": "frugal-fire",
@@ -120,7 +125,8 @@
       "inspiredBy": "Mr. Money Mustache",
       "philosophy": "Cut spending hard, retire early",
       "status": "locked",
-      "tier": "plus"
+      "tier": "plus",
+      "image": null
     },
     {
       "id": "asset-builder",
@@ -128,7 +134,8 @@
       "inspiredBy": "Robert Kiyosaki",
       "philosophy": "Buy assets, not liabilities",
       "status": "locked",
-      "tier": "plus"
+      "tier": "plus",
+      "image": null
     },
     {
       "id": "protect-first",
@@ -136,7 +143,8 @@
       "inspiredBy": "Suze Orman",
       "philosophy": "Emergency fund and protection before anything",
       "status": "locked",
-      "tier": "plus"
+      "tier": "plus",
+      "image": null
     },
     {
       "id": "value-investor",
@@ -144,7 +152,8 @@
       "inspiredBy": "Warren Buffett",
       "philosophy": "Patience and a margin of safety",
       "status": "locked",
-      "tier": "plus"
+      "tier": "plus",
+      "image": null
     },
     {
       "id": "principles",
@@ -152,7 +161,8 @@
       "inspiredBy": "Ray Dalio",
       "philosophy": "Diversify across uncorrelated bets",
       "status": "locked",
-      "tier": "plus"
+      "tier": "plus",
+      "image": null
     }
   ],
   "explainer": {
@@ -162,5 +172,6 @@
   "tiers": {
     "free": "3 mentors + 3 coaches, free",
     "plus": "All 10 mentors + all 10 coaches for $4.99/month"
-  }
+  },
+  "imageNote": "Drop character art in public/img/mentors/<id>.webp (4:5, at least 600x750) and set \"image\": \"/img/mentors/<id>.webp\". Until then the UI shows a monogram."
 }

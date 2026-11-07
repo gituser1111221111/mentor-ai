@@ -3,85 +3,182 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Money Mentor (working title)</title>
+  <title>Money Mentor</title>
+  <meta name="description" content="A budget built around your worst month. Coaching does the math in code; a mentor you trust picks the plan.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-  <header class="top">
-    <strong>Money Mentor</strong> <span class="muted">(working title)</span>
-    <span id="engine" class="pill"></span>
-    <button id="restart" class="link" hidden>Start over</button>
+  <header class="site">
+    <a href="/" class="wordmark" id="home">Money Mentor</a>
+    <nav class="links" id="nav">
+      <a href="#how">How it works</a>
+      <a href="#mentors">Mentors</a>
+      <a href="#pricing">Pricing</a>
+    </nav>
+    <div class="head-right">
+      <span id="tier" class="tag" hidden>Plus</span>
+      <span id="engine" class="tag quiet" title="Which engine is answering"></span>
+      <button id="restart" class="btn text" hidden>Start over</button>
+      <button id="head-start" class="btn">Start free</button>
+    </div>
   </header>
 
+  <div id="banner" class="banner" role="status" hidden></div>
+
   <main>
-    <!-- Landing -->
+    <!-- LANDING -->
     <section id="v-landing" class="view">
-      <h1>Budget around income that changes every month.</h1>
-      <p class="lead">Your coach does the work and computes every option in code. The mentor you pick directs it: it chooses the option that fits its philosophy and explains why. Mentors can't make up numbers.</p>
-      <div class="row">
-        <button id="start" class="primary">Take the 2-minute quiz</button>
-        <button id="demo" class="ghost">Use demo profile (Jordan, 22)</button>
+      <div class="hero">
+        <div class="hero-copy">
+          <p class="kicker">For paychecks that change every month</p>
+          <h1>A budget built around your worst month.</h1>
+          <p class="lead">Pick a money philosophy you already trust. Our coaching does every calculation in code, and your mentor chooses the plan that fits how you think. Mentors can't make up numbers. They can only choose.</p>
+          <div class="row">
+            <button id="start" class="btn primary">Start the 2-minute quiz</button>
+            <button id="demo" class="btn">Try a sample profile</button>
+          </div>
+          <p class="fine">Free to start. No bank login. Not licensed financial advice.</p>
+        </div>
+        <figure class="sample" aria-label="Real output from the live app using the sample profile">
+          <figcaption class="sample-head"><span>Jordan, 22</span><span>part-time and delivery apps</span></figcaption>
+          <dl class="ledger">
+            <div><dt>Lowest month</dt><dd>$1,780.00</dd></div>
+            <div><dt>Monthly essentials</dt><dd>$1,955.00</dd></div>
+            <div class="short"><dt>Short in a low month</dt><dd>$175.00</dd></div>
+          </dl>
+          <blockquote>
+            <p>"Hours getting cut is exactly why you need a cushion first. Build the $1,000 starter fund before you go hard after the card."</p>
+            <footer><strong>Debt-Free Mentor</strong> directing Budget Coaching</footer>
+          </blockquote>
+          <p class="check">Number check: 9 of 9 options passed</p>
+          <p class="fine">Real output from the live app, sample profile.</p>
+        </figure>
       </div>
-      <div class="how card">
-        <div><span class="step">1</span><strong>Coaching does the work.</strong> <span class="muted" id="ex-coaching"></span></div>
-        <div><span class="step">2</span><strong>Your mentor directs it.</strong> <span class="muted" id="ex-mentors"></span></div>
-        <div><span class="step">3</span><strong>Switch mentors anytime.</strong> <span class="muted">Same facts, same math, a different point of view.</span></div>
-      </div>
-      <h3>Mentors <span class="muted small">how to think</span></h3>
-      <div id="personas" class="grid"></div>
-      <h3>Coaching <span class="muted small">the professional</span></h3>
-      <div id="agents" class="grid"></div>
-      <p class="small muted">Free: 3 mentors and 3 coaches. Plus ($4.99/month): all 10 mentors and all 10 coaches.</p>
+
+      <section id="how" class="band">
+        <h2>How it works</h2>
+        <ol class="steps">
+          <li><span class="n">1</span><div><h3>Tell us about a few months of pay</h3><p>Two minutes: take-home pay, bills, debts, savings. We find your lowest month and what it has to cover.</p></div></li>
+          <li><span class="n">2</span><div><h3>Coaching does the work</h3><p id="ex-coaching"></p></div></li>
+          <li><span class="n">3</span><div><h3>Your mentor directs it</h3><p id="ex-mentors"></p></div></li>
+          <li><span class="n">4</span><div><h3>Switch mentors anytime</h3><p>Same facts, same math, a different point of view. See every option and why your mentor passed on the others.</p></div></li>
+        </ol>
+      </section>
+
+      <section id="mentors" class="band">
+        <div class="band-head"><h2>Mentors</h2><p>How to think. Each mentor is built from a well-known money philosophy, labeled with its source, and never pretends to be the real person.</p></div>
+        <div id="personas" class="portraits"></div>
+      </section>
+
+      <section class="band">
+        <div class="band-head"><h2>Coaching</h2><p>The professional. Each coach is a specialist that does the work and every calculation.</p></div>
+        <div id="agents" class="table"></div>
+      </section>
+
+      <section id="pricing" class="band">
+        <h2>Pricing</h2>
+        <div class="plans">
+          <div class="plan">
+            <h3>Free</h3>
+            <p class="price">$0</p>
+            <p>3 mentors: Debt-Free, Hustle and Conscious Spender.</p>
+            <p>3 coaches: Budget, Debt, and Savings &amp; Emergency Fund.</p>
+            <p>Every option and every number check.</p>
+          </div>
+          <div class="plan plus">
+            <h3>Plus</h3>
+            <p class="price">$4.99<span>/month</span></p>
+            <p>All 10 mentors and all 10 coaches as they launch.</p>
+            <p>Shared memory across every coach.</p>
+            <p>Cancel anytime.</p>
+            <button class="btn primary" data-unlock>Get Plus</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="band never">
+        <h2>What we will never do</h2>
+        <ul class="plain">
+          <li>Let an AI invent a number. Every figure comes from a calculation you can open.</li>
+          <li>Pretend a mentor is the real person. Mentors are inspired by public teachings and not affiliated with or endorsed by anyone.</li>
+          <li>Ask for your bank or brokerage password.</li>
+          <li>Call this licensed advice. It's education to help you decide.</li>
+        </ul>
+      </section>
     </section>
 
-    <!-- Quiz -->
-    <section id="v-quiz" class="view" hidden>
-      <div class="progress"><div id="bar"></div></div>
-      <p id="q-section" class="eyebrow"></p>
-      <h2 id="q-prompt"></h2>
+    <!-- QUIZ -->
+    <section id="v-quiz" class="view narrow" hidden>
+      <div class="progress" aria-hidden="true"><div id="bar"></div></div>
+      <p id="q-section" class="kicker"></p>
+      <h2 id="q-prompt" class="q"></h2>
+      <p id="q-why" class="why"></p>
       <div id="q-body"></div>
       <p id="q-error" class="error" role="alert"></p>
-      <div class="row">
-        <button id="q-back" class="ghost">Back</button>
-        <button id="q-skip" class="link">Skip</button>
-        <button id="q-next" class="primary">Next</button>
+      <div class="row nav">
+        <button id="q-back" class="btn">Back</button>
+        <button id="q-skip" class="btn text">Skip</button>
+        <button id="q-next" class="btn primary">Next</button>
       </div>
     </section>
 
-    <!-- Snapshot -->
-    <section id="v-snap" class="view" hidden>
-      <h2>Your money snapshot</h2>
+    <!-- SNAPSHOT + SETUP -->
+    <section id="v-snap" class="view narrow" hidden>
+      <p class="kicker">Your numbers</p>
+      <h2 id="snap-title" class="q"></h2>
       <div id="snap"></div>
-      <button id="to-chat" class="primary">Start coaching</button>
+      <h3 class="sub">Choose your mentor</h3>
+      <p class="why">They decide which plan fits. You can switch in the middle of a conversation.</p>
+      <div id="pick-mentor" class="choice-grid"></div>
+      <h3 class="sub">Choose your coaching</h3>
+      <div id="pick-coach" class="choice-list"></div>
+      <div class="row"><button id="to-chat" class="btn primary">Start coaching</button></div>
     </section>
 
-    <!-- Chat -->
+    <!-- CHAT -->
     <section id="v-chat" class="view chat" hidden>
-      <aside>
-        <h4>Mentor <span class="small">directs</span></h4>
-        <div id="persona-switch"></div>
-        <h4>Coaching <span class="small">does the work</span></h4>
-        <div id="agent-list"></div>
+      <aside class="rail">
+        <h4>Mentor <span>directs</span></h4>
+        <div id="persona-switch" class="rail-list"></div>
+        <h4>Coaching <span>does the work</span></h4>
+        <div id="agent-list" class="rail-list"></div>
         <h4>What I remember</h4>
-        <ul id="memory" class="small"></ul>
+        <ul id="memory" class="memory"></ul>
       </aside>
       <div class="chat-main">
-        <div id="snap-mini" class="small muted"></div>
-        <div id="log"></div>
+        <div id="chat-head" class="chat-head"></div>
+        <div id="log" aria-live="polite"></div>
         <div class="chips" id="suggest"></div>
         <form id="composer">
-          <input id="msg" autocomplete="off" placeholder="Ask your coach…" maxlength="2000">
-          <button class="primary">Send</button>
+          <label for="msg" class="sr">Your question</label>
+          <input id="msg" autocomplete="off" placeholder="Ask your coach anything about your money" maxlength="2000">
+          <button class="btn primary">Send</button>
         </form>
       </div>
     </section>
   </main>
 
-  <dialog id="drawer"><form method="dialog"><h3>All options your coach generated</h3><p class="small muted">The mentor picked one of these by id. It couldn't change the numbers.</p><div id="drawer-body"></div><button class="primary">Close</button></form></dialog>
-  <dialog id="unlock"><form method="dialog"><h3>Unlock every mentor and coach</h3><p>Free gets you 3 mentors and 3 coaches. One plan, <strong>$4.99/month</strong>, unlocks all 10 mentors and all 10 coaches, with shared memory across them.</p><p id="unlock-msg" class="small muted"></p><div class="row"><button id="unlock-go" class="primary" value="go">Unlock (demo)</button><button class="ghost">Not now</button></div></form></dialog>
+  <dialog id="drawer"><form method="dialog">
+    <h3>Every option your coach built</h3>
+    <p class="why">Your mentor picked one by its id. It could not change the numbers.</p>
+    <div id="drawer-body"></div>
+    <button class="btn primary">Close</button>
+  </form></dialog>
 
-  <footer class="small muted">
-    Educational opinion, not advice from a licensed financial adviser, CPA, or attorney. Mentors are inspired by public teachings and not affiliated with or endorsed by the people named. Prototype: fictional data, single-user store, payments mocked.
+  <dialog id="unlock"><form method="dialog">
+    <h3>Plus, $4.99 a month</h3>
+    <p>Free gets you 3 mentors and 3 coaches. Plus unlocks all 10 mentors and all 10 coaches as they launch, with shared memory across them.</p>
+    <p id="unlock-test" class="fine" hidden>Stripe test mode. Use card 4242 4242 4242 4242, any future date, any CVC. No real charge.</p>
+    <p id="unlock-msg" class="error" role="alert"></p>
+    <div class="row"><button id="unlock-go" class="btn primary" value="go">Continue to checkout</button><button class="btn">Not now</button></div>
+  </form></dialog>
+
+  <footer class="site-foot">
+    <p>Educational opinion, not advice from a licensed financial adviser, CPA, or attorney. Mentors are inspired by public teachings and are not affiliated with or endorsed by the people named.</p>
+    <p><a href="/terms.html">Terms</a> · <a href="/privacy.html">Privacy</a> · <a href="https://github.com/gituser1111221111/mentor-ai">Source</a> · Built for RedHawk Builds 2026</p>
   </footer>
   <script type="module" src="/app.js"></script>
 </body>
