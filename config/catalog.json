@@ -1,5 +1,5 @@
 {
-  "version": 5,
+  "version": 6,
   "disclaimer": "Personas are inspired by public teachings; not affiliated with or endorsed by the people named. Educational opinion, not advice from a licensed financial adviser, CPA, or attorney.",
   "agents": [
     {
@@ -8,8 +8,7 @@
       "job": "Build a plan for variable pay and spending",
       "category": "Everyday money",
       "status": "live",
-      "tier": "plus",
-      "includedWithFlagship": true
+      "tier": "included"
     },
     {
       "id": "debt",
@@ -17,7 +16,7 @@
       "job": "Compare payoff and consolidation paths",
       "category": "Everyday money",
       "status": "planned",
-      "tier": "plus"
+      "tier": "included"
     },
     {
       "id": "savings",
@@ -25,7 +24,7 @@
       "job": "Plan cash reserves and surprise expenses",
       "category": "Everyday money",
       "status": "planned",
-      "tier": "plus"
+      "tier": "included"
     },
     {
       "id": "tax",
@@ -33,7 +32,7 @@
       "job": "Organize tax questions and planning topics",
       "category": "Everyday money",
       "status": "planned",
-      "tier": "plus"
+      "tier": "included"
     },
     {
       "id": "credit",
@@ -41,7 +40,7 @@
       "job": "Review credit habits and borrowing costs",
       "category": "Everyday money",
       "status": "planned",
-      "tier": "plus"
+      "tier": "included"
     },
     {
       "id": "retirement",
@@ -49,7 +48,7 @@
       "job": "Map retirement goals and account choices",
       "category": "Everyday money",
       "status": "planned",
-      "tier": "plus"
+      "tier": "included"
     },
     {
       "id": "insurance",
@@ -57,7 +56,7 @@
       "job": "Spot coverage questions and tradeoffs",
       "category": "Everyday money",
       "status": "planned",
-      "tier": "plus"
+      "tier": "included"
     },
     {
       "id": "investing",
@@ -65,7 +64,7 @@
       "job": "Review portfolio mix, concentration, earnings, and risk",
       "category": "Investing & property",
       "status": "live",
-      "tier": "free"
+      "tier": "included"
     },
     {
       "id": "equity",
@@ -73,7 +72,7 @@
       "job": "Research company earnings, analyst views, and filings",
       "category": "Investing & property",
       "status": "live",
-      "tier": "free"
+      "tier": "included"
     },
     {
       "id": "real_estate",
@@ -81,7 +80,7 @@
       "job": "Explore property decisions and cash flow",
       "category": "Investing & property",
       "status": "planned",
-      "tier": "plus"
+      "tier": "included"
     },
     {
       "id": "life",
@@ -89,7 +88,7 @@
       "job": "Plan for moves, school and major purchases",
       "category": "Investing & property",
       "status": "planned",
-      "tier": "plus"
+      "tier": "included"
     },
     {
       "id": "business",
@@ -97,7 +96,7 @@
       "job": "Explore ownership and operating decisions",
       "category": "Business building",
       "status": "planned",
-      "tier": "plus"
+      "tier": "included"
     },
     {
       "id": "biz_cash",
@@ -105,7 +104,7 @@
       "job": "Review runway, receivables and expenses",
       "category": "Business building",
       "status": "planned",
-      "tier": "plus"
+      "tier": "included"
     },
     {
       "id": "biz_strategy",
@@ -113,7 +112,7 @@
       "job": "Test growth plans and tradeoffs",
       "category": "Business building",
       "status": "planned",
-      "tier": "plus"
+      "tier": "included"
     },
     {
       "id": "pricing",
@@ -121,7 +120,7 @@
       "job": "Explore pricing and revenue models",
       "category": "Business building",
       "status": "planned",
-      "tier": "plus"
+      "tier": "included"
     },
     {
       "id": "income",
@@ -129,19 +128,19 @@
       "job": "Find income, freelance and side-hustle options",
       "category": "Business building",
       "status": "planned",
-      "tier": "plus"
+      "tier": "included"
     }
   ],
   "personas": [
     {
       "id": "debt-free-coach",
-      "name": "Dave Ramsey\u2013inspired",
+      "name": "Dave Ramsey–inspired",
       "inspiredBy": "Dave Ramsey",
       "philosophy": "Debt is the enemy; baby steps; cash only",
       "risk": "conservative",
       "audience": "Beginners, people with debt, financially inexperienced users",
       "status": "live",
-      "tier": "free",
+      "tier": "included",
       "image": "/img/mentors/debt-free-coach.webp",
       "riskNote": "Conservative. Pausing retirement investing while paying debt can cost employer match and growth; several of these views are disputed.",
       "voiceIdEnv": "ELEVENLABS_VOICE_DEBT_FREE_COACH",
@@ -149,13 +148,13 @@
     },
     {
       "id": "value-investor",
-      "name": "Warren Buffett\u2013inspired",
+      "name": "Warren Buffett–inspired",
       "inspiredBy": "Warren Buffett",
       "philosophy": "Business quality, owner earnings, and disciplined valuation",
       "risk": "moderate",
       "audience": "Young investors building long-term wealth",
       "status": "live",
-      "tier": "free",
+      "tier": "included",
       "image": "/img/mentors/value-investor.webp",
       "riskNote": "Stocks can fall sharply in the short run. Long-term historical returns are not a forecast, and index funds do not protect against losses.",
       "affiliation": "Inspired by the publicly documented teachings of Warren Buffett. Not affiliated with or endorsed by Warren Buffett. Not an official or AI version of any real person.",
@@ -163,13 +162,13 @@
     },
     {
       "id": "asset-builder",
-      "name": "Robert Kiyosaki\u2013inspired",
+      "name": "Robert Kiyosaki–inspired",
       "inspiredBy": "Robert Kiyosaki",
       "philosophy": "Buy assets, not liabilities. Real estate, entrepreneurship and cash flow",
       "risk": "aggressive",
       "audience": "Aspiring entrepreneurs and people seeking financial independence",
       "status": "planned",
-      "tier": "plus",
+      "tier": "included",
       "reviewNote": "Leverage and wealth-creation claims need independent evaluation in contested fields before this persona goes live.",
       "image": "/img/mentors/asset-builder.webp",
       "riskNote": "Debt, leverage and speculative investments can magnify losses, including losing more than you put in. Real estate and businesses are illiquid and can fail. Several of these views are widely disputed.",
@@ -178,13 +177,13 @@
     },
     {
       "id": "disruptive-growth",
-      "name": "Cathie Wood\u2013inspired",
+      "name": "Cathie Wood–inspired",
       "inspiredBy": "Cathie Wood",
       "philosophy": "Innovation, adoption, and evidence-tested growth theses",
       "risk": "very aggressive",
       "audience": "Younger investors interested in technology and high-growth companies",
       "status": "live",
-      "tier": "free",
+      "tier": "included",
       "image": "/img/mentors/disruptive-growth.webp",
       "riskNote": "Concentrated bets on emerging technology are highly volatile and can lose much of their value. Valuations are uncertain, forecasts can be wrong, and you can lose capital.",
       "affiliation": "Inspired by the publicly documented teachings of Cathie Wood. Not affiliated with or endorsed by Cathie Wood. Not an official or AI version of any real person.",
@@ -192,13 +191,13 @@
     },
     {
       "id": "credit-smart",
-      "name": "Vivian Tu\u2013inspired",
+      "name": "Vivian Tu–inspired",
       "inspiredBy": "Vivian Tu",
       "philosophy": "Use credit on purpose, negotiate your pay, and start investing early",
       "risk": "moderate",
       "audience": "Gen Z, college students, young professionals",
       "status": "planned",
-      "tier": "plus",
+      "tier": "included",
       "image": "/img/mentors/credit-smart.webp",
       "riskNote": "Credit cards only help if paid in full every month. Carrying a balance costs far more than any rewards.",
       "voiceIdEnv": "ELEVENLABS_VOICE_CREDIT_SMART",
@@ -206,13 +205,13 @@
     },
     {
       "id": "conscious-spender",
-      "name": "Ramit Sethi\u2013inspired",
+      "name": "Ramit Sethi–inspired",
       "inspiredBy": "Ramit Sethi",
       "philosophy": "Spend big on what you love, cut the rest",
       "risk": "moderate",
       "audience": "Young professionals who want to enjoy their money while building wealth",
       "status": "planned",
-      "tier": "plus",
+      "tier": "included",
       "image": "/img/mentors/conscious-spender.webp",
       "riskNote": "Guilt-free spending only works once savings, investing and fixed costs are covered.",
       "voiceIdEnv": "ELEVENLABS_VOICE_CONSCIOUS_SPENDER",
@@ -220,13 +219,13 @@
     },
     {
       "id": "money-psychology",
-      "name": "Morgan Housel\u2013inspired",
+      "name": "Morgan Housel–inspired",
       "inspiredBy": "Morgan Housel",
       "philosophy": "Behavior over spreadsheets; room for error",
       "risk": "moderate",
       "audience": "Users interested in the psychology behind financial decisions",
       "status": "planned",
-      "tier": "plus",
+      "tier": "included",
       "image": "/img/mentors/money-psychology.webp",
       "riskNote": "Emphasizes resilience and room for error; it does not promise any particular return.",
       "voiceIdEnv": "ELEVENLABS_VOICE_MONEY_PSYCHOLOGY",
@@ -234,13 +233,13 @@
     },
     {
       "id": "real-estate-saver",
-      "name": "Graham Stephan\u2013inspired",
+      "name": "Graham Stephan–inspired",
       "inspiredBy": "Graham Stephan",
       "philosophy": "Save hard, invest early, and build toward real estate and financial independence",
       "risk": "moderate to aggressive",
       "audience": "Gen Z and younger millennials interested in investing and real estate",
       "status": "planned",
-      "tier": "plus",
+      "tier": "included",
       "image": "/img/mentors/real-estate-saver.webp",
       "riskNote": "Real estate uses borrowed money and is illiquid. Leverage magnifies losses as well as gains.",
       "voiceIdEnv": "ELEVENLABS_VOICE_REAL_ESTATE_SAVER",
@@ -248,13 +247,13 @@
     },
     {
       "id": "money-basics",
-      "name": "Humphrey Yang\u2013inspired",
+      "name": "Humphrey Yang–inspired",
       "inspiredBy": "Humphrey Yang",
       "philosophy": "Plain-language investing, taxes and compound interest for beginners",
       "risk": "moderate",
       "audience": "College students and beginning investors",
       "status": "planned",
-      "tier": "plus",
+      "tier": "included",
       "image": "/img/mentors/money-basics.webp",
       "riskNote": "Educational and beginner-focused. Tax rules change, so check current official guidance.",
       "voiceIdEnv": "ELEVENLABS_VOICE_MONEY_BASICS",
@@ -262,13 +261,13 @@
     },
     {
       "id": "step-by-step-planner",
-      "name": "Money Guy\u2013inspired",
+      "name": "Money Guy–inspired",
       "inspiredBy": "Brian Preston and Bo Hanson (The Money Guy Show)",
       "philosophy": "Take financial steps in a set order, from employer match to retirement",
       "risk": "moderate",
       "audience": "Users seeking a structured financial plan",
       "status": "planned",
-      "tier": "plus",
+      "tier": "included",
       "image": "/img/mentors/step-by-step-planner.webp",
       "riskNote": "A general order of steps. Your own situation, such as job stability or very high-interest debt, can change the order.",
       "voiceIdEnv": "ELEVENLABS_VOICE_STEP_BY_STEP_PLANNER",
@@ -295,7 +294,7 @@
         "investing",
         "equity"
       ],
-      "tier": "free",
+      "tier": "included",
       "status": "live",
       "env": "finnhub",
       "logo": "/img/providers/finnhub.webp"
@@ -310,7 +309,7 @@
         "investing",
         "equity"
       ],
-      "tier": "free",
+      "tier": "included",
       "status": "live",
       "env": "fred",
       "logo": "/img/providers/fred.ico"
@@ -324,7 +323,7 @@
       "agents": [
         "equity"
       ],
-      "tier": "free",
+      "tier": "included",
       "status": "live",
       "env": "secEdgar",
       "logo": "/img/providers/sec-edgar.ico"
@@ -338,7 +337,7 @@
       "agents": [
         "investing"
       ],
-      "tier": "free",
+      "tier": "included",
       "status": "live",
       "env": "coingecko",
       "logo": "/img/providers/coingecko.png"
@@ -352,7 +351,7 @@
         "equity",
         "investing"
       ],
-      "tier": "plus",
+      "tier": "included",
       "status": "planned",
       "logo": "/img/providers/quartr.ico"
     },
@@ -364,7 +363,7 @@
       "agents": [
         "equity"
       ],
-      "tier": "plus",
+      "tier": "included",
       "status": "planned",
       "logo": "/img/providers/financial-datasets.png"
     },
@@ -377,7 +376,7 @@
         "investing",
         "equity"
       ],
-      "tier": "plus",
+      "tier": "included",
       "status": "planned",
       "logo": "/img/providers/alpha-vantage.ico"
     },
@@ -392,7 +391,7 @@
         "savings",
         "debt"
       ],
-      "tier": "plus",
+      "tier": "included",
       "status": "planned",
       "logo": "/img/providers/plaid.png"
     },
@@ -404,7 +403,7 @@
       "agents": [
         "investing"
       ],
-      "tier": "plus",
+      "tier": "included",
       "status": "planned",
       "logo": "/img/providers/lunarcrush.png"
     },
@@ -416,7 +415,7 @@
       "agents": [
         "savings"
       ],
-      "tier": "plus",
+      "tier": "included",
       "status": "planned",
       "logo": "/img/providers/fdic.ico"
     },
@@ -429,7 +428,7 @@
         "tax",
         "retirement"
       ],
-      "tier": "plus",
+      "tier": "included",
       "status": "planned",
       "logo": "/img/providers/irs.ico"
     },
@@ -441,7 +440,7 @@
       "agents": [
         "real_estate"
       ],
-      "tier": "plus",
+      "tier": "included",
       "status": "planned",
       "logo": "/img/providers/attom.png"
     }

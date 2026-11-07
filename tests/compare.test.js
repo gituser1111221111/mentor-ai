@@ -62,10 +62,11 @@ test('API: launched mentors judge verified options while planned mentors stay vi
     assert.equal(free.factsUnchanged, true);
     const ids = free.candidates.map(c => c.id);
     assert.ok(ids.length >= 3);
-    assert.ok(free.mentors.filter(m => m.status === 'locked').length >= 1); // Plus mentors stay gated
+    assert.ok(free.mentors.some(m => m.status === 'coming-soon'));
+    assert.equal(free.mentors.some(m => m.status === 'locked'),false);
     for (const m of free.mentors.filter(m => m.status === 'ok')) assert.ok(ids.includes(m.pickId), `${m.personaId} picked outside the set`);
 
-    assert.equal((await (await post('/api/checkout/demo')).json()).tier, 'plus');
+    assert.equal((await post('/api/checkout/demo')).status,409);
     const plus = await (await post('/api/compare', {turnId: chat.turnId})).json();
     const ran = plus.mentors.filter(m => m.status === 'ok');
     assert.deepEqual(ran.map(m => m.personaId), ['debt-free-coach', 'value-investor', 'disruptive-growth']);

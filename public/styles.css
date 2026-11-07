@@ -967,3 +967,45 @@ body.chat-open .header-context { display:none; }
 #live-data .api-logos a { background:#fff; border-color:#dce3d8; padding:10px 14px; border-radius:10px; box-shadow:0 2px 4px #17332b05; }
 #live-data .api-logos a:hover { border-color:#92ad96; background:#f5f8f1; }
 #live-data .api-logos span { font-size:.84rem; }
+/* Mentor Labs pivot: the existing palette and illustrations, with progressive disclosure. */
+.money-path-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px; }
+.money-path-grid article { padding:24px; background:#fffefa; border:1px solid #cbd7c4; border-radius:16px; display:flex; flex-direction:column; align-items:flex-start; }
+.money-path-grid h3 { margin:0; font-size:1.2rem; }
+.money-path-grid p { color:var(--ink-2); flex:1; margin:12px 0 22px; }
+.money-path-grid .btn { white-space:normal; text-align:left; }
+#v-landing .compact-section { padding-block:8px; }
+.section-disclosure > summary { cursor:pointer; min-height:66px; padding:18px 4px; color:var(--ink); }
+.section-disclosure > summary > span { display:inline-flex; vertical-align:middle; flex-direction:column; gap:6px; max-width:calc(100% - 28px); }
+.section-disclosure > summary strong { font-size:1.05rem; font-weight:600; }
+.section-disclosure > summary small { color:var(--ink-2); font-size:.84rem; line-height:1.5; }
+.section-disclosure > summary:focus-visible,.context-reference > summary:focus-visible { outline:3px solid #6c9774; outline-offset:3px; border-radius:6px; }
+.section-disclosure[open] > summary { border-bottom:1px solid var(--rule); margin-bottom:18px; }
+.section-disclosure .method-band { background:transparent; padding:8px 0 18px!important; gap:32px; }
+.section-disclosure .method-intro h2 { font-size:1.75rem; }
+.section-disclosure .method-list > div { padding-block:14px; }
+.section-disclosure .evidence-grid { padding-bottom:18px; }
+#pricing .plans.single-offer { display:block; max-width:none; }
+.single-offer > .plan { display:grid; grid-template-columns:1fr 1fr; gap:36px; border:1px solid #bccdbb; border-radius:16px; }
+.single-offer h3 { margin-top:18px; }
+.single-offer .price { font-size:2.4rem; }
+.single-offer .plan-links { align-items:flex-start; }
+#start-choice { width:min(560px,calc(100vw - 32px)); }
+#start-choice-form { display:grid; gap:18px; }
+#start-choice-form .f { display:grid; gap:8px; }
+#start-choice select { width:100%; min-height:46px; border:1px solid var(--rule); background:#fffefa; color:var(--ink); border-radius:8px; padding:10px; font:inherit; }
+.context-reference { border:1px solid var(--rule); border-radius:12px; padding:0 16px; }
+.context-reference > summary { cursor:pointer; min-height:48px; padding:14px 0; font-size:.88rem; }
+.context-reference .context-field { padding:10px 0 16px; border:0; }
+.tag.available,.tag.preview { color:#623b87; background:#eee4f7; border:1px solid #cfb5e4; }
+@media(max-width:700px) {
+ .money-path-grid,.single-offer > .plan { grid-template-columns:minmax(0,1fr); gap:16px; }
+ .money-path-grid article { padding:20px; }
+ .section-disclosure > summary small { font-size:.8rem; }
+ .section-disclosure .method-band { grid-template-columns:minmax(0,1fr); }
+ .single-offer .price { font-size:2rem; }
+}
+.specialist-group { border-top:1px solid var(--rule); margin-top:16px; }
+.specialist-group > summary { cursor:pointer; min-height:54px; padding:18px 2px; font-weight:600; }
+.specialist-group > summary:focus-visible { outline:3px solid #6c9774; outline-offset:3px; }
+.specialist-group .agent-grid { margin-bottom:20px; }
+#live-data .api-logos a span small { display:block; font-weight:400; line-height:1.5; margin-top:3px; }

@@ -154,7 +154,7 @@ test('speak refuses unknown turns, other sessions, and unlaunched mentors', asyn
   const r = await (await post('/api/chat', s, {message: 'help'})).json();
   assert.equal((await post('/api/voice/speak', s, {turnId: 'nope', personaId: 'debt-free-coach'})).status, 404);
   assert.equal((await post('/api/voice/speak', sid(), {turnId: r.turnId, personaId: 'debt-free-coach'})).status, 404); // another session
-  assert.equal((await post('/api/repick', s, {turnId: r.turnId, personaId: 'conscious-spender'})).status, 402);
+  assert.equal((await post('/api/repick', s, {turnId: r.turnId, personaId: 'conscious-spender'})).status, 409);
   const noVoice = await post('/api/voice/speak', s, {turnId: r.turnId, personaId: 'conscious-spender'});
   assert.equal(noVoice.status, 404);
   assert.equal((await post('/api/voice/speak', s, {turnId: 5})).status, 400);

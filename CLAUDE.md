@@ -1,3 +1,5 @@
+> **Current direction (November 7):** AI teachers explain along the way, with equal everyday-money and investing emphasis, optional Barone learning modules, and one intended month-free/$2.99 all-inclusive offer. Legacy checkout is disabled. See [the current pivot specification](docs/MENTOR_LABS_PIVOT.md). The older flagship/tier descriptions below are historical.
+
 # Mentor Labs (RedHawk Builds 2026, Challenge #21)
 
 Current product direction (Nov 7): free Ramsey-inspired starter chat, optional six-screen intake, ten visible mentors and sixteen visible specialist agents. Interactive: the free Ramsey budgeting starter, plus (Plus tier) the Portfolio Review and Equity Research agents with the Buffett- and Cathie Wood-inspired mentors, backed by live market data (see below). All agent cards show `+`; all other mentor and agent entries belong to the planned Plus library and explain their status when selected. The context hub previews document selection and portfolio URLs; holdings CSV import works. Do not claim a thousands-of-hours source corpus has already been processed.

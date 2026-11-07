@@ -1,0 +1,498 @@
+{
+  "source": "https://github.com/gituser1111221111/barone-investment-group",
+  "revision": "b8b165e3266cad4532ec9a1bbb3f49b81535b63f",
+  "modules": [
+    {
+      "id": "investing",
+      "title": "Investing 101",
+      "summary": "Learn risk, diversification, time horizon, compounding, and the difference between investing and speculating.",
+      "outcomes": [
+        "Explain what stocks, bonds, funds, and diversification are",
+        "Connect risk to time horizon",
+        "Build a beginner research checklist"
+      ],
+      "url": "https://www.baroneinvestmentgroup.site/lesson.html?topic=investing",
+      "sections": [
+        {
+          "title": "Why investing beats saving alone",
+          "body": "A savings account paying 0.5% APY loses purchasing power every year when inflation runs at 3–4%. Investing puts your money into assets — stocks, bonds, index funds — that historically grow faster than inflation over long periods. The S&P 500 has returned an average of roughly 10% per year before inflation over the past 50 years. That does not mean every year is positive — it means the long-run trend rewards patient, diversified investors. The key insight: $200 per month invested at 8% for 30 years grows to approximately $298,000. The same $200 sitting in a 0.5% savings account becomes about $79,000. Time and return rate are the two most powerful variables in your financial life, and both favor starting early."
+        },
+        {
+          "title": "Risk, time horizon, and diversification",
+          "body": "Every investment carries risk — the possibility that its value drops. But risk and time horizon are deeply connected. A 22-year-old investing for retirement at 65 has 43 years to recover from market downturns. A 55-year-old needs to retire in 10 years and cannot afford to wait out a decade-long recovery. This is why your time horizon should drive your asset allocation, not headlines or fear. Diversification reduces risk without necessarily reducing returns. When you own 500 companies through an S&P 500 index fund instead of just one stock, a single company's failure does not ruin your portfolio. Stocks, bonds, and cash all move differently in different economic conditions — mixing them is one of the few genuinely free lunches in investing."
+        },
+        {
+          "title": "Accounts matter as much as investments",
+          "body": "Where you invest is often more important than what you invest in. A Roth IRA lets your money grow completely tax-free — you pay taxes now, but never again on the gains. If you invest $6,000 per year in a Roth IRA starting at 22 and it grows to $800,000 by retirement, you pay zero tax on that $800,000. A traditional 401(k) reduces your taxable income today and taxes you at withdrawal. Most experts suggest: max your 401(k) match first (that is a 50–100% instant return), then fund a Roth IRA, then invest in a standard brokerage account. For beginners, low-cost index ETFs like VTI (total US market), VXUS (international), or BND (bonds) cover almost everything you need at expense ratios below 0.10%."
+        },
+        {
+          "title": "Use AI as a research assistant, not a stock picker",
+          "body": "AI tools like Claude or ChatGPT are excellent at explaining financial concepts, summarizing SEC filings in plain English, defining unfamiliar terms, and generating research questions you had not thought to ask. They are not reliable for specific buy or sell recommendations, and they cannot predict markets. A useful workflow: paste a company's investor relations summary into AI and ask it to explain the business model, identify the top three risks, and list five questions you should research before forming an opinion. Then verify every fact against the original source. AI accelerates your research — it does not replace your judgment."
+        }
+      ],
+      "checklist": [
+        "Open a Roth IRA or 401(k) if you have not already",
+        "Define the goal and time horizon for this money",
+        "Choose a low-cost index fund as your starting point",
+        "Set a recurring automatic contribution, even if small",
+        "List the risks before committing any money"
+      ]
+    },
+    {
+      "id": "credit",
+      "title": "Credit 101",
+      "summary": "Understand how credit scores work, how to build credit from zero, and how to avoid the mistakes that make borrowing expensive.",
+      "outcomes": [
+        "Explain the five major FICO score factors",
+        "Calculate utilization and statement balance risk",
+        "Build safer credit habits from the first card"
+      ],
+      "url": "https://www.baroneinvestmentgroup.site/lesson.html?topic=credit",
+      "sections": [
+        {
+          "title": "Credit is a reputation system",
+          "body": "A credit score is a lender's shortcut for answering one question: if they give you access to money, how likely are you to pay it back on time? FICO scores usually range from 300 to 850. The score matters because it can affect apartment approvals, car loans, insurance pricing in some states, and whether you qualify for better interest rates. A 720 score does not mean you are rich. It means your borrowing history looks reliable."
+        },
+        {
+          "title": "The five FICO factors",
+          "body": "The biggest factor is payment history, about 35% of the score. Amounts owed, including utilization, is about 30%. Length of credit history is about 15%. New credit and hard inquiries are about 10%. Credit mix is about 10%. Translation: pay on time, keep balances low, avoid random applications, and let accounts age. You do not need to carry interest to build credit; paying in full is usually the strongest habit."
+        },
+        {
+          "title": "Utilization is controllable",
+          "body": "Utilization is your reported balance divided by your credit limit. A $300 statement balance on a $1,000 limit is 30% utilization. Many beginners accidentally report high utilization because they spend normally during the month, even if they pay in full later. A simple rule: keep statement balances below 30% of the limit, and below 10% when you are preparing for an apartment, car loan, or card application."
+        },
+        {
+          "title": "Building credit from zero",
+          "body": "If you have no credit history, start small. A student card, secured card, or becoming an authorized user on a responsible family member's card can create a file. Put one predictable subscription or small purchase on the card, turn on autopay for at least the minimum, and pay the full statement balance every month. Avoid cash advances, late payments, and annual fees unless the card clearly earns its keep."
+        },
+        {
+          "title": "AI can help you plan, not borrow",
+          "body": "AI can translate card terms, compare payoff scenarios, create bill reminders, and explain the difference between hard and soft inquiries. It should not decide whether you should borrow. Never paste full account numbers, Social Security numbers, or screenshots with private information into a chatbot. Use anonymized balances and rates instead."
+        }
+      ],
+      "checklist": [
+        "Turn on autopay before your first statement closes",
+        "Track both due dates and statement dates",
+        "Keep utilization below 30%, or below 10% before major applications",
+        "Avoid applying for credit randomly",
+        "Read APR, annual fee, late fee, and rewards terms before signing"
+      ]
+    },
+    {
+      "id": "budgeting",
+      "title": "Budgeting",
+      "summary": "Build a budget that actually survives real life: bills, irregular income, subscriptions, social spending, savings, and mistakes.",
+      "outcomes": [
+        "Choose between 50/30/20, zero-based, and envelope budgeting",
+        "Plan around irregular income",
+        "Create a weekly review habit"
+      ],
+      "url": "https://www.baroneinvestmentgroup.site/lesson.html?topic=budgeting",
+      "sections": [
+        {
+          "title": "A budget is a control panel",
+          "body": "A budget is not punishment. It is a visibility system. It shows where money is going before your account balance surprises you. The point is not to make every month perfect; the point is to notice patterns early enough to adjust. A strong budget answers four questions: what money is coming in, what must be paid, what can be flexible, and what goal gets funded first."
+        },
+        {
+          "title": "Pick the method that fits your personality",
+          "body": "The 50/30/20 budget splits take-home pay into needs, wants, and savings or debt. It is simple and beginner-friendly. Zero-based budgeting gives every dollar a job before the month starts, which is more detailed but more powerful. Envelope budgeting separates spending into categories so you cannot accidentally spend grocery money on entertainment. The best system is the one you will review every week, not the one that looks smartest on paper."
+        },
+        {
+          "title": "Budgeting with irregular income",
+          "body": "If your income changes because of hourly work, commissions, tips, or seasonal jobs, build the budget from your lowest realistic month, not your best month. Put extra income into a holding category before spending it. Once the next month starts, assign that money to bills, savings, debt, or planned fun. This turns irregular income from stressful surprise money into a buffer."
+        },
+        {
+          "title": "Make it weekly",
+          "body": "Monthly budgets are useful, but weekly reviews are easier for students and new earners. Every Sunday, check upcoming bills, food, transport, subscriptions, social plans, and savings. A five-minute review prevents the classic mistake: feeling fine for three weeks, then realizing rent, a card payment, and a subscription all hit at once."
+        },
+        {
+          "title": "Build a buffer before optimizing",
+          "body": "Before chasing perfect categories, build a small cash buffer. Start with $250, then $500, then one month of essential expenses. A buffer keeps normal problems from becoming debt: a flat tire, a textbook, a laptop repair, or a delayed paycheck. Once the buffer exists, budgeting feels less like restriction and more like control."
+        },
+        {
+          "title": "Use AI to classify and reflect",
+          "body": "AI can group anonymized transactions, summarize patterns, and turn messy spending into a short action list. Paste merchant names and rounded amounts, not account numbers or private screenshots. Ask for categories, recurring charges, biggest surprises, and one realistic change for next week. Keep the final decision human."
+        }
+      ],
+      "checklist": [
+        "List fixed costs and due dates",
+        "Estimate flexible weekly spending",
+        "Choose a budget method: 50/30/20, zero-based, or envelope",
+        "Create a starter buffer goal",
+        "Review weekly and adjust without guilt"
+      ]
+    },
+    {
+      "id": "ai",
+      "title": "AI for Personal Finance",
+      "summary": "Use AI to organize money questions, compare options, summarize sources, and build better habits without giving away control.",
+      "outcomes": [
+        "Write safer finance prompts",
+        "Verify AI outputs against real sources",
+        "Know what financial data not to share"
+      ],
+      "url": "https://www.baroneinvestmentgroup.site/lesson.html?topic=ai",
+      "sections": [
+        {
+          "title": "AI is a thinking partner",
+          "body": "AI is best used to clarify, summarize, organize, draft, and generate better questions. It can explain a Roth IRA, compare budgeting methods, translate a credit card disclosure, or turn your goals into a checklist. It should not replace professional advice, predict markets, or make final decisions for you. Treat it like a smart tutor: useful, fast, and still worth checking."
+        },
+        {
+          "title": "What AI cannot safely do",
+          "body": "AI cannot guarantee investment returns, know your complete tax situation, see every hidden fee, or understand the emotional pressure behind a money decision. It may also sound confident while being wrong. For high-stakes decisions like taxes, legal contracts, insurance, student loans, or investment advice, use AI to prepare questions and then verify with official sources or a qualified professional."
+        },
+        {
+          "title": "Protect your data",
+          "body": "Do not paste account numbers, passwords, Social Security numbers, tax IDs, full bank statements, private screenshots, or documents with your address into public AI tools. Use anonymized examples: replace names with labels, round dollar amounts, and remove transaction IDs. A safe prompt says '$1,850 rent, $340 groceries, $92 subscriptions' instead of uploading a bank export with personal details."
+        },
+        {
+          "title": "Prompt like an analyst",
+          "body": "Good finance prompts ask for assumptions, tradeoffs, risks, calculations, and questions to verify. Instead of 'What should I do with my money?' ask: 'Here is my anonymized situation. Explain three options, list pros and cons, show the math, name the assumptions, and tell me what I should verify before acting.' Better prompts produce better thinking."
+        },
+        {
+          "title": "Use AI with verification",
+          "body": "Ask AI for sources, assumptions, and alternative explanations. Then verify important information with official documents or trusted sources: SEC filings for companies, IRS pages for tax rules, CFPB pages for credit and debt, and the actual app website for fees. AI should make research faster, not become the only source."
+        }
+      ],
+      "checklist": [
+        "Remove private data before using any AI tool",
+        "Ask for assumptions, risks, and verification steps",
+        "Request multiple options instead of one answer",
+        "Check fees and rules on official websites",
+        "Make the final decision yourself"
+      ]
+    },
+    {
+      "id": "careers",
+      "title": "Finance Careers",
+      "summary": "Connect classroom finance to internships, networking, resumes, interview preparation, salary research, and early career growth.",
+      "outcomes": [
+        "Map common finance career paths",
+        "Write stronger networking messages",
+        "Prepare better interview and salary conversations"
+      ],
+      "url": "https://www.baroneinvestmentgroup.site/lesson.html?topic=careers",
+      "sections": [
+        {
+          "title": "Careers are built through signals",
+          "body": "Employers look for signals: curiosity, preparation, communication, and evidence that you can learn quickly. A finance club, stock pitch, budgeting project, internship, Excel model, or well-written outreach message all create signals. You do not need a perfect background to start. You need proof that you are serious and improving."
+        },
+        {
+          "title": "Know the map before applying",
+          "body": "Finance is not one job. Investment banking focuses on deals and corporate finance. Wealth management focuses on client portfolios and planning. Corporate finance works inside companies on budgets, forecasting, and strategy. Asset management researches investments. Fintech mixes finance, product, data, and software. Understanding the map helps you apply to roles that actually match your strengths."
+        },
+        {
+          "title": "Use AI to prepare faster",
+          "body": "AI can research companies, draft outreach, practice interview questions, and improve resume bullets. The trap is sending generic AI text. Use AI for a first draft, then add specific details: the person's role, the firm's recent work, your school or project, and one clear ask. Personalization is what makes outreach feel human."
+        },
+        {
+          "title": "Build a simple pipeline",
+          "body": "Track target roles, contacts, application dates, follow-ups, and interview notes. A lightweight system beats random last-minute applying. Use columns for company, role, contact, date sent, follow-up date, status, and notes. Review it every Monday. The goal is consistency, not chaos."
+        },
+        {
+          "title": "Salary research is preparation",
+          "body": "Before an interview or offer conversation, research compensation ranges by role, city, and experience level. For internships, understand hourly pay and conversion rates. For full-time roles, compare base salary, bonus, benefits, relocation, retirement match, and cost of living. Negotiation is not being difficult; it is using information professionally."
+        }
+      ],
+      "checklist": [
+        "Pick three target role types",
+        "Research 10 firms and one recent fact about each",
+        "Draft outreach with one specific personalized line",
+        "Improve resume bullets with action, tool, and result",
+        "Practice behavioral stories using the STAR format"
+      ]
+    },
+    {
+      "id": "entrepreneurship",
+      "title": "Entrepreneurship",
+      "summary": "Explore cash flow, pricing, margins, customer discovery, and small business fundamentals.",
+      "outcomes": [
+        "Understand cash flow",
+        "Think through pricing",
+        "Use AI to prototype and automate"
+      ],
+      "url": "https://www.baroneinvestmentgroup.site/lesson.html?topic=entrepreneurship",
+      "sections": [
+        {
+          "title": "A business is a money system",
+          "body": "Revenue, costs, margins, cash timing, and customer demand matter. A great idea still needs a model that can survive reality."
+        },
+        {
+          "title": "AI makes small teams stronger",
+          "body": "AI can help draft landing pages, write outreach, analyze customer feedback, create simple code, and automate repetitive admin tasks."
+        },
+        {
+          "title": "Validate before scaling",
+          "body": "Talk to customers, test pricing, measure demand, and avoid building too much before learning what people actually want."
+        }
+      ],
+      "checklist": [
+        "Define the customer",
+        "List costs",
+        "Estimate margins",
+        "Test one offer",
+        "Automate one repetitive task"
+      ]
+    },
+    {
+      "id": "diversification",
+      "title": "Diversification & Asset Allocation",
+      "summary": "Learn why spreading risk across different assets is one of the most powerful tools in investing.",
+      "outcomes": [
+        "Understand why diversification reduces risk",
+        "Learn the main asset classes",
+        "Build a simple allocation starting point"
+      ],
+      "url": "https://www.baroneinvestmentgroup.site/lesson.html?topic=diversification",
+      "sections": [
+        {
+          "title": "Don't put everything in one basket",
+          "body": "Diversification means owning different types of investments so a loss in one area does not wipe out everything. When stocks fall, bonds may hold. When one sector struggles, another may thrive. The goal is resilience, not perfection."
+        },
+        {
+          "title": "Asset classes that behave differently",
+          "body": "Stocks, bonds, real estate investment trusts, and cash all respond differently to economic conditions. Mixing them creates a portfolio more capable of surviving market events without you having to react emotionally."
+        },
+        {
+          "title": "Index funds make diversification automatic",
+          "body": "A single S&P 500 index fund gives you exposure to 500 companies across every major sector. That is instant diversification at a very low cost — no stock picking required."
+        }
+      ],
+      "checklist": [
+        "List your current holdings by category",
+        "Count how many sectors you are in",
+        "Identify any heavy concentrations",
+        "Consider low-cost index ETFs for base exposure",
+        "Review allocation at least once a year"
+      ]
+    },
+    {
+      "id": "stocks",
+      "title": "Types of Stocks",
+      "summary": "Understand the difference between growth, value, and dividend stocks, and how market cap shapes your risk.",
+      "outcomes": [
+        "Tell growth stocks from value and dividend stocks",
+        "Understand large, mid, and small cap categories",
+        "Build a basic stock evaluation checklist"
+      ],
+      "url": "https://www.baroneinvestmentgroup.site/lesson.html?topic=stocks",
+      "sections": [
+        {
+          "title": "Growth, value, and dividend — three different bets",
+          "body": "Growth stocks reinvest earnings to expand fast — higher upside, higher risk. Value stocks trade below estimated fair value and tend to be more stable businesses. Dividend stocks pay regular income, making them popular for long-term holders who want cash flow."
+        },
+        {
+          "title": "Market cap tells you the company's size and risk level",
+          "body": "Large-cap companies are established giants like Apple or JPMorgan — lower risk, slower growth. Mid-cap companies are growing businesses with more upside. Small-cap companies are earlier stage with the most risk and most potential reward."
+        },
+        {
+          "title": "Use AI to research, not to decide",
+          "body": "Ask AI to explain a company's business model, revenue drivers, and key risks. Then verify with the company's own filings and trusted financial sources. AI is a research accelerator, not a stock picker."
+        }
+      ],
+      "checklist": [
+        "Define your goal: income, growth, or stability",
+        "Research the company's business model in plain terms",
+        "Identify its market cap category",
+        "Look at performance across different market conditions",
+        "Compare it to at least two alternatives"
+      ]
+    },
+    {
+      "id": "etfs",
+      "title": "ETFs & Index Investing",
+      "summary": "Learn how exchange-traded funds work and why low-cost passive investing beats most active strategies over time.",
+      "outcomes": [
+        "Explain what an ETF is and how it trades",
+        "Compare ETFs to mutual funds",
+        "Understand expense ratios and why they compound against you"
+      ],
+      "url": "https://www.baroneinvestmentgroup.site/lesson.html?topic=etfs",
+      "sections": [
+        {
+          "title": "An ETF is a basket of investments in one share",
+          "body": "When you buy one share of an ETF, you get exposure to every security inside it. A total market ETF might hold thousands of stocks. You get diversification immediately, without needing to buy each company separately."
+        },
+        {
+          "title": "Index funds track the market instead of trying to beat it",
+          "body": "Rather than guessing which stocks will outperform, index funds match the market. Research consistently shows that most active fund managers underperform simple index strategies over 10 to 20 years — especially after fees."
+        },
+        {
+          "title": "Expense ratios are a hidden drag on returns",
+          "body": "A 1% annual fee versus a 0.03% fee sounds small. Over 30 years on a $50,000 portfolio, it can cost more than $100,000 in lost growth. Always compare expense ratios before choosing between similar funds."
+        }
+      ],
+      "checklist": [
+        "Look up the expense ratio before buying any fund",
+        "Identify what index or benchmark the fund tracks",
+        "Check how liquid the ETF is (daily volume)",
+        "Compare at least two similar ETFs",
+        "Understand what sectors and regions you are buying exposure to"
+      ]
+    },
+    {
+      "id": "reset",
+      "title": "Money Reset",
+      "summary": "Build a clear starting point: net worth, income, spending, debt, cash cushion, and the first 30 days of action.",
+      "outcomes": [
+        "Calculate your real net worth",
+        "Map income and expenses clearly",
+        "Complete a practical 30-day reset"
+      ],
+      "url": "https://www.baroneinvestmentgroup.site/lesson.html?topic=reset",
+      "sections": [
+        {
+          "title": "Start with what you actually have",
+          "body": "A money reset begins with honesty, not judgment. Net worth is simply what you own minus what you owe. It can be negative when you're starting out — that's completely normal. Knowing the number is what matters, not what the number is right now."
+        },
+        {
+          "title": "Income vs. expenses: the most important equation",
+          "body": "List every source of income and every regular expense. Most people discover they're spending more than they realized in at least one category. This is valuable information, not bad news. Seeing it clearly is the first step."
+        },
+        {
+          "title": "Separate net worth from self-worth",
+          "body": "Money can feel emotional because it touches independence, family pressure, social life, and fear of falling behind. A low balance or debt number is information, not identity. The reset works best when you treat your finances like a dashboard: some lights are green, some are yellow, and some need attention."
+        },
+        {
+          "title": "The 30-day reset method",
+          "body": "For the next 30 days, track only three numbers: money coming in, money going out, and your ending cash balance each week. Week 1 is visibility. Week 2 is subscriptions and recurring charges. Week 3 is food, transport, and social spending. Week 4 is setting one savings or debt target."
+        },
+        {
+          "title": "The first lever",
+          "body": "A lever is the one change that creates the most relief. It might be canceling three subscriptions, moving bill dates, adding one extra shift, setting up autopay, or building a starter emergency buffer. A reset is not about shame or perfection. It is about finding the first lever and pulling it consistently."
+        }
+      ],
+      "checklist": [
+        "List all accounts and current balances",
+        "Add up assets and liabilities",
+        "Calculate your net worth, even if negative",
+        "Track income and spending for 30 days",
+        "Choose one first lever: savings, debt, income, or spending"
+      ]
+    },
+    {
+      "id": "debt_payoff",
+      "title": "Debt Payoff Strategy",
+      "summary": "Compare snowball vs. avalanche and build a realistic plan to pay down debt faster.",
+      "outcomes": [
+        "Understand how interest compounds on debt",
+        "Compare snowball vs. avalanche methods",
+        "Build a prioritized payoff order"
+      ],
+      "url": "https://www.baroneinvestmentgroup.site/lesson.html?topic=debt_payoff",
+      "sections": [
+        {
+          "title": "Minimum payments keep you stuck",
+          "body": "Paying only the minimum on a credit card can take years to clear a small balance, because interest compounds on the remaining amount each month. Understanding this is the first step to getting free."
+        },
+        {
+          "title": "Snowball: smallest balance first",
+          "body": "The snowball method pays off debts from smallest balance to largest, ignoring interest rates. Each paid-off debt creates momentum and motivation. Research shows this method helps people who need visible wins to stay on track."
+        },
+        {
+          "title": "Avalanche: highest interest rate first",
+          "body": "The avalanche method attacks the highest-interest debt first. Mathematically, this saves the most money over time. It works best for people who are motivated by numbers and long-term savings over quick psychological wins."
+        },
+        {
+          "title": "APR is the price of waiting",
+          "body": "APR is the annual cost of borrowing. A $3,000 credit card balance at 24% APR with a $60 minimum payment can take years to clear because much of the payment goes to interest first. Extra payments matter because they attack principal, which reduces future interest. Even $25 extra per month can shorten the timeline."
+        },
+        {
+          "title": "Refinancing and consolidation",
+          "body": "A balance transfer card, personal loan, or student loan refinance can lower interest, but only if the fees, promotional deadlines, and behavior risk make sense. Moving debt is not the same as paying debt. Before consolidating, compare total cost, payoff date, origination fees, and whether the old cards will stay closed to new spending."
+        },
+        {
+          "title": "The psychology of payoff",
+          "body": "Debt payoff is math plus behavior. Automate minimum payments so late fees do not sabotage progress. Pick one target debt and send all extra money there. Celebrate small wins without adding new balances. The plan works when it is visible, automatic, and realistic enough to repeat during stressful months."
+        }
+      ],
+      "checklist": [
+        "List every debt with balance, rate, and minimum payment",
+        "Add up total debt",
+        "Choose snowball or avalanche based on your motivation style",
+        "Find at least one extra dollar per month to apply to your target debt",
+        "Track your payoff progress monthly"
+      ]
+    },
+    {
+      "id": "taxes_paychecks",
+      "title": "Taxes & Paychecks",
+      "summary": "Understand what actually happens between your salary and take-home pay: taxes, deductions, forms, refunds, and benefits.",
+      "outcomes": [
+        "Read a pay stub without guessing",
+        "Understand W-4 basics and tax withholding",
+        "Compare salary, hourly pay, benefits, and take-home income"
+      ],
+      "url": "https://www.baroneinvestmentgroup.site/lesson.html?topic=taxes_paychecks",
+      "sections": [
+        {
+          "title": "Gross pay is not take-home pay",
+          "body": "Gross pay is what you earn before anything is taken out. Net pay is what lands in your bank account. The difference includes federal income tax, state and local taxes in many places, Social Security, Medicare, insurance premiums, retirement contributions, and other benefits. A $60,000 salary does not mean $5,000 per month to spend. The real planning number is after-tax, after-deduction take-home pay."
+        },
+        {
+          "title": "What your pay stub is telling you",
+          "body": "A pay stub usually shows current pay period earnings, year-to-date earnings, taxes withheld, benefit deductions, retirement contributions, and employer-paid benefits. The most important habit is checking the first few paychecks after starting a job. Make sure hours, hourly rate or salary, tax withholding, insurance deductions, and retirement contributions match what you expected."
+        },
+        {
+          "title": "W-4 forms and withholding",
+          "body": "The W-4 tells your employer how much federal income tax to withhold. Withhold too little and you may owe money at tax time. Withhold too much and you get a larger refund, but that means you gave the government an interest-free loan during the year. For beginners, the goal is not a huge refund. The goal is avoiding surprises and understanding your monthly cash flow."
+        },
+        {
+          "title": "Benefits are part of compensation",
+          "body": "When comparing offers, do not look only at salary. Health insurance premiums, deductible, retirement match, paid time off, tuition support, commuting benefits, relocation, bonus eligibility, and remote work flexibility can change the real value of the offer. A slightly lower salary with a strong 401(k) match and cheaper health insurance can beat a higher salary with weak benefits."
+        },
+        {
+          "title": "Refunds are not free money",
+          "body": "A tax refund usually means you overpaid during the year. It can still be useful if you treat it intentionally: emergency fund, debt payoff, Roth IRA contribution, moving expenses, or a planned purchase. The mistake is mentally spending the refund before it arrives or relying on it to fix a budget that does not work month to month."
+        }
+      ],
+      "checklist": [
+        "Find your real monthly take-home pay",
+        "Read one pay stub line by line",
+        "Check your W-4 when starting a new job",
+        "Compare benefits before accepting an offer",
+        "Plan any refund before spending it"
+      ]
+    },
+    {
+      "id": "insurance_risk",
+      "title": "Insurance & Risk",
+      "summary": "Learn how insurance protects your money, what coverage actually means, and how to avoid being underinsured or overpaying.",
+      "outcomes": [
+        "Explain premiums, deductibles, copays, and coverage limits",
+        "Know which insurance types matter first",
+        "Compare policies without only chasing the cheapest price"
+      ],
+      "url": "https://www.baroneinvestmentgroup.site/lesson.html?topic=insurance_risk",
+      "sections": [
+        {
+          "title": "Insurance is risk transfer",
+          "body": "Insurance is not an investment. It is a way to transfer a financial risk you cannot afford to handle alone. You pay a smaller predictable premium so that a major event, like a car accident, apartment fire, medical bill, or liability claim, does not destroy your financial base. The goal is protection, not profit."
+        },
+        {
+          "title": "The terms that matter",
+          "body": "Premium is what you pay to keep coverage. Deductible is what you pay before insurance starts covering many costs. Copay is a fixed cost for a service. Coinsurance is your percentage of a bill after the deductible. Coverage limit is the maximum the policy will pay. Exclusion means something the policy does not cover. These terms decide whether a policy is actually useful."
+        },
+        {
+          "title": "Start with the big risks",
+          "body": "For most young adults, the first priorities are health insurance, auto insurance if you drive, renters insurance if you rent, and enough emergency cash for deductibles. Renters insurance is often inexpensive and can protect belongings plus liability. Auto insurance should be chosen for real protection, not just the legal minimum. Health insurance needs careful attention to networks, deductibles, prescriptions, and urgent care costs."
+        },
+        {
+          "title": "Cheap can become expensive",
+          "body": "The cheapest policy can cost more if the deductible is too high, coverage limits are weak, or important situations are excluded. Compare the total risk: monthly premium plus deductible plus what happens in a realistic bad scenario. A good policy is one you can afford every month and actually use when something goes wrong."
+        },
+        {
+          "title": "Review coverage when life changes",
+          "body": "Insurance is not set-and-forget. Review coverage when you move, buy a car, start a job, leave a parent's plan, get married, adopt a pet, freelance, or buy expensive equipment. Life changes create new risks. A 20-minute review once a year can prevent a very expensive surprise."
+        }
+      ],
+      "checklist": [
+        "List the risks you could not afford alone",
+        "Know your deductible for each policy",
+        "Check coverage limits and exclusions",
+        "Compare at least three quotes when shopping",
+        "Review coverage once a year or after life changes"
+      ]
+    }
+  ]
+}

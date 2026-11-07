@@ -28,7 +28,7 @@ test('launched text mentors are available to free users; voice remains Ramsey on
  const config=await (await fetch(base+'/api/config')).json();
  for(const id of ['value-investor','disruptive-growth']){
   const p=config.catalog.personas.find(p=>p.id===id);
-  assert.equal(p.built,true);assert.equal(p.tier,'free');assert.equal(p.textOnly,true);
+  assert.equal(p.built,true);assert.equal(p.tier,'included');assert.equal(p.textOnly,true);
   const r=await post('/api/chat','new-mentor-free-'+id,{personaId:id,agentId:'budget',message:'Explain owner earnings and valuation.'});
   assert.equal(r.status,200);const reply=await r.json();assert.equal(reply.personaId,id);
   const voice=await post('/api/voice/speak','new-mentor-free-'+id,{personaId:id,turnId:reply.voiceTurnId||reply.turnId});

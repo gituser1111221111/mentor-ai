@@ -95,11 +95,11 @@ test('API: quiz -> chat -> repick, static UI, and traversal blocked', async () =
     assert.equal(cfg.catalog.agents.length, 16);
     assert.equal(cfg.catalog.personas.length, 10);
     assert.equal(cfg.quiz.questions.length, 6);
-    assert.deepEqual(cfg.catalog.personas.filter(p => p.tier === 'free').map(p => p.id), ['debt-free-coach', 'value-investor', 'disruptive-growth']);
+    assert.ok(cfg.catalog.personas.every(p => p.tier === 'included'));
     assert.deepEqual(cfg.catalog.personas.filter(p => p.built).map(p => p.id), ['debt-free-coach', 'value-investor', 'disruptive-growth']);
     assert.deepEqual(cfg.catalog.agents.filter(a => a.built).map(a => a.id), ['budget', 'investing', 'equity']);
     assert.ok(cfg.catalog.agents.every(a => a.name.endsWith('Agent')));
-    assert.deepEqual(cfg.catalog.agents.filter(a => a.tier === 'free').map(a => a.id), ['investing','equity']);
+    assert.ok(cfg.catalog.agents.every(a => a.tier === 'included'));
     const p = await fetch(base + '/api/profile', {method: 'POST', headers: h, body: JSON.stringify({answers})});
     assert.equal(p.status, 200);
     const attachment = await fetch(base + '/api/attachment', {method: 'POST', headers: h, body: JSON.stringify({name: 'statement.txt', base64: Buffer.from('Monthly statement for review').toString('base64')})});
@@ -110,8 +110,8 @@ test('API: quiz -> chat -> repick, static UI, and traversal blocked', async () =
     assert.equal(bad.status, 422);
     const c = await (await fetch(base + '/api/chat', {method: 'POST', headers: h, body: JSON.stringify({message: 'How do I budget?'})})).json();
     assert.ok(c.turnId);
-    assert.equal((await fetch(base + '/api/chat', {method: 'POST', headers: h, body: JSON.stringify({message: 'hi', agentId: 'debt'})})).status, 402);
-    assert.equal((await fetch(base + '/api/chat', {method: 'POST', headers: h, body: JSON.stringify({message: 'hi', personaId: 'conscious-spender'})})).status, 402);
+    assert.equal((await fetch(base + '/api/chat', {method: 'POST', headers: h, body: JSON.stringify({message: 'hi', agentId: 'debt'})})).status, 409);
+    assert.equal((await fetch(base + '/api/chat', {method: 'POST', headers: h, body: JSON.stringify({message: 'hi', personaId: 'conscious-spender'})})).status, 409);
     await fetch(base + '/api/checkout/demo', {method: 'POST', headers: h, body: '{}'});
     assert.equal(c.personaName, 'Dave Ramsey–inspired');
     assert.equal('candidates' in c, false);
@@ -135,38 +135,25 @@ test('API: quiz -> chat -> repick, static UI, and traversal blocked', async () =
   } finally { await new Promise(r => server.close(r)); }
 });
 
-test('Plus gating: locked mentor -> 402, demo unlock without Stripe, unbuilt -> coming soon', async () => {
-  delete process.env.STRIPE_TEST_SECRET_KEY;
-  const server = createServer(); await new Promise(r => server.listen(0, '127.0.0.1', r));
-  const base = `http://127.0.0.1:${server.address().port}`;
-  const h = {'Content-Type': 'application/json', 'X-Session-Id': 'test-session-plus-000001'};
-  const post = (p, b) => fetch(base + p, {method: 'POST', headers: h, body: JSON.stringify(b || {})});
+test('all-inclusive demo access keeps previews unavailable and disables legacy checkout', async () => {
+  const server=createServer();await new Promise(r=>server.listen(0,'127.0.0.1',r));
+  const base='http://127.0.0.1:'+server.address().port;
+  const headers={'Content-Type':'application/json','X-Session-Id':'all-inclusive-session-00001'};
+  const post=(p,b={})=>fetch(base+p,{method:'POST',headers,body:JSON.stringify(b)});
   try {
-    await post('/api/profile', {answers});
-    assert.equal((await post('/api/chat', {message: 'hi', personaId: 'asset-builder'})).status, 402);
-    assert.equal((await post('/api/chat', {message: 'hi', agentId: 'tax'})).status, 402);
-    assert.equal((await (await post('/api/checkout')).json()).mode, 'demo');
-    assert.equal((await (await post('/api/checkout/demo')).json()).tier, 'plus');
-    assert.equal((await (await fetch(base + '/api/me', {headers: h})).json()).tier, 'plus');
-    const soon = await post('/api/chat', {message: 'hi', personaId: 'asset-builder'});
-    assert.equal(soon.status, 409);
-    assert.match((await soon.json()).error, /coming soon/);
-    assert.equal((await post('/api/chat', {message: 'hi', agentId: 'debt'})).status, 409);
-    await fetch(base + '/api/session', {method: 'DELETE', headers: h});
-    assert.equal((await (await fetch(base + '/api/me', {headers: h})).json()).tier, 'plus'); // start over keeps Plus
-  } finally { await new Promise(r => server.close(r)); }
+    for(const personaId of ['debt-free-coach','value-investor','disruptive-growth']) assert.equal((await post('/api/chat',{message:'Hello',personaId,agentId:'budget'})).status,200);
+    assert.equal((await post('/api/chat',{message:'Hello',personaId:'asset-builder'})).status,409);
+    for(const path of ['/api/checkout','/api/checkout/demo','/api/checkout/confirm']) assert.equal((await post(path)).status,409);
+    const me=await (await fetch(base+'/api/me',{headers})).json();assert.equal(me.tier,'included');assert.equal(me.billingActive,false);
+    const config=await (await fetch(base+'/api/config')).json();assert.equal(config.billing.plan.amountCents,299);assert.equal(config.billing.enabled,false);
+  } finally {await new Promise(r=>server.close(r));}
 });
 
-test('Stripe confirm checks session ownership and completion (fake Stripe)', async () => {
-  process.env.STRIPE_TEST_SECRET_KEY = 'sk_test_fake';
-  const {confirmCheckout, createCheckout} = await import('../lib/billing.js');
-  const fake = body => async () => ({ok: true, json: async () => body});
-  assert.equal((await confirmCheckout('me', 'cs_test_abc', {fetcher: fake({client_reference_id: 'me', status: 'complete', subscription: 'sub_1'})})).ok, true);
-  assert.match((await confirmCheckout('me', 'cs_test_abc', {fetcher: fake({client_reference_id: 'other', status: 'complete'})})).reason, /different session/);
-  assert.match((await confirmCheckout('me', 'cs_test_abc', {fetcher: fake({client_reference_id: 'me', status: 'open'})})).reason, /open/);
-  assert.equal((await confirmCheckout('me', 'cs_live_abc')).ok, false);
-  let sent; await createCheckout('me', 'https://x.example', {fetcher: async (u, o) => (sent = o.body, {ok: true, json: async () => ({url: 'https://checkout.stripe.com/x', id: 'cs_test_1'})})});
-  assert.equal(sent.get('mode'), 'subscription');
-  assert.equal(sent.get('line_items[0][price_data][unit_amount]'), '499');
-  assert.equal(sent.get('client_reference_id'), 'me');  delete process.env.STRIPE_TEST_SECRET_KEY;
+test('billing helpers cannot create or confirm subscriptions even when keys exist',async()=>{
+  process.env.STRIPE_TEST_SECRET_KEY='sk_test_fake';
+  const {createCheckout,confirmCheckout,stripeConfigured}=await import('../lib/billing.js');
+  assert.equal(stripeConfigured(),false);
+  await assert.rejects(createCheckout(),/not active/);
+  assert.equal((await confirmCheckout()).ok,false);
+  delete process.env.STRIPE_TEST_SECRET_KEY;
 });
