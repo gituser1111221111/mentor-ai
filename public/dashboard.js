@@ -1,4 +1,5 @@
 // Mentor Labs dashboard (Investing + Budget), built to the approved concept screens.
+import {classicScreens, setDebtPlan} from './dashboard-classic.js?v=1';
 // Every figure comes from the server's code-computed workspace (/api/workspace) or the labeled sample
 // (/api/workspace/demo). Samples are display-only and never saved as the user's finances.
 // Mounted by app.js (openWorkspace -> mountDashboard) into #dashboard-root under the shared header.
@@ -380,7 +381,9 @@ function budSettings() {
 }
 function empty(title) { return {body: head(title, 'Loading your dashboard...', '') + '<article class="db-card"><p class="db-empty">Loading…</p></article>'}; }
 
-const VIEWS = {portfolio: {overview: invOverview, risk: invRisk, improve: invImprove, holdings: invHoldings, calendar: invCalendar, news: invNews, guidelines: invGuidelines}, budget: {overview: budOverview, cashflow: budCashflow, spending: budSpending, debt: budDebt, goals: budGoals, review: budReview, settings: budSettings}};
+const VIEWS = {portfolio: {overview: invOverview, risk: invRisk, improve: invImprove, holdings: invHoldings, calendar: invCalendar, news: invNews, guidelines: invGuidelines}, budget: {overview: budOverview, cashflow: budCashflow, spending: budSpending, debt: classic('debt'), goals: classic('goals'), review: classic('review'), settings: classic('settings')}};
+// Debt plan, Goals, Review and Settings use the original reference-board screens (restored on request).
+function classic(name) { return () => ({body: `<div class="mlx mlx-embed">${classicScreens[name]()}</div>`}); }
 
 function render() {
   clearCharts();
@@ -469,6 +472,15 @@ root.addEventListener('change', e => {
 root.addEventListener('input', e => { if (e.target.matches('[data-news-search]')) { state.newsQuery = e.target.value; const list = root.querySelector('[data-news-list]'); if (list) list.innerHTML = newsList(); return; } if (e.target.matches('#db-limit')) { const o = root.querySelector('#db-limit-out'); if (o) o.textContent = e.target.value + '%'; state.draftLimit = Number(e.target.value); } });
 root.addEventListener('submit', e => { if (e.target.matches('[data-ask]')) { e.preventDefault(); const input = e.target.querySelector('input'); ask(input.value || input.closest('.db-teacher').querySelector('p').textContent); input.value = ''; } });
 
+// Restored screens: plan toggle, in-dashboard links, tradeoff choices, segmented controls, privacy link.
+root.addEventListener('click', e => {
+  const mlx = e.target.closest('.mlx'); if (!mlx) return;
+  const plan = e.target.closest('[data-plan]'); if (plan) { setDebtPlan(plan.dataset.plan); render(); return; }
+  const go = e.target.closest('[data-go]'); if (go) { e.preventDefault(); const [tab, view] = go.dataset.go.split('/'); state.tab = tab === 'budget' ? 'budget' : 'portfolio'; if (view) state.view[state.tab] = view; render(); window.scrollTo(0, 0); return; }
+  const act = e.target.closest('[data-action="privacy"]'); if (act) { window.open('/privacy.html', '_blank', 'noopener'); return; }
+  const opt = e.target.closest('.option'); if (opt) { opt.parentElement.querySelectorAll('.option').forEach(o => { o.classList.toggle('on', o === opt); o.querySelector('.radio')?.classList.toggle('on', o === opt); }); return; }
+  const seg = e.target.closest('.pill-group button'); if (seg) seg.parentElement.querySelectorAll('button').forEach(b => b.classList.toggle('on', b === seg));
+});
 document.addEventListener('mentor:workspace-open', () => run(load));
 document.addEventListener('mentor:inputs-updated', () => { if (!document.querySelector('#v-workspace')?.hidden) run(load); });
 document.addEventListener('mentor:guidelines-updated', () => { state.scenario = null; run(load); });
