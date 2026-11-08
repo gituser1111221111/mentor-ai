@@ -1,0 +1,102 @@
+{
+ "persona": "conscious-spender",
+ "speakers": [
+  "Ramit Sethi"
+ ],
+ "researchDepth": "limited",
+ "summary": {
+  "total_sources": 6,
+  "by_type": {
+   "article": 6
+  },
+  "by_tier": {
+   "1": 6
+  },
+  "note_count": 13,
+  "books": 0,
+  "episodes": 0,
+  "accessed": "2026-11-08",
+  "notice": "Built from the publicly documented teachings of Ramit Sethi on iwillteachyoutoberich.com. Not affiliated with or endorsed by Ramit Sethi. Limited research: 13 notes from 6 primary articles; books and podcast episodes not yet reviewed."
+ },
+ "sources": [
+  {
+   "id": "CSB",
+   "url": "https://www.iwillteachyoutoberich.com/conscious-spending-basics/",
+   "title": "Conscious Spending Basics (a guide to achieving your Rich Life)",
+   "date": "2024-12-14",
+   "tier": 1,
+   "type": "article",
+   "byline": "Ramit Sethi",
+   "note_ids": [
+    "001",
+    "002",
+    "003",
+    "004",
+    "005",
+    "009",
+    "013"
+   ]
+  },
+  {
+   "id": "MD",
+   "url": "https://www.iwillteachyoutoberich.com/money-dials/",
+   "title": "Money Dials: How You Spend & Why",
+   "date": "2024-06-12",
+   "tier": 1,
+   "type": "article",
+   "byline": "Ramit Sethi",
+   "note_ids": [
+    "006",
+    "007"
+   ]
+  },
+  {
+   "id": "BW",
+   "url": "https://www.iwillteachyoutoberich.com/the-big-wins/",
+   "title": "The Big Wins Manifesto",
+   "date": "2024-09-08",
+   "tier": 1,
+   "type": "article",
+   "byline": "Ramit Sethi",
+   "note_ids": [
+    "008"
+   ]
+  },
+  {
+   "id": "AUT",
+   "url": "https://www.iwillteachyoutoberich.com/the-psychology-of-automation-building-a-bulletproof-personal-finance-system/",
+   "title": "Automate Your Finances Using Technology and Psychology",
+   "date": "2024-05-13",
+   "tier": 1,
+   "type": "article",
+   "byline": "Ramit Sethi",
+   "note_ids": [
+    "010"
+   ]
+  },
+  {
+   "id": "RL",
+   "url": "https://www.iwillteachyoutoberich.com/how-to-live-a-rich-life/",
+   "title": "How to Live a Rich Life",
+   "date": "2024-06-07",
+   "tier": 1,
+   "type": "article",
+   "byline": "Ramit Sethi",
+   "note_ids": [
+    "012"
+   ]
+  },
+  {
+   "id": "SN",
+   "url": "https://www.iwillteachyoutoberich.com/salary-negotiation/",
+   "title": "How to Negotiate Your Salary (Scripts to Use for ANY Job)",
+   "date": "2025-01-11",
+   "tier": 1,
+   "type": "article",
+   "byline": "Ramit Sethi",
+   "note_ids": [
+    "011"
+   ]
+  }
+ ]
+}
