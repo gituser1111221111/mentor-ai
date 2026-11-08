@@ -8,3 +8,28 @@
 .app-copy small{white-space:normal}
 a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--gold-2);outline-offset:3px}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+/* Embedded chapters share the Mentor application canvas and avoid nested headers. */
+body.mentor-embedded{--black:#fff;--panel:#fafbf8;--panel-2:#f2f5ed;--white:#20362c;--muted:#63715f;--soft:#52634c;--line:#e0e6d9;--gold:#24694a;--gold-2:#2e7954;--shadow:none;color-scheme:light;background:#fff;color:#20362c;font-size:15px;line-height:1.7}
+.mentor-embedded .site-header,.mentor-embedded .ambient-bg,.mentor-embedded #lesson-progress,.mentor-embedded #lesson-hero-canvas,.mentor-embedded .detail-hero .hero-actions{display:none}
+.mentor-embedded .detail-page{width:100%;max-width:none;margin:0;padding:24px}
+.mentor-embedded .detail-hero{padding:8px 0 24px;min-height:0;background:none;border:0;margin:0}
+.mentor-embedded .detail-hero h1{font-size:clamp(28px,3vw,42px);line-height:1.2;letter-spacing:-.025em;margin:8px 0 14px;color:#173f2e}
+.mentor-embedded .detail-hero p:not(.eyebrow){max-width:850px;font-size:16px;line-height:1.65}
+.mentor-embedded .module-shell{grid-template-columns:minmax(0,1fr);gap:24px}
+.mentor-embedded .module-sidebar{display:none}
+.mentor-embedded .module-main{display:grid;gap:26px}
+.mentor-embedded .module-card,.mentor-embedded .module-lesson-card{background:#fafbf8;border-color:#e0e6d9;border-radius:10px;box-shadow:none;padding:24px}
+.mentor-embedded .module-card p,.mentor-embedded .module-card li,.mentor-embedded .module-lesson-card p{font-size:15px;line-height:1.8;color:#42543f}
+.mentor-embedded .module-overview{gap:16px}.mentor-embedded .module-lessons{display:grid;gap:18px}
+.mentor-embedded .section-head h2{font-size:25px}.mentor-embedded .section-head p{max-width:850px}
+.mentor-embedded .apps-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.mentor-embedded .app-card{display:flex;gap:14px;padding:20px;background:white;border:1px solid #dfe5d8;border-radius:10px;align-items:flex-start;box-shadow:none}
+.mentor-embedded .app-copy strong{font-size:15px;color:#183e2b}.mentor-embedded .app-copy span{font-size:13px;line-height:1.6;color:#52634d}.mentor-embedded .app-copy small{font-size:11px;color:#66765f}
+.app-logo-wrap,.workflow-logo-wrap{flex:none;background:white!important;border:1px solid #e4e7df;border-radius:10px;display:grid;place-items:center;padding:8px;width:54px;height:54px}
+.app-logo-wrap img,.workflow-logo-wrap img{width:36px;height:36px;object-fit:contain;display:block}
+.mentor-embedded .button,.mentor-embedded .copy-button{border-radius:7px;background:#edf3e6;border:1px solid #d8e2cf;color:#175540}
+@media(max-width:650px){.mentor-embedded .detail-page{padding:18px 14px}.mentor-embedded .module-card,.mentor-embedded .module-lesson-card{padding:18px}.mentor-embedded .apps-grid{grid-template-columns:1fr}}
+/* Learning fills the full canvas: no centered max-width caps inside the embedded lesson. */
+.mentor-embedded .detail-hero,.mentor-embedded .detail-hero>*,.mentor-embedded .section-head,.mentor-embedded .next-chapter-banner{max-width:none}
+.mentor-embedded .detail-hero p:not(.eyebrow),.mentor-embedded .section-head p{max-width:none}
+.mentor-embedded .detail-page h2,.mentor-embedded .detail-page h3,.mentor-embedded .detail-page p{max-width:none}

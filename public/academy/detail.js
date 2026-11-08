@@ -45,7 +45,8 @@ function logoDomain(app) {
 
 function logoMarkup(item, className = "app-logo-wrap") {
   const initial = String(item.name || 'M').charAt(0).replace(/[&<>"']/g, '');
-  return `<span class="${className}" aria-hidden="true">${initial}</span>`;
+  const domain=logoDomain(item).replace(/[^a-zA-Z0-9.-]/g,'');
+  return `<span class="${className}"><img src="/academy/brand-icons/${domain}.png" width="40" height="40" alt="${String(item.name||'').replace(/[&<>"']/g,'')} logo" loading="lazy" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><span hidden aria-hidden="true">${initial}</span></span>`;
 }
 
 function renderApps(apps = []) {

@@ -2,7 +2,7 @@ const root = document.querySelector('#learning-modules');
 const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 if (root) {
   const style = document.createElement('link');
-  style.rel = 'stylesheet'; style.href = '/academy/host.css?v=2'; document.head.append(style);
+  style.rel = 'stylesheet'; style.href = '/academy/host.css?v=4'; document.head.append(style);
   fetch('/learning-modules.json').then(r => {if (!r.ok) throw Error('Lessons could not load.');return r.json();}).then(data => {
     const order = ['reset','budgeting','credit','debt_payoff','taxes_paychecks','insurance_risk','investing','stocks','etfs','diversification','careers','entrepreneurship','ai'];
     const modules = order.map(id => data.modules.find(m => m.id === id)).filter(Boolean);
@@ -36,6 +36,11 @@ if (root) {
       try{
         const w=frame.contentWindow,d=frame.contentDocument,page=new URL(w.location.href),lesson=page.pathname.endsWith('/lesson.html')&&modules.find(m=>m.id===page.searchParams.get('topic'));
         if(lesson){selected=lesson;select.value=lesson.id;changeMode('guide');frame.title=`${lesson.title} — interactive lesson`;progress();}
+        d.body.classList.add('mentor-embedded');
+        frame.scrolling='no';
+        const fit=()=>{const h=Math.ceil(d.body.scrollHeight)+20;if(Math.abs(frame.clientHeight-h)>4)frame.style.height=h+'px';};
+        if(frame._lessonObserver)frame._lessonObserver.disconnect();
+        frame._lessonObserver=new ResizeObserver(fit);frame._lessonObserver.observe(d.body);d.fonts.ready.then(fit);fit();
         const tools=w.BIG_CONTENT?.tools;
         if(tools&&toolSelect.options.length<2)toolSelect.innerHTML=Object.entries(tools).map(([id,t])=>`<option value="${esc(id)}">${esc(t.title)}</option>`).join('');
         if(page.pathname.endsWith('/tool.html')){changeMode('tools');toolSelect.value=page.searchParams.get('tool');frame.title=`${toolSelect.selectedOptions[0]?.textContent||'Practice tool'} — interactive tool`;}

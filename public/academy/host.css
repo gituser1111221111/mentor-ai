@@ -30,3 +30,21 @@
 .learning-shell :focus-visible{outline:2px solid #b7dbc2;outline-offset:3px}
 @media(max-width:1050px){.learning-shell{grid-template-columns:190px minmax(0,1fr)}.learning-toolbar{flex-wrap:wrap}.learning-tools{justify-content:flex-start}.learning-rail{padding:20px 10px}}
 @media(max-width:700px){.learning-shell{grid-template-columns:minmax(0,1fr)}.learning-rail{border-right:0;border-bottom:1px solid #303030;padding:18px}.learning-rail h3{margin-bottom:10px}.learning-meter{padding-bottom:0;display:flex;align-items:center;gap:12px}.learning-meter progress{width:110px}.learning-steps{display:none}.learning-mode{padding:16px 14px 0}.learning-toolbar{padding:14px;align-items:stretch}.learning-toolbar>label{max-width:none;flex-basis:100%}.learning-tools{width:100%;justify-content:space-between}.learning-frame{height:740px}.learning-footer{padding:14px}.learning-footer>a{font-size:10px}.learning-nav{gap:6px}}
+/* Learning fills the application canvas; each chapter remains its own lesson. */
+body.learning-open main{max-width:none;width:100%;margin:0;padding:0 24px 32px}
+body.learning-open .learning-page{padding:24px 0 0}
+body.learning-open .learning-page>h1{font-size:28px;margin:6px 0}
+body.learning-open .learning-page>.section-eyebrow{font-size:10px;margin:0}
+body.learning-open .learning-page>p:not(.section-eyebrow){font-size:13px;margin:8px 0 20px;max-width:none}
+body.learning-open #learning-modules{margin-top:0}
+.learning-shell{grid-template-columns:236px minmax(0,1fr);background:#f7f6f2;color:#20382d;border:1px solid #e0e4da;border-radius:10px;overflow:visible;align-items:start}
+.learning-rail{background:#f7f6f2;border-color:#e0e4da;position:sticky;top:94px;max-height:calc(100vh - 105px);overflow:auto;border-radius:10px 0 0 10px}
+.learning-rail h3{color:#20382d}.learning-eyebrow,.learning-step-number{color:#236344}.learning-meter{color:#687465}
+.learning-steps button{color:#52634f;min-height:46px;font-size:12px}.learning-steps button:hover{background:#edf1e6;color:#173e2c}.learning-steps button[aria-current=step]{background:#e1edd9;color:#173e2c;border-color:#d5e3ca}
+.learning-content{background:white;min-width:0;border-radius:0 10px 10px 0}
+.learning-mode{padding:18px 22px 0}.learning-mode button{color:#31563e;border-color:#dbe2d3}.learning-mode button[aria-pressed=true]{background:#175540;border-color:#175540;color:white}
+.learning-toolbar{padding:14px 22px;background:#fff}.learning-toolbar select{background:#fafbf7;color:#20382d;border-color:#dce3d5}.learning-tools label{color:#56634f}.learning-shell .btn{color:#175540;border-color:#d3dfca;background:white}.learning-shell .btn.primary{background:#175540;color:white}
+.learning-frame{height:calc(100vh - 210px);min-height:650px;background:white;border-top:1px solid #e3e7dc}
+.learning-footer{border-color:#e3e7dc;background:white}.learning-footer a{color:#276442}
+@media(max-width:900px){body.learning-open main{padding:0 12px 24px}.learning-shell{grid-template-columns:190px minmax(0,1fr)}.learning-toolbar{flex-wrap:wrap}}
+@media(max-width:700px){.learning-shell{grid-template-columns:1fr}.learning-rail{position:static;max-height:none;border-bottom:1px solid #e0e4da}.learning-mode{padding:14px 12px 0}.learning-toolbar{padding:12px}.learning-frame{min-height:600px}}
