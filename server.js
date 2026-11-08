@@ -11,6 +11,8 @@ import {mentorRoutes,serveStatic,voiceRoutes} from './lib/routes.js';
 const uuid=x=>typeof x==='string'&&/^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(x);
 async function body(req){let size=0;const chunks=[];for await(const c of req){size+=c.length;if(size>7_100_000)throw Error('Request exceeds 7 MB');chunks.push(c);}return JSON.parse(Buffer.concat(chunks).toString()||'{}');}
 export function createServer(){return http.createServer(async(req,res)=>{
+ // Clickjacking, referrer and device-permission protection for every response.
+ res.setHeader('X-Frame-Options','SAMEORIGIN');res.setHeader('Content-Security-Policy',"frame-ancestors 'self'");res.setHeader('Referrer-Policy','strict-origin-when-cross-origin');res.setHeader('Permissions-Policy','camera=(), geolocation=(), microphone=(self)');
  const send=(code,data)=>{res.writeHead(code,{'Content-Type':'application/json','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});res.end(JSON.stringify(data));};
  try{
   // Local backend only. Reject browser cross-origin calls; no wildcard CORS.

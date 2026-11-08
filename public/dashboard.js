@@ -12,6 +12,8 @@ const pct = (v, d = 1) => num(v) === null ? '—' : `${Number(v).toFixed(d)}%`;
 const signedPct = (v, d = 1) => num(v) === null ? '—' : `${v >= 0 ? '+' : '−'}${Math.abs(v).toFixed(d)}%`;
 const fix = (v, d = 2) => num(v) === null ? '—' : Number(v).toFixed(d);
 const cents = v => Math.round(Number(v || 0) * 100);
+// Only http(s) links are rendered as links; anything else (javascript:, data:) becomes plain text.
+const safeUrl = u => { try { const x = new URL(String(u)); return ['http:', 'https:'].includes(x.protocol) ? x.href : null; } catch { return null; } };
 const info = text => `<span class="db-i" title="${esc(text)}" aria-label="${esc(text)}" role="img"></span>`;
 const MONTH = m => new Date(`${m}-15T12:00:00Z`).toLocaleString('en-US', {month: 'short', timeZone: 'UTC'});
 const MONTH_LONG = m => new Date(`${m}-15T12:00:00Z`).toLocaleString('en-US', {month: 'long', timeZone: 'UTC'});
@@ -102,8 +104,8 @@ function head(title, sub, badge, actions = '') {
 }
 const btn = (label, attrs = '', icon = '', primary = false) => `<button type="button" class="db-btn${primary ? ' primary' : ''}" ${attrs}>${icon ? svg(icon) : ''}${esc(label)}</button>`;
 const stat = (label, value, tip, sub = '', cls = '') => `<article class="db-card db-stat"><span>${esc(label)} ${tip ? info(tip) : ''}</span><strong class="${cls}">${value}</strong>${sub ? `<em>${sub}</em>` : ''}</article>`;
-function teacher() { return ''; } // inline panels removed: the app's teacher launcher is the one teacher
-function teacherPanelUnused(prompt, placeholder = 'Ask about these numbers...') {
+// Inline panel from the concept boards. It opens the same teacher dock as the floating launcher (one teacher).
+function teacher(prompt, placeholder = 'Ask about these numbers...') {
   let persona = 'debt-free-coach'; try { persona = JSON.parse(localStorage.getItem('mentor-labs-choice') || '{}').personaId || persona; } catch {}
   return `<div class="db-teacher"><div class="db-teacher-top"><img src="/img/mentors/${esc(persona)}.webp" alt="" onerror="this.src='/img/mentor-logo-suede.webp'"><div><b>Ask your teacher <span class="db-dot"></span></b><p>${esc(prompt)}</p></div></div><form data-ask><input aria-label="Ask your teacher" placeholder="${esc(placeholder)}" value=""><button type="submit" aria-label="Send">${svg('send')}</button></form></div>`;
 }
@@ -243,7 +245,7 @@ function newsList() {
   const items = [...(market?.news || []).map(n => ({...n, kind: 'holding'})), ...macroItems(market)]
     .filter(n => f === 'all' || (f === 'holdings' ? n.kind === 'holding' : n.kind === 'macro'))
     .filter(n => !q || `${n.title} ${n.symbol || ''} ${(n.tickers || []).join(' ')} ${n.source || ''}`.toLowerCase().includes(q));
-  return items.length ? `<ul class="db-list">${items.map(n => `<li><span>${n.kind === 'macro' ? '<b class="db-tag-macro">MACRO</b>' : `<b>${esc(n.symbol || '')}</b>`} ${n.url ? `<a href="${esc(n.url)}" target="_blank" rel="noopener noreferrer">${esc(n.title)}</a>` : esc(n.title)}</span><small>${esc(n.source || n.provider || '')} · ${esc(n.date || n.providerAsOf || '')}</small></li>`).join('')}</ul>` : '<p class="db-empty">No items match this filter.</p>';
+  return items.length ? `<ul class="db-list">${items.map(n => `<li><span>${n.kind === 'macro' ? '<b class="db-tag-macro">MACRO</b>' : `<b>${esc(n.symbol || '')}</b>`} ${safeUrl(n.url) ? `<a href="${esc(safeUrl(n.url))}" target="_blank" rel="noopener noreferrer">${esc(n.title)}</a>` : esc(n.title)}</span><small>${esc(n.source || n.provider || '')} · ${esc(n.date || n.providerAsOf || '')}</small></li>`).join('')}</ul>` : '<p class="db-empty">No items match this filter.</p>';
 }
 function invNews() {
   const {sample, market} = investing();
@@ -255,7 +257,7 @@ function invNews() {
     return {body};
   }
   const body = head('News', 'Recent headlines about your holdings, with source and date', sample ? 'Example portfolio' : '', sample ? '' : btn('Refresh market data', 'data-refresh', 'reset')) + `
-  <article class="db-card">${news.length ? `<ul class="db-list">${news.map(n => `<li><span><b>${esc(n.symbol || '')}</b> ${n.url ? `<a href="${esc(n.url)}" target="_blank" rel="noopener noreferrer">${esc(n.title)}</a>` : esc(n.title)}</span><small>${esc(n.source || n.provider || '')} · ${esc(n.date || n.providerAsOf || '')}</small></li>`).join('')}</ul>` : `<p class="db-empty">${sample ? 'No sample headlines.' : 'Refresh market data to load headlines for your holdings.'}</p>`}</article>`;
+  <article class="db-card">${news.length ? `<ul class="db-list">${news.map(n => `<li><span><b>${esc(n.symbol || '')}</b> ${safeUrl(n.url) ? `<a href="${esc(safeUrl(n.url))}" target="_blank" rel="noopener noreferrer">${esc(n.title)}</a>` : esc(n.title)}</span><small>${esc(n.source || n.provider || '')} · ${esc(n.date || n.providerAsOf || '')}</small></li>`).join('')}</ul>` : `<p class="db-empty">${sample ? 'No sample headlines.' : 'Refresh market data to load headlines for your holdings.'}</p>`}</article>`;
   return {body};
 }
 function invGuidelines() {
@@ -383,7 +385,9 @@ function empty(title) { return {body: head(title, 'Loading your dashboard...', '
 
 const VIEWS = {portfolio: {overview: invOverview, risk: invRisk, improve: invImprove, holdings: invHoldings, calendar: invCalendar, news: invNews, guidelines: invGuidelines}, budget: {overview: budOverview, cashflow: budCashflow, spending: budSpending, debt: classic('debt'), goals: classic('goals'), review: classic('review'), settings: classic('settings')}};
 // Debt plan, Goals, Review and Settings use the original reference-board screens (restored on request).
-function classic(name) { return () => ({body: `<div class="mlx mlx-embed">${classicScreens[name]()}</div>`}); }
+// Reference-board screens show the example; once the user saves their own numbers, the data-driven screen
+// takes over so every figure is theirs. Settings is always the editable form (the only place to enter income).
+function classic(name) { const own = {debt: () => budDebt(), goals: () => budGoals(), review: () => budReview(), settings: () => budSettings()}[name]; return () => (name === 'settings' || !budget().sample ? own() : {body: `<div class="mlx mlx-embed">${classicScreens[name]()}</div>`}); }
 
 function render() {
   clearCharts();
