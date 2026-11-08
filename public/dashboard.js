@@ -1,324 +1,443 @@
-// Mentor Labs dashboard (design pass). Static sample content copied from the Nov 7 reference boards;
-// routes: #investing/<view> and #budget/<view>. Numbers here are illustrative, not the user's data.
+// Mentor Labs dashboard (Investing + Budget), built to the approved concept screens.
+// Every figure comes from the server's code-computed workspace (/api/workspace) or the labeled sample
+// (/api/workspace/demo). Samples are display-only and never saved as the user's finances.
+// Mounted by app.js (openWorkspace -> mountDashboard) into #dashboard-root under the shared header.
+const root = document.querySelector('#dashboard-root') || document.querySelector('#workspace-content');
+const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
+const num = v => (v === null || v === undefined || v === '' || !Number.isFinite(Number(v)) ? null : Number(v));
+const usd = (v, d = 0) => num(v) === null ? '—' : new Intl.NumberFormat('en-US', {style: 'currency', currency: 'USD', minimumFractionDigits: d, maximumFractionDigits: d}).format(Number(v));
+const signedUsd = v => num(v) === null ? '—' : (v >= 0 ? '+' : '−') + usd(Math.abs(v));
+const pct = (v, d = 1) => num(v) === null ? '—' : `${Number(v).toFixed(d)}%`;
+const signedPct = (v, d = 1) => num(v) === null ? '—' : `${v >= 0 ? '+' : '−'}${Math.abs(v).toFixed(d)}%`;
+const fix = (v, d = 2) => num(v) === null ? '—' : Number(v).toFixed(d);
+const cents = v => Math.round(Number(v || 0) * 100);
+const info = text => `<span class="db-i" title="${esc(text)}" aria-label="${esc(text)}" role="img"></span>`;
+const MONTH = m => new Date(`${m}-15T12:00:00Z`).toLocaleString('en-US', {month: 'short', timeZone: 'UTC'});
+const MONTH_LONG = m => new Date(`${m}-15T12:00:00Z`).toLocaleString('en-US', {month: 'long', timeZone: 'UTC'});
+
 const P = {
-  home: 'M3 10.5 12 3l9 7.5V21h-6v-6H9v6H3z', shield: 'M12 21s7-3.5 7-9.5V5.5L12 3 5 5.5v6C5 17.5 12 21 12 21z',
-  trend: 'M3 17l6-6 4 4 8-8 M15 7h6v6', layers: 'M12 3 2 8l10 5 10-5-10-5z M2 12.5l10 5 10-5 M2 16.5l10 5 10-5',
-  calendar: 'M4 5h16v16H4z M4 10h16 M8 3v4 M16 3v4', news: 'M5 3h11l3 3v15H5z M8 9h8 M8 13h8 M8 17h5',
-  book: 'M2 5c3-1.5 7-1.5 10 1v14c-3-2.5-7-2.5-10-1z M22 5c-3-1.5-7-1.5-10 1v14c3-2.5 7-2.5 10-1z',
-  swap: 'M4 8h15l-4-4 M20 16H5l4 4', pie: 'M11 4a8 8 0 1 0 9 9h-9z M14 2.8V10h7.2A7.3 7.3 0 0 0 14 2.8z',
-  card: 'M3 5h18v14H3z M3 10h18 M7 15h4', target: 'M12 3a9 9 0 1 0 .01 0 M12 7a5 5 0 1 0 .01 0 M12 11a1 1 0 1 0 .01 0',
-  clip: 'M8 3h8v3H8z M6 4.5H5V21h14V4.5h-1 M9 14l2 2 4-4',
-  gear: 'M12 9a3 3 0 1 0 .01 0 M10.3 3h3.4l.5 2.3 1.6.9 2.2-.8 1.7 2.9-1.7 1.6v1.8l1.7 1.6-1.7 2.9-2.2-.8-1.6.9-.5 2.3h-3.4l-.5-2.3-1.6-.9-2.2.8-1.7-2.9 1.7-1.6v-1.8L4.3 8.3 6 5.4l2.2.8 1.6-.9z',
-  info: 'M12 3a9 9 0 1 0 .01 0 M12 11v5 M12 7.6v.4', user: 'M12 3.5a4 4 0 1 0 .01 0 M4.5 21c1-4 4.2-6 7.5-6s6.5 2 7.5 6',
-  upload: 'M12 15V4 M7 9l5-5 5 5 M4 15v5h16v-5', plus: 'M12 5v14 M5 12h14', plug: 'M9 3v5 M15 3v5 M6 8h12v3a6 6 0 0 1-12 0z M12 17v4',
-  check: 'M5 12.5l4.5 4.5L19 7', pencil: 'M4 20h4L19 9l-4-4L4 16z M14 6l4 4', refresh: 'M20 11a8 8 0 1 0-2.3 5.7 M20 4v7h-7',
-  reset: 'M4 11a8 8 0 1 1 2.3 5.7 M4 4v7h7', search: 'M10.5 4a6.5 6.5 0 1 0 .01 0 M15.5 15.5 21 21', ext: 'M14 4h6v6 M20 4l-9 9 M18 14v6H4V6h6',
-  chevR: 'M9 5l7 7-7 7', chevL: 'M15 5l-7 7 7 7', chevD: 'M6 9l6 6 6-6', send: 'M21 3 3 10.5l7 2.5 2.5 7z M10 13 21 3',
-  msg: 'M4 5h16v11H9l-5 4z', warn: 'M12 3.5 2.5 20h19z M12 10v4.5 M12 17.2v.3', lock: 'M5 11h14v10H5z M8 11V8a4 4 0 0 1 8 0v3',
-  download: 'M12 4v11 M7 10l5 5 5-5 M4 19h16', link: 'M10 14a4 4 0 0 0 6 0l3-3a4 4 0 0 0-6-6l-1 1 M14 10a4 4 0 0 0-6 0l-3 3a4 4 0 0 0 6 6l1-1',
-  cap: 'M2 9l10-5 10 5-10 5z M6 11.2v4.8c3 2 9 2 12 0v-4.8 M22 9v5', car: 'M3 16v-4l2.2-5h13.6L21 12v4z M4 16v2.5h3V16 M17 16v2.5h3V16 M7 12.5h.5 M16.5 12.5h.5',
-  shieldok: 'M12 21s7-3.5 7-9.5V5.5L12 3 5 5.5v6C5 17.5 12 21 12 21z M9 12l2 2 4-4', doc: 'M6 3h9l4 4v14H6z M9 10h7 M9 14h7 M9 18h4',
-  edit: 'M4 20h4L19 9l-4-4L4 16z',
+  overview: 'M3 10.5 12 3l9 7.5V21h-6v-6H9v6H3z', risk: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z', improve: 'M3 17l6-6 4 4 8-8 M14 7h7v7',
+  holdings: 'M12 2 2 7l10 5 10-5-10-5z M2 17l10 5 10-5 M2 12l10 5 10-5', calendar: 'M4 5h16v16H4z M4 10h16 M9 3v4 M15 3v4', news: 'M5 3h14v18H5z M9 7h6 M9 11h6 M9 15h4',
+  guidelines: 'M4 5a2 2 0 0 1 2-2h5v18H6a2 2 0 0 1-2-2z M13 3h5a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-5z', cashflow: 'M4 8h13l-3-3 M20 16H7l3 3', spending: 'M12 3v9h9 M20.5 14A9 9 0 1 1 10 3.5',
+  debt: 'M3 6h18v12H3z M3 10h18 M7 15h4', goals: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M12 12h.01', review: 'M8 4h8v3H8z M6 5H4v16h16V5h-2 M8 13l3 3 5-6',
+  settings: 'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1V21a2 2 0 1 1-4 0v-.1a1.6 1.6 0 0 0-2.7-1.1l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0-1.1-2.7H3a2 2 0 1 1 0-4h.1a1.6 1.6 0 0 0 1.1-2.7l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 2.7-1.1V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 2.7 1.1l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0 1.1 2.7H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1z',
+  book: 'M3 5a2 2 0 0 1 2-2h6v18H5a2 2 0 0 1-2-2z M21 5a2 2 0 0 0-2-2h-6v18h6a2 2 0 0 0 2-2z', upload: 'M12 16V4 M7 9l5-5 5 5 M4 20h16', download: 'M12 4v12 M7 11l5 5 5-5 M4 20h16',
+  plus: 'M12 5v14 M5 12h14', play: 'M7 4l13 8-13 8z', reset: 'M3 12a9 9 0 1 0 3-6.7L3 8 M3 3v5h5', check: 'M5 12l5 5 9-10', send: 'M22 2 11 13 M22 2l-7 20-4-9-9-4z',
+  warn: 'M12 3 2 21h20z M12 10v5 M12 18h.01', home: 'M3 10.5 12 3l9 7.5V21h-6v-6H9v6H3z', food: 'M7 3v8a2 2 0 0 0 4 0V3 M9 11v10 M17 3c-2 0-3 3-3 6s1 4 3 4v8',
+  car: 'M5 16l1.5-6h11L19 16 M3 16h18v4H3z M7 20v1 M17 20v1', heart: 'M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.5-7 10-7 10z', stack: 'M12 3 3 7l9 4 9-4z M3 12l9 4 9-4 M3 17l9 4 9-4',
+  dot: 'M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0-8 0', chev: 'M9 6l6 6-6 6', shield: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z', card: 'M3 6h18v12H3z M3 10h18',
 };
-const ic = (n, cls = 'i') => `<svg class="${cls}" viewBox="0 0 24 24" aria-hidden="true"><path d="${P[n]}"/></svg>`;
-const inf = ic('info');
-const LOGO = {
-  NVDA: '<svg class="logo" viewBox="0 0 24 18"><path d="M9 4.5c4-1 9 .5 13 4.5-4 4-9 5.5-13 4.5V11c3 .8 6-.2 8.5-2C15 7 12 6 9 6.8z M9 6.8V4.5C5 5.3 2 7 1 9c1 2 4 3.7 8 4.5V11C6.5 10.4 5 9.8 4 9c1-.8 2.5-1.6 5-2.2z" fill="#76b900"/></svg>',
-  AAPL: '<svg class="logo" viewBox="0 0 24 24"><path d="M16.4 12.6c0-2.3 1.9-3.4 2-3.5-1.1-1.6-2.8-1.8-3.4-1.8-1.4-.1-2.8.9-3.5.9s-1.9-.8-3.1-.8C6.8 7.4 5 8.6 4.1 10.4c-1.8 3.2-.5 7.9 1.3 10.4.9 1.2 1.9 2.6 3.2 2.6 1.3-.1 1.8-.8 3.3-.8s2 .8 3.3.8c1.4 0 2.2-1.3 3.1-2.5.9-1.4 1.3-2.8 1.4-2.9-.1 0-2.6-1-2.6-3.9zM14.1 5.8c.7-.9 1.2-2 1-3.2-1 .1-2.3.7-3 1.6-.7.8-1.2 2-1.1 3.1 1.2.1 2.3-.6 3.1-1.5z" fill="#111"/></svg>',
-  MSFT: '<svg class="logo" viewBox="0 0 20 20"><path fill="#f25022" d="M1 1h8.5v8.5H1z"/><path fill="#7fba00" d="M10.5 1H19v8.5h-8.5z"/><path fill="#00a4ef" d="M1 10.5h8.5V19H1z"/><path fill="#ffb900" d="M10.5 10.5H19V19h-8.5z"/></svg>',
-  VEA: '<svg class="logo" viewBox="0 0 20 20"><path d="M1 3h5l4 10 4-10h5l-7.5 15h-3z" fill="#9b1c1f"/></svg>',
-  VTI: '<svg class="logo" viewBox="0 0 20 20"><path d="M1 3h5l4 10 4-10h5l-7.5 15h-3z" fill="#9b1c1f"/></svg>',
+const svg = (name, cls = '') => `<svg class="${cls}" viewBox="0 0 24 24" aria-hidden="true"><path d="${P[name] || P.dot}"/></svg>`;
+const catIcon = name => /hous|rent|mortgage/i.test(name) ? 'home' : /food|grocer|dining|eat/i.test(name) ? 'food' : /transport|car|gas|transit|auto/i.test(name) ? 'car' : /life|fun|enter|personal|shop/i.test(name) ? 'heart' : /debt|loan|card/i.test(name) ? 'stack' : 'dot';
+
+const NAV = {
+  portfolio: [['overview', 'Overview'], ['risk', 'Risk review'], ['improve', 'Improve'], ['holdings', 'Holdings'], ['calendar', 'Calendar'], ['news', 'News'], ['guidelines', 'Guidelines']],
+  budget: [['overview', 'Overview'], ['cashflow', 'Cash flow'], ['spending', 'Spending'], ['debt', 'Debt plan'], ['goals', 'Goals'], ['review', 'Review'], ['settings', 'Settings']],
 };
+const NAV_ICON = {overview: 'overview', risk: 'risk', improve: 'improve', holdings: 'holdings', calendar: 'calendar', news: 'news', guidelines: 'guidelines', cashflow: 'cashflow', spending: 'spending', debt: 'debt', goals: 'goals', review: 'review', settings: 'settings'};
 
-const INVESTING = [['overview', 'Overview', 'home'], ['risk', 'Risk review', 'shield'], ['improve', 'Improve', 'trend'], ['holdings', 'Holdings', 'layers'], ['calendar', 'Calendar', 'calendar'], ['news', 'News', 'news'], ['guidelines', 'Guidelines', 'book']];
-const BUDGET = [['overview', 'Overview', 'home'], ['cashflow', 'Cash flow', 'swap'], ['spending', 'Spending', 'pie'], ['debt', 'Debt plan', 'card'], ['goals', 'Goals', 'target'], ['review', 'Review', 'clip'], ['settings', 'Settings', 'gear']];
+const state = {tab: 'budget', view: {portfolio: 'overview', budget: 'overview'}, session: null, demo: null, market: null, scenario: null, scenarioMode: 'baseline', perfRange: 52, flowRange: 6, month: null, edit: null, charts: []};
 
-const kpi = (k, v, cls = '') => `<div class="kpi"><div class="k">${k}${inf}</div><div class="v ${cls}">${v}</div></div>`;
-const S = '<span class="sort"></span>';
-
-// ---------- tiny SVG chart helpers ----------
-function rng(seed) { return () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646; }
-function walk(n, end, vol, seed, shape = 0) {
-  const r = rng(seed), raw = [0];
-  for (let i = 1; i < n; i++) raw.push(raw[i - 1] + (r() - .5) * vol);
-  return raw.map((v, i) => { const t = i / (n - 1); return v - raw[n - 1] * t + end * t + shape * Math.sin(Math.PI * t); });
+async function api(path, method = 'GET', body) {
+  let sid; try { sid = localStorage.getItem('sid'); } catch {}
+  if (!sid) throw Error('Enable browser storage to save your workspace.');
+  const r = await fetch(path, {method, headers: {'Content-Type': 'application/json', 'X-Session-Id': sid}, body: body ? JSON.stringify(body) : undefined});
+  const d = await r.json().catch(() => ({}));
+  if (!r.ok) throw Error(d.error || 'The dashboard could not update.');
+  return d;
 }
-const path = pts => pts.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' ');
+const status = text => { state.statusText = text || ''; const el = root.querySelector('.db-status'); if (el) el.textContent = state.statusText; };
 
-function portfolioChart() {
-  const W = 880, H = 190, L = 52, R = 14, T = 8, B = 22, n = 230;
-  const y = v => T + (15 - v) / 25 * (H - T - B), x = i => L + i / (n - 1) * (W - L - R);
-  const port = walk(n, 8.2, 1.7, 11, 3).map((v, i) => [x(i), y(v)]);
-  const spx = walk(n, 6.1, .8, 29, 1).map((v, i) => [x(i), y(v)]);
-  const grid = [15, 10, 5, 0, -5, -10].map(v => `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" stroke="#ecebe5"/><text x="${L - 10}" y="${y(v) + 4}" text-anchor="end">${v > 0 ? '+' : ''}${v === 0 ? '0' : v}%</text>`).join('');
-  const months = ['Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov'];
-  const xl = months.map((m, i) => `<text x="${L + 26 + i * (W - L - R - 40) / 11}" y="${H - 4}" text-anchor="middle">${m}</text>`).join('');
-  const last = port.at(-1), lastS = spx.at(-1);
-  return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Portfolio vs S&P 500, one year (illustrative)">
-    <defs><linearGradient id="pf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b7a4f" stop-opacity=".18"/><stop offset="1" stop-color="#2b7a4f" stop-opacity="0"/></linearGradient></defs>
-    ${grid}${xl}<path d="${path(port)} L${last[0]} ${H - B} L${L} ${H - B}Z" fill="url(#pf)"/>
-    <path d="${path(spx)}" fill="none" stroke="#b9bcb4" stroke-width="1.4" stroke-dasharray="3 3"/><path d="${path(port)}" fill="none" stroke="#1e5a3b" stroke-width="1.8"/>
-    <circle cx="${lastS[0]}" cy="${lastS[1]}" r="3" fill="#b9bcb4"/><circle cx="${last[0]}" cy="${last[1]}" r="4" fill="#1f8a43" stroke="#fff" stroke-width="1.5"/></svg>`;
+// ---------- data selection: personal when present, labeled sample otherwise ----------
+function investing() {
+  const own = state.session?.profile?.portfolio?.securities?.length ? state.session : null;
+  const src = own || state.demo;
+  return {sample: !own, ws: src, risk: src?.advancedRisk, portfolio: src?.profile?.portfolio, guidelines: src?.guidelines, market: own ? state.market : state.demo?.marketContext};
 }
+function budget() {
+  const own = state.session?.budget?.ready ? state.session : null;
+  const src = own || state.demo;
+  const p = src?.profile || {}, snap = src?.budget?.snapshot || {};
+  const income = [...(p.incomeHistory || [])].sort((a, b) => a.month.localeCompare(b.month));
+  const debtMin = (p.debts || []).reduce((t, d) => t + cents(d.minPayment), 0);
+  const cats = [...(p.bills || []).map(r => ({name: r.name, amount: cents(r.amount), fixed: true})), ...(p.expenses || []).map(r => ({name: r.name, amount: cents(r.amount), fixed: false}))];
+  if (debtMin) cats.push({name: 'Debt payments', amount: debtMin, fixed: true, debt: true});
+  const planned = cats.reduce((t, c) => t + c.amount, 0);
+  const month = income.some(x => x.month === state.month) ? state.month : income.at(-1)?.month;
+  const monthIncome = cents(income.find(x => x.month === month)?.amount);
+  const savings = cents(p.savings), goal = src?.budget?.cashCushion == null ? null : cents(src.budget.cashCushion);
+  return {sample: !own, src, p, snap, income, cats, planned, month, monthIncome, available: monthIncome - planned, savings, goal, debts: p.debts || []};
+}
+const dollars = c => c / 100;
 
-function smooth(pts) { let d = `M${pts[0][0]} ${pts[0][1]}`; for (let i = 1; i < pts.length; i++) { const [a, b] = [pts[i - 1], pts[i]], mx = (a[0] + b[0]) / 2; d += ` C${mx} ${a[1]} ${mx} ${b[1]} ${b[0]} ${b[1]}`; } return d; }
+// ---------- risk score (same weighting as the Sentinel review: high 10, medium 5, low 2) ----------
+function riskScore(risk) {
+  if (!risk) return null;
+  const w = {high: 10, med: 5, low: 2};
+  return Math.max(0, Math.min(100, Math.round(100 - (risk.breaches || []).reduce((t, b) => t + (w[b.severity] ?? 0), 0))));
+}
+const riskWord = s => s >= 80 ? 'Low risk' : s >= 55 ? 'Moderate risk' : 'Elevated risk';
+const breachCount = risk => (risk?.breaches || []).filter(b => b.severity !== 'info').length;
+const top3 = risk => (risk?.rows || []).filter(r => !r.isCash).slice(0, 3);
 
-// ---------- investing screens ----------
-const holdings = () => `
-  <div class="head"><h1>Holdings${inf}</h1><span class="spacer"></span>
-    <button class="btn" data-action="context">${ic('upload')}Import CSV</button><button class="btn">${ic('plus')}Add holding</button><button class="btn ghost" data-action="context">${ic('plug')}Broker connection — planned</button></div>
-  <div class="grid g4">${kpi('Total value', '$119,687')}${kpi('Total cost', '$76,480')}${kpi('Total gain', '+$43,207<small>(+56.5%)</small>', 'pos')}${kpi('Holdings count', '5')}</div>
-  <div class="notice"><span class="ok">${ic('check')}</span><b>Import complete</b> — 5 holdings added from portfolio.csv <span class="dotsep">·</span> Nov 20, 2024 at 10:24 AM <a href="#" data-go="investing/holdings">View details</a></div>
-  <div class="card mt"><div class="card-head"><h2>Portfolio value</h2><div class="pill-group"><button>3M</button><button>6M</button><button class="on">1Y</button></div></div>
-    <div class="legend"><span><i></i>Portfolio <span>+8.2% (1Y)</span></span><span><i class="dash"></i>S&amp;P 500 <span>+6.1% (1Y)</span></span></div>${portfolioChart()}
-    <div class="foot-note">Illustrative data. Not a recommendation to buy or sell any security.</div></div>
-  <div class="card mt"><div class="card-head"><h2>Holdings (5)${inf}</h2><button class="btn sm">${ic('pencil')}Edit</button></div><div class="table-wrap"><table>
-    <thead><tr><th>Symbol${S}</th><th>Name${S}</th><th>Sector${S}</th><th class="r">Quantity${S}</th><th class="r">Market value${S}</th><th class="r">Cost basis${S}</th><th class="r">Weight${S}</th></tr></thead><tbody>
-    ${[['NVDA', 'NVIDIA Corporation', 'Technology', 100, '$28,800', '$16,000', '24.1%'], ['AAPL', 'Apple Inc.', 'Technology', 60, '$24,360', '$15,000', '20.4%'], ['MSFT', 'Microsoft Corporation', 'Technology', 80, '$20,160', '$13,000', '16.8%'], ['VTI', 'Vanguard Total Stock Market ETF', 'Broad market', 200, '$17,940', '$14,000', '15.0%'], ['VEA', 'Vanguard FTSE Developed Markets ETF', 'International', 560, '$28,427', '$18,480', '23.8%']]
-      .map(([s, n, sec, q, mv, cb, w]) => `<tr><td><span class="sym">${LOGO[s]}${s}</span></td><td class="small">${n}</td><td class="small">${sec}</td><td class="r"><span class="cellbox">${q}</span></td><td class="r">${mv}</td><td class="r">${cb}</td><td class="r">${w}</td></tr>`).join('')}
-    </tbody></table></div></div>
-  <div class="grid mt">
-    <div class="card"><h3>Portfolio summary${inf}</h3><div class="sumrow"><div><span>Value</span><b>$119,687</b></div><div><span>Cost basis</span><b>$76,480</b></div><div><span>Gain ($)</span><b class="pos">+$43,207</b></div><div><span>Gain (%)</span><b class="pos">+56.5%</b></div></div></div></div>`;
+// ---------- shell ----------
+function shell(body) {
+  const tab = state.tab, view = state.view[tab];
+  const inv = investing();
+  const flags = breachCount(inv.risk);
+  let done = 0; try { done = new Set([...(JSON.parse(localStorage.getItem('completedChapters') || '[]')), ...(JSON.parse(localStorage.getItem('mentor-learning-completed') || '[]'))]).size; } catch {}
+  const step = Math.min(13, done + 1);
+  root.innerHTML = `<div class="db-shell"><aside class="db-side" aria-label="Dashboard navigation">
+    <div class="db-switch" role="group" aria-label="Dashboard"><button type="button" data-workspace-tab="portfolio" aria-pressed="${tab === 'portfolio'}">Investing</button><button type="button" data-workspace-tab="budget" aria-pressed="${tab === 'budget'}">Budget</button></div>
+    <nav class="db-nav">${NAV[tab].map(([id, label]) => `<button type="button" data-view="${id}" ${id === view ? 'aria-current="page"' : ''}>${svg(NAV_ICON[id])}<span>${label}</span>${tab === 'portfolio' && id === 'risk' && flags ? `<span class="db-count">${flags}</span>` : ''}</button>`).join('')}</nav>
+    <div class="db-side-foot"><button type="button" class="db-guide" data-learn><div class="db-guide-top">${svg('book')}<div><strong>Learning guide</strong><small>13-step program</small></div><span class="db-chev">›</span></div><div class="db-progress"><i style="width:${Math.round(step / 13 * 100)}%"></i></div><span class="db-step">Step ${step} of 13</span></button>
+    <div class="db-avail"><span class="db-dot"></span><div><b>Teacher available</b>Typically replies in minutes</div></div></div>
+  </aside><div class="db-main">${body}</div></div>`;
+  root.dataset.sampleBudget = String(budget().sample); root.dataset.samplePortfolio = String(inv.sample);
+}
+function head(title, sub, badge, actions = '') {
+  return `<div class="db-head"><div><h2>${esc(title)}${badge ? `<span class="db-badge">${esc(badge)}</span>` : ''}</h2>${sub ? `<p>${esc(sub)}</p>` : ''}</div><div class="db-actions">${actions}</div></div><p class="db-status" role="status">${esc(state.statusText || '')}</p>`;
+}
+const btn = (label, attrs = '', icon = '', primary = false) => `<button type="button" class="db-btn${primary ? ' primary' : ''}" ${attrs}>${icon ? svg(icon) : ''}${esc(label)}</button>`;
+const stat = (label, value, tip, sub = '', cls = '') => `<article class="db-card db-stat"><span>${esc(label)} ${tip ? info(tip) : ''}</span><strong class="${cls}">${value}</strong>${sub ? `<em>${sub}</em>` : ''}</article>`;
+function teacher(prompt, placeholder = 'Ask about these numbers...') {
+  let persona = 'debt-free-coach'; try { persona = JSON.parse(localStorage.getItem('mentor-labs-choice') || '{}').personaId || persona; } catch {}
+  return `<div class="db-teacher"><div class="db-teacher-top"><img src="/img/mentors/${esc(persona)}.webp" alt="" onerror="this.src='/img/mentor-logo-suede.webp'"><div><b>Ask your teacher <span class="db-dot"></span></b><p>${esc(prompt)}</p></div></div><form data-ask><input aria-label="Ask your teacher" placeholder="${esc(placeholder)}" value=""><button type="submit" aria-label="Send">${svg('send')}</button></form></div>`;
+}
+const bar = (value, max, light = false, thin = false) => `<div class="db-track${light ? ' light' : ''}${thin ? ' thin' : ''}"><i style="width:${Math.max(0, Math.min(100, max ? value / max * 100 : 0))}%"></i></div>`;
+const logo = sym => { const palette = ['#155c49', '#2e7d5b', '#0f493b', '#3d6b5a', '#1f6b4f', '#4a7c63']; let h = 0; for (const ch of sym) h = (h * 31 + ch.charCodeAt(0)) % 997; return `<span class="db-logo" style="background:${palette[h % palette.length]}">${esc(sym.slice(0, 4))}</span>`; };
 
-const stepRow = (l, h, v) => `<div class="rule-row"><span class="lbl">${l}${inf}</span><span class="stepper">${v}</span><span class="hint">${h}</span></div>`;
-const guidelines = () => `
-  <div class="head"><h1 style="font-size:23px">Your portfolio guidelines</h1><span class="saved">Saved</span><span class="updated">Last updated Nov 20</span><span class="spacer"></span>
-    <button class="btn">${ic('reset')}Reset</button><button class="btn primary">${ic('check')}Save guidelines</button>
-    <p class="sub">Set the rules that keep your portfolio aligned with your goals and risk tolerance.</p></div>
-  <div class="grid g2">
-    <div class="card"><h2>Concentration${inf}</h2><p class="desc">Control how much to put in a single stock, sector, or top holdings.</p>
-      ${stepRow('Single position limit', 'Max portfolio weight in any one stock.', '≤ 10%')}${stepRow('Sector limit', 'Max total weight in any one sector (e.g., Tech).', '≤ 30%')}${stepRow('Top 5 holdings', 'Max combined weight of your five largest holdings.', '≤ 50%')}</div>
-    <div class="card"><h2>Risk${inf}</h2><p class="desc">Keep portfolio risk within a comfortable range.</p>
-      ${stepRow('Beta (vs. market)', 'Portfolio sensitivity to market moves (1.00 = market).', '≤ 1.15')}${stepRow('Volatility (annual)', 'Expected annual price variation (standard deviation).', '≤ 22%')}${stepRow('Max drawdown', 'Largest acceptable peak-to-trough decline (e.g., -20%).', '≥ -20%')}</div>
-    <div class="card"><h2>Diversification${inf}</h2><p class="desc">Build a more resilient portfolio across assets and cash.</p>
-      ${stepRow('Minimum holdings', 'Keep at least this many total positions.', '≥ 12')}${stepRow('Cash bounds', 'Target range for cash / cash-like holdings.', '5% – 15%')}${stepRow('Crypto allocation', 'Max portfolio weight in crypto (e.g., BTC, ETH).', '≤ 5%')}</div>
-    <div class="card"><h2>Valuation${inf}</h2><p class="desc">Prefer reasonable valuations and income where it fits.</p>
-      ${stepRow('P/E (trailing)', 'Avoid stocks with trailing P/E above this level.', '≤ 60')}${stepRow('Dividend yield', 'Prefer holdings with at least this dividend yield (if applicable).', '≥ 1.5%')}</div>
-  </div>
-  <div class="card mt collapse">${ic('chevR')}<div><b>Overrides &amp; exclusions${inf}</b><small>Allow limited exceptions or exclude specific securities, sectors, or themes.</small></div></div>
-  <div class="card mt collapse">${ic('plus')}<div><b>Add a custom rule</b><small>Create an additional rule using a metric, condition, and limit.</small></div>
-    <span class="field" style="margin-left:auto;width:196px;color:var(--muted);font-size:12px">Example: EV/EBITDA ≤ 15</span><button class="btn sm ghost" style="background:var(--line-2)">Add rule</button></div>`;
-
-const news = () => `
-  <div class="head"><h1>News on your holdings</h1><span class="spacer"></span><button class="btn">${ic('refresh')}Refresh</button></div>
-  <div style="display:flex;gap:18px;align-items:center"><div class="search">${ic('search')}Search topics, companies, or tickers...</div><div class="pill-group"><button class="on" style="padding:6px 24px">All</button><button>My holdings</button><button>Macro</button></div></div>
-  <div class="digest mt"><div><h3>${ic('doc')}Today’s digest</h3><p>A quick view of items that may be relevant to your portfolio.</p></div>
-    <div><b>Tech stocks edge higher</b><small>MarketWatch • Nov 12</small></div><div><b>Rates seen steady for now</b><small>Bloomberg • Nov 12</small></div><div><b>Energy sector shows strength</b><small>Reuters • Nov 12</small></div></div>
-  <div class="grid mt split" style="grid-template-columns:1.6fr 1fr;align-items:start">
-    <div><h2 style="font-size:17px;margin:4px 0 12px">Recent coverage</h2><div class="grid" style="gap:14px">
-      ${[['NVDA', 'NVIDIA outlines next phase of AI roadmap at developer event', 'MarketWatch • Nov 12, 10:24 AM'], ['AAPL', 'Apple reports quarterly results, reaffirms year outlook', 'Reuters • Nov 12, 9:41 AM'], ['MSFT', 'Microsoft expands cloud features for enterprise customers', 'Bloomberg • Nov 11, 4:27 PM']]
-        .map(([t, h, s]) => `<article class="story"><span class="ticker">${t}</span><div><b>${h}</b><small>${s}</small></div>${ic('ext')}</article>`).join('')}</div></div>
-    <div class="grid"><div class="card"><div class="card-head"><h3>Watchlist</h3><button class="btn sm">Edit</button></div><table><thead><tr><th>Ticker</th><th class="r">Price</th><th class="r">Change</th></tr></thead><tbody>
-      ${[['NVDA', '$493.20', '+2.4%'], ['AAPL', '$189.65', '+0.7%'], ['MSFT', '$415.30', '+1.1%'], ['VTI', '$244.10', '+0.5%']].map(([t, p, c]) => `<tr><td><b>${t}</b></td><td class="r">${p}</td><td class="r pos">${c}<span class="dotg"></span></td></tr>`).join('')}</tbody></table></div>
-      <div class="card"><h3>Market context${inf}</h3><table class="mt"><tbody>
-      ${[['S&amp;P 500', '5,986.20', '+0.6%', 'pos'], ['Nasdaq', '18,590.14', '+0.9%', 'pos'], ['10-yr yield', '4.29%', '−0.03 pp', 'neg'], ['VIX', '14.8', '−0.7', '']].map(([n, v, c, k]) => `<tr><td><b>${n}</b></td><td class="r">${v}</td><td class="r ${k}">${c}</td></tr>`).join('')}</tbody></table></div></div></div>`;
-
-function calendar() {
-  const weeks = [[27, 28, 29, 30, 31, 1, 2], [3, 4, 5, 6, 7, 8, 9], [10, 11, 12, 13, 14, 15, 16], [17, 18, 19, 20, 21, 22, 23], [24, 25, 26, 27, 28, 29, 30]];
-  const ev = {5: 'NVDA', 14: 'AAPL'};
-  const cells = weeks.map((w, wi) => `<div class="cal-w">${w.map(d => { const mute = wi === 0 && d > 7; return `<div class="${mute ? 'mute' : ''}${!mute && d === 20 ? ' today' : ''}">${d}${!mute && ev[d] ? `<span class="ev">${ev[d]}</span>` : ''}</div>`; }).join('')}</div>`).join('');
-  return `
-  <div class="head"><h1>Investing calendar${inf}</h1><span class="spacer"></span><button class="btn">${ic('refresh')}Refresh</button><span class="updated"><i>Last updated: Nov 20, 2024</i></span>
-    <p class="sub">Earnings, key events, and market dates in one place.</p></div>
-  <div class="pill-group"><button class="on" style="padding:5px 24px">Earnings</button><button style="padding:5px 24px">Macro events</button></div>
-  <div class="card mt"><div class="card-head"><div style="display:flex;align-items:center;gap:22px"><button class="btn sm">${ic('chevL')}</button><b style="font-size:16px;display:flex;align-items:center;gap:6px">November 2024 ${ic('chevD')}</b><button class="btn sm">${ic('chevR')}</button></div>
-    <div class="pill-group"><button style="padding:5px 26px">Week</button><button class="on" style="padding:5px 26px">Month</button></div></div>
-    <div class="cal"><div class="cal-h">${['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => `<div>${d}</div>`).join('')}</div>${cells}</div>
-    <div class="cal-legend"><span>Earnings</span><span class="o">Other event</span><em>Earnings dates are company-reported and may change.</em></div></div>
-  <div class="grid mt split" style="grid-template-columns:1.3fr 1fr">
-    <div class="card"><div class="card-head"><h3>Upcoming earnings${inf}</h3><a class="small" style="color:var(--green);font-weight:600;text-decoration:none" href="#" data-go="investing/calendar">View all ›</a></div><table><thead><tr><th>Symbol</th><th>Event</th><th>Date${S}</th><th>Source${S}</th></tr></thead><tbody>
-      ${[['NVDA', 'Earnings (Q3 FY25)', 'Nov 5, 2024'], ['AAPL', 'Earnings (Q4 FY24)', 'Nov 14, 2024'], ['MSFT', 'Earnings (Q1 FY25)', 'Nov 26, 2024']].map(([s, e, d]) => `<tr><td><span class="sym">${LOGO[s]}${s}</span></td><td class="small">${e}</td><td class="small">${d}</td><td class="small">Company</td></tr>`).join('')}</tbody></table></div>
-    <div class="card"><h3>Key macro events${inf}</h3><div class="mt">${[['FOMC meeting', 'Nov 6–7, 2024'], ['CPI (Oct)', 'Nov 13, 2024'], ['PCE (Oct)', 'Nov 29, 2024'], ['Jobs report (Nov)', 'Dec 6, 2024']].map(([e, d]) => `<div class="mac">${ic('calendar')}<span>${e}</span><span>${d}</span></div>`).join('')}</div></div></div>
-  <div class="grid mt">
-    <div class="card"><h3>Earnings dates${inf}</h3><div class="counts"><div><b>3</b><span>Confirmed</span></div><div><b>0</b><span>Tentative</span></div><div><b>2</b><span>Unknown</span></div></div></div></div>`;
+// ---------- charts ----------
+function clearCharts() { for (const c of state.charts) c.destroy(); state.charts = []; }
+function lineChart(canvas, labels, sets, {percent = false, money = false, min, max} = {}) {
+  if (!window.Chart || !canvas) return;
+  const tick = v => percent ? `${v > 0 ? '+' : ''}${v}%` : money ? `$${Number(v).toLocaleString('en-US')}` : v;
+  state.charts.push(new window.Chart(canvas, {type: 'line', data: {labels, datasets: sets.map(s => ({label: s.label, data: s.data, borderColor: s.color, backgroundColor: s.fill || 'transparent', fill: Boolean(s.fill), borderWidth: s.width || 2, borderDash: s.dash || [], pointRadius: s.points ? 3.5 : 0, pointBackgroundColor: '#fff', pointBorderWidth: 2, tension: .25}))},
+    options: {responsive: true, maintainAspectRatio: false, animation: false, interaction: {mode: 'index', intersect: false}, plugins: {legend: {display: false}, tooltip: {callbacks: {label: c => `${c.dataset.label}: ${percent ? signedPct(c.parsed.y) : money ? usd(c.parsed.y) : c.parsed.y}`}}},
+      scales: {x: {grid: {display: false}, ticks: {color: '#6f7a74', font: {size: 11}, maxTicksLimit: 12, autoSkip: true}}, y: {min, max, grid: {color: '#efede6'}, border: {display: false}, ticks: {color: '#6f7a74', font: {size: 11}, callback: tick}}}}}));
+}
+function donut(canvas, values, colors) {
+  if (!window.Chart || !canvas) return;
+  state.charts.push(new window.Chart(canvas, {type: 'doughnut', data: {datasets: [{data: values, backgroundColor: colors, borderWidth: 0}]}, options: {cutout: '68%', responsive: true, maintainAspectRatio: false, animation: false, plugins: {legend: {display: false}, tooltip: {enabled: false}}}}));
 }
 
-// ---------- budget screens ----------
-// Every figure matches the shared fictional demo profile the teacher reads (lib/workspace-demo.js):
-// lowest month $5,200, essentials $3,650 (housing 1,600 + food 550 + transport 350 + lifestyle 450 + debt minimums 700),
-// $1,550 available, $10,600 cash vs a $16,640 cushion goal. Payoff paths come from the app's own
-// month-by-month simulator (lib/mentor/chat.mock.js payoff(), exact cents) with $300/mo extra.
-const PLANS = {
-  snowball: {label: 'Snowball (smallest balance first)', months: 19, interest: '$1,472.18', paid: '$18,112.18', order: 'Student loan → Credit card → Auto loan',
-    tip: 'The snowball method can build momentum<br>by paying off smaller debts first.',
-    bal: [16640, 15801, 14955, 14103, 13245, 12380, 11508, 10623, 9726, 8814, 7890, 6951, 5998, 5032, 4058, 3079, 2095, 1106, 112, 0]},
-  avalanche: {label: 'Avalanche (highest APR first)', months: 18, interest: '$1,305.48', paid: '$17,945.48', order: 'Credit card → Student loan → Auto loan',
-    tip: 'The avalanche method pays the least interest<br>by targeting the highest APR first.',
-    bal: [16640, 15801, 14951, 14090, 13219, 12337, 11444, 10539, 9623, 8695, 7756, 6804, 5840, 4870, 3895, 2915, 1931, 941, 0]},
-};
-const MIN_ONLY = [16640, 16101, 15556, 15007, 14452, 13892, 13326, 12755, 12179, 11597, 11010, 10416, 9817, 9212, 8601, 7984, 7361, 6729, 6090, 5441, 4784, 4118, 3443, 2761, 2076, 1387, 694, 0]; // 27 months, $2,257.38 interest
-let debtPlan = 'snowball';
-
-function debtChart(plan) {
-  const W = 900, H = 235, L = 62, R = 16, T = 10, B = 24, N = 27;
-  const x = m => L + m / N * (W - L - R), y = v => T + (18000 - v) / 18000 * (H - T - B);
-  const pts = plan.bal.map((v, m) => [x(m), y(v)]);
-  const dots = pts.filter((_, m) => m % 3 === 0 || m === plan.bal.length - 1);
-  const min = MIN_ONLY.map((v, m) => [x(m), y(v)]);
-  const grid = Array.from({length: 10}, (_, i) => i * 2000).map(v => `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" stroke="#ecebe5"/><text x="${L - 8}" y="${y(v) + 4}" text-anchor="end">$${v.toLocaleString()}</text>`).join('');
-  const xt = [0, 3, 6, 9, 12, 15, 18, 21, 24, 27].map(m => `<text x="${x(m)}" y="${H - 5}" text-anchor="middle">${m ? m + ' mo' : 'Now'}</text>`).join('');
-  return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Projected debt balance: paid off in ${plan.months} months with $300 extra, 27 months on minimums">
-    <defs><linearGradient id="db" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b7a4f" stop-opacity=".22"/><stop offset="1" stop-color="#2b7a4f" stop-opacity=".04"/></linearGradient></defs>
-    ${grid}${xt}<path d="${path(pts)} L${x(0)} ${y(0)} Z" fill="url(#db)"/>
-    <path d="${path(min)}" fill="none" stroke="#a9aca4" stroke-width="1.4" stroke-dasharray="5 4"/>
-    <path d="${path(pts)}" fill="none" stroke="#1e5a3b" stroke-width="2"/>${dots.map(p => `<circle cx="${p[0]}" cy="${p[1]}" r="3.6" fill="#fff" stroke="#1e5a3b" stroke-width="1.8"/>`).join('')}</svg>`;
+// ================= INVESTING =================
+function invOverview() {
+  const {sample, risk, portfolio, market} = investing();
+  if (!risk) return empty('Your portfolio');
+  const rows = risk.rows || [], total = Number(portfolio?.marketValue) || 0;
+  const cost = rows.reduce((t, r) => t + (num(r.costBasis) ?? 0), 0), costKnown = rows.length && rows.every(r => num(r.costBasis) !== null);
+  const gain = costKnown ? total - cost : null, score = riskScore(risk), m = risk.metrics || {}, h = risk.history || {};
+  const t3 = top3(risk), t3w = t3.reduce((s, r) => s + r.weight, 0);
+  const classes = [['Stocks', rows.filter(r => !r.isCash && r.sector !== 'Crypto').reduce((s, r) => s + r.weight, 0)], ['Crypto', rows.filter(r => r.sector === 'Crypto').reduce((s, r) => s + r.weight, 0)], ['Cash', rows.filter(r => r.isCash).reduce((s, r) => s + r.weight, 0)], ['Unclassified', rows.filter(r => !r.isCash && r.sector === 'Unknown').reduce((s, r) => s + r.weight, 0)]];
+  const body = head('Your portfolio', '', sample ? 'Example portfolio' : '', btn('Import holdings', 'data-import', 'upload') + btn('Export', 'data-export="holdings"', 'download')) + `
+  <div class="db-grid db-g4">${stat('Portfolio value', usd(total), 'Imported market values. A refresh does not revalue your holdings.')}${stat('Unrealized gain', gain === null ? '—' : signedUsd(gain), 'Value minus the cost basis you imported.', gain === null ? 'Add cost basis to see this' : signedPct(cost ? gain / cost * 100 : null) + ' on cost', gain === null ? '' : gain >= 0 ? 'pos' : 'neg')}${stat('Historical mix return', signedPct(m.ret1y), 'Your current mix replayed over the past year of weekly closes. Not your account performance.', `S&amp;P 500 ${signedPct(m.spyRet)} (1Y)`, num(m.ret1y) >= 0 ? 'pos' : 'neg')}${stat('Risk health', `${score ?? '—'}<small> /100</small>`, 'Starts at 100 and drops for each guideline breach: 10 for high, 5 for medium, 2 for low severity.', sample ? 'Example guideline review' : 'Your saved guidelines')}</div>
+  <article class="db-card"><div class="db-card-h"><h3>Performance</h3><div class="db-seg" role="group" aria-label="Range">${[[13, '3M'], [26, '6M'], [52, '1Y']].map(([w, l]) => `<button type="button" data-range="${w}" aria-pressed="${state.perfRange === w}">${l}</button>`).join('')}</div></div>
+    <div class="db-legend"><span><i></i>Portfolio <b id="db-perf-p"></b></span><span><i class="dash"></i>S&amp;P 500 <b id="db-perf-b"></b></span></div>
+    <div class="db-chart"><canvas id="db-perf" aria-label="Portfolio mix versus S&P 500"></canvas></div>
+    <p class="db-note">${sample ? 'Illustrative data. ' : ''}Weekly closes ${esc(h.startDate || '')} to ${esc(h.endDate || '')} from the ${esc(h.source || 'dated snapshot')}. Not a recommendation to buy or sell any security.</p></article>
+  <div class="db-grid db-g21"><article class="db-card"><h3>Holdings</h3><table class="db-table"><thead><tr><th>Asset</th><th class="r">Value</th><th class="r">Weight</th><th></th></tr></thead><tbody>${rows.slice(0, 4).map(r => holdingRow(r, risk)).join('')}</tbody></table><button type="button" class="db-link" data-view="holdings">View all ${rows.length} holdings ›</button></article>
+    <article class="db-card"><h3>Exposure warnings ${info('Shares of your imported value by asset type. Concentration uses your three largest non-cash holdings.')}</h3>${t3w > 50 ? `<div class="db-warnbox">${svg('warn')}<div><b>High concentration: ${pct(t3w)}</b> in three holdings (${t3.map(r => esc(r.symbol)).join(', ')}). Consider diversifying.</div></div>` : ''}
+      <div class="db-bars">${classes.map(([l, v], i) => `<div class="db-bar-row noicon"><span>${l}</span>${bar(v, 100, i > 0, true)}<span class="v">${pct(v)}</span></div>`).join('')}</div></article></div>
+  <div class="db-grid db-g21"><article class="db-card"><h3>Key metrics ${info('Computed in code from weekly history of your current mix against the S&P 500.')}</h3><div class="db-grid db-g4">${[['Beta', fix(m.beta)], ['Volatility', pct(m.vol, 0)], ['Sharpe ratio', fix(m.sharpe)], ['Max drawdown', num(m.maxDD) === null ? '—' : '−' + pct(m.maxDD)]].map(([l, v]) => `<div><span class="db-note" style="color:var(--db-ink-2)">${l}</span><div style="font:700 1.25rem 'DM Sans',Arial;margin-top:4px">${v}</div></div>`).join('')}</div></article>
+    ${teacher(sample ? 'What does concentration mean for a portfolio like this?' : 'What does concentration mean for my portfolio?')}</div>`;
+  return {body, after: () => drawPerf(risk)};
+}
+function drawPerf(risk) {
+  const h = risk?.history; if (!h?.dates?.length || !h.portfolio?.length) return;
+  const n = Math.min(state.perfRange + 1, h.dates.length), s = h.dates.length - n;
+  const base = (arr, i) => arr[s] ? (arr[i] / arr[s] - 1) * 100 : null;
+  const p = h.dates.slice(s).map((_, i) => +base(h.portfolio, s + i).toFixed(2)), b = h.benchmark ? h.dates.slice(s).map((_, i) => +base(h.benchmark, s + i).toFixed(2)) : [];
+  const el = id => root.querySelector(id); if (el('#db-perf-p')) el('#db-perf-p').textContent = `${signedPct(p.at(-1))} (${state.perfRange === 52 ? '1Y' : state.perfRange === 26 ? '6M' : '3M'})`; if (el('#db-perf-b')) el('#db-perf-b').textContent = b.length ? signedPct(b.at(-1)) : '—';
+  lineChart(root.querySelector('#db-perf'), h.dates.slice(s).map(d => MONTH(d.slice(0, 7))), [{label: 'Portfolio', data: p, color: '#155c49', fill: 'rgba(21,92,73,.08)'}, {label: 'S&P 500', data: b, color: '#9aa39e', dash: [5, 4], width: 1.6}], {percent: true});
+}
+function holdingRow(r, risk) {
+  const breach = (risk?.breaches || []).some(b => b.id === 'position:' + r.symbol);
+  return `<tr><td><div class="db-asset">${logo(r.symbol)}<div><b>${esc(r.symbol)}</b><small>${esc(r.company || r.sector || '')}</small></div></div></td><td class="r">${usd(r.value)}</td><td class="r">${pct(r.weight)}</td><td class="r"><span class="db-ok${breach ? ' warn' : ''}" title="${breach ? 'Above your position limit' : 'Within your position limit'}"></span></td></tr>`;
+}
+const checkStatus = c => c.status === 'pass' ? 'pass' : c.status === 'unknown' ? 'unknown' : c.severity === 'high' ? 'breach' : 'warn';
+const checkWord = s => ({pass: 'Pass', warn: 'Warn', breach: 'Breach', unknown: 'Unknown'}[s]);
+function invRisk() {
+  const {sample, risk, guidelines} = investing();
+  if (!risk) return empty('Risk review');
+  const m = risk.metrics || {}, score = riskScore(risk), rows = (risk.rows || []).filter(r => !r.isCash), checks = risk.checks || [];
+  const ringColor = score >= 80 ? '#3d9a62' : score >= 55 ? '#e0a43a' : '#b2452f';
+  const top4 = rows.slice(0, 4), other = rows.slice(4), otherW = other.reduce((s, r) => s + r.weight, 0), maxW = Math.max(...rows.map(r => r.weight), otherW, 1);
+  const sectors = Object.entries(risk.sectors || {}).sort((a, b) => b[1] - a[1]), sMax = Math.max(40, ...sectors.map(s => s[1]));
+  const g = guidelines || {};
+  const worst = prefix => { const list = checks.filter(c => c.id.startsWith(prefix)); if (!list.length) return null; const order = {breach: 3, warn: 2, unknown: 1, pass: 0}; return list.sort((a, b) => order[checkStatus(b)] - order[checkStatus(a)])[0]; };
+  const lines = [['position:', `Position size (≤ ${g.maxPositionPercent ?? '—'}%)`], ['sector:', `Sector concentration (≤ ${g.maxSectorPercent ?? '—'}%)`], ['top-five', `Top-five share (≤ ${g.maxTop5Percent ?? '—'}%)`], ['drawdown', `Portfolio drawdown (≤ ${g.maxDrawdownPercent ?? '—'}%)`], ['volatility', `Volatility (≤ ${g.maxVolatilityPercent ?? '—'}%)`], ['holdings', `Diversification (≥ ${g.minHoldings ?? '—'} positions)`], ['crypto', `Crypto share (≤ ${g.maxCryptoPercent ?? '—'}%)`]].map(([id, label]) => { const c = worst(id); return c ? [label, checkStatus(c)] : null; }).filter(Boolean).slice(0, 6);
+  const corr = rows.slice(0, 4).map(r => r.symbol), pair = (a, b) => a === b ? 1 : (risk.pairs || []).find(p => (p.a === a && p.b === b) || (p.a === b && p.b === a))?.correlation;
+  const body = head('Risk review', 'Portfolio risk and guideline check', sample ? 'Example portfolio' : '', btn('Import holdings', 'data-import', 'upload') + btn('Export', 'data-export="risk"', 'download')) + `
+  <div class="db-grid db-g4">${stat('Beta', fix(m.beta), 'How much the mix moved with the S&P 500 over the past year. 1.0 moves with the market.')}${stat('Volatility', pct(m.vol), 'Annualized standard deviation of weekly returns.', '', 'pos')}${stat('Max drawdown', num(m.maxDD) === null ? '—' : '−' + pct(m.maxDD), 'Largest peak-to-trough fall of the mix over the window.', '', 'neg')}${stat('Sharpe ratio', fix(m.sharpe), 'Return above the 10-year Treasury rate per unit of volatility.')}</div>
+  <div class="db-grid db-g2"><article class="db-card"><h3>Risk score ${info('100 minus points for each guideline breach: 10 high, 5 medium, 2 low.')}</h3><div class="db-score"><div class="db-ring" style="--p:${score};--c:${ringColor}"><div><div><b>${score}<small>/100</small></b><span>${riskWord(score)}</span></div></div></div><div>${breachCount(risk) ? `<span class="db-flag">${svg('warn', 'db-ic')} ${breachCount(risk)} guideline breach${breachCount(risk) === 1 ? '' : 'es'}</span>` : ''}<p class="db-note" style="color:var(--db-ink-2);font-size:.8rem">${score >= 80 ? 'Risk is within your guidelines.' : score >= 55 ? 'Risk is within a moderate range, with areas to address.' : 'Several guidelines are breached. Review the checklist.'}</p></div></div></article>
+    <article class="db-card"><h3>Position concentration ${info('Share of imported value in each holding.')}</h3><table class="db-table"><thead><tr><th>Position</th><th></th><th class="r">% of portfolio</th></tr></thead><tbody>${top4.map(r => `<tr><td><b>${esc(r.symbol)}</b></td><td style="width:55%">${bar(r.weight, maxW, false, true)}</td><td class="r">${pct(r.weight)}</td></tr>`).join('')}${other.length ? `<tr><td>Other (${other.length})</td><td>${bar(otherW, maxW, true, true)}</td><td class="r">${pct(otherW)}</td></tr>` : ''}</tbody></table></article></div>
+  <div class="db-grid db-g2"><article class="db-card"><h3>Sector exposure ${info('Sectors from your import, or the dated snapshot when the import has none.')}</h3><div class="db-bars">${sectors.map(([s, w]) => `<div class="db-bar-row noicon"><span style="font-size:.78rem">${esc(s)}</span>${bar(w, sMax, true, true)}<span class="v">${pct(w)}</span></div>`).join('')}</div></article>
+    <article class="db-card"><h3>Guideline checklist ${info(sample ? 'Example limits applied to the example holdings.' : 'Your saved guideline limits.')}</h3><ul class="db-checks">${lines.map(([l, s]) => `<li><span class="db-ck ${s}">${s === 'pass' ? '✓' : s === 'unknown' ? '?' : '!'}</span><span>${esc(l)}</span><span class="db-pill ${s}">${checkWord(s)}</span></li>`).join('')}</ul></article></div>
+  <div class="db-grid db-g21"><article class="db-card"><h3>Correlation <small>(selected assets)</small> ${info('Correlation of weekly returns over the window. 1.00 moves together exactly.')}</h3><table class="db-table db-corr"><thead><tr><th>Asset</th>${corr.map(s => `<th class="r" style="text-align:center">${esc(s)}</th>`).join('')}</tr></thead><tbody>${corr.map(a => `<tr><td>${esc(a)}</td>${corr.map(b => { const v = pair(a, b); return `<td class="${a === b ? 'diag' : num(v) !== null && v >= .6 ? 'hi' : ''}">${num(v) === null ? '—' : v.toFixed(2)}</td>`; }).join('')}</tr>`).join('')}</tbody></table></article>
+    ${teacher(`What does a beta of ${fix(m.beta)} mean for ${sample ? 'a portfolio like this' : 'my portfolio'}?`)}</div>`;
+  return {body};
+}
+function invImprove() {
+  const {sample, risk, guidelines} = investing();
+  if (!risk) return empty('Explore portfolio tradeoffs');
+  const rows = (risk.rows || []).filter(r => !r.isCash), sc = state.scenario, g = guidelines || {};
+  const limit = sc?.positionLimit ?? state.draftLimit ?? Math.max(5, Math.min(50, g.maxPositionPercent ?? 25));
+  const sym = sc?.symbol ?? state.draftSymbol ?? rows[0]?.symbol, from = rows.find(r => r.symbol === sym)?.weight;
+  const to = sc?.toPercent ?? state.draftTo ?? Math.min(limit, from ?? limit);
+  const before = sc?.before || risk, after = sc?.after, showAfter = Boolean(after) && state.scenarioMode === 'whatif';
+  const bScore = riskScore(before), aScore = after ? riskScore(after) : null;
+  const t3 = r => top3(r).reduce((s, x) => s + x.weight, 0);
+  const allocRows = [...(before.rows || []).filter(r => !r.isCash).slice(0, 4).map(r => r.symbol), 'CASH'];
+  const w = (r, s) => s === 'CASH' ? (r?.rows || []).filter(x => x.isCash).reduce((t, x) => t + x.weight, 0) : (r?.rows || []).find(x => x.symbol === s)?.weight ?? 0;
+  const delta = (a, b, d = 1, pp = true) => num(a) === null || num(b) === null ? '—' : `<span class="${a - b <= 0 ? 'pos' : 'neg'}">${a - b <= 0 ? '−' : '+'}${Math.abs(a - b).toFixed(d)}${pp ? ' pp' : ''}</span>`;
+  const body = head('Explore portfolio tradeoffs', 'Adjust position size and trims to see how risk, concentration, and allocation could change.', sample ? 'Example portfolio' : '', btn('Run scenario', 'data-run', 'play', true) + btn('Reset', 'data-reset-scenario', 'reset')) + `
+  <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><div class="db-radio" role="radiogroup" aria-label="View"><label class="${!showAfter ? 'on' : ''}"><input type="radio" name="db-mode" value="baseline" ${!showAfter ? 'checked' : ''}> Baseline <small>(current portfolio)</small></label><label class="${showAfter ? 'on' : ''}"><input type="radio" name="db-mode" value="whatif" ${showAfter ? 'checked' : ''} ${after ? '' : 'disabled'}> What-if <small>(proposed changes)</small></label></div><span class="db-chip" style="margin-left:auto">${svg('check')} Baseline unchanged</span></div>
+  <div class="db-grid db-g3">${stat('Risk score (before)', `${bScore}<small> / 100</small>`, 'Score of your current holdings under these limits.')}${stat('Risk score (after)', aScore === null ? '—' : `${aScore}<small> / 100</small>`, 'Score after the trim, under the same limits.', '', aScore !== null && aScore >= bScore ? 'pos' : '')}${stat('Cash released', sc ? usd(sc.cashReleased) : '—', 'Value moved from the trimmed holding to cash in the scenario. No trade is placed.', '', 'pos')}</div>
+  <div class="db-grid db-g2"><article class="db-card"><h3>Position limit ${info('Maximum share of the portfolio in any one holding, for this scenario only.')}</h3><p class="db-note">Max weight per holding</p><div style="display:flex;justify-content:flex-end"><span class="db-input" style="width:64px;text-align:center;font-weight:700" id="db-limit-out">${limit}%</span></div><input class="db-range" type="range" min="5" max="50" step="1" value="${limit}" id="db-limit" aria-label="Position limit"><div class="db-range-row"><span>5%</span><span>50%</span></div></article>
+    <article class="db-card"><h3>Trim-to-cash scenario ${info('Reduce one holding to a target share and hold the proceeds as cash.')}</h3><p class="db-note">Reduce selected holding(s) and move proceeds to cash.</p><div class="db-trim" style="margin-top:12px"><select class="db-select" id="db-sym" aria-label="Holding">${rows.map(r => `<option value="${esc(r.symbol)}" ${r.symbol === sym ? 'selected' : ''}>${esc(r.symbol)}</option>`).join('')}</select><span>from</span><span class="db-input" style="width:78px;text-align:center">${pct(from)}</span><span>to</span><input class="db-input" id="db-to" inputmode="decimal" value="${Number(to).toFixed(1)}" aria-label="Target share in percent"><span>%</span></div></article></div>
+  <article class="db-card"><div class="db-card-h"><h3>Allocation: before vs. after</h3><div class="db-legend" style="margin:0"><span><span class="db-swatch" style="background:#1f6b4f"></span>Before (baseline)</span><span><span class="db-swatch" style="background:#a9d3b5"></span>After (what-if)</span></div></div>
+    <div class="db-bars">${allocRows.map(s => { const b = w(before, s), a = after ? w(after, s) : null, mx = Math.max(30, ...allocRows.map(x => Math.max(w(before, x), after ? w(after, x) : 0))); return `<div class="db-bar-row noicon" style="grid-template-columns:70px minmax(0,1fr) 54px;row-gap:3px"><b style="grid-row:span 2">${s === 'CASH' ? 'Cash' : esc(s)}</b>${bar(b, mx, false, true)}<span class="v" style="font-size:.74rem">${pct(b)}</span>${bar(a ?? 0, mx, true, true)}<span class="v" style="font-size:.74rem">${a === null ? '—' : pct(a)}</span></div>`; }).join('')}</div></article>
+  <div class="db-grid db-g21"><article class="db-card"><h3>Key comparison ${info('Before uses your current holdings; after uses the scenario. Same weekly history and limits.')}</h3><table class="db-table"><thead><tr><th>Metric</th><th class="r">Before (baseline)</th><th class="r">After (what-if)</th><th class="r">Change</th></tr></thead><tbody>
+    <tr><td>Concentration (top 3)</td><td class="r">${pct(t3(before))}</td><td class="r">${after ? pct(t3(after)) : '—'}</td><td class="r">${after ? delta(t3(after), t3(before)) : '—'}</td></tr>
+    <tr><td>Beta</td><td class="r">${fix(before.metrics?.beta)}</td><td class="r">${after ? fix(after.metrics?.beta) : '—'}</td><td class="r">${after ? delta(after.metrics?.beta, before.metrics?.beta, 2, false) : '—'}</td></tr>
+    <tr><td>Volatility (annualized)</td><td class="r">${pct(before.metrics?.vol)}</td><td class="r">${after ? pct(after.metrics?.vol) : '—'}</td><td class="r">${after ? delta(after.metrics?.vol, before.metrics?.vol) : '—'}</td></tr></tbody></table><p class="db-note" style="margin-top:6px">${esc(sc?.note || 'Scenario only. Nothing is saved and no trade is placed.')}</p></article>
+    ${teacher(`What would be the impact of a larger trim${sym ? ' of ' + sym : ''}?`)}</div>`;
+  return {body};
+}
+function invHoldings() {
+  const {sample, risk} = investing();
+  if (!risk) return empty('Holdings');
+  const rows = risk.rows || [];
+  const body = head('Holdings', 'Every imported position, valued as imported', sample ? 'Example portfolio' : '', btn('Import holdings', 'data-import', 'upload') + btn('Export', 'data-export="holdings"', 'download')) + `
+  <article class="db-card"><table class="db-table"><thead><tr><th>Asset</th><th>Sector</th><th class="r">Value</th><th class="r">Weight</th><th class="r">Gain vs cost</th><th class="r">Price</th><th>Price source</th></tr></thead><tbody>${rows.map(r => `<tr><td><div class="db-asset">${logo(r.symbol)}<div><b>${esc(r.symbol)}</b><small>${esc(r.company || '')}</small></div></div></td><td>${esc(r.sector)}</td><td class="r">${usd(r.value, 2)}</td><td class="r">${pct(r.weight)}</td><td class="r ${num(r.plPct) === null ? '' : r.plPct >= 0 ? 'pos' : 'neg'}">${signedPct(r.plPct)}</td><td class="r">${usd(r.price, 2)}</td><td><small class="db-note">${esc(r.priceSource || '—')} ${esc(r.priceAsOf || '')}</small></td></tr>`).join('')}</tbody></table></article>`;
+  return {body};
+}
+function invCalendar() {
+  const {sample, risk, market} = investing();
+  if (!risk) return empty('Calendar');
+  const events = (risk.rows || []).filter(r => r.nextEarnings?.date).map(r => ({symbol: r.symbol, ...r.nextEarnings})).sort((a, b) => a.date.localeCompare(b.date));
+  const econ = market?.economicEvents || [];
+  const body = head('Calendar', 'Scheduled earnings and economic events. Dates can change.', sample ? 'Example portfolio' : '', sample ? '' : btn('Refresh market data', 'data-refresh', 'reset')) + `
+  <div class="db-grid db-g2"><article class="db-card"><h3>Upcoming earnings</h3>${events.length ? `<ul class="db-list">${events.map(e => `<li><span><b>${esc(e.symbol)}</b> <small>${esc(e.time === 'amc' ? 'after close' : e.time === 'bmo' ? 'before open' : '')}</small></span><span>${esc(e.date)} <small>· ${esc(e.source || '')}</small></span></li>`).join('')}</ul>` : '<p class="db-empty">No scheduled earnings found for these holdings.</p>'}</article>
+    <article class="db-card"><h3>Economic calendar</h3>${econ.length ? `<ul class="db-list">${econ.map(e => `<li><span>${esc(e.name || e.event || e.title || 'Event')}</span><span>${esc(e.date)} <small>· ${esc(e.source || '')}</small></span></li>`).join('')}</ul>` : `<p class="db-empty">${sample ? 'No events in the sample window.' : 'Refresh market data to load events.'}</p>`}</article></div>
+  <p class="db-note">No earnings transcript is loaded. Ask your teacher what to listen for; it will not predict results.</p>`;
+  return {body};
+}
+function invNews() {
+  const {sample, market} = investing();
+  const news = market?.news || [];
+  const body = head('News', 'Recent headlines about your holdings, with source and date', sample ? 'Example portfolio' : '', sample ? '' : btn('Refresh market data', 'data-refresh', 'reset')) + `
+  <article class="db-card">${news.length ? `<ul class="db-list">${news.map(n => `<li><span><b>${esc(n.symbol || '')}</b> ${n.url ? `<a href="${esc(n.url)}" target="_blank" rel="noopener noreferrer">${esc(n.title)}</a>` : esc(n.title)}</span><small>${esc(n.source || n.provider || '')} · ${esc(n.date || n.providerAsOf || '')}</small></li>`).join('')}</ul>` : `<p class="db-empty">${sample ? 'No sample headlines.' : 'Refresh market data to load headlines for your holdings.'}</p>`}</article>`;
+  return {body};
+}
+function invGuidelines() {
+  const {sample} = investing();
+  const body = head('Guidelines', 'Your own review limits. They flag holdings for review; they never place trades.', sample ? 'Example portfolio' : '') + `<article class="db-card" id="db-guidelines-slot"></article>`;
+  return {body, after: () => { const g = document.querySelector('#portfolio-guidelines'); const slot = root.querySelector('#db-guidelines-slot'); if (g && slot) { slot.append(g); g.hidden = false; g.querySelectorAll('details').forEach(d => { d.open = true; }); } }};
 }
 
-function incomeBars() {
-  const W = 900, H = 112, L = 110, R = 80, x = v => L + v / 6000 * (W - L - R);
-  const ticks = [0, 1000, 2000, 3000, 4000, 5000, 6000].map(v => `<text x="${x(v)}" y="${H - 4}" text-anchor="middle">$${v.toLocaleString()}</text><line x1="${x(v)}" x2="${x(v)}" y1="8" y2="${H - 22}" stroke="#ecebe5"/>`).join('');
-  return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Income $5,200 vs planned cost $3,650">${ticks}
-    <text x="${L - 14}" y="38" text-anchor="end" style="font-size:13px;fill:#1b1d1a">Income</text><rect x="${L}" y="24" width="${x(5200) - L}" height="20" fill="#1e5a3b"/><text x="${x(6000) + 10}" y="38" style="font-size:13px;fill:#1b1d1a">$5,200</text>
-    <text x="${L - 14}" y="70" text-anchor="end" style="font-size:13px;fill:#1b1d1a">Planned cost</text><rect x="${L}" y="56" width="${x(3650) - L}" height="20" fill="#9cc79f"/><text x="${x(6000) + 10}" y="70" style="font-size:13px;fill:#1b1d1a">$3,650</text></svg>`;
+// ================= BUDGET =================
+function budgetHead(title, sub, actions) {
+  const b = budget();
+  const months = b.income.map(x => x.month);
+  const sel = months.length ? `<select class="db-select" data-month aria-label="Month">${months.map(m => `<option value="${m}" ${m === b.month ? 'selected' : ''}>${MONTH_LONG(m)}</option>`).join('')}</select>` : '';
+  return head(title, sub, b.sample ? 'Example budget' : '', sel + actions);
+}
+function catRows(b, max) { return b.cats.map(c => `<div class="db-bar-row">${svg(catIcon(c.name), 'db-ic')}<span>${esc(c.name)}</span>${bar(c.amount, max)}<span class="v">${b.monthIncome ? pct(c.amount / b.monthIncome * 100) : '—'}</span></div>`).join(''); }
+function payoff(debts) {
+  let months = 0, interest = 0; const list = debts.map(d => ({bal: Number(d.balance), rate: (d.rateBps || 0) / 10000 / 12, pay: Number(d.minPayment)}));
+  if (!list.length) return null;
+  while (list.some(d => d.bal > 0.005) && months < 600) { months++; for (const d of list) { if (d.bal <= 0) continue; const i = d.bal * d.rate; interest += i; d.bal = d.bal + i - d.pay; if (d.pay <= i) return {months: null, interest: null}; if (d.bal < 0) d.bal = 0; } }
+  return {months, interest};
+}
+function budOverview() {
+  const b = budget();
+  if (!b.src) return empty('Your monthly plan');
+  const gap = b.goal === null ? null : Math.max(0, b.goal - b.savings), monthsToGoal = gap === null ? null : gap === 0 ? 0 : b.available > 0 ? gap / b.available : null;
+  const goalMonths = b.goal && b.planned ? b.goal / b.planned : null, progress = b.goal ? Math.min(100, b.savings / b.goal * 100) : null;
+  const totalDebt = b.debts.reduce((t, d) => t + Number(d.balance), 0), pay = payoff(b.debts);
+  const max = Math.max(...b.cats.map(c => c.amount), 1);
+  const body = budgetHead('Your monthly plan', '', btn('Add your numbers', 'data-view="settings"', 'plus') + btn('Import', 'data-import-doc', 'upload')) + `
+  <div class="db-grid db-g4">${stat('Income', usd(dollars(b.monthIncome)), `Take-home income saved for ${b.month ? MONTH_LONG(b.month) : 'this month'}.`)}${stat('Planned spending', usd(dollars(b.planned)), 'Fixed bills, everyday spending and debt minimums.')}${stat('Available', usd(dollars(b.available)), 'Income for the selected month minus planned spending.', '', b.available >= 0 ? 'pos' : 'neg')}${stat('Cushion gap', monthsToGoal === null ? (gap === null ? 'Not set' : '—') : `${monthsToGoal.toFixed(1)} months`, 'Months to reach your cash cushion goal if the available amount is saved each month.', gap === null ? '' : `${usd(dollars(gap))} to go`, 'pos')}</div>
+  <article class="db-card"><div class="db-card-h"><h3>Income vs. current planned costs</h3>${b.sample ? '<span class="db-note">Illustrative data.</span>' : ''}</div><div class="db-legend"><span><i></i>Income</span><span><i class="light"></i>Planned costs</span></div><div class="db-chart"><canvas id="db-flow" aria-label="Income versus planned costs by month"></canvas></div></article>
+  <div class="db-grid db-g21"><article class="db-card"><h3>Spending by category <small>(${b.month ? MONTH_LONG(b.month) : ''})</small></h3><table class="db-table"><thead><tr><th>Category</th><th class="r">Amount</th><th></th><th class="r">% of income ${info('Share of the selected month\'s take-home income.')}</th></tr></thead><tbody>${b.cats.map(c => `<tr><td><div class="db-asset">${svg(catIcon(c.name), 'db-ic')}<b>${esc(c.name)}</b></div></td><td class="r">${usd(dollars(c.amount))}</td><td style="width:34%">${bar(c.amount, max, true, true)}</td><td class="r">${b.monthIncome ? pct(c.amount / b.monthIncome * 100) : '—'}</td></tr>`).join('')}</tbody></table></article>
+    <article class="db-card"><h3>Emergency fund goal</h3>${b.goal ? `<div style="display:flex;gap:10px">${svg('shield', 'db-ic')}<div style="flex:1"><div style="font-size:.84rem">${usd(dollars(b.goal))} (≈ ${goalMonths.toFixed(1)} months of planned costs)</div><div style="display:flex;align-items:center;gap:10px;margin:8px 0 4px">${bar(progress, 100)}<b>${Math.round(progress)}%</b></div><small class="db-note">${usd(dollars(b.savings))} saved · ${usd(dollars(gap))} to go</small></div></div>` : '<p class="db-empty">Set a cash cushion goal in Goals.</p>'}<hr class="db-divider" style="margin:14px 0">
+      <div style="display:flex;gap:10px">${svg('card', 'db-ic')}<div><b style="font-size:.88rem">Debt payoff (preview)</b> ${info('Pays only the current minimums, with monthly interest at each debt\'s APR. An estimate, not a payoff quote.')}<div class="db-note" style="color:var(--db-ink-2);margin:4px 0">${b.debts.length ? (pay?.months ? `Pay off ${usd(totalDebt)} in ≈ ${pay.months} months` : 'Minimums do not cover the interest.') : 'No debts saved.'}</div><button type="button" class="db-link" data-view="debt">Explore debt plan ›</button></div></div></article></div>
+  ${teacher(b.available > 0 ? 'You have room to build your emergency fund.' : 'Your planned costs are above this month\'s income.', 'Ask about these numbers...')}`;
+  return {body, after: () => drawFlow(b, '#db-flow', 6)};
+}
+function drawFlow(b, sel, range) {
+  const months = b.income.slice(-range), lo = Math.min(dollars(b.planned), ...months.map(m => Number(m.amount)));
+  lineChart(root.querySelector(sel), months.map(m => MONTH(m.month)), [{label: 'Income', data: months.map(m => Number(m.amount)), color: '#155c49', fill: 'rgba(21,92,73,.07)', points: true}, {label: 'Planned costs', data: months.map(() => dollars(b.planned)), color: '#8fc29d', points: true}], {money: true, min: Math.max(0, Math.floor(lo * 0.85 / 500) * 500)});
+}
+function budCashflow() {
+  const b = budget();
+  if (!b.src) return empty('Cash flow');
+  const vals = b.income.map(x => cents(x.amount)), low = vals.length ? Math.min(...vals) : 0, avg = vals.length ? vals.reduce((t, v) => t + v, 0) / vals.length : 0;
+  const fixed = b.cats.filter(c => c.fixed).reduce((t, c) => t + c.amount, 0), flex = b.planned - fixed;
+  const body = head('Cash flow', 'Income, planned costs, and monthly balance', b.sample ? 'Example budget' : '', `<select class="db-select" data-flow-range aria-label="Range">${[[6, 'Last 6 months'], [3, 'Last 3 months'], [12, 'Last 12 months']].map(([v, l]) => `<option value="${v}" ${state.flowRange === v ? 'selected' : ''}>${l}</option>`).join('')}</select>` + btn('Add amount', 'data-view="settings"', 'plus') + btn('Export', 'data-export="cashflow"', 'download')) + `
+  <div class="db-grid db-g4">${stat('Lowest income', usd(dollars(low)), 'Lowest saved take-home month. Plans built on it hold up in a slow month.')}${stat('Average income', usd(dollars(avg)), 'Average of saved months, to the cent.', '', 'pos')}${stat('Planned costs', usd(dollars(b.planned)), 'Current monthly plan: bills, spending and debt minimums.', '', 'pos')}${stat('Monthly balance', usd(dollars(avg - b.planned)), 'Average income minus planned costs.', '', avg - b.planned >= 0 ? 'pos' : 'neg')}</div>
+  <article class="db-card"><div class="db-card-h"><h3>Income vs. planned costs</h3><div class="db-seg" role="group" aria-label="Range">${[[1, '1M'], [3, '3M'], [6, '6M']].map(([v, l]) => `<button type="button" data-flow="${v}" aria-pressed="${Math.min(state.flowRange, 6) === v}">${l}</button>`).join('')}</div></div><div class="db-legend"><span><i></i>Income</span><span><i class="light"></i>Planned costs</span></div><div class="db-chart"><canvas id="db-flow2" aria-label="Income versus planned costs"></canvas></div></article>
+  <div class="db-grid db-g21"><article class="db-card"><h3>Saved income history ${info('Planned costs use your current plan for every month; past plans are not stored.')}</h3><table class="db-table"><thead><tr><th>Month</th><th class="r">Income</th><th class="r">Planned costs</th><th class="r">Saved income</th></tr></thead><tbody>${b.income.slice(-state.flowRange).map(x => { const s = cents(x.amount) - b.planned; return `<tr><td>${MONTH(x.month)}</td><td class="r">${usd(Number(x.amount))}</td><td class="r">${usd(dollars(b.planned))}</td><td class="r ${s >= 0 ? 'pos' : 'neg'}"><b>${usd(dollars(s))}</b></td></tr>`; }).join('')}</tbody></table></article>
+    <article class="db-card"><h3>Costs: fixed vs. flexible ${info('Fixed: bills and debt minimums. Flexible: everyday spending.')}</h3><div class="db-donut"><div class="db-chart"><canvas id="db-donut"></canvas><div class="db-donut-center"><div><b>${usd(dollars(b.planned))}</b><span>Planned<br>costs</span></div></div></div><div><div class="db-kv"><span><span class="db-swatch" style="background:#155c49"></span>Fixed costs</span><b>${usd(dollars(fixed))} <small class="db-note">${b.planned ? pct(fixed / b.planned * 100) : ''}</small></b></div><div class="db-kv"><span><span class="db-swatch" style="background:#a9d3b5"></span>Flexible costs</span><b>${usd(dollars(flex))} <small class="db-note">${b.planned ? pct(flex / b.planned * 100) : ''}</small></b></div><hr class="db-divider"><div class="db-kv"><b>Total planned</b><b>${usd(dollars(b.planned))} <small class="db-note">100%</small></b></div></div></div></article></div>
+  ${teacher('How can I increase my monthly balance?')}`;
+  return {body, after: () => { drawFlow(b, '#db-flow2', Math.min(state.flowRange, 12)); donut(root.querySelector('#db-donut'), [fixed, flex], ['#155c49', '#a9d3b5']); }};
+}
+function budSpending() {
+  const b = budget();
+  if (!b.src) return empty('Spending');
+  state.edit ||= b.cats.map(c => ({...c, amount: (c.amount / 100).toFixed(2)}));
+  const edit = state.edit, total = edit.reduce((t, c) => t + cents(c.amount), 0), avail = b.monthIncome - total;
+  const gap = b.goal === null ? null : Math.max(0, b.goal - b.savings), est = gap === null ? null : gap === 0 ? 0 : avail > 0 ? gap / avail : null;
+  const max = Math.max(...b.cats.map(c => c.amount), 1);
+  const body = budgetHead('Spending', 'Plan and adjust your monthly spending by category.', '') + `
+  <div class="db-grid db-g2">${stat('Total costs', usd(dollars(b.planned)), 'Saved monthly plan.')}${stat('Available', usd(dollars(b.available)), 'Selected month income minus saved planned costs.', '', b.available >= 0 ? 'pos' : 'neg')}</div>
+  <article class="db-card"><h3>Spending by category <small>(${b.month ? MONTH_LONG(b.month) : ''})</small></h3><div class="db-bars">${catRows(b, max)}</div></article>
+  <div class="db-grid db-g21"><article class="db-card"><h3>Edit spending plan ${info('Saved as your monthly plan. Debt payments come from your debts; edit them in Debt plan.')}</h3><table class="db-table"><thead><tr><th>Category</th><th>Amount</th><th class="r">Share of income</th></tr></thead><tbody>${edit.map((c, i) => `<tr><td><div class="db-asset">${svg(catIcon(c.name), 'db-ic')}${c.debt ? `<b>${esc(c.name)}</b>` : `<input class="db-input" data-cat-name="${i}" value="${esc(c.name)}" aria-label="Category name" style="max-width:150px">`}</div></td><td><input class="db-input" data-cat-amount="${i}" inputmode="decimal" value="${esc(c.amount)}" ${c.debt ? 'readonly title="Edit in Debt plan"' : ''} aria-label="${esc(c.name)} amount" style="max-width:120px"></td><td class="r">${b.monthIncome ? pct(cents(c.amount) / b.monthIncome * 100) : '—'}</td></tr>`).join('')}</tbody></table><button type="button" class="db-add" data-add-cat>+ Add category</button></article>
+    <article class="db-card"><h3>Planned costs summary</h3><div class="db-kv"><span>Total planned spending</span><b>${usd(dollars(total))}</b></div><div class="db-kv"><span>Share of income</span><b>${b.monthIncome ? pct(total / b.monthIncome * 100) : '—'}</b></div><hr class="db-divider"><div class="db-kv big"><span>Available after spending</span><b class="${avail >= 0 ? 'pos' : 'neg'}">${usd(dollars(avail))}</b></div><hr class="db-divider"><div class="db-kv"><span>Emergency fund goal ${info('Your saved cash cushion goal.')}</span><b>${b.goal === null ? 'Not set' : usd(dollars(b.goal))}</b></div><div class="db-kv"><span>Est. time to goal ${info('Remaining gap divided by the amount available after spending.')}</span><b>${est === null ? '—' : `${est.toFixed(1)} months`}</b></div></article></div>
+  <div class="db-grid db-g21"><div style="display:flex;gap:10px">${btn(b.sample ? 'Save as my plan' : 'Save changes', 'data-save-plan', 'check', true)}${btn('Reset', 'data-reset-plan', 'reset')}</div>${teacher('How can I adjust this plan to add more to my emergency fund?')}</div>`;
+  return {body};
+}
+function budDebt() {
+  const b = budget();
+  if (!b.src) return empty('Debt plan');
+  const pay = payoff(b.debts), total = b.debts.reduce((t, d) => t + Number(d.balance), 0), mins = b.debts.reduce((t, d) => t + Number(d.minPayment), 0);
+  const byBalance = [...b.debts].sort((a, c) => Number(a.balance) - Number(c.balance)), byRate = [...b.debts].sort((a, c) => c.rateBps - a.rateBps);
+  const body = head('Debt plan', 'Your saved debts and a minimum-payment payoff estimate', b.sample ? 'Example budget' : '', btn('Edit debts', 'data-edit-finances', 'settings')) + `
+  <div class="db-grid db-g4">${stat('Total debt', usd(total), 'Sum of saved balances.')}${stat('Monthly minimums', usd(mins), 'Included in planned costs.')}${stat('Payoff estimate', pay?.months ? `${pay.months} months` : '—', 'Minimum payments only, monthly interest at each APR.')}${stat('Interest estimate', pay?.interest ? usd(pay.interest) : '—', 'Interest paid over that schedule.', '', 'neg')}</div>
+  <div class="db-grid db-g2"><article class="db-card"><h3>Your debts</h3>${b.debts.length ? `<table class="db-table"><thead><tr><th>Debt</th><th class="r">Balance</th><th class="r">APR</th><th class="r">Minimum</th></tr></thead><tbody>${b.debts.map(d => `<tr><td><b>${esc(d.name)}</b></td><td class="r">${usd(Number(d.balance), 2)}</td><td class="r">${(d.rateBps / 100).toFixed(2)}%</td><td class="r">${usd(Number(d.minPayment), 2)}</td></tr>`).join('')}</tbody></table>` : '<p class="db-empty">No debts saved.</p>'}</article>
+    <article class="db-card"><h3>Payoff order to discuss</h3><div class="db-kv"><span><b>Snowball</b> <small class="db-note">smallest balance first</small></span><span>${byBalance.map(d => esc(d.name)).join(' → ') || '—'}</span></div><div class="db-kv"><span><b>Avalanche</b> <small class="db-note">highest APR first</small></span><span>${byRate.map(d => esc(d.name)).join(' → ') || '—'}</span></div><p class="db-note">Both orders are shown for learning. Your teacher can explain how your mentor approaches it.</p></article></div>
+  ${teacher('Which payoff order fits my situation, and why?')}`;
+  return {body};
+}
+function budGoals() {
+  const b = budget();
+  if (!b.src) return empty('Goals');
+  const gap = b.goal === null ? null : Math.max(0, b.goal - b.savings), progress = b.goal ? Math.min(100, b.savings / b.goal * 100) : 0;
+  const body = head('Goals', 'Your cash cushion goal', b.sample ? 'Example budget' : '') + `
+  <div class="db-grid db-g3">${stat('Cushion goal', b.goal === null ? 'Not set' : usd(dollars(b.goal)), 'The cash you want set aside for surprises.')}${stat('Saved', usd(dollars(b.savings)), 'Cash savings you entered.', '', 'pos')}${stat('To go', gap === null ? '—' : usd(dollars(gap)), 'Goal minus savings.')}</div>
+  <article class="db-card"><h3>Emergency fund goal</h3><div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">${bar(progress, 100)}<b>${Math.round(progress)}%</b></div>
+    <div class="db-trim"><label>Goal <input class="db-input" id="db-goal" inputmode="decimal" value="${b.goal === null ? '' : (b.goal / 100).toFixed(2)}" style="width:120px"></label><label>Savings <input class="db-input" id="db-savings" inputmode="decimal" value="${(b.savings / 100).toFixed(2)}" style="width:120px"></label>${btn(b.sample ? 'Save as my goal' : 'Save goal', 'data-save-goal', 'check', true)}</div></article>
+  ${teacher('How much should my cash cushion be?')}`;
+  return {body};
+}
+function budReview() {
+  const b = budget();
+  if (!b.src) return empty('Review');
+  const vals = b.income.map(x => cents(x.amount)), low = vals.length ? Math.min(...vals) : 0, debtPay = b.cats.filter(c => c.debt).reduce((t, c) => t + c.amount, 0);
+  const rows = [['Lowest month covers planned costs', low >= b.planned ? 'pass' : 'warn', `${usd(dollars(low))} lowest vs ${usd(dollars(b.planned))} planned`], ['Cash cushion goal set', b.goal === null ? 'unknown' : 'pass', b.goal === null ? 'Add a goal in Goals' : usd(dollars(b.goal))], ['Cushion progress', b.goal ? (b.savings >= b.goal ? 'pass' : 'warn') : 'unknown', b.goal ? pct(b.savings / b.goal * 100, 0) + ' saved' : '—'], ['Debt payments share of income', 'unknown', b.monthIncome ? pct(debtPay / b.monthIncome * 100) : '—'], ['Months of income saved', 'unknown', b.income.length + ' month(s)']];
+  const body = head('Review', 'Your plan at a glance. Facts from your saved numbers, not a grade.', b.sample ? 'Example budget' : '') + `
+  <article class="db-card"><ul class="db-checks">${rows.map(([l, s, d]) => `<li><span class="db-ck ${s}">${s === 'pass' ? '✓' : s === 'unknown' ? 'i' : '!'}</span><span>${esc(l)} <small class="db-note">· ${esc(d)}</small></span><span class="db-pill ${s}">${s === 'pass' ? 'On track' : s === 'warn' ? 'Review' : 'Info'}</span></li>`).join('')}</ul></article>
+  ${teacher('Walk me through my plan and the one thing to focus on first.')}`;
+  return {body};
+}
+function budSettings() {
+  const b = budget();
+  const months = []; const now = new Date(); for (let i = 5; i >= 0; i--) { const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - i, 15)); months.push(d.toISOString().slice(0, 7)); }
+  const saved = new Map((b.sample ? [] : b.income).map(x => [x.month, x.amount]));
+  const body = head('Settings', 'Your take-home income by month. Used for every budget figure.', b.sample ? 'Example budget' : '') + `
+  <article class="db-card"><h3>Take-home income</h3><table class="db-table"><thead><tr><th>Month</th><th>Take-home income</th></tr></thead><tbody>${months.map(m => `<tr><td>${MONTH_LONG(m)} ${m.slice(0, 4)}</td><td><input class="db-input" data-income="${m}" inputmode="decimal" placeholder="0.00" value="${esc(saved.get(m) || '')}" style="max-width:160px"></td></tr>`).join('')}</tbody></table>
+    <div style="display:flex;gap:10px;margin-top:12px">${btn('Save income', 'data-save-income', 'check', true)}${btn('Edit debts & detailed inputs', 'data-edit-finances', 'settings')}</div><p class="db-note" style="margin-top:8px">Leave a month blank if you have no record. Sample numbers are never saved unless you save them here.</p></article>`;
+  return {body};
+}
+function empty(title) { return {body: head(title, 'Loading your dashboard...', '') + '<article class="db-card"><p class="db-empty">Loading…</p></article>'}; }
+
+const VIEWS = {portfolio: {overview: invOverview, risk: invRisk, improve: invImprove, holdings: invHoldings, calendar: invCalendar, news: invNews, guidelines: invGuidelines}, budget: {overview: budOverview, cashflow: budCashflow, spending: budSpending, debt: budDebt, goals: budGoals, review: budReview, settings: budSettings}};
+
+function render() {
+  clearCharts();
+  const g = document.querySelector('#portfolio-guidelines'); if (g && root.contains(g)) { g.hidden = true; document.body.append(g); }
+  const view = VIEWS[state.tab][state.view[state.tab]] || VIEWS[state.tab].overview;
+  const out = view();
+  shell(out.body);
+  out.after?.();
+  document.dispatchEvent(new CustomEvent('mentor:workspace-rendered'));
+}
+async function load() {
+  const [session, demo] = await Promise.all([api('/api/workspace').catch(() => null), state.demo ? state.demo : api('/api/workspace/demo').catch(() => null)]);
+  state.session = session; state.demo = demo; state.edit = null;
+  render();
 }
 
-// Projection: $10,600 today, +$1,550 a month (the full lowest-month surplus) until the $16,640 goal.
-function goalChart() {
-  const W = 900, H = 160, L = 64, R = 20, T = 8, B = 22;
-  const months = ['Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr'];
-  const x = i => L + 30 + i * (W - L - R - 60) / 5, y = v => T + (20000 - v) / 20000 * (H - T - B);
-  const saved = [10600, 12150, 13700, 15250, 16640, 16640].map((v, i) => [x(i), y(v)]);
-  const target = months.map((_, i) => [x(i), y(16640)]);
-  const grid = [0, 5000, 10000, 15000, 20000].map(v => `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" stroke="#ecebe5"/><text x="${L - 8}" y="${y(v) + 4}" text-anchor="end">$${v.toLocaleString()}</text>`).join('');
-  return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Cash cushion projection: $10,600 now, goal $16,640 reached in 4 months at $1,550 a month">
-    <defs><linearGradient id="gp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b7a4f" stop-opacity=".16"/><stop offset="1" stop-color="#2b7a4f" stop-opacity=".02"/></linearGradient></defs>
-    ${grid}${months.map((m, i) => `<text x="${x(i)}" y="${H - 4}" text-anchor="middle">${m}</text>`).join('')}
-    <path d="${path(saved)} L${x(5)} ${y(0)} L${x(0)} ${y(0)}Z" fill="url(#gp)"/>
-    <path d="${path(target)}" fill="none" stroke="#9cc79f" stroke-width="1.6" stroke-dasharray="5 4"/>${target.map(p => `<circle cx="${p[0]}" cy="${p[1]}" r="3" fill="#9cc79f"/>`).join('')}
-    <path d="${path(saved)}" fill="none" stroke="#1e5a3b" stroke-width="2"/>${saved.map(p => `<circle cx="${p[0]}" cy="${p[1]}" r="3.6" fill="#fff" stroke="#1e5a3b" stroke-width="1.8"/>`).join('')}</svg>`;
+// ---------- actions ----------
+function ask(question) {
+  const q = String(question || '').trim(); if (!q) return;
+  let chosen = null; try { chosen = JSON.parse(localStorage.getItem('mentor-labs-choice') || 'null')?.personaId; } catch {}
+  const launcher = document.querySelector('#teacher-launcher');
+  if (!chosen) { document.dispatchEvent(new CustomEvent('mentor:workspace-question', {detail: {question: q}})); return; }
+  if (launcher) { launcher.click(); setTimeout(() => { const msg = document.querySelector('#msg'), form = document.querySelector('#composer'); if (msg && form && !document.querySelector('#teacher-dock')?.hidden) { msg.value = q; form.requestSubmit(); } }, 80); }
+  else document.dispatchEvent(new CustomEvent('mentor:workspace-question', {detail: {question: q}}));
 }
-
-const debt = () => { const p = PLANS[debtPlan]; return `
-  <div class="head"><h1>Debt plan${inf}</h1><span class="spacer"></span><span class="plan-label">Plan:</span><div class="pill-group">${Object.keys(PLANS).map(k => `<button data-plan="${k}" class="${k === debtPlan ? 'on' : ''}" style="padding:5px 18px">${k === 'snowball' ? 'Snowball' : 'Avalanche'}</button>`).join('')}</div>
-    <button class="btn" style="margin-left:16px">${ic('gear')}Rate assumptions</button></div>
-  <div class="grid g4">${kpi('Total balance', '$16,640')}${kpi('Total minimum payments', '$700 <small>/ mo</small>')}${kpi('Extra payment', '$300 <small>/ mo</small>')}${kpi('Payoff horizon', p.months + ' months', 'pos')}</div>
-  <div class="card mt"><h2>Projected debt balance${inf}</h2><div class="legend" style="margin-top:10px"><span><i class="dotline"></i>With extra payment ($300/mo)</span><span><i class="dash"></i>Minimum payments only (27 months)</span></div>${debtChart(p)}
-    <div class="foot-note">Projection using your current APRs and payments, month by month in exact cents. Not a guarantee of results.</div></div>
-  <div class="grid mt split" style="grid-template-columns:1.12fr 1fr">
-    <div class="card"><div class="card-head"><h2>Your debts (3)${inf}</h2><button class="btn sm">${ic('pencil')}Edit</button></div><table><thead><tr><th>Debt${S}</th><th>APR${S}</th><th>Balance${S}</th><th>Minimum${S}</th></tr></thead><tbody>
-      ${[['card', 'Credit card', '21.49%', '$6,040', '$300'], ['car', 'Auto loan', '6.25%', '$8,400', '$250'], ['cap', 'Student loan', '4.75%', '$2,200', '$150']].map(([i, n, a, b, m]) => `<tr><td><span class="debt-name">${ic(i)}${n}</span></td><td>${a}</td><td><span class="cellbox">${b}</span></td><td><span class="cellbox">${m}</span></td></tr>`).join('')}</tbody></table></div>
-    <div class="card"><h2>Plan details${inf}</h2><div class="detail-row" style="margin-top:14px"><span>Strategy</span><span class="select">${p.label}</span></div>
-      <div class="detail-row"><span>Payoff order</span><span class="small">${p.order}</span></div>
-      <div class="detail-row"><span>Rate assumptions</span><span class="select">Use current APRs</span></div>
-      <div class="detail-row" style="grid-template-columns:1fr"><span style="display:flex;align-items:center">Extra payment (optional)${inf}</span></div>
-      <div style="display:flex;align-items:center;gap:12px"><span class="field" style="flex:1">$300</span><span class="small">/ month</span></div></div></div>
-  <div class="grid mt split" style="grid-template-columns:1.12fr 1fr">
-    <div class="card"><h3>Payoff summary${inf}</h3><div class="sumrow" style="grid-template-columns:repeat(3,auto)"><div><span>Total paid</span><b>${p.paid}</b></div><div><span>Total interest</span><b>${p.interest}</b></div><div><span>Payoff horizon</span><b>${p.months} months</b></div></div></div>
-    <div class="grid" style="gap:10px"><div class="tip"><span class="ok"></span>${p.tip}</div></div></div>`; };
-
-const prefRow = (l, v, h) => `<div class="pref-row"><span class="lbl">${l}${inf}</span><span class="stepper">${v}</span>${h ? `<span class="hint">${h}</span>` : ''}</div>`;
-const settings = () => `
-  <div class="head"><h1 style="font-size:23px">Your planning preferences</h1><span class="spacer"></span><button class="btn primary">${ic('check')}Save my budget</button>
-    <p class="sub">Set your budget inputs, cash cushion goal, and data preferences.</p></div>
-  <div class="grid split" style="grid-template-columns:1fr 1fr">
-    <div class="card"><h2>Income planning${inf}</h2><p class="desc">Use your lowest saved month as the basis for planning.</p>
-      <div class="pref-row" style="grid-template-columns:1fr 104px;margin-top:8px"><span class="lbl" style="font-weight:600">Basis month (lowest saved)</span><span class="select">June</span><span class="hint" style="grid-column:1">The month with the lowest takehome income in your saved data ($5,200).</span></div></div>
-    <div class="card"><h2>Cash cushion goal${inf}</h2><p class="desc">A cash reserve for unexpected expenses or income changes.</p>
-      <div class="pref-row" style="grid-template-columns:1fr 150px;margin-top:8px"><span class="lbl">Target amount</span><span class="stepper">$16,640</span></div>
-      <div class="pref-row" style="grid-template-columns:1fr 150px"><span class="lbl">Months of expenses</span><span class="stepper">Custom</span></div></div></div>
-  <div class="grid mt split" style="grid-template-columns:1.45fr 1fr;align-items:start">
-    <div class="card"><h2>Detailed budget inputs${inf}</h2><p class="desc">Enter your monthly amounts. Use your takehome (after-tax) income and typical spending.</p>
-      ${prefRow('Income (monthly)', '$5,350', 'Average of your 6 saved months ($5,200 to $5,500).')}${prefRow('Takehome income', '$5,200', 'Your lowest saved month, used as the planning basis.')}${prefRow('Fixed bills', '$1,600', 'Recurring essentials (housing).')}
-      ${prefRow('Everyday spending', '$1,350', 'Food $550, transport $350, lifestyle $450.')}${prefRow('Debt payments', '$700', 'Minimums: credit card $300, auto $250, student $150.')}${prefRow('Savings (planned)', '$1,550', 'What is left in your lowest month after costs.')}</div>
-    <div class="grid">
-      <div class="card"><h2>Future bank connection<span class="planned">Planned</span>${inf}</h2><p class="desc">A secure bank connection (MCP) is planned for a future release to import your transactions automatically.</p>
-        <button class="btn disabled mt">${ic('link')}Connect bank (planned)</button><p class="desc" style="margin-top:10px">Manual entry (your current method) works fully and isn’t affected.</p></div>
-      <div class="card"><h2>Privacy &amp; data</h2><div class="mt">
-        <div class="link-row" data-action="privacy" role="link" tabindex="0" style="cursor:pointer">${ic('lock')}<div><b>Privacy</b><small>How we use and protect your data.</small></div>${ic('chevR')}</div>
-        <div class="link-row">${ic('download')}<div><b>Export my data</b><small>Download your budget data (CSV).</small></div>${ic('chevR')}</div></div></div></div></div>`;
-
-const review = () => `
-  <div class="head"><h1>Review your monthly plan</h1><span class="spacer"></span><span class="select" style="height:34px;width:110px;font-size:13.5px">November</span><button class="btn" data-go="budget/settings">${ic('pencil')}Edit plan</button></div>
-  <div class="grid g4">${kpi('Income (lowest)', '$5,200')}${kpi('Planned costs', '$3,650')}${kpi('Available', '$1,550', 'pos')}${kpi('Cushion gap', '$6,040', 'neg')}</div>
-  <div class="card mt"><h2>Income vs. cost <span style="font-weight:400;font-size:14px;margin-left:5px">(monthly)</span></h2>${incomeBars()}</div>
-  <div class="grid mt split" style="grid-template-columns:1fr 1fr">
-    <div class="card"><h2>Plan checklist</h2><div style="margin-top:8px">${[['Income is complete', 1], ['Costs are complete', 1], ['Debt minimums are covered', 1], ['Cash cushion goal reached', 0]].map(([t, on]) => `<div class="check"><span class="box ${on ? 'on' : ''}"></span>${t}${ic('info', 'i tiny-i')}</div>`).join('')}</div></div>
-    <div class="warn"><h3>${ic('warn')}$6,040 cushion gap</h3><p>You have $10,600 in cash toward a $16,640 cushion goal. Your lowest month still leaves $1,550 after costs to work with.</p></div></div>
-  <div class="grid mt split" style="grid-template-columns:1fr 1fr;align-items:start">
-    <div class="card"><h2>Plan arithmetic</h2><table class="arith mt"><thead><tr><th>Item</th><th class="r">Amount</th></tr></thead><tbody>
-      ${[['Income (lowest month)', '$5,200'], ['Housing', '$1,600'], ['Food', '$550'], ['Transport', '$350'], ['Lifestyle', '$450'], ['Debt payments', '$700']].map(([a, b]) => `<tr><td>${a}</td><td class="r">${b}</td></tr>`).join('')}
-      <tr class="total"><td>Total planned costs</td><td class="r">$3,650</td></tr><tr class="total"><td>Available (income − costs)</td><td class="r pos">$1,550</td></tr></tbody></table></div>
-    <div class="grid"><div class="card"><h2>${ic('cap')}&nbsp;Teacher-guided tradeoffs</h2><p class="desc" style="font-size:12.5px;color:var(--ink-2)">Ways to use the $1,550 available (illustrative):</p>
-      ${[['Close the cushion gap first with <em>$1,550</em> a month', 'Reaches the $16,640 goal in about 4 months.', 1], ['Put $300 extra toward debt, the rest to savings', 'Matches your debt plan: debt-free in 19 months (snowball).', 0], ['Attack the 21.49% credit card first', 'Highest APR; the avalanche order pays the least interest.', 0]].map(([t, s, on]) => `<div class="option ${on ? 'on' : ''}"><span class="radio ${on ? 'on' : ''}"></span><div><b>${t}</b><small>${s}</small></div></div>`).join('')}</div></div></div>`;
-
-const goalBlock = (icon, name, line, pct, target, saved, rem, monthly, labels = ['Target amount', 'Saved', 'Remaining', 'Monthly contribution']) => `<div class="goal"><div class="goal-top">${ic(icon)}<div><b>${name}${inf}</b><small>${line}</small></div><span class="edit" data-go="budget/settings" style="cursor:pointer">${ic('pencil')}Edit</span></div>
-  <div class="bar"><span style="width:${pct}%"></span></div><div class="goal-cols"><div>${labels[0]}<span class="field">${target}${ic('edit')}</span></div><div>${labels[1]}<b>${saved}</b></div><div>${labels[2]}<b>${rem}</b></div><div>${labels[3]}<span class="field">${monthly}${ic('edit')}</span></div></div></div>`;
-const goals = () => `
-  <div class="head"><h1>Budget goals${inf}</h1><span class="spacer"></span><button class="btn" data-go="budget/settings">${ic('pencil')}Edit goals</button><p class="sub">Set target amounts, track progress, and stay on plan.</p></div>
-  <div class="grid g4">${kpi('Emergency fund', '$16,640')}${kpi('Saved', '$10,600')}${kpi('Remaining', '$6,040')}${kpi('Monthly contribution', '$1,550')}</div>
-  <div class="card mt"><div class="card-head"><h2>Goal progress (projected)</h2><div class="legend" style="margin:0"><span><i class="dotline"></i>Saved</span><span><i class="dash" style="border-color:#9cc79f"></i>Target</span></div><span class="select" style="width:96px">6 Months</span></div>${goalChart()}</div>
-  <div class="grid mt split" style="grid-template-columns:1.55fr 1fr;align-items:start">
-    <div class="card">${goalBlock('shieldok', 'Emergency fund', '$10,600 of $16,640 (64%)', 64, '$16,640', '$10,600', '$6,040', '$1,550')}${goalBlock('card', 'Debt-free', '$0 of $16,640 paid so far (0%) · 19 months on the snowball plan', 0, '$16,640', '$0', '$16,640', '$1,000', ['Debt to clear', 'Paid', 'Remaining', 'Monthly payment'])}</div>
-    <div class="card"><h2>Cash cushion calculator${inf}</h2><p class="desc">Estimate how much cash to keep for near-term needs.</p>
-      <div class="pref-row" style="grid-template-columns:1fr 92px;margin-top:10px"><span class="small">Monthly essential expenses</span><span class="field" style="justify-content:space-between">$3,650${ic('edit')}</span></div>
-      <div class="pref-row" style="grid-template-columns:1fr 92px"><span class="small">Cushion (months)</span><span class="select">3 months</span></div>
-      <div class="reco"><span>Recommended cushion</span><b>$10,950 <svg class="i tiny-i" viewBox="0 0 24 24"><path d="${P.info}"/></svg></b></div>
-      <p class="desc" style="color:var(--ink-2);font-size:12px"><b style="color:var(--ink)">Context</b><br>Covers about 3 months of essential expenses ($3,650 × 3). Your $16,640 goal covers about 4.5 months.</p></div></div>`;
-
-const placeholder = (ws, label, links) => `<div class="head"><h1>${label}</h1></div><div class="placeholder"><p>This view is next in the redesign.</p><p>${links.map(([v, l]) => `<a href="#" data-go="${ws}/${v}">${l}</a>`).join(' · ')}</p></div>`;
-
-const SCREENS = {
-  investing: {holdings, guidelines, news, calendar},
-  budget: {debt, settings, review, goals},
-};
-const DEFAULT = {investing: 'holdings', budget: 'debt'};
-
-// ---------- mounted inside the app: shared site header + the app's built-in teacher dock ----------
-const DASH_KEY = 'mentor-dashboard-view';
-let route = {ws: 'investing', view: 'holdings'};
-try { const saved = JSON.parse(sessionStorage.getItem(DASH_KEY) || 'null'); if (saved?.ws) route = saved; } catch {}
-
-function shell() {
-  return `<div class="mlx"><div class="app"><div class="body">
-    <aside class="side"><div class="seg" data-seg role="tablist" aria-label="Workspace"></div><nav class="nav" data-nav aria-label="Dashboard sections"></nav>
-      <div class="side-foot">
-        <div class="guide"><a class="guide-row" href="#" data-action="learning"><span>${ic('book')}</span><span><b>Learning guide</b><small>13-step program</small></span><span style="margin-left:auto">${ic('chevR', 'i chev')}</span></a>
-          <div class="bar"><span style="width:46%"></span></div><div class="step">Step 6 of 13</div></div>
-        <button type="button" class="avail" data-action="teacher" aria-label="Open your teacher"><span class="live-dot"></span><span><b>Teacher available</b><small>Typically replies in minutes</small></span><span style="margin-left:auto">${ic('msg')}</span></button>
-      </div></aside>
-    <main class="main" data-main></main></div></div></div>`;
+function download(name, rows) {
+  const csv = rows.map(r => r.map(v => `"${String(v ?? '').replace(/"/g, '""')}"`).join(',')).join('\n');
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], {type: 'text/csv'})); a.download = name; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }
+async function run(fn) { try { await fn(); } catch (e) { status(e.message); } }
 
-function draw(root) {
-  const {ws} = route, items = ws === 'budget' ? BUDGET : INVESTING;
-  const view = items.some(([id]) => id === route.view) ? route.view : DEFAULT[ws];
-  route = {ws, view};
-  try { sessionStorage.setItem(DASH_KEY, JSON.stringify(route)); } catch {}
-  root.querySelector('[data-seg]').innerHTML = ['investing', 'budget'].map(w => `<a href="#" role="tab" aria-selected="${w === ws}" data-go="${w}" class="${w === ws ? 'on' : ''}">${w === 'budget' ? 'Budget' : 'Investing'}</a>`).join('');
-  root.querySelector('[data-nav]').innerHTML = items.map(([id, label, icon]) => `<a href="#" data-go="${ws}/${id}" class="${id === view ? 'on' : ''}" ${id === view ? 'aria-current="page"' : ''}>${ic(icon)}${label}</a>`).join('');
-  const fn = SCREENS[ws][view], label = items.find(([id]) => id === view)[1];
-  root.querySelector('[data-main]').innerHTML = fn ? fn() : placeholder(ws, label, Object.keys(SCREENS[ws]).map(v => [v, items.find(([id]) => id === v)[1]]));
-  document.dispatchEvent(new CustomEvent('mentor:dashboard-view', {detail: {...route}}));
-}
-
-// Simple, honest interactivity: navigation goes where it says; segmented controls and options toggle.
-function onClick(root, e) {
-  const go = e.target.closest('[data-go]');
-  if (go) { e.preventDefault(); const [ws, view] = go.dataset.go.split('/'); route = {ws, view: view || DEFAULT[ws]}; draw(root); window.scrollTo(0, 0); return; }
-  const act = e.target.closest('[data-action]');
-  if (act) {
-    e.preventDefault();
-    const a = act.dataset.action;
-    if (a === 'learning') document.querySelector('#app-nav [data-open-learning]')?.click();
-    else if (a === 'teacher') document.querySelector('#teacher-launcher')?.click();
-    else if (a === 'context') document.querySelector('[data-context]')?.click();
-    else if (a === 'privacy') window.open('/privacy.html', '_blank', 'noopener');
+root.addEventListener('click', e => {
+  const t = e.target.closest('button, a'); if (!t || !root.contains(t)) return;
+  if (t.dataset.workspaceTab) { state.tab = t.dataset.workspaceTab; state.statusText = ''; render(); return; }
+  if (t.dataset.view) { state.view[state.tab] = t.dataset.view; state.edit = null; state.statusText = ''; render(); return; }
+  if (t.hasAttribute('data-learn')) { document.dispatchEvent(new CustomEvent('mentor:show-learning')); return; }
+  if (t.dataset.range) { state.perfRange = Number(t.dataset.range); render(); return; }
+  if (t.dataset.flow) { state.flowRange = Number(t.dataset.flow); render(); return; }
+  if (t.hasAttribute('data-import')) { document.querySelector('#portfolio-file')?.click(); return; }
+  if (t.hasAttribute('data-import-doc')) { document.querySelector('#context-dialog')?.showModal?.(); return; }
+  if (t.hasAttribute('data-edit-finances')) { document.dispatchEvent(new CustomEvent('mentor:edit-finances')); return; }
+  if (t.dataset.export) {
+    const inv = investing(), b = budget();
+    if (t.dataset.export === 'cashflow') download('mentor-labs-cash-flow.csv', [['Month', 'Income', 'Planned costs', 'Saved income'], ...b.income.map(x => [x.month, x.amount, (b.planned / 100).toFixed(2), ((cents(x.amount) - b.planned) / 100).toFixed(2)])]);
+    else if (t.dataset.export === 'risk') download('mentor-labs-risk-review.csv', [['Check', 'Value', 'Limit', 'Status'], ...(inv.risk?.checks || []).map(c => [c.label, c.value?.toFixed?.(2) ?? '', c.limit ?? '', c.status])]);
+    else download('mentor-labs-holdings.csv', [['Symbol', 'Company', 'Sector', 'Value', 'Weight %', 'Price', 'Price source', 'Price date'], ...(inv.risk?.rows || []).map(r => [r.symbol, r.company, r.sector, r.value, r.weight?.toFixed(2), r.price, r.priceSource, r.priceAsOf])]);
     return;
   }
-  const seg = e.target.closest('.pill-group button');
-  if (seg?.dataset.plan) { debtPlan = seg.dataset.plan; draw(root); return; }
-  if (seg) { seg.parentElement.querySelectorAll('button').forEach(b => b.classList.toggle('on', b === seg)); return; }
-  const opt = e.target.closest('.option');
-  if (opt) opt.parentElement.querySelectorAll('.option').forEach(o => { o.classList.toggle('on', o === opt); o.querySelector('.radio')?.classList.toggle('on', o === opt); });
-}
-
-export function mountDashboard(root, ws) {
-  if (ws === 'investing' || ws === 'budget') route = {ws, view: route.ws === ws ? route.view : DEFAULT[ws]};
-  if (!root.dataset.mounted) {
-    root.innerHTML = shell(); root.dataset.mounted = '1';
-    root.addEventListener('click', e => onClick(root, e));
-    root.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.matches('[data-action]')) onClick(root, e); });
+  if (t.hasAttribute('data-run')) {
+    const sym = root.querySelector('#db-sym')?.value, to = Number(root.querySelector('#db-to')?.value), limit = Number(root.querySelector('#db-limit')?.value);
+    state.draftSymbol = sym; state.draftTo = to; state.draftLimit = limit;
+    run(async () => { status('Running scenario…'); state.scenario = await api('/api/workspace/whatif', 'POST', {sample: investing().sample, symbol: sym, toPercent: to, positionLimit: limit}); state.scenarioMode = 'whatif'; render(); status('Scenario ready. Your saved holdings are unchanged.'); });
+    return;
   }
-  draw(root);
+  if (t.hasAttribute('data-reset-scenario')) { state.scenario = null; state.scenarioMode = 'baseline'; state.draftSymbol = state.draftTo = state.draftLimit = undefined; render(); return; }
+  if (t.hasAttribute('data-refresh')) {
+    run(async () => { status('Retrieving market data…'); state.market = await api('/api/workspace/market', 'POST', {}); render(); status(state.market.fallbackNote || 'Market data refreshed. Check each source and date.'); });
+    return;
+  }
+  if (t.hasAttribute('data-add-cat')) { syncEdit(); state.edit.push({name: 'New category', amount: '0.00', fixed: false}); render(); return; }
+  if (t.hasAttribute('data-reset-plan')) { state.edit = null; render(); return; }
+  if (t.hasAttribute('data-save-plan')) {
+    syncEdit();
+    run(async () => { const cats = state.edit.filter(c => !c.debt).map(c => ({name: c.name, amount: c.amount, fixed: /hous|rent|mortgage|insur|utilit|phone|bill/i.test(c.name) || c.fixed})); const b = budget(); const body = {categories: cats}; if (b.sample) Object.assign(body, {incomeHistory: b.income, debts: b.debts, savings: (b.savings / 100).toFixed(2), cashCushion: b.goal === null ? undefined : (b.goal / 100).toFixed(2)}); state.session = await api('/api/workspace/plan', 'POST', body); state.edit = null; document.dispatchEvent(new CustomEvent('mentor:inputs-updated')); render(); status('Plan saved. Your teacher uses these same numbers.'); });
+    return;
+  }
+  if (t.hasAttribute('data-save-goal')) {
+    run(async () => { const b = budget(), goal = root.querySelector('#db-goal').value.trim(), savings = root.querySelector('#db-savings').value.trim(); const body = {categories: b.cats.filter(c => !c.debt).map(c => ({name: c.name, amount: (c.amount / 100).toFixed(2), fixed: c.fixed})), savings, cashCushion: goal}; if (b.sample) Object.assign(body, {incomeHistory: b.income, debts: b.debts}); state.session = await api('/api/workspace/plan', 'POST', body); document.dispatchEvent(new CustomEvent('mentor:inputs-updated')); render(); status('Goal saved.'); });
+    return;
+  }
+  if (t.hasAttribute('data-save-income')) {
+    run(async () => { const b = budget(); const incomeHistory = [...root.querySelectorAll('[data-income]')].map(i => ({month: i.dataset.income, amount: i.value.trim()})); const body = {categories: b.sample ? [] : b.cats.filter(c => !c.debt).map(c => ({name: c.name, amount: (c.amount / 100).toFixed(2), fixed: c.fixed})), incomeHistory}; state.session = await api('/api/workspace/plan', 'POST', body); document.dispatchEvent(new CustomEvent('mentor:inputs-updated')); state.view.budget = 'overview'; render(); status('Income saved.'); });
+  }
+});
+function syncEdit() { if (!state.edit) return; root.querySelectorAll('[data-cat-name]').forEach(i => { state.edit[i.dataset.catName].name = i.value.trim() || 'Category'; }); root.querySelectorAll('[data-cat-amount]').forEach(i => { state.edit[i.dataset.catAmount].amount = i.value.trim(); }); }
+root.addEventListener('change', e => {
+  if (e.target.matches('[data-month]')) { state.month = e.target.value; render(); }
+  if (e.target.matches('[data-flow-range]')) { state.flowRange = Number(e.target.value); render(); }
+  if (e.target.matches('input[name="db-mode"]')) { state.scenarioMode = e.target.value; render(); }
+  if (e.target.matches('#db-sym')) { state.draftSymbol = e.target.value; state.draftTo = undefined; state.scenario = null; render(); }
+  if (e.target.matches('[data-cat-amount], [data-cat-name]')) { syncEdit(); const pos = e.target.dataset.catAmount; render(); if (pos !== undefined) root.querySelector(`[data-cat-amount="${pos}"]`)?.focus(); }
+});
+root.addEventListener('input', e => { if (e.target.matches('#db-limit')) { const o = root.querySelector('#db-limit-out'); if (o) o.textContent = e.target.value + '%'; state.draftLimit = Number(e.target.value); } });
+root.addEventListener('submit', e => { if (e.target.matches('[data-ask]')) { e.preventDefault(); const input = e.target.querySelector('input'); ask(input.value || input.closest('.db-teacher').querySelector('p').textContent); input.value = ''; } });
+
+document.addEventListener('mentor:workspace-open', () => run(load));
+document.addEventListener('mentor:inputs-updated', () => { if (!document.querySelector('#v-workspace')?.hidden) run(load); });
+document.addEventListener('mentor:guidelines-updated', () => { state.scenario = null; run(load); });
+root.classList.add('db');
+render();
+
+// Entry point used by app.js. tab: 'investing' | 'portfolio' | 'budget' | undefined.
+export function mountDashboard(_el, tab) {
+  if (tab === 'investing' || tab === 'portfolio') state.tab = 'portfolio';
+  else if (tab === 'budget') state.tab = 'budget';
+  return run(load);
 }
-export const dashboardRoute = () => ({...route});
