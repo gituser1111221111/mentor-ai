@@ -1,0 +1,43 @@
+/* One app shell for Chat, Dashboard and Learning (loaded last).
+   The top bar keeps the same height, colors and toggle position on every app page, so switching
+   between Teacher chat, Dashboard and Learning guide never moves it. Learning fills the screen. */
+
+/* ---------- top bar: identical on every app page ---------- */
+html body.app-open header.site {
+  position: sticky; top: 0; z-index: 30;
+  height: 64px; min-height: 64px; padding: 0 24px;
+  display: flex; flex-wrap: nowrap; align-items: center; gap: 20px;
+  background: #faf9f5; color: #193b31; border-bottom: 1px solid #e5e7df; backdrop-filter: none;
+}
+html body.app-open header.site .wordmark { color: #193b31; flex: none; }
+html body.app-open header.site .app-nav {
+  order: 0; flex: none; width: auto; margin: 0 0 0 8px; padding: 4px; gap: 4px;
+  display: flex; justify-content: flex-start; border: 1px solid #e4e2dc; border-left: 1px solid #e4e2dc;
+  border-radius: 999px; background: #fff;
+}
+html body.app-open header.site .app-nav button {
+  font: 600 13px/1 Inter, system-ui, sans-serif; padding: 9px 16px; border: 0; border-radius: 999px;
+  background: transparent; color: #344b41; white-space: nowrap;
+}
+html body.app-open header.site .app-nav button:hover { background: #f1f4ee; }
+html body.app-open header.site .app-nav button[aria-current="page"] { background: #e1edd9; color: #173c2f; }
+html body.app-open header.site .head-right { display: flex; align-items: center; gap: 10px; margin-left: auto; width: auto; justify-content: flex-end; }
+html body.app-open header.site #restart, html body.app-open header.site #engine { color: #193b31; }
+html body.app-open header.site #engine { border-color: #dfe6dc; background: #f1f5ee; }
+html body.app-open header.site .header-context { display: none; }
+
+@media (max-width: 760px) {
+  html body.app-open header.site { height: auto; min-height: 56px; padding: 8px 14px; flex-wrap: wrap; gap: 8px; }
+  html body.app-open header.site .app-nav { order: 3; width: 100%; margin: 0; justify-content: center; }
+  html body.app-open header.site .app-nav button { padding: 8px 12px; font-size: 12px; }
+}
+
+/* ---------- Learning guide fills the screen ---------- */
+html body.learning-open main { max-width: none; padding: 0; margin: 0; }
+html body.learning-open #v-learning { max-width: none; width: 100%; margin: 0; padding: 0; }
+html body.learning-open .learning-page { max-width: none; padding: 0; margin: 0; }
+html body.learning-open .learning-page > .section-eyebrow,
+html body.learning-open .learning-page > h1,
+html body.learning-open .learning-page > p { display: none; }
+html body.learning-open .learning-shell { border-radius: 0; border-width: 0; min-height: calc(100vh - 64px); }
+html body.learning-open .site-foot { display: none; }
