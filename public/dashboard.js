@@ -1,5 +1,5 @@
 // Mentor Labs dashboard (Investing + Budget), built to the approved concept screens.
-import {classicScreens, setDebtPlan} from './dashboard-classic.js?v=1';
+import {classicScreens, setDebtPlan} from './dashboard-classic.js?v=2';
 // Every figure comes from the server's code-computed workspace (/api/workspace) or the labeled sample
 // (/api/workspace/demo). Samples are display-only and never saved as the user's finances.
 // Mounted by app.js (openWorkspace -> mountDashboard) into #dashboard-root under the shared header.
@@ -396,6 +396,7 @@ function render() {
   const out = view();
   shell(out.body);
   out.after?.();
+  document.body.classList.toggle('db-inline-teacher', Boolean(root.querySelector('.db-teacher')));
   document.dispatchEvent(new CustomEvent('mentor:workspace-rendered'));
 }
 async function load() {
