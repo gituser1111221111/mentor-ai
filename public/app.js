@@ -698,7 +698,7 @@ document.querySelector('#start-choice')?.addEventListener('submit', () => {
 // Dashboard design pass (Nov 7): the Dashboard opens the standalone Investing/Budget page.
 // The Dashboard (Investing/Budget design pass) mounts inside the app, under the shared header,
 // with the built-in teacher dock available. The previous workspace.js is kept but no longer loaded.
-function openWorkspace(tab) {show('v-workspace');import('/dashboard.js?v=4').then(m=>m.mountDashboard(document.querySelector('#dashboard-root'),tab==='portfolio'||tab==='investing'?'investing':tab==='budget'?'budget':undefined)).catch(e=>banner('The dashboard could not load: '+e.message,true));}
+function openWorkspace(tab) {show('v-workspace');import('/dashboard.js?v=6').then(m=>m.mountDashboard(document.querySelector('#dashboard-root'),tab==='portfolio'||tab==='investing'?'investing':tab==='budget'?'budget':undefined)).catch(e=>banner('The dashboard could not load: '+e.message,true));}
 function openLearning() {show('v-learning');}
 document.querySelectorAll('[data-open-workspace]').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();openWorkspace(b.dataset.openWorkspace);}));
 document.querySelectorAll('[data-open-learning]').forEach(b=>b.addEventListener('click',openLearning));
