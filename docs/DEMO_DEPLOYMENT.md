@@ -23,7 +23,7 @@ Not used by the app: Supabase (`SUPABASE_*`), LlamaParse (`LLAMA_CLOUD_API_KEY`)
 1. Render Dashboard > the `mentor-ai` service > Environment.
 2. Add `MENTOR_API_KEY` with the Anthropic key. Add `ELEVENLABS_API_KEY` and `ELEVENLABS_VOICE_DEBT_FREE_COACH` for voice. Add any market keys you have.
 3. Confirm `HOST` is `0.0.0.0` (render.yaml sets it).
-4. Save, which redeploys. Then check, in a browser:
+4. Save, which redeploys. Then run `npm run verify:live` (or `npm run verify:live -- <site url>`). It checks every item below, asks one budgeting question and requests its audio, without spending Alpha Vantage calls. Or check by hand in a browser:
    - `/api/health`: `mentorConfigured` and `voiceConfigured` should be `true`. These are booleans only; they show a value is set, not that the provider accepted it.
    - `/api/config`: `engine` should be `live`, and `voice` should be `true` once the voice ID resolves.
    - `/api/market/status`: which market sources are configured.
