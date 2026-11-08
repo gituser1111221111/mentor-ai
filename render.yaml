@@ -26,3 +26,8 @@ services:
         sync: false
       - key: ALPHA_VANTAGE_API_KEY
         sync: false
+      # Voice for the Dave Ramsey-inspired mentor. Without these, voice is hidden and text chat still works.
+      - key: ELEVENLABS_API_KEY
+        sync: false
+      - key: ELEVENLABS_VOICE_DEBT_FREE_COACH
+        sync: false
