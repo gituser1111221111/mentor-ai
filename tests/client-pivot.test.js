@@ -21,24 +21,22 @@ function client() {
   return {$,state,saved,context,started:()=>started};
 }
 
-test('a first visit requires a real mentor choice, and cannot start a preview', () => {
+// Nov 7: entry buttons skip the teacher-choice dialog and go straight to chat.
+test('a first visit goes straight to chat with an available teacher, never a preview', () => {
   const c=client();
-  vm.runInContext('openStartChoice()',c.context);
-  assert.equal(c.$('#start-personas').value,'');
-  c.$('#start-personas').value='preview';
-  vm.runInContext('submitStartChoice({preventDefault(){}})',c.context);
-  assert.equal(c.started(),0);
-  assert.match(c.$('#start-choice-error').textContent,/available perspective/);
+  vm.runInContext("openStartChoice({personaId:'preview'})",c.context);
+  assert.equal(c.started(),1);
+  assert.notEqual(c.$('#start-choice').open,true);
+  assert.equal(c.state.personaId,'ramsey');
 });
 
-test('future-money choice starts the holdings specialist with the selected mentor', () => {
+test('future-money entry starts the holdings specialist with the selected mentor, no dialog', () => {
   const c=client();
   vm.runInContext("openStartChoice({personaId:'buffett',need:'future'})",c.context);
-  vm.runInContext('submitStartChoice({preventDefault(){}})',c.context);
   assert.equal(c.state.personaId,'buffett');
   assert.equal(c.state.agentId,'investing');
   assert.equal(c.started(),1);
-  assert.equal(c.$('#start-choice').open,false);
+  assert.notEqual(c.$('#start-choice').open,true);
   assert.equal(JSON.parse(c.saved.get('mentor-labs-choice')).personaId,'buffett');
 });
 

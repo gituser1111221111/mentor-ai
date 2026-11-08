@@ -71,7 +71,17 @@ function renderLanding() {
 
 // Choose explicitly: no mentor is the product's default.
 let pendingAgent = null;
+// Nov 7: entry buttons go straight to the chatbot. The teacher can be switched inside chat.
 function openStartChoice({personaId = state.personaId, need = state.need, agentId = null} = {}) {
+  let saved = null; try { saved = JSON.parse(localStorage.getItem('mentor-labs-choice') || 'null'); } catch {}
+  const pick = [personaId, saved?.personaId, 'debt-free-coach'].map(persona).find(p => p && usable(p)) || personas().find(usable);
+  if (!pick) { banner('No teacher is available right now. Please try again shortly.', true); return; }
+  state.personaId = pick.id; state.need = need || saved?.need || 'question';
+  state.agentId = agentId || (state.need === 'future' && usable(agent('investing')) ? 'investing' : (usable(agent(state.agentId)) ? state.agentId : 'budget'));
+  rememberChoice(); startChat();
+  try { if (learningQuestion) { $('#msg').value = learningQuestion; learningQuestion = ''; $('#msg').focus(); } } catch {}
+}
+function openStartChoiceDialog({personaId = state.personaId, need = state.need, agentId = null} = {}) {
   pendingAgent = agentId;
   $('#start-personas').innerHTML = '<option value="">Choose a perspective</option>' + personas().slice().sort((a,b) => Number(usable(b)) - Number(usable(a))).map(p => `<option value="${esc(p.id)}" ${usable(p) ? '' : 'disabled'}>${esc(p.name)}${usable(p) ? '' : ' · Preview'}</option>`).join('');
   $('#start-personas').value = usable(persona(personaId)) ? personaId : '';
@@ -136,7 +146,13 @@ async function submitQuiz(answers) {
   } catch (e) { banner(e.message, true); }
 }
 
-function renderIntake() {
+// The six-question intake is retired (Nov 7). Import is the planned way to bring in numbers.
+function showImportSoon() {
+  const msg = 'Import is coming soon: you will be able to bring in your budget and holdings here. Until then, your teacher works from the shared demo profile.';
+  if (!$('#v-chat').hidden) note(msg); else banner(msg);
+}
+function renderIntake() { return showImportSoon(); }
+function renderIntakeLegacy() {
   if (!usable(persona(state.personaId))) return openStartChoice();
   $('#intake-teacher').textContent = 'Getting started with ' + persona(state.personaId).name;
   $('#income-months').innerHTML = lastMonths(6).map(m => `<label class="f">${esc(new Date(m + '-15T12:00:00Z').toLocaleString('en-US', {month: 'short', year: 'numeric', timeZone: 'UTC'}))}<input inputmode="decimal" data-month="${m}" placeholder="0.00"></label>`).join('');
@@ -230,7 +246,7 @@ function starterPrompts() {
 // Empty-state starters: visible questions instead of a blank log. Removed on the first send.
 function showStarters() {
   const el = document.createElement('div'); el.className = 'starter';
-  el.innerHTML = `<p class="fine">Try one of these, or ask your own.</p><div class="chips">${starterPrompts().map(t => `<button class="chip" type="button">${esc(t)}</button>`).join('')}</div>${state.profile?.incomeHistory?.length ? '' : '<button class="btn text" type="button" data-add-numbers>Add my numbers for a personal plan</button>'}`;
+  el.innerHTML = `<p class="fine">Try one of these, or ask your own.</p><div class="chips">${starterPrompts().map(t => `<button class="chip" type="button">${esc(t)}</button>`).join('')}</div><button class="btn text" type="button" data-add-numbers title="Import is coming soon">Import my data <span class="tag quiet">Soon</span></button>`;
   el.querySelectorAll('.chip').forEach(c => c.onclick = () => send(c.textContent));
   el.querySelector('[data-add-numbers]')?.addEventListener('click', renderIntake);
   $('#log').append(el);
@@ -385,7 +401,7 @@ function startChat() {
   if (['investing','equity'].includes(a.id)) {
     note(state.profile?.portfolio ? `Your teacher can explore your saved holdings through ${p.name}'s researched perspective.` : 'Import your holdings to explore your portfolio with your teacher.');
     if (!state.profile?.portfolio) { const el = document.createElement('div'); el.className = 'portfolio-start'; el.innerHTML = '<button class="btn primary" type="button" data-holdings>Upload holdings CSV</button><button class="btn text" type="button" data-context-open>Open context hub</button>'; el.querySelector('[data-holdings]').onclick = () => $('#portfolio-file').click(); el.querySelector('[data-context-open]').onclick = () => $('#context-dialog').showModal(); $('#log').append(el); }
-  } else note(p.textOnly ? `${p.name} is ready for text chat. Explore a perspective or bring a research question.` : state.profile?.incomeHistory?.length ? `${p.name} is ready to talk through your plan. Ask anything below.` : `Say hello, ask a question, or choose Talk live for a voice conversation. Add your numbers anytime for a personal plan.`);
+  } else note(p.textOnly ? `${p.name} is ready for text chat. Explore a perspective or bring a research question.` : state.profile?.incomeHistory?.length ? `${p.name} is ready to talk through your plan. Ask anything below.` : `Say hello, ask a question, or choose Talk live for a voice conversation. Importing your own numbers is coming soon.`);
   if (state.need === 'retirement') note('Explore retirement questions here. A dedicated retirement scenario tool is still planned.');
   showStarters();
   $('#msg').focus();
@@ -646,7 +662,7 @@ async function boot() {
   $('#start-choice-form').onsubmit = submitStartChoice;
   $('#start-choice-close').onclick = () => $('#start-choice').close();
   document.querySelectorAll('[data-start-need]').forEach(b => b.onclick = () => openStartChoice({need:b.dataset.startNeed}));
-  $('#chat-plan').onclick = renderIntake;
+  $('#chat-plan').onclick = showImportSoon; $('#chat-import').onclick = showImportSoon;
   $('#demo').onclick = async () => { await api('/api/portfolio/upload', {method: 'POST', body: {sample: true}}).catch(() => {}); submitQuiz(DEMO); };
   document.querySelectorAll('[data-unlock]').forEach(b => b.onclick = openUnlock);
   setupContextHub();
