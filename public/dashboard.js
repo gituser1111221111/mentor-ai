@@ -63,7 +63,8 @@ function budget() {
   const cats = [...(p.bills || []).map(r => ({name: r.name, amount: cents(r.amount), fixed: true})), ...(p.expenses || []).map(r => ({name: r.name, amount: cents(r.amount), fixed: false}))];
   if (debtMin) cats.push({name: 'Debt payments', amount: debtMin, fixed: true, debt: true});
   const planned = cats.reduce((t, c) => t + c.amount, 0);
-  const month = income.some(x => x.month === state.month) ? state.month : income.at(-1)?.month;
+  const lowest = income.reduce((lo, x) => (!lo || cents(x.amount) < cents(lo.amount) ? x : lo), null);
+  const month = income.some(x => x.month === state.month) ? state.month : lowest?.month;
   const monthIncome = cents(income.find(x => x.month === month)?.amount);
   const savings = cents(p.savings), goal = src?.budget?.cashCushion == null ? null : cents(src.budget.cashCushion);
   return {sample: !own, src, p, snap, income, cats, planned, month, monthIncome, available: monthIncome - planned, savings, goal, debts: p.debts || []};
@@ -100,7 +101,8 @@ function head(title, sub, badge, actions = '') {
 }
 const btn = (label, attrs = '', icon = '', primary = false) => `<button type="button" class="db-btn${primary ? ' primary' : ''}" ${attrs}>${icon ? svg(icon) : ''}${esc(label)}</button>`;
 const stat = (label, value, tip, sub = '', cls = '') => `<article class="db-card db-stat"><span>${esc(label)} ${tip ? info(tip) : ''}</span><strong class="${cls}">${value}</strong>${sub ? `<em>${sub}</em>` : ''}</article>`;
-function teacher(prompt, placeholder = 'Ask about these numbers...') {
+function teacher() { return ''; } // inline panels removed: the app's teacher launcher is the one teacher
+function teacherPanelUnused(prompt, placeholder = 'Ask about these numbers...') {
   let persona = 'debt-free-coach'; try { persona = JSON.parse(localStorage.getItem('mentor-labs-choice') || '{}').personaId || persona; } catch {}
   return `<div class="db-teacher"><div class="db-teacher-top"><img src="/img/mentors/${esc(persona)}.webp" alt="" onerror="this.src='/img/mentor-logo-suede.webp'"><div><b>Ask your teacher <span class="db-dot"></span></b><p>${esc(prompt)}</p></div></div><form data-ask><input aria-label="Ask your teacher" placeholder="${esc(placeholder)}" value=""><button type="submit" aria-label="Send">${svg('send')}</button></form></div>`;
 }
@@ -130,7 +132,7 @@ function invOverview() {
   const gain = costKnown ? total - cost : null, score = riskScore(risk), m = risk.metrics || {}, h = risk.history || {};
   const t3 = top3(risk), t3w = t3.reduce((s, r) => s + r.weight, 0);
   const classes = [['Stocks', rows.filter(r => !r.isCash && r.sector !== 'Crypto').reduce((s, r) => s + r.weight, 0)], ['Crypto', rows.filter(r => r.sector === 'Crypto').reduce((s, r) => s + r.weight, 0)], ['Cash', rows.filter(r => r.isCash).reduce((s, r) => s + r.weight, 0)], ['Unclassified', rows.filter(r => !r.isCash && r.sector === 'Unknown').reduce((s, r) => s + r.weight, 0)]];
-  const body = head('Your portfolio', '', sample ? 'Example portfolio' : '', btn('Import holdings', 'data-import', 'upload') + btn('Export', 'data-export="holdings"', 'download')) + `
+  const body = head('Your portfolio', '', sample ? 'Example portfolio' : '', btn('Export', 'data-export="holdings"', 'download')) + `
   <div class="db-grid db-g4">${stat('Portfolio value', usd(total), 'Imported market values. A refresh does not revalue your holdings.')}${stat('Unrealized gain', gain === null ? '—' : signedUsd(gain), 'Value minus the cost basis you imported.', gain === null ? 'Add cost basis to see this' : signedPct(cost ? gain / cost * 100 : null) + ' on cost', gain === null ? '' : gain >= 0 ? 'pos' : 'neg')}${stat('Historical mix return', signedPct(m.ret1y), 'Your current mix replayed over the past year of weekly closes. Not your account performance.', `S&amp;P 500 ${signedPct(m.spyRet)} (1Y)`, num(m.ret1y) >= 0 ? 'pos' : 'neg')}${stat('Risk health', `${score ?? '—'}<small> /100</small>`, 'Starts at 100 and drops for each guideline breach: 10 for high, 5 for medium, 2 for low severity.', sample ? 'Example guideline review' : 'Your saved guidelines')}</div>
   <article class="db-card"><div class="db-card-h"><h3>Performance</h3><div class="db-seg" role="group" aria-label="Range">${[[13, '3M'], [26, '6M'], [52, '1Y']].map(([w, l]) => `<button type="button" data-range="${w}" aria-pressed="${state.perfRange === w}">${l}</button>`).join('')}</div></div>
     <div class="db-legend"><span><i></i>Portfolio <b id="db-perf-p"></b></span><span><i class="dash"></i>S&amp;P 500 <b id="db-perf-b"></b></span></div>
@@ -168,7 +170,7 @@ function invRisk() {
   const worst = prefix => { const list = checks.filter(c => c.id.startsWith(prefix)); if (!list.length) return null; const order = {breach: 3, warn: 2, unknown: 1, pass: 0}; return list.sort((a, b) => order[checkStatus(b)] - order[checkStatus(a)])[0]; };
   const lines = [['position:', `Position size (≤ ${g.maxPositionPercent ?? '—'}%)`], ['sector:', `Sector concentration (≤ ${g.maxSectorPercent ?? '—'}%)`], ['top-five', `Top-five share (≤ ${g.maxTop5Percent ?? '—'}%)`], ['drawdown', `Portfolio drawdown (≤ ${g.maxDrawdownPercent ?? '—'}%)`], ['volatility', `Volatility (≤ ${g.maxVolatilityPercent ?? '—'}%)`], ['holdings', `Diversification (≥ ${g.minHoldings ?? '—'} positions)`], ['crypto', `Crypto share (≤ ${g.maxCryptoPercent ?? '—'}%)`]].map(([id, label]) => { const c = worst(id); return c ? [label, checkStatus(c)] : null; }).filter(Boolean).slice(0, 6);
   const corr = rows.slice(0, 4).map(r => r.symbol), pair = (a, b) => a === b ? 1 : (risk.pairs || []).find(p => (p.a === a && p.b === b) || (p.a === b && p.b === a))?.correlation;
-  const body = head('Risk review', 'Portfolio risk and guideline check', sample ? 'Example portfolio' : '', btn('Import holdings', 'data-import', 'upload') + btn('Export', 'data-export="risk"', 'download')) + `
+  const body = head('Risk review', 'Portfolio risk and guideline check', sample ? 'Example portfolio' : '', btn('Export', 'data-export="risk"', 'download')) + `
   <div class="db-grid db-g4">${stat('Beta', fix(m.beta), 'How much the mix moved with the S&P 500 over the past year. 1.0 moves with the market.')}${stat('Volatility', pct(m.vol), 'Annualized standard deviation of weekly returns.', '', 'pos')}${stat('Max drawdown', num(m.maxDD) === null ? '—' : '−' + pct(m.maxDD), 'Largest peak-to-trough fall of the mix over the window.', '', 'neg')}${stat('Sharpe ratio', fix(m.sharpe), 'Return above the 10-year Treasury rate per unit of volatility.')}</div>
   <div class="db-grid db-g2"><article class="db-card"><h3>Risk score ${info('100 minus points for each guideline breach: 10 high, 5 medium, 2 low.')}</h3><div class="db-score"><div class="db-ring" style="--p:${score};--c:${ringColor}"><div><div><b>${score}<small>/100</small></b><span>${riskWord(score)}</span></div></div></div><div>${breachCount(risk) ? `<span class="db-flag">${svg('warn', 'db-ic')} ${breachCount(risk)} guideline breach${breachCount(risk) === 1 ? '' : 'es'}</span>` : ''}<p class="db-note" style="color:var(--db-ink-2);font-size:.8rem">${score >= 80 ? 'Risk is within your guidelines.' : score >= 55 ? 'Risk is within a moderate range, with areas to address.' : 'Several guidelines are breached. Review the checklist.'}</p></div></div></article>
     <article class="db-card"><h3>Position concentration ${info('Share of imported value in each holding.')}</h3><table class="db-table"><thead><tr><th>Position</th><th></th><th class="r">% of portfolio</th></tr></thead><tbody>${top4.map(r => `<tr><td><b>${esc(r.symbol)}</b></td><td style="width:55%">${bar(r.weight, maxW, false, true)}</td><td class="r">${pct(r.weight)}</td></tr>`).join('')}${other.length ? `<tr><td>Other (${other.length})</td><td>${bar(otherW, maxW, true, true)}</td><td class="r">${pct(otherW)}</td></tr>` : ''}</tbody></table></article></div>
@@ -209,7 +211,7 @@ function invHoldings() {
   const {sample, risk} = investing();
   if (!risk) return empty('Holdings');
   const rows = risk.rows || [];
-  const body = head('Holdings', 'Every imported position, valued as imported', sample ? 'Example portfolio' : '', btn('Import holdings', 'data-import', 'upload') + btn('Export', 'data-export="holdings"', 'download')) + `
+  const body = head('Holdings', 'Every imported position, valued as imported', sample ? 'Example portfolio' : '', btn('Export', 'data-export="holdings"', 'download')) + `
   <article class="db-card"><table class="db-table"><thead><tr><th>Asset</th><th>Sector</th><th class="r">Value</th><th class="r">Weight</th><th class="r">Gain vs cost</th><th class="r">Price</th><th>Price source</th></tr></thead><tbody>${rows.map(r => `<tr><td><div class="db-asset">${logo(r.symbol)}<div><b>${esc(r.symbol)}</b><small>${esc(r.company || '')}</small></div></div></td><td>${esc(r.sector)}</td><td class="r">${usd(r.value, 2)}</td><td class="r">${pct(r.weight)}</td><td class="r ${num(r.plPct) === null ? '' : r.plPct >= 0 ? 'pos' : 'neg'}">${signedPct(r.plPct)}</td><td class="r">${usd(r.price, 2)}</td><td><small class="db-note">${esc(r.priceSource || '—')} ${esc(r.priceAsOf || '')}</small></td></tr>`).join('')}</tbody></table></article>`;
   return {body};
 }
@@ -224,9 +226,33 @@ function invCalendar() {
   <p class="db-note">No earnings transcript is loaded. Ask your teacher what to listen for; it will not predict results.</p>`;
   return {body};
 }
+// Macro items are the dated macro series and economic calendar the teacher also receives, not invented headlines.
+function macroItems(market) {
+  const m = market?.macro || {}, notes = m.asOfNotes || {}, items = [];
+  const add = (title, n, src) => items.push({kind: 'macro', title, source: src, date: n || m.snapshotAsOf || ''});
+  if (m.fedFunds != null) add(`Fed funds rate at ${m.fedFunds}%`, notes.fedFunds, 'FRED');
+  if (m.tenYear != null) add(`10-year Treasury yield at ${m.tenYear}%${m.twoYear != null ? ` (2-year ${m.twoYear}%)` : ''}`, notes.tenYear, 'FRED');
+  if (m.cpiYoY != null) add(`CPI inflation running ${m.cpiYoY}% year over year`, notes.cpiYoY, 'BLS via FRED');
+  if (m.unemployment != null) add(`Unemployment rate at ${m.unemployment}%`, notes.unemployment, 'BLS via FRED');
+  for (const e of market?.economicEvents || []) items.push({kind: 'macro', title: `Upcoming: ${e.title || e.name || e.event}`, source: e.description || e.source || 'federalreserve.gov', date: e.date});
+  return items;
+}
+function newsList() {
+  const {market} = investing(), f = state.newsFilter || 'all', q = (state.newsQuery || '').toLowerCase();
+  const items = [...(market?.news || []).map(n => ({...n, kind: 'holding'})), ...macroItems(market)]
+    .filter(n => f === 'all' || (f === 'holdings' ? n.kind === 'holding' : n.kind === 'macro'))
+    .filter(n => !q || `${n.title} ${n.symbol || ''} ${(n.tickers || []).join(' ')} ${n.source || ''}`.toLowerCase().includes(q));
+  return items.length ? `<ul class="db-list">${items.map(n => `<li><span>${n.kind === 'macro' ? '<b class="db-tag-macro">MACRO</b>' : `<b>${esc(n.symbol || '')}</b>`} ${n.url ? `<a href="${esc(n.url)}" target="_blank" rel="noopener noreferrer">${esc(n.title)}</a>` : esc(n.title)}</span><small>${esc(n.source || n.provider || '')} · ${esc(n.date || n.providerAsOf || '')}</small></li>`).join('')}</ul>` : '<p class="db-empty">No items match this filter.</p>';
+}
 function invNews() {
   const {sample, market} = investing();
   const news = market?.news || [];
+  const f = state.newsFilter || 'all';
+  const controls = `<div class="db-news-bar"><input class="db-input" data-news-search type="search" placeholder="Search headlines, tickers or sources" value="${esc(state.newsQuery || '')}" aria-label="Search news"><div class="db-seg" role="group" aria-label="News filter">${[['all', 'All'], ['holdings', 'My holdings'], ['macro', 'Macro']].map(([k, l]) => `<button type="button" data-news-filter="${k}" aria-pressed="${f === k}">${l}</button>`).join('')}</div></div>`;
+  if (news.length || macroItems(market).length) {
+    const body = head('News', 'Headlines on your holdings plus the macro backdrop, with source and date', sample ? 'Example portfolio' : '', sample ? '' : btn('Refresh market data', 'data-refresh', 'reset')) + controls + `<article class="db-card" data-news-list>${newsList()}</article>`;
+    return {body};
+  }
   const body = head('News', 'Recent headlines about your holdings, with source and date', sample ? 'Example portfolio' : '', sample ? '' : btn('Refresh market data', 'data-refresh', 'reset')) + `
   <article class="db-card">${news.length ? `<ul class="db-list">${news.map(n => `<li><span><b>${esc(n.symbol || '')}</b> ${n.url ? `<a href="${esc(n.url)}" target="_blank" rel="noopener noreferrer">${esc(n.title)}</a>` : esc(n.title)}</span><small>${esc(n.source || n.provider || '')} · ${esc(n.date || n.providerAsOf || '')}</small></li>`).join('')}</ul>` : `<p class="db-empty">${sample ? 'No sample headlines.' : 'Refresh market data to load headlines for your holdings.'}</p>`}</article>`;
   return {body};
@@ -245,11 +271,20 @@ function budgetHead(title, sub, actions) {
   return head(title, sub, b.sample ? 'Example budget' : '', sel + actions);
 }
 function catRows(b, max) { return b.cats.map(c => `<div class="db-bar-row">${svg(catIcon(c.name), 'db-ic')}<span>${esc(c.name)}</span>${bar(c.amount, max)}<span class="v">${b.monthIncome ? pct(c.amount / b.monthIncome * 100) : '—'}</span></div>`).join(''); }
-function payoff(debts) {
-  let months = 0, interest = 0; const list = debts.map(d => ({bal: Number(d.balance), rate: (d.rateBps || 0) / 10000 / 12, pay: Number(d.minPayment)}));
+function payoff(debts, order = 'snowball', extraCents = 0) {
+  const list = debts.map(d => ({name: d.name, bal: cents(d.balance), rate: d.rateBps || 0, min: cents(d.minPayment)}));
   if (!list.length) return null;
-  while (list.some(d => d.bal > 0.005) && months < 600) { months++; for (const d of list) { if (d.bal <= 0) continue; const i = d.bal * d.rate; interest += i; d.bal = d.bal + i - d.pay; if (d.pay <= i) return {months: null, interest: null}; if (d.bal < 0) d.bal = 0; } }
-  return {months, interest};
+  list.sort(order === 'avalanche' ? (a, b) => b.rate - a.rate : (a, b) => a.bal - b.bal);
+  const budget = list.reduce((t, d) => t + d.min, 0) + extraCents, round = (n, d) => Math.sign(n) * Math.floor((Math.abs(n) + d / 2) / d);
+  let months = 0, interest = 0; const paidOff = [];
+  while (list.some(d => d.bal > 0) && months < 600) {
+    months++; let left = budget;
+    for (const d of list) if (d.bal > 0) { const i = round(d.bal * d.rate, 120000); d.bal += i; interest += i; }
+    for (const d of list) if (d.bal > 0) { const pay = Math.min(d.min, d.bal); d.bal -= pay; left -= pay; }
+    for (const d of list) if (d.bal > 0 && left > 0) { const pay = Math.min(left, d.bal); d.bal -= pay; left -= pay; }
+    for (const d of list) if (d.bal === 0 && !paidOff.some(p => p.name === d.name)) paidOff.push({name: d.name, month: months});
+  }
+  return months >= 600 ? {months: null, interest: null} : {months, interest: interest / 100, order: paidOff};
 }
 function budOverview() {
   const b = budget();
@@ -258,12 +293,12 @@ function budOverview() {
   const goalMonths = b.goal && b.planned ? b.goal / b.planned : null, progress = b.goal ? Math.min(100, b.savings / b.goal * 100) : null;
   const totalDebt = b.debts.reduce((t, d) => t + Number(d.balance), 0), pay = payoff(b.debts);
   const max = Math.max(...b.cats.map(c => c.amount), 1);
-  const body = budgetHead('Your monthly plan', '', btn('Add your numbers', 'data-view="settings"', 'plus') + btn('Import', 'data-import-doc', 'upload')) + `
+  const body = budgetHead('Your monthly plan', '', btn('Edit income', 'data-view="settings"', 'settings')) + `
   <div class="db-grid db-g4">${stat('Income', usd(dollars(b.monthIncome)), `Take-home income saved for ${b.month ? MONTH_LONG(b.month) : 'this month'}.`)}${stat('Planned spending', usd(dollars(b.planned)), 'Fixed bills, everyday spending and debt minimums.')}${stat('Available', usd(dollars(b.available)), 'Income for the selected month minus planned spending.', '', b.available >= 0 ? 'pos' : 'neg')}${stat('Cushion gap', monthsToGoal === null ? (gap === null ? 'Not set' : '—') : `${monthsToGoal.toFixed(1)} months`, 'Months to reach your cash cushion goal if the available amount is saved each month.', gap === null ? '' : `${usd(dollars(gap))} to go`, 'pos')}</div>
   <article class="db-card"><div class="db-card-h"><h3>Income vs. current planned costs</h3>${b.sample ? '<span class="db-note">Illustrative data.</span>' : ''}</div><div class="db-legend"><span><i></i>Income</span><span><i class="light"></i>Planned costs</span></div><div class="db-chart"><canvas id="db-flow" aria-label="Income versus planned costs by month"></canvas></div></article>
   <div class="db-grid db-g21"><article class="db-card"><h3>Spending by category <small>(${b.month ? MONTH_LONG(b.month) : ''})</small></h3><table class="db-table"><thead><tr><th>Category</th><th class="r">Amount</th><th></th><th class="r">% of income ${info('Share of the selected month\'s take-home income.')}</th></tr></thead><tbody>${b.cats.map(c => `<tr><td><div class="db-asset">${svg(catIcon(c.name), 'db-ic')}<b>${esc(c.name)}</b></div></td><td class="r">${usd(dollars(c.amount))}</td><td style="width:34%">${bar(c.amount, max, true, true)}</td><td class="r">${b.monthIncome ? pct(c.amount / b.monthIncome * 100) : '—'}</td></tr>`).join('')}</tbody></table></article>
     <article class="db-card"><h3>Emergency fund goal</h3>${b.goal ? `<div style="display:flex;gap:10px">${svg('shield', 'db-ic')}<div style="flex:1"><div style="font-size:.84rem">${usd(dollars(b.goal))} (≈ ${goalMonths.toFixed(1)} months of planned costs)</div><div style="display:flex;align-items:center;gap:10px;margin:8px 0 4px">${bar(progress, 100)}<b>${Math.round(progress)}%</b></div><small class="db-note">${usd(dollars(b.savings))} saved · ${usd(dollars(gap))} to go</small></div></div>` : '<p class="db-empty">Set a cash cushion goal in Goals.</p>'}<hr class="db-divider" style="margin:14px 0">
-      <div style="display:flex;gap:10px">${svg('card', 'db-ic')}<div><b style="font-size:.88rem">Debt payoff (preview)</b> ${info('Pays only the current minimums, with monthly interest at each debt\'s APR. An estimate, not a payoff quote.')}<div class="db-note" style="color:var(--db-ink-2);margin:4px 0">${b.debts.length ? (pay?.months ? `Pay off ${usd(totalDebt)} in ≈ ${pay.months} months` : 'Minimums do not cover the interest.') : 'No debts saved.'}</div><button type="button" class="db-link" data-view="debt">Explore debt plan ›</button></div></div></article></div>
+      <div style="display:flex;gap:10px">${svg('card', 'db-ic')}<div><b style="font-size:.88rem">Debt payoff (preview)</b> ${info('Pays only the current minimums, with monthly interest at each debt\'s APR. An estimate, not a payoff quote.')}<div class="db-note" style="color:var(--db-ink-2);margin:4px 0">${b.debts.length ? (pay?.months ? `Pay off ${usd(totalDebt)} in ${pay.months} months (snowball, current minimums)` : 'Minimums do not cover the interest.') : 'No debts saved.'}</div><button type="button" class="db-link" data-view="debt">Explore debt plan ›</button></div></div></article></div>
   ${teacher(b.available > 0 ? 'You have room to build your emergency fund.' : 'Your planned costs are above this month\'s income.', 'Ask about these numbers...')}`;
   return {body, after: () => drawFlow(b, '#db-flow', 6)};
 }
@@ -276,7 +311,7 @@ function budCashflow() {
   if (!b.src) return empty('Cash flow');
   const vals = b.income.map(x => cents(x.amount)), low = vals.length ? Math.min(...vals) : 0, avg = vals.length ? vals.reduce((t, v) => t + v, 0) / vals.length : 0;
   const fixed = b.cats.filter(c => c.fixed).reduce((t, c) => t + c.amount, 0), flex = b.planned - fixed;
-  const body = head('Cash flow', 'Income, planned costs, and monthly balance', b.sample ? 'Example budget' : '', `<select class="db-select" data-flow-range aria-label="Range">${[[6, 'Last 6 months'], [3, 'Last 3 months'], [12, 'Last 12 months']].map(([v, l]) => `<option value="${v}" ${state.flowRange === v ? 'selected' : ''}>${l}</option>`).join('')}</select>` + btn('Add amount', 'data-view="settings"', 'plus') + btn('Export', 'data-export="cashflow"', 'download')) + `
+  const body = head('Cash flow', 'Income, planned costs, and monthly balance', b.sample ? 'Example budget' : '', `<select class="db-select" data-flow-range aria-label="Range">${[[6, 'Last 6 months'], [3, 'Last 3 months'], [12, 'Last 12 months']].map(([v, l]) => `<option value="${v}" ${state.flowRange === v ? 'selected' : ''}>${l}</option>`).join('')}</select>` + btn('Edit income', 'data-view="settings"', 'settings') + btn('Export', 'data-export="cashflow"', 'download')) + `
   <div class="db-grid db-g4">${stat('Lowest income', usd(dollars(low)), 'Lowest saved take-home month. Plans built on it hold up in a slow month.')}${stat('Average income', usd(dollars(avg)), 'Average of saved months, to the cent.', '', 'pos')}${stat('Planned costs', usd(dollars(b.planned)), 'Current monthly plan: bills, spending and debt minimums.', '', 'pos')}${stat('Monthly balance', usd(dollars(avg - b.planned)), 'Average income minus planned costs.', '', avg - b.planned >= 0 ? 'pos' : 'neg')}</div>
   <article class="db-card"><div class="db-card-h"><h3>Income vs. planned costs</h3><div class="db-seg" role="group" aria-label="Range">${[[1, '1M'], [3, '3M'], [6, '6M']].map(([v, l]) => `<button type="button" data-flow="${v}" aria-pressed="${Math.min(state.flowRange, 6) === v}">${l}</button>`).join('')}</div></div><div class="db-legend"><span><i></i>Income</span><span><i class="light"></i>Planned costs</span></div><div class="db-chart"><canvas id="db-flow2" aria-label="Income versus planned costs"></canvas></div></article>
   <div class="db-grid db-g21"><article class="db-card"><h3>Saved income history ${info('Planned costs use your current plan for every month; past plans are not stored.')}</h3><table class="db-table"><thead><tr><th>Month</th><th class="r">Income</th><th class="r">Planned costs</th><th class="r">Saved income</th></tr></thead><tbody>${b.income.slice(-state.flowRange).map(x => { const s = cents(x.amount) - b.planned; return `<tr><td>${MONTH(x.month)}</td><td class="r">${usd(Number(x.amount))}</td><td class="r">${usd(dollars(b.planned))}</td><td class="r ${s >= 0 ? 'pos' : 'neg'}"><b>${usd(dollars(s))}</b></td></tr>`; }).join('')}</tbody></table></article>
@@ -302,12 +337,14 @@ function budSpending() {
 function budDebt() {
   const b = budget();
   if (!b.src) return empty('Debt plan');
-  const pay = payoff(b.debts), total = b.debts.reduce((t, d) => t + Number(d.balance), 0), mins = b.debts.reduce((t, d) => t + Number(d.minPayment), 0);
+  const order = state.debtOrder || 'snowball', pay = payoff(b.debts, order), other = payoff(b.debts, order === 'snowball' ? 'avalanche' : 'snowball');
+  const total = b.debts.reduce((t, d) => t + Number(d.balance), 0), mins = b.debts.reduce((t, d) => t + Number(d.minPayment), 0);
   const byBalance = [...b.debts].sort((a, c) => Number(a.balance) - Number(c.balance)), byRate = [...b.debts].sort((a, c) => c.rateBps - a.rateBps);
-  const body = head('Debt plan', 'Your saved debts and a minimum-payment payoff estimate', b.sample ? 'Example budget' : '') + `
-  <div class="db-grid db-g4">${stat('Total debt', usd(total), 'Sum of saved balances.')}${stat('Monthly minimums', usd(mins), 'Included in planned costs.')}${stat('Payoff estimate', pay?.months ? `${pay.months} months` : '—', 'Minimum payments only, monthly interest at each APR.')}${stat('Interest estimate', pay?.interest ? usd(pay.interest) : '—', 'Interest paid over that schedule.', '', 'neg')}</div>
+  const seg = `<div class="db-seg" role="group" aria-label="Payoff order">${[['snowball', 'Snowball'], ['avalanche', 'Avalanche']].map(([k, l]) => `<button type="button" data-debt-order="${k}" aria-pressed="${order === k}">${l}</button>`).join('')}</div>`;
+  const body = head('Debt plan', 'Your saved debts, paid with your current minimums. Paid-off minimums roll to the next debt.', b.sample ? 'Example budget' : '', seg) + `
+  <div class="db-grid db-g4">${stat('Total debt', usd(total), 'Sum of saved balances.')}${stat('Monthly minimums', usd(mins), 'Included in planned costs.')}${stat('Payoff estimate', pay?.months ? `${pay.months} months` : '—', `${order === 'snowball' ? 'Snowball' : 'Avalanche'} order with your current minimums; freed-up minimums roll to the next debt. Monthly interest at each APR, exact cents.`)}${stat('Interest estimate', pay?.interest != null ? usd(pay.interest, 2) : '—', 'Interest paid over that schedule.', other?.interest != null ? `${order === 'snowball' ? 'Avalanche' : 'Snowball'}: ${usd(other.interest, 2)} over ${other.months} months` : '', 'neg')}</div>
   <div class="db-grid db-g2"><article class="db-card"><h3>Your debts</h3>${b.debts.length ? `<table class="db-table"><thead><tr><th>Debt</th><th class="r">Balance</th><th class="r">APR</th><th class="r">Minimum</th></tr></thead><tbody>${b.debts.map(d => `<tr><td><b>${esc(d.name)}</b></td><td class="r">${usd(Number(d.balance), 2)}</td><td class="r">${(d.rateBps / 100).toFixed(2)}%</td><td class="r">${usd(Number(d.minPayment), 2)}</td></tr>`).join('')}</tbody></table>` : '<p class="db-empty">No debts saved.</p>'}</article>
-    <article class="db-card"><h3>Payoff order to discuss</h3><div class="db-kv"><span><b>Snowball</b> <small class="db-note">smallest balance first</small></span><span>${byBalance.map(d => esc(d.name)).join(' → ') || '—'}</span></div><div class="db-kv"><span><b>Avalanche</b> <small class="db-note">highest APR first</small></span><span>${byRate.map(d => esc(d.name)).join(' → ') || '—'}</span></div><p class="db-note">Both orders are shown for learning. Your teacher can explain how your mentor approaches it.</p></article></div>
+    <article class="db-card"><h3>Payoff order to discuss</h3><div class="db-kv"><span><b>Snowball</b> <small class="db-note">smallest balance first</small></span><span>${byBalance.map(d => esc(d.name)).join(' → ') || '—'}</span></div><div class="db-kv"><span><b>Avalanche</b> <small class="db-note">highest APR first</small></span><span>${byRate.map(d => esc(d.name)).join(' → ') || '—'}</span></div>${pay?.order?.length ? `<div class="db-kv"><span><b>Debt-free timeline</b> <small class="db-note">${order}</small></span><span>${pay.order.map(p => `${esc(p.name)} (month ${p.month})`).join(' → ')}</span></div>` : ''}<p class="db-note">Both orders are shown for learning. Your teacher can explain how your mentor approaches it.</p></article></div>
   ${teacher('Which payoff order fits my situation, and why?')}`;
   return {body};
 }
@@ -335,10 +372,10 @@ function budReview() {
 function budSettings() {
   const b = budget();
   const months = []; const now = new Date(); for (let i = 5; i >= 0; i--) { const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - i, 15)); months.push(d.toISOString().slice(0, 7)); }
-  const saved = new Map((b.sample ? [] : b.income).map(x => [x.month, x.amount]));
+  const saved = new Map(b.income.map(x => [x.month, x.amount]));
   const body = head('Settings', 'Your take-home income by month. Used for every budget figure.', b.sample ? 'Example budget' : '') + `
   <article class="db-card"><h3>Take-home income</h3><table class="db-table"><thead><tr><th>Month</th><th>Take-home income</th></tr></thead><tbody>${months.map(m => `<tr><td>${MONTH_LONG(m)} ${m.slice(0, 4)}</td><td><input class="db-input" data-income="${m}" inputmode="decimal" placeholder="0.00" value="${esc(saved.get(m) || '')}" style="max-width:160px"></td></tr>`).join('')}</tbody></table>
-    <div style="display:flex;gap:10px;margin-top:12px">${btn('Save income', 'data-save-income', 'check', true)}</div><p class="db-note" style="margin-top:8px">Leave a month blank if you have no record. Sample numbers are never saved unless you save them here.</p></article>`;
+    <div style="display:flex;gap:10px;margin-top:12px">${btn('Save income', 'data-save-income', 'check', true)}</div><p class="db-note" style="margin-top:8px">These are the example months the dashboard and your teacher use. Saving makes them your own numbers.</p></article>`;
   return {body};
 }
 function empty(title) { return {body: head(title, 'Loading your dashboard...', '') + '<article class="db-card"><p class="db-empty">Loading…</p></article>'}; }
@@ -382,6 +419,8 @@ root.addEventListener('click', e => {
   if (t.hasAttribute('data-learn')) { document.dispatchEvent(new CustomEvent('mentor:show-learning')); return; }
   if (t.dataset.range) { state.perfRange = Number(t.dataset.range); render(); return; }
   if (t.dataset.flow) { state.flowRange = Number(t.dataset.flow); render(); return; }
+  if (t.dataset.newsFilter) { state.newsFilter = t.dataset.newsFilter; render(); return; }
+  if (t.dataset.debtOrder) { state.debtOrder = t.dataset.debtOrder; render(); return; }
   if (t.hasAttribute('data-import')) { document.querySelector('#portfolio-file')?.click(); return; }
   if (t.hasAttribute('data-import-doc')) { document.querySelector('#context-dialog')?.showModal?.(); return; }
   if (t.hasAttribute('data-edit-finances')) { document.dispatchEvent(new CustomEvent('mentor:edit-finances')); return; }
@@ -426,7 +465,7 @@ root.addEventListener('change', e => {
   if (e.target.matches('#db-sym')) { state.draftSymbol = e.target.value; state.draftTo = undefined; state.scenario = null; render(); }
   if (e.target.matches('[data-cat-amount], [data-cat-name]')) { syncEdit(); const pos = e.target.dataset.catAmount; render(); if (pos !== undefined) root.querySelector(`[data-cat-amount="${pos}"]`)?.focus(); }
 });
-root.addEventListener('input', e => { if (e.target.matches('#db-limit')) { const o = root.querySelector('#db-limit-out'); if (o) o.textContent = e.target.value + '%'; state.draftLimit = Number(e.target.value); } });
+root.addEventListener('input', e => { if (e.target.matches('[data-news-search]')) { state.newsQuery = e.target.value; const list = root.querySelector('[data-news-list]'); if (list) list.innerHTML = newsList(); return; } if (e.target.matches('#db-limit')) { const o = root.querySelector('#db-limit-out'); if (o) o.textContent = e.target.value + '%'; state.draftLimit = Number(e.target.value); } });
 root.addEventListener('submit', e => { if (e.target.matches('[data-ask]')) { e.preventDefault(); const input = e.target.querySelector('input'); ask(input.value || input.closest('.db-teacher').querySelector('p').textContent); input.value = ''; } });
 
 document.addEventListener('mentor:workspace-open', () => run(load));

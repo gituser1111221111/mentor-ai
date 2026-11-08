@@ -247,7 +247,7 @@ function starterPrompts() {
 function showStarters() {
   $('#log').querySelectorAll('.starter').forEach(x => x.remove()); // only one set of suggestions at a time
   const el = document.createElement('div'); el.className = 'starter';
-  el.innerHTML = `<p class="fine">Try one of these, or ask your own.</p><div class="chips">${starterPrompts().map(t => `<button class="chip" type="button">${esc(t)}</button>`).join('')}</div><button class="btn text" type="button" data-add-numbers title="Import is coming soon">Import my data <span class="tag quiet">Soon</span></button>`;
+  el.innerHTML = `<p class="fine">Try one of these, or ask your own.</p><div class="chips">${starterPrompts().map(t => `<button class="chip" type="button">${esc(t)}</button>`).join('')}</div>`;
   el.querySelectorAll('.chip').forEach(c => c.onclick = () => send(c.textContent));
   el.querySelector('[data-add-numbers]')?.addEventListener('click', renderIntake);
   $('#log').append(el);
@@ -367,7 +367,7 @@ async function send(text, {spoken = false, voiceSession = null} = {}) {
   $('#msg').value = ''; const btn = $('#composer button[type="submit"]'); btn.disabled = true;
   const sk = skeleton();
   try {
-    const r = await api('/api/chat', {method: 'POST', body: {message: text, demoProfile: !(state.profile?.incomeHistory?.length || state.profile?.portfolio?.securities?.length), personaId: state.personaId, agentId: state.agentId, learningModuleId: teacherLessonContext()?.id, learningToolTitle: teacherLessonContext()?.id ? undefined : teacherLessonContext()?.title}}); state.lastTurn = r.turnId;
+    const r = await api('/api/chat', {method: 'POST', body: {message: text, demoProfile: Boolean(state.profile?.demoIdentity?.fictional) || !(state.profile?.incomeHistory?.length || state.profile?.portfolio?.securities?.length), personaId: state.personaId, agentId: state.agentId, learningModuleId: teacherLessonContext()?.id, learningToolTitle: teacherLessonContext()?.id ? undefined : teacherLessonContext()?.title}}); state.lastTurn = r.turnId;
     const el = botMessage(r); refreshMemory();
     if (r.profileUpdated) el.insertAdjacentHTML('beforeend', '<p class="fine">Saved inputs updated from your message.</p>');
     if (voiceSession && voice.active && voice.session === voiceSession && canSpeak(r) && speechEpoch === voice.epoch) {
@@ -409,7 +409,7 @@ function startChat() {
   if (['investing','equity'].includes(a.id)) {
     note(state.profile?.portfolio ? `Your teacher can explore your saved holdings through ${p.name}'s researched perspective.` : 'Import your holdings to explore your portfolio with your teacher.');
     if (!state.profile?.portfolio) { const el = document.createElement('div'); el.className = 'portfolio-start'; el.innerHTML = '<button class="btn primary" type="button" data-holdings>Upload holdings CSV</button><button class="btn text" type="button" data-context-open>Open context hub</button>'; el.querySelector('[data-holdings]').onclick = () => $('#portfolio-file').click(); el.querySelector('[data-context-open]').onclick = () => $('#context-dialog').showModal(); $('#log').append(el); }
-  } else note(p.textOnly ? `${p.name} is ready for text chat. Explore a perspective or bring a research question.` : state.profile?.incomeHistory?.length ? `${p.name} is ready to talk through your plan. Ask anything below.` : `Say hello, ask a question, or choose Talk live for a voice conversation. Importing your own numbers is coming soon.`);
+  } else note(p.textOnly ? `${p.name} is ready for text chat. Explore a perspective or bring a research question.` : state.profile?.incomeHistory?.length ? `${p.name} is ready to talk through your plan. Ask anything below.` : `Say hello, ask a question, or choose Talk live for a voice conversation.`);
   if (state.need === 'retirement') note('Explore retirement questions here. A dedicated retirement scenario tool is still planned.');
   showStarters();
   $('#msg').focus();
@@ -670,7 +670,7 @@ async function boot() {
   $('#start-choice-form').onsubmit = submitStartChoice;
   $('#start-choice-close').onclick = () => $('#start-choice').close();
   document.querySelectorAll('[data-start-need]').forEach(b => b.onclick = () => openStartChoice({need:b.dataset.startNeed}));
-  $('#chat-plan').onclick = showImportSoon; $('#chat-import').onclick = showImportSoon;
+  $('#chat-plan').onclick = showImportSoon; $('#chat-import') && ($('#chat-import').onclick = showImportSoon);
   $('#demo').onclick = async () => { await api('/api/portfolio/upload', {method: 'POST', body: {sample: true}}).catch(() => {}); submitQuiz(DEMO); };
   document.querySelectorAll('[data-unlock]').forEach(b => b.onclick = openUnlock);
   setupContextHub();
@@ -722,7 +722,7 @@ document.querySelector('#start-choice')?.addEventListener('submit', () => {
 // Dashboard design pass (Nov 7): the Dashboard opens the standalone Investing/Budget page.
 // The Dashboard (Investing/Budget design pass) mounts inside the app, under the shared header,
 // with the built-in teacher dock available. The previous workspace.js is kept but no longer loaded.
-function openWorkspace(tab) {show('v-workspace');import('/dashboard.js?v=7').then(m=>m.mountDashboard(document.querySelector('#dashboard-root'),tab==='portfolio'||tab==='investing'?'investing':tab==='budget'?'budget':undefined)).catch(e=>banner('The dashboard could not load: '+e.message,true));}
+function openWorkspace(tab) {show('v-workspace');import('/dashboard.js?v=8').then(m=>m.mountDashboard(document.querySelector('#dashboard-root'),tab==='portfolio'||tab==='investing'?'investing':tab==='budget'?'budget':undefined)).catch(e=>banner('The dashboard could not load: '+e.message,true));}
 function openLearning() {show('v-learning');}
 document.querySelectorAll('[data-open-workspace]').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();openWorkspace(b.dataset.openWorkspace);}));
 document.querySelectorAll('[data-open-learning]').forEach(b=>b.addEventListener('click',openLearning));

@@ -191,3 +191,8 @@ body.dashboard-open #teacher-launcher { display: none; }
 .db-bar-row.noicon > span:first-child { font-size: .8rem; }
 .db-logo { font-size: .56rem; letter-spacing: -.03em; }
 .db-g21 > div:first-child:not(.db-card) { align-self: start; }
+
+/* News filter bar + macro tag (live dashboards audit) */
+.db .db-news-bar { display: flex; gap: 12px; align-items: center; margin: 0 0 12px; flex-wrap: wrap; }
+.db .db-news-bar .db-input { flex: 1; min-width: 220px; }
+.db .db-tag-macro { font-size: .66rem; letter-spacing: .06em; background: #e8efe9; color: #155c49; border-radius: 4px; padding: 2px 6px; margin-right: 4px; }
