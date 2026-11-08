@@ -201,3 +201,25 @@ body.dashboard-open.db-inline-teacher #teacher-launcher { display: none; }
 .db .db-tag-macro { font-size: .66rem; letter-spacing: .06em; background: #e8efe9; color: #155c49; border-radius: 4px; padding: 2px 6px; margin-right: 4px; }
 .db button.db-avail { border: 0; background: none; width: 100%; text-align: left; cursor: pointer; font-family: inherit; font-size: .72rem; line-height: 1.35; color: var(--db-ink-2); border-radius: 8px; }
 .db button.db-avail:hover { background: rgba(21,92,73,.06); }
+
+/* Import connections dialog (planned connectors) */
+#db-connect { width: min(620px, calc(100vw - 32px)); border: 1px solid #e4e2dc; border-radius: 16px; padding: 0; background: #fff; color: #1b1d1a; box-shadow: 0 20px 60px rgba(0,0,0,.18); font-family: Inter, system-ui, sans-serif; }
+#db-connect::backdrop { background: rgba(20,24,20,.35); }
+#db-connect .dc-head { display: flex; justify-content: space-between; gap: 16px; padding: 20px 22px 8px; }
+#db-connect .dc-eyebrow { margin: 0 0 4px; font: 700 11px/1 Inter, sans-serif; letter-spacing: .1em; color: #155c49; }
+#db-connect h3 { margin: 0; font-size: 20px; }
+#db-connect .dc-sub { margin: 6px 0 0; font-size: 13px; color: #4a4f48; line-height: 1.45; }
+#db-connect .dc-close { border: 0; background: none; font-size: 24px; line-height: 1; cursor: pointer; color: #4a4f48; align-self: flex-start; }
+#db-connect .dc-list { list-style: none; margin: 8px 0 0; padding: 0 22px; display: grid; gap: 10px; }
+#db-connect .dc-list li { display: grid; grid-template-columns: 36px 1fr auto; gap: 12px; align-items: start; padding: 12px; border: 1px solid #ecebe5; border-radius: 12px; }
+#db-connect .dc-list li.dim { opacity: .6; }
+#db-connect .dc-logo { width: 36px; height: 36px; border-radius: 9px; background: #e8efe9; color: #155c49; display: grid; place-items: center; font-weight: 700; overflow: hidden; }
+#db-connect .dc-logo img { width: 24px; height: 24px; object-fit: contain; }
+#db-connect .dc-body b { display: block; font-size: 14px; }
+#db-connect .dc-kind { font-size: 10.5px; font-weight: 600; color: #155c49; background: #e8efe9; border-radius: 4px; padding: 2px 6px; margin-left: 6px; }
+#db-connect .dc-body small { display: block; font-size: 12px; color: #4a4f48; margin-top: 3px; }
+#db-connect .dc-key { display: grid; gap: 3px; margin-top: 8px; font-size: 11px; color: #6c7068; }
+#db-connect .dc-key input { height: 30px; border: 1px solid #e4e2dc; border-radius: 7px; padding: 0 10px; background: #f6f6f3; font-size: 12px; }
+#db-connect .dc-btn { height: 32px; border-radius: 8px; border: 1px solid #e4e2dc; background: #f1f1ee; color: #6c7068; font: 600 12px Inter, sans-serif; padding: 0 12px; white-space: nowrap; }
+#db-connect .dc-note { margin: 12px 22px 20px; font-size: 11.5px; color: #6c7068; }
+@media (max-width: 560px) { #db-connect .dc-list li { grid-template-columns: 36px 1fr; } #db-connect .dc-btn { grid-column: 2; justify-self: start; } }

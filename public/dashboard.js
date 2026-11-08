@@ -100,6 +100,8 @@ function shell(body) {
   root.dataset.sampleBudget = String(budget().sample); root.dataset.samplePortfolio = String(inv.sample);
 }
 function head(title, sub, badge, actions = '') {
+  const importKind = /portfolio/i.test(badge || '') ? 'portfolio' : /budget/i.test(badge || '') ? 'budget' : null;
+  if (importKind) { actions = btn(importKind === 'portfolio' ? 'Import my portfolio' : 'Import my budget', `data-connect="${importKind}"`, 'upload', true) + actions; badge = ''; }
   return `<div class="db-head"><div><h2>${esc(title)}${badge ? `<span class="db-badge">${esc(badge)}</span>` : ''}</h2>${sub ? `<p>${esc(sub)}</p>` : ''}</div><div class="db-actions">${actions}</div></div><p class="db-status" role="status">${esc(state.statusText || '')}</p>`;
 }
 const btn = (label, attrs = '', icon = '', primary = false) => `<button type="button" class="db-btn${primary ? ' primary' : ''}" ${attrs}>${icon ? svg(icon) : ''}${esc(label)}</button>`;
@@ -136,7 +138,7 @@ function invOverview() {
   const t3 = top3(risk), t3w = t3.reduce((s, r) => s + r.weight, 0);
   const classes = [['Stocks', rows.filter(r => !r.isCash && r.sector !== 'Crypto').reduce((s, r) => s + r.weight, 0)], ['Crypto', rows.filter(r => r.sector === 'Crypto').reduce((s, r) => s + r.weight, 0)], ['Cash', rows.filter(r => r.isCash).reduce((s, r) => s + r.weight, 0)], ['Unclassified', rows.filter(r => !r.isCash && r.sector === 'Unknown').reduce((s, r) => s + r.weight, 0)]];
   const body = head('Your portfolio', '', sample ? 'Example portfolio' : '', btn('Export', 'data-export="holdings"', 'download')) + `
-  <div class="db-grid db-g4">${stat('Portfolio value', usd(total), 'Imported market values. A refresh does not revalue your holdings.')}${stat('Unrealized gain', gain === null ? '—' : signedUsd(gain), 'Value minus the cost basis you imported.', gain === null ? 'Add cost basis to see this' : signedPct(cost ? gain / cost * 100 : null) + ' on cost', gain === null ? '' : gain >= 0 ? 'pos' : 'neg')}${stat('Historical mix return', signedPct(m.ret1y), 'Your current mix replayed over the past year of weekly closes. Not your account performance.', `S&amp;P 500 ${signedPct(m.spyRet)} (1Y)`, num(m.ret1y) >= 0 ? 'pos' : 'neg')}${stat('Risk health', `${score ?? '—'}<small> /100</small>`, 'Starts at 100 and drops for each guideline breach: 10 for high, 5 for medium, 2 for low severity.', sample ? 'Example guideline review' : 'Your saved guidelines')}</div>
+  <div class="db-grid db-g4">${stat('Portfolio value', usd(total), 'Imported market values. A refresh does not revalue your holdings.')}${stat('Unrealized gain', gain === null ? '—' : signedUsd(gain), 'Value minus the cost basis you imported.', gain === null ? 'Add cost basis to see this' : signedPct(cost ? gain / cost * 100 : null) + ' on cost', gain === null ? '' : gain >= 0 ? 'pos' : 'neg')}${stat('Historical mix return', signedPct(m.ret1y), 'Your current mix replayed over the past year of weekly closes. Not your account performance.', `S&amp;P 500 ${signedPct(m.spyRet)} (1Y)`, num(m.ret1y) >= 0 ? 'pos' : 'neg')}${stat('Risk health', `${score ?? '—'}<small> /100</small>`, 'Starts at 100 and drops for each guideline breach: 10 for high, 5 for medium, 2 for low severity.', sample ? 'Guideline review' : 'Your saved guidelines')}</div>
   <article class="db-card"><div class="db-card-h"><h3>Performance</h3><div class="db-seg" role="group" aria-label="Range">${[[13, '3M'], [26, '6M'], [52, '1Y']].map(([w, l]) => `<button type="button" data-range="${w}" aria-pressed="${state.perfRange === w}">${l}</button>`).join('')}</div></div>
     <div class="db-legend"><span><i></i>Portfolio <b id="db-perf-p"></b></span><span><i class="dash"></i>S&amp;P 500 <b id="db-perf-b"></b></span></div>
     <div class="db-chart"><canvas id="db-perf" aria-label="Portfolio mix versus S&P 500"></canvas></div>
@@ -178,7 +180,7 @@ function invRisk() {
   <div class="db-grid db-g2"><article class="db-card"><h3>Risk score ${info('100 minus points for each guideline breach: 10 high, 5 medium, 2 low.')}</h3><div class="db-score"><div class="db-ring" style="--p:${score};--c:${ringColor}"><div><div><b>${score}<small>/100</small></b><span>${riskWord(score)}</span></div></div></div><div>${breachCount(risk) ? `<span class="db-flag">${svg('warn', 'db-ic')} ${breachCount(risk)} guideline breach${breachCount(risk) === 1 ? '' : 'es'}</span>` : ''}<p class="db-note" style="color:var(--db-ink-2);font-size:.8rem">${score >= 80 ? 'Risk is within your guidelines.' : score >= 55 ? 'Risk is within a moderate range, with areas to address.' : 'Several guidelines are breached. Review the checklist.'}</p></div></div></article>
     <article class="db-card"><h3>Position concentration ${info('Share of imported value in each holding.')}</h3><table class="db-table"><thead><tr><th>Position</th><th></th><th class="r">% of portfolio</th></tr></thead><tbody>${top4.map(r => `<tr><td><b>${esc(r.symbol)}</b></td><td style="width:55%">${bar(r.weight, maxW, false, true)}</td><td class="r">${pct(r.weight)}</td></tr>`).join('')}${other.length ? `<tr><td>Other (${other.length})</td><td>${bar(otherW, maxW, true, true)}</td><td class="r">${pct(otherW)}</td></tr>` : ''}</tbody></table></article></div>
   <div class="db-grid db-g2"><article class="db-card"><h3>Sector exposure ${info('Sectors from your import, or the dated snapshot when the import has none.')}</h3><div class="db-bars">${sectors.map(([s, w]) => `<div class="db-bar-row noicon"><span style="font-size:.78rem">${esc(s)}</span>${bar(w, sMax, true, true)}<span class="v">${pct(w)}</span></div>`).join('')}</div></article>
-    <article class="db-card"><h3>Guideline checklist ${info(sample ? 'Example limits applied to the example holdings.' : 'Your saved guideline limits.')}</h3><ul class="db-checks">${lines.map(([l, s]) => `<li><span class="db-ck ${s}">${s === 'pass' ? '✓' : s === 'unknown' ? '?' : '!'}</span><span>${esc(l)}</span><span class="db-pill ${s}">${checkWord(s)}</span></li>`).join('')}</ul></article></div>
+    <article class="db-card"><h3>Guideline checklist ${info(sample ? 'Guideline limits applied to these holdings.' : 'Your saved guideline limits.')}</h3><ul class="db-checks">${lines.map(([l, s]) => `<li><span class="db-ck ${s}">${s === 'pass' ? '✓' : s === 'unknown' ? '?' : '!'}</span><span>${esc(l)}</span><span class="db-pill ${s}">${checkWord(s)}</span></li>`).join('')}</ul></article></div>
   <div class="db-grid db-g21"><article class="db-card"><h3>Correlation <small>(selected assets)</small> ${info('Correlation of weekly returns over the window. 1.00 moves together exactly.')}</h3><table class="db-table db-corr"><thead><tr><th>Asset</th>${corr.map(s => `<th class="r" style="text-align:center">${esc(s)}</th>`).join('')}</tr></thead><tbody>${corr.map(a => `<tr><td>${esc(a)}</td>${corr.map(b => { const v = pair(a, b); return `<td class="${a === b ? 'diag' : num(v) !== null && v >= .6 ? 'hi' : ''}">${num(v) === null ? '—' : v.toFixed(2)}</td>`; }).join('')}</tr>`).join('')}</tbody></table></article>
     ${teacher(`What does a beta of ${fix(m.beta)} mean for ${sample ? 'a portfolio like this' : 'my portfolio'}?`)}</div>`;
   return {body};
@@ -387,7 +389,7 @@ const VIEWS = {portfolio: {overview: invOverview, risk: invRisk, improve: invImp
 // Debt plan, Goals, Review and Settings use the original reference-board screens (restored on request).
 // Reference-board screens show the example; once the user saves their own numbers, the data-driven screen
 // takes over so every figure is theirs. Settings is always the editable form (the only place to enter income).
-function classic(name) { const own = {debt: () => budDebt(), goals: () => budGoals(), review: () => budReview(), settings: () => budSettings()}[name]; return () => (name === 'settings' || !budget().sample ? own() : {body: `<div class="mlx mlx-embed">${classicScreens[name]()}</div>`}); }
+function classic(name) { const own = {debt: () => budDebt(), goals: () => budGoals(), review: () => budReview(), settings: () => budSettings()}[name]; return () => (name === 'settings' || !budget().sample ? own() : {body: `<div class="mlx mlx-embed">${classicScreens[name]().replace('<span class="spacer"></span>', '<span class="spacer"></span><button type="button" class="btn primary" data-connect="budget">Import my budget</button>')}</div>`}); }
 
 function render() {
   clearCharts();
@@ -486,6 +488,24 @@ root.addEventListener('click', e => {
   const opt = e.target.closest('.option'); if (opt) { opt.parentElement.querySelectorAll('.option').forEach(o => { o.classList.toggle('on', o === opt); o.querySelector('.radio')?.classList.toggle('on', o === opt); }); return; }
   const seg = e.target.closest('.pill-group button'); if (seg) seg.parentElement.querySelectorAll('button').forEach(b => b.classList.toggle('on', b === seg));
 });
+// ---------- Import connections (planned; nothing is collected or saved in this demo) ----------
+const CONNECTORS = [
+  {id: 'plaid', name: 'Plaid', kind: 'API key', for: ['portfolio', 'budget'], icon: '/img/providers/plaid.png', what: 'Bank and brokerage accounts: balances, transactions, investment holdings.', key: 'Plaid client ID and secret'},
+  {id: 'snaptrade', name: 'SnapTrade', kind: 'API key', for: ['portfolio'], what: 'Read-only brokerage holdings and positions across 20+ brokerages.', key: 'SnapTrade client ID and consumer key'},
+  {id: 'robinhood', name: 'Robinhood', kind: 'MCP connector', for: ['portfolio'], what: 'Positions, watchlists and cost basis through a read-only MCP connector.', key: 'Sign in through the connector; no key stored here'},
+  {id: 'coinbase', name: 'Coinbase', kind: 'API key', for: ['portfolio'], what: 'Crypto balances and cost basis.', key: 'Coinbase read-only API key'},
+  {id: 'ynab', name: 'YNAB', kind: 'API key or MCP connector', for: ['budget'], what: 'Budget categories, monthly income and spending.', key: 'YNAB personal access token'},
+];
+function connectDialog(kind) {
+  let d = document.querySelector('#db-connect');
+  if (!d) { d = document.createElement('dialog'); d.id = 'db-connect'; document.body.append(d); d.addEventListener('click', e => { if (e.target === d || e.target.closest('[data-connect-close]')) d.close(); }); }
+  const list = [...CONNECTORS].sort((a, b) => Number(b.for.includes(kind)) - Number(a.for.includes(kind)));
+  d.innerHTML = `<div class="dc-head"><div><p class="dc-eyebrow">${kind === 'budget' ? 'IMPORT MY BUDGET' : 'IMPORT MY PORTFOLIO'}</p><h3>Connect your accounts</h3><p class="dc-sub">Bring in your own ${kind === 'budget' ? 'income and spending' : 'holdings'} with an API key or an MCP connector. Your teacher and dashboard then use your numbers instead of the sample profile.</p></div><button type="button" class="dc-close" data-connect-close aria-label="Close">×</button></div>
+    <ul class="dc-list">${list.map(c => `<li class="${c.for.includes(kind) ? '' : 'dim'}"><span class="dc-logo">${c.icon ? `<img src="${esc(c.icon)}" alt="">` : esc(c.name[0])}</span><div class="dc-body"><b>${esc(c.name)} <span class="dc-kind">${esc(c.kind)}</span></b><small>${esc(c.what)}</small><label class="dc-key"><span>${esc(c.key)}</span><input type="password" disabled placeholder="Available when connections launch" aria-label="${esc(c.name)} key"></label></div><button type="button" class="dc-btn" disabled>Connect · Planned</button></li>`).join('')}</ul>
+    <p class="dc-note">Connections are planned and not active in this demo. No keys are collected or stored. The dashboards show a shared fictional sample profile until you connect.</p>`;
+  d.showModal();
+}
+root.addEventListener('click', e => { const c = e.target.closest('[data-connect]'); if (c) { e.preventDefault(); e.stopPropagation(); connectDialog(c.dataset.connect); } }, true);
 document.addEventListener('mentor:workspace-open', () => run(load));
 document.addEventListener('mentor:inputs-updated', () => { if (!document.querySelector('#v-workspace')?.hidden) run(load); });
 document.addEventListener('mentor:guidelines-updated', () => { state.scenario = null; run(load); });
