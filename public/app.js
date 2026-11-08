@@ -132,6 +132,7 @@ function renderIntake() {
     $('#intake-bills').value = sum(p.bills); $('#intake-spending').value = sum(p.expenses);
     $('#intake-savings').value = p.savings || '';
     $('#intake-goal').value = p.goals?.[0] || 'stop_paycheck_to_paycheck';
+    $('#intake-risk').value = p.riskTolerance || ''; $('#intake-horizon').value = p.investmentHorizon || '';
     const debt = p.debts?.[0];
     $('#intake-debt-balance').value = debt?.balance || '';
     $('#intake-debt-apr').value = debt?.rateBps != null ? debt.rateBps / 100 : '';
@@ -156,6 +157,7 @@ async function submitIntake(e) {
     expenses: moneyInput('#intake-spending') ? [{name: 'Everyday spending', amount: moneyInput('#intake-spending')}] : [],
     debts: debt.every(Boolean) ? [{name: state.profile?.debts?.[0]?.name || 'Debt', balance: debt[0], aprPercent: debt[1], minPayment: debt[2]}, ...(state.profile?.debts?.slice(1) || [])] : (state.profile?.debts?.slice(1) || []),
     savings: moneyInput('#intake-savings') || '0', goals: [$('#intake-goal').value],
+    riskTolerance: $('#intake-risk').value, investmentHorizon: $('#intake-horizon').value,
   };
   const button = $('#intake-form button[type="submit"]'); button.disabled = true;
   try {
