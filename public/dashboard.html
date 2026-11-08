@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard · Mentor Labs</title>
+  <link rel="icon" type="image/webp" href="/img/mentor-logo-suede.webp">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/dashboard.css?v=2">
+</head>
+<body>
+  <div class="app">
+    <header class="top">
+      <a class="brand" href="/" aria-label="Mentor Labs home"><span class="mark">ML</span><span class="wordmark">Mentor Labs</span></a>
+      <nav class="tabs" aria-label="Main"><a href="/">Chat</a><a href="/dashboard.html" class="on" aria-current="page">Dashboard</a><a href="/?view=learning">Learning</a></nav>
+      <button class="user" id="user" type="button" aria-label="Account"></button>
+    </header>
+    <div class="body">
+      <aside class="side">
+        <div class="seg" id="seg" role="tablist" aria-label="Workspace"></div>
+        <nav class="nav" id="nav" aria-label="Dashboard sections"></nav>
+        <div class="side-foot">
+          <div class="guide"><a class="guide-row" href="/?view=learning"><span id="guide-icons"></span><span><b>Learning guide</b><small>13-step program</small></span><span id="guide-chev" style="margin-left:auto"></span></a>
+            <div class="bar"><span style="width:46%"></span></div><div class="step">Step 6 of 13</div></div>
+          <div class="avail"><span class="live-dot"></span><span><b>Teacher available</b><small>Typically replies in minutes</small></span><span id="avail-icon" style="margin-left:auto"></span></div>
+        </div>
+      </aside>
+      <main class="main" id="main"></main>
+    </div>
+  </div>
+  <script type="module" src="/dashboard.js?v=2"></script>
+</body>
+</html>

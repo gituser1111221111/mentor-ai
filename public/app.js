@@ -695,7 +695,8 @@ document.querySelector('#start-choice')?.addEventListener('submit', () => {
 });
 
 // One teacher conversation, shared with the learning and planning workspace.
-function openWorkspace(tab) {show('v-workspace');document.dispatchEvent(new CustomEvent('mentor:workspace-open'));if(tab)document.querySelector('[data-workspace-tab="'+tab+'"]')?.click();}
+// Dashboard design pass (Nov 7): the Dashboard opens the standalone Investing/Budget page.
+function openWorkspace(tab) {location.href='/dashboard.html#'+(tab==='portfolio'?'investing/holdings':'budget/debt');return;show('v-workspace');document.dispatchEvent(new CustomEvent('mentor:workspace-open'));if(tab)document.querySelector('[data-workspace-tab="'+tab+'"]')?.click();}
 function openLearning() {show('v-learning');}
 document.querySelectorAll('[data-open-workspace]').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();openWorkspace(b.dataset.openWorkspace);}));
 document.querySelectorAll('[data-open-learning]').forEach(b=>b.addEventListener('click',openLearning));
