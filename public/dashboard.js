@@ -26,14 +26,13 @@ const LOGO = {
   NVDA: '<svg class="logo" viewBox="0 0 24 18"><path d="M9 4.5c4-1 9 .5 13 4.5-4 4-9 5.5-13 4.5V11c3 .8 6-.2 8.5-2C15 7 12 6 9 6.8z M9 6.8V4.5C5 5.3 2 7 1 9c1 2 4 3.7 8 4.5V11C6.5 10.4 5 9.8 4 9c1-.8 2.5-1.6 5-2.2z" fill="#76b900"/></svg>',
   AAPL: '<svg class="logo" viewBox="0 0 24 24"><path d="M16.4 12.6c0-2.3 1.9-3.4 2-3.5-1.1-1.6-2.8-1.8-3.4-1.8-1.4-.1-2.8.9-3.5.9s-1.9-.8-3.1-.8C6.8 7.4 5 8.6 4.1 10.4c-1.8 3.2-.5 7.9 1.3 10.4.9 1.2 1.9 2.6 3.2 2.6 1.3-.1 1.8-.8 3.3-.8s2 .8 3.3.8c1.4 0 2.2-1.3 3.1-2.5.9-1.4 1.3-2.8 1.4-2.9-.1 0-2.6-1-2.6-3.9zM14.1 5.8c.7-.9 1.2-2 1-3.2-1 .1-2.3.7-3 1.6-.7.8-1.2 2-1.1 3.1 1.2.1 2.3-.6 3.1-1.5z" fill="#111"/></svg>',
   MSFT: '<svg class="logo" viewBox="0 0 20 20"><path fill="#f25022" d="M1 1h8.5v8.5H1z"/><path fill="#7fba00" d="M10.5 1H19v8.5h-8.5z"/><path fill="#00a4ef" d="M1 10.5h8.5V19H1z"/><path fill="#ffb900" d="M10.5 10.5H19V19h-8.5z"/></svg>',
+  VEA: '<svg class="logo" viewBox="0 0 20 20"><path d="M1 3h5l4 10 4-10h5l-7.5 15h-3z" fill="#9b1c1f"/></svg>',
   VTI: '<svg class="logo" viewBox="0 0 20 20"><path d="M1 3h5l4 10 4-10h5l-7.5 15h-3z" fill="#9b1c1f"/></svg>',
 };
 
 const INVESTING = [['overview', 'Overview', 'home'], ['risk', 'Risk review', 'shield'], ['improve', 'Improve', 'trend'], ['holdings', 'Holdings', 'layers'], ['calendar', 'Calendar', 'calendar'], ['news', 'News', 'news'], ['guidelines', 'Guidelines', 'book']];
 const BUDGET = [['overview', 'Overview', 'home'], ['cashflow', 'Cash flow', 'swap'], ['spending', 'Spending', 'pie'], ['debt', 'Debt plan', 'card'], ['goals', 'Goals', 'target'], ['review', 'Review', 'clip'], ['settings', 'Settings', 'gear']];
 
-const teacher = (q, cls = '') => `<form class="teacher ${cls}" action="/" method="get"><div class="teacher-top"><img src="/img/mentors/credit-smart.webp" alt="AI teacher portrait (AI-generated)"><div><b>Ask your teacher</b><small>${q}</small></div></div>
-  <div class="ask"><input name="ask" placeholder="Ask about these numbers..." aria-label="Ask your teacher"><button type="submit" aria-label="Send">${ic('send')}</button></div></form>`;
 const kpi = (k, v, cls = '') => `<div class="kpi"><div class="k">${k}${inf}</div><div class="v ${cls}">${v}</div></div>`;
 const S = '<span class="sort"></span>';
 
@@ -103,20 +102,19 @@ function goalChart() {
 // ---------- investing screens ----------
 const holdings = () => `
   <div class="head"><h1>Holdings${inf}</h1><span class="spacer"></span>
-    <button class="btn">${ic('upload')}Import CSV</button><button class="btn">${ic('plus')}Add holding</button><button class="btn ghost">${ic('plug')}Broker connection — planned</button></div>
-  <div class="grid g4">${kpi('Total value', '$119,687')}${kpi('Total cost', '$104,540')}${kpi('Total gain', '+$15,147<small>(+14.5%)</small>', 'pos')}${kpi('Holdings count', '4')}</div>
-  <div class="notice"><span class="ok">${ic('check')}</span><b>Import complete</b> — 4 holdings added from portfolio.csv <span class="dotsep">·</span> Nov 20, 2024 at 10:24 AM <a href="#investing/holdings">View details</a></div>
+    <button class="btn" data-action="context">${ic('upload')}Import CSV</button><button class="btn">${ic('plus')}Add holding</button><button class="btn ghost" data-action="context">${ic('plug')}Broker connection — planned</button></div>
+  <div class="grid g4">${kpi('Total value', '$119,687')}${kpi('Total cost', '$76,480')}${kpi('Total gain', '+$43,207<small>(+56.5%)</small>', 'pos')}${kpi('Holdings count', '5')}</div>
+  <div class="notice"><span class="ok">${ic('check')}</span><b>Import complete</b> — 5 holdings added from portfolio.csv <span class="dotsep">·</span> Nov 20, 2024 at 10:24 AM <a href="#" data-go="investing/holdings">View details</a></div>
   <div class="card mt"><div class="card-head"><h2>Portfolio value</h2><div class="pill-group"><button>3M</button><button>6M</button><button class="on">1Y</button></div></div>
     <div class="legend"><span><i></i>Portfolio <span>+8.2% (1Y)</span></span><span><i class="dash"></i>S&amp;P 500 <span>+6.1% (1Y)</span></span></div>${portfolioChart()}
     <div class="foot-note">Illustrative data. Not a recommendation to buy or sell any security.</div></div>
-  <div class="card mt"><div class="card-head"><h2>Holdings (4)${inf}</h2><button class="btn sm">${ic('pencil')}Edit</button></div><div class="table-wrap"><table>
+  <div class="card mt"><div class="card-head"><h2>Holdings (5)${inf}</h2><button class="btn sm">${ic('pencil')}Edit</button></div><div class="table-wrap"><table>
     <thead><tr><th>Symbol${S}</th><th>Name${S}</th><th>Sector${S}</th><th class="r">Quantity${S}</th><th class="r">Market value${S}</th><th class="r">Cost basis${S}</th><th class="r">Weight${S}</th></tr></thead><tbody>
-    ${[['NVDA', 'NVIDIA Corporation', 'Technology', 100, '$28,800', '$24,000', '24.1%'], ['AAPL', 'Apple Inc.', 'Technology', 60, '$24,360', '$21,600', '20.4%'], ['MSFT', 'Microsoft Corporation', 'Technology', 80, '$20,160', '$17,600', '16.8%'], ['VTI', 'Vanguard Total Stock Market ETF', 'Broad market', 200, '$17,940', '—', '15.0%']]
+    ${[['NVDA', 'NVIDIA Corporation', 'Technology', 100, '$28,800', '$16,000', '24.1%'], ['AAPL', 'Apple Inc.', 'Technology', 60, '$24,360', '$15,000', '20.4%'], ['MSFT', 'Microsoft Corporation', 'Technology', 80, '$20,160', '$13,000', '16.8%'], ['VTI', 'Vanguard Total Stock Market ETF', 'Broad market', 200, '$17,940', '$14,000', '15.0%'], ['VEA', 'Vanguard FTSE Developed Markets ETF', 'International', 560, '$28,427', '$18,480', '23.8%']]
       .map(([s, n, sec, q, mv, cb, w]) => `<tr><td><span class="sym">${LOGO[s]}${s}</span></td><td class="small">${n}</td><td class="small">${sec}</td><td class="r"><span class="cellbox">${q}</span></td><td class="r">${mv}</td><td class="r">${cb}</td><td class="r">${w}</td></tr>`).join('')}
     </tbody></table></div></div>
-  <div class="grid mt split" style="grid-template-columns:1fr 1fr">
-    <div class="card"><h3>Portfolio summary${inf}</h3><div class="sumrow"><div><span>Value</span><b>$119,687</b></div><div><span>Cost basis</span><b>$104,540</b></div><div><span>Gain ($)</span><b class="pos">+$15,147</b></div><div><span>Gain (%)</span><b class="pos">+14.5%</b></div></div></div>
-    ${teacher('Questions about your holdings or next steps?')}</div>`;
+  <div class="grid mt">
+    <div class="card"><h3>Portfolio summary${inf}</h3><div class="sumrow"><div><span>Value</span><b>$119,687</b></div><div><span>Cost basis</span><b>$76,480</b></div><div><span>Gain ($)</span><b class="pos">+$43,207</b></div><div><span>Gain (%)</span><b class="pos">+56.5%</b></div></div></div></div>`;
 
 const stepRow = (l, h, v) => `<div class="rule-row"><span class="lbl">${l}${inf}</span><span class="stepper">${v}</span><span class="hint">${h}</span></div>`;
 const guidelines = () => `
@@ -135,8 +133,7 @@ const guidelines = () => `
   </div>
   <div class="card mt collapse">${ic('chevR')}<div><b>Overrides &amp; exclusions${inf}</b><small>Allow limited exceptions or exclude specific securities, sectors, or themes.</small></div></div>
   <div class="card mt collapse">${ic('plus')}<div><b>Add a custom rule</b><small>Create an additional rule using a metric, condition, and limit.</small></div>
-    <span class="field" style="margin-left:auto;width:196px;color:var(--muted);font-size:12px">Example: EV/EBITDA ≤ 15</span><button class="btn sm ghost" style="background:var(--line-2)">Add rule</button></div>
-  <div style="display:flex;justify-content:flex-end;margin-top:10px">${teacher('How will these guidelines affect my portfolio?').replace('class="teacher ', 'style="width:345px" class="teacher ')}</div>`;
+    <span class="field" style="margin-left:auto;width:196px;color:var(--muted);font-size:12px">Example: EV/EBITDA ≤ 15</span><button class="btn sm ghost" style="background:var(--line-2)">Add rule</button></div>`;
 
 const news = () => `
   <div class="head"><h1>News on your holdings</h1><span class="spacer"></span><button class="btn">${ic('refresh')}Refresh</button></div>
@@ -150,8 +147,7 @@ const news = () => `
     <div class="grid"><div class="card"><div class="card-head"><h3>Watchlist</h3><button class="btn sm">Edit</button></div><table><thead><tr><th>Ticker</th><th class="r">Price</th><th class="r">Change</th></tr></thead><tbody>
       ${[['NVDA', '$493.20', '+2.4%'], ['AAPL', '$189.65', '+0.7%'], ['MSFT', '$415.30', '+1.1%'], ['VTI', '$244.10', '+0.5%']].map(([t, p, c]) => `<tr><td><b>${t}</b></td><td class="r">${p}</td><td class="r pos">${c}<span class="dotg"></span></td></tr>`).join('')}</tbody></table></div>
       <div class="card"><h3>Market context${inf}</h3><table class="mt"><tbody>
-      ${[['S&amp;P 500', '5,986.20', '+0.6%', 'pos'], ['Nasdaq', '18,590.14', '+0.9%', 'pos'], ['10-yr yield', '4.29%', '−0.03 pp', 'neg'], ['VIX', '14.8', '−0.7', '']].map(([n, v, c, k]) => `<tr><td><b>${n}</b></td><td class="r">${v}</td><td class="r ${k}">${c}</td></tr>`).join('')}</tbody></table></div></div></div>
-  ${teacher('How might this news affect my holdings?', 'float')}`;
+      ${[['S&amp;P 500', '5,986.20', '+0.6%', 'pos'], ['Nasdaq', '18,590.14', '+0.9%', 'pos'], ['10-yr yield', '4.29%', '−0.03 pp', 'neg'], ['VIX', '14.8', '−0.7', '']].map(([n, v, c, k]) => `<tr><td><b>${n}</b></td><td class="r">${v}</td><td class="r ${k}">${c}</td></tr>`).join('')}</tbody></table></div></div></div>`;
 
 function calendar() {
   const weeks = [[27, 28, 29, 30, 31, 1, 2], [3, 4, 5, 6, 7, 8, 9], [10, 11, 12, 13, 14, 15, 16], [17, 18, 19, 20, 21, 22, 23], [24, 25, 26, 27, 28, 29, 30]];
@@ -166,31 +162,30 @@ function calendar() {
     <div class="cal"><div class="cal-h">${['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => `<div>${d}</div>`).join('')}</div>${cells}</div>
     <div class="cal-legend"><span>Earnings</span><span class="o">Other event</span><em>Earnings dates are company-reported and may change.</em></div></div>
   <div class="grid mt split" style="grid-template-columns:1.3fr 1fr">
-    <div class="card"><div class="card-head"><h3>Upcoming earnings${inf}</h3><a class="small" style="color:var(--green);font-weight:600;text-decoration:none" href="#investing/calendar">View all ›</a></div><table><thead><tr><th>Symbol</th><th>Event</th><th>Date${S}</th><th>Source${S}</th></tr></thead><tbody>
+    <div class="card"><div class="card-head"><h3>Upcoming earnings${inf}</h3><a class="small" style="color:var(--green);font-weight:600;text-decoration:none" href="#" data-go="investing/calendar">View all ›</a></div><table><thead><tr><th>Symbol</th><th>Event</th><th>Date${S}</th><th>Source${S}</th></tr></thead><tbody>
       ${[['NVDA', 'Earnings (Q3 FY25)', 'Nov 5, 2024'], ['AAPL', 'Earnings (Q4 FY24)', 'Nov 14, 2024'], ['MSFT', 'Earnings (Q1 FY25)', 'Nov 26, 2024']].map(([s, e, d]) => `<tr><td><span class="sym">${LOGO[s]}${s}</span></td><td class="small">${e}</td><td class="small">${d}</td><td class="small">Company</td></tr>`).join('')}</tbody></table></div>
     <div class="card"><h3>Key macro events${inf}</h3><div class="mt">${[['FOMC meeting', 'Nov 6–7, 2024'], ['CPI (Oct)', 'Nov 13, 2024'], ['PCE (Oct)', 'Nov 29, 2024'], ['Jobs report (Nov)', 'Dec 6, 2024']].map(([e, d]) => `<div class="mac">${ic('calendar')}<span>${e}</span><span>${d}</span></div>`).join('')}</div></div></div>
-  <div class="grid mt split" style="grid-template-columns:1fr 1fr">
-    <div class="card"><h3>Earnings dates${inf}</h3><div class="counts"><div><b>3</b><span>Confirmed</span></div><div><b>0</b><span>Tentative</span></div><div><b>2</b><span>Unknown</span></div></div></div>
-    ${teacher('Which earnings should I watch this month?').replace('these numbers', 'these events')}</div>`;
+  <div class="grid mt">
+    <div class="card"><h3>Earnings dates${inf}</h3><div class="counts"><div><b>3</b><span>Confirmed</span></div><div><b>0</b><span>Tentative</span></div><div><b>2</b><span>Unknown</span></div></div></div></div>`;
 }
 
 // ---------- budget screens ----------
 const debt = () => `
   <div class="head"><h1>Debt plan${inf}</h1><span class="spacer"></span><span class="plan-label">Plan:</span><div class="pill-group"><button class="on" style="padding:5px 18px">Snowball</button><button style="padding:5px 18px">Avalanche</button></div>
     <button class="btn" style="margin-left:16px">${ic('gear')}Rate assumptions</button></div>
-  <div class="grid g4">${kpi('Total balance', '$16,640')}${kpi('Total minimum payments', '$420 <small>/ mo</small>')}${kpi('Extra payment', '$300 <small>/ mo</small>')}${kpi('Payoff horizon', '28 months', 'pos')}</div>
+  <div class="grid g4">${kpi('Total balance', '$16,640')}${kpi('Total minimum payments', '$700 <small>/ mo</small>')}${kpi('Extra payment', '$300 <small>/ mo</small>')}${kpi('Payoff horizon', '28 months', 'pos')}</div>
   <div class="card mt"><h2>Projected debt balance${inf}</h2><div class="legend" style="margin-top:10px"><span><i class="dotline"></i>With extra payment ($300/mo)</span><span><i class="dash"></i>Minimum payments only</span></div>${debtChart()}
     <div class="foot-note">Illustrative projection using your rates and payments. Not a guarantee of results.</div></div>
   <div class="grid mt split" style="grid-template-columns:1.12fr 1fr">
     <div class="card"><div class="card-head"><h2>Your debts (3)${inf}</h2><button class="btn sm">${ic('pencil')}Edit</button></div><table><thead><tr><th>Debt${S}</th><th>APR${S}</th><th>Balance${S}</th><th>Minimum${S}</th></tr></thead><tbody>
-      ${[['card', 'Credit card', '21.49%', '$6,040', '$180'], ['car', 'Auto loan', '6.25%', '$8,400', '$200'], ['cap', 'Student loan', '4.75%', '$2,200', '$40']].map(([i, n, a, b, m]) => `<tr><td><span class="debt-name">${ic(i)}${n}</span></td><td>${a}</td><td><span class="cellbox">${b}</span></td><td><span class="cellbox">${m}</span></td></tr>`).join('')}</tbody></table></div>
+      ${[['card', 'Credit card', '21.49%', '$6,040', '$300'], ['car', 'Auto loan', '6.25%', '$8,400', '$250'], ['cap', 'Student loan', '4.75%', '$2,200', '$150']].map(([i, n, a, b, m]) => `<tr><td><span class="debt-name">${ic(i)}${n}</span></td><td>${a}</td><td><span class="cellbox">${b}</span></td><td><span class="cellbox">${m}</span></td></tr>`).join('')}</tbody></table></div>
     <div class="card"><h2>Plan details${inf}</h2><div class="detail-row" style="margin-top:14px"><span>Strategy</span><span class="select">Snowball (smallest balance first)</span></div>
       <div class="detail-row"><span>Rate assumptions</span><span class="select">Use current APRs</span></div>
       <div class="detail-row" style="grid-template-columns:1fr"><span style="display:flex;align-items:center">Extra payment (optional)${inf}</span></div>
       <div style="display:flex;align-items:center;gap:12px"><span class="field" style="flex:1">$300</span><span class="small">/ month</span></div></div></div>
   <div class="grid mt split" style="grid-template-columns:1.12fr 1fr">
     <div class="card"><h3>Payoff summary${inf}</h3><div class="sumrow" style="grid-template-columns:repeat(3,auto)"><div><span>Total paid</span><b>$24,980</b></div><div><span>Total interest</span><b>$8,340</b></div><div><span>Payoff horizon</span><b>28 months</b></div></div></div>
-    <div class="grid" style="gap:10px"><div class="tip"><span class="ok"></span>The snowball method can build momentum<br>by paying off smaller debts first.</div>${teacher('Questions about your debt plan or payments?')}</div></div>`;
+    <div class="grid" style="gap:10px"><div class="tip"><span class="ok"></span>The snowball method can build momentum<br>by paying off smaller debts first.</div></div></div>`;
 
 const prefRow = (l, v, h) => `<div class="pref-row"><span class="lbl">${l}${inf}</span><span class="stepper">${v}</span>${h ? `<span class="hint">${h}</span>` : ''}</div>`;
 const settings = () => `
@@ -210,9 +205,8 @@ const settings = () => `
       <div class="card"><h2>Future bank connection<span class="planned">Planned</span>${inf}</h2><p class="desc">A secure bank connection (MCP) is planned for a future release to import your transactions automatically.</p>
         <button class="btn disabled mt">${ic('link')}Connect bank (planned)</button><p class="desc" style="margin-top:10px">Manual entry (your current method) works fully and isn’t affected.</p></div>
       <div class="card"><h2>Privacy &amp; data</h2><div class="mt">
-        <div class="link-row">${ic('lock')}<div><b>Privacy</b><small>How we use and protect your data.</small></div>${ic('chevR')}</div>
-        <div class="link-row">${ic('download')}<div><b>Export my data</b><small>Download your budget data (CSV).</small></div>${ic('chevR')}</div></div></div></div></div>
-  <div style="display:flex;justify-content:flex-end;margin-top:12px">${teacher('Is my cash cushion and monthly plan a good fit?').replace('class="teacher ', 'style="width:350px" class="teacher ')}</div>`;
+        <div class="link-row" data-action="privacy" role="link" tabindex="0" style="cursor:pointer">${ic('lock')}<div><b>Privacy</b><small>How we use and protect your data.</small></div>${ic('chevR')}</div>
+        <div class="link-row">${ic('download')}<div><b>Export my data</b><small>Download your budget data (CSV).</small></div>${ic('chevR')}</div></div></div></div></div>`;
 
 const review = () => `
   <div class="head"><h1>Review your monthly plan</h1><span class="spacer"></span><span class="select" style="height:34px;width:110px;font-size:13.5px">November</span><button class="btn">${ic('pencil')}Edit plan</button></div>
@@ -226,8 +220,7 @@ const review = () => `
       ${[['Income (lowest month)', '$5,200'], ['Housing', '$1,600'], ['Food', '$550'], ['Transport', '$350'], ['Lifestyle', '$450'], ['Debt payments', '$700'], ['Other', '$1,910']].map(([a, b]) => `<tr><td>${a}</td><td class="r">${b}</td></tr>`).join('')}
       <tr class="total"><td>Total planned costs</td><td class="r">$5,560</td></tr><tr class="avail"><td>Available (income − costs)</td><td class="r">−$360</td></tr></tbody></table></div>
     <div class="grid"><div class="card"><h2>${ic('cap')}&nbsp;Teacher-guided tradeoffs</h2><p class="desc" style="font-size:12.5px;color:var(--ink-2)">Ways to close the $360 gap (illustrative):</p>
-      ${[['Reduce discretionary spending by <em>$360</em>', 'e.g., dining out, subscriptions, or shopping.', 1], ['Adjust a planned cost by $360', 'e.g., lower a variable category like lifestyle.', 0], ['Use extra income of $360', 'e.g., a small side project or a one-time bonus.', 0]].map(([t, s, on]) => `<div class="option ${on ? 'on' : ''}"><span class="radio ${on ? 'on' : ''}"></span><div><b>${t}</b><small>${s}</small></div></div>`).join('')}</div>
-      ${teacher('Which tradeoff best fits my goals?')}</div></div>`;
+      ${[['Reduce discretionary spending by <em>$360</em>', 'e.g., dining out, subscriptions, or shopping.', 1], ['Adjust a planned cost by $360', 'e.g., lower a variable category like lifestyle.', 0], ['Use extra income of $360', 'e.g., a small side project or a one-time bonus.', 0]].map(([t, s, on]) => `<div class="option ${on ? 'on' : ''}"><span class="radio ${on ? 'on' : ''}"></span><div><b>${t}</b><small>${s}</small></div></div>`).join('')}</div></div></div>`;
 
 const goalBlock = (icon, name, line, pct, target, saved, rem, monthly) => `<div class="goal"><div class="goal-top">${ic(icon)}<div><b>${name}${inf}</b><small>${line}</small></div><span class="edit">${ic('pencil')}Edit</span></div>
   <div class="bar"><span style="width:${pct}%"></span></div><div class="goal-cols"><div>Target amount<span class="field">${target}${ic('edit')}</span></div><div>Saved<b>${saved}</b></div><div>Remaining<b>${rem}</b></div><div>Monthly contribution<span class="field">${monthly}${ic('edit')}</span></div></div></div>`;
@@ -241,10 +234,9 @@ const goals = () => `
       <div class="pref-row" style="grid-template-columns:1fr 92px;margin-top:10px"><span class="small">Monthly essential expenses</span><span class="field" style="justify-content:space-between">$3,200${ic('edit')}</span></div>
       <div class="pref-row" style="grid-template-columns:1fr 92px"><span class="small">Cushion (months)</span><span class="select">3 months</span></div>
       <div class="reco"><span>Recommended cushion</span><b>$9,600 <svg class="i tiny-i" viewBox="0 0 24 24"><path d="${P.info}"/></svg></b></div>
-      <p class="desc" style="color:var(--ink-2);font-size:12px"><b style="color:var(--ink)">Context</b><br>Covers about 3 months of essential expenses ($3,200 × 3).</p></div></div>
-  <div style="display:flex;justify-content:flex-end;margin-top:12px">${teacher('How can I adjust my goals to build my emergency fund faster?').replace('these numbers', 'your goals').replace('class="teacher ', 'style="width:360px" class="teacher ')}</div>`;
+      <p class="desc" style="color:var(--ink-2);font-size:12px"><b style="color:var(--ink)">Context</b><br>Covers about 3 months of essential expenses ($3,200 × 3).</p></div></div>`;
 
-const placeholder = (ws, label, links) => `<div class="head"><h1>${label}</h1></div><div class="placeholder"><p>This view is next in the redesign.</p><p>${links.map(([v, l]) => `<a href="#${ws}/${v}">${l}</a>`).join(' · ')}</p></div>`;
+const placeholder = (ws, label, links) => `<div class="head"><h1>${label}</h1></div><div class="placeholder"><p>This view is next in the redesign.</p><p>${links.map(([v, l]) => `<a href="#" data-go="${ws}/${v}">${l}</a>`).join(' · ')}</p></div>`;
 
 const SCREENS = {
   investing: {holdings, guidelines, news, calendar},
@@ -252,21 +244,61 @@ const SCREENS = {
 };
 const DEFAULT = {investing: 'holdings', budget: 'debt'};
 
-function render() {
-  const [wsRaw, viewRaw] = location.hash.replace(/^#/, '').split('/');
-  const ws = wsRaw === 'budget' ? 'budget' : 'investing';
-  const items = ws === 'budget' ? BUDGET : INVESTING;
-  const view = items.some(([id]) => id === viewRaw) ? viewRaw : DEFAULT[ws];
-  document.querySelector('#seg').innerHTML = ['investing', 'budget'].map(w => `<a href="#${w}/${DEFAULT[w]}" class="${w === ws ? 'on' : ''}">${w === 'budget' ? 'Budget' : 'Investing'}</a>`).join('');
-  document.querySelector('#nav').innerHTML = items.map(([id, label, icon]) => `<a href="#${ws}/${id}" class="${id === view ? 'on' : ''}" ${id === view ? 'aria-current="page"' : ''}>${ic(icon)}${label}</a>`).join('');
-  const fn = SCREENS[ws][view];
-  const label = items.find(([id]) => id === view)[1];
-  document.querySelector('#main').innerHTML = fn ? fn() : placeholder(ws, label, Object.keys(SCREENS[ws]).map(v => [v, items.find(([id]) => id === v)[1]]));
-  document.title = `${label} · ${ws === 'budget' ? 'Budget' : 'Investing'} · Mentor Labs`;
+// ---------- mounted inside the app: shared site header + the app's built-in teacher dock ----------
+const DASH_KEY = 'mentor-dashboard-view';
+let route = {ws: 'investing', view: 'holdings'};
+try { const saved = JSON.parse(sessionStorage.getItem(DASH_KEY) || 'null'); if (saved?.ws) route = saved; } catch {}
+
+function shell() {
+  return `<div class="mlx"><div class="app"><div class="body">
+    <aside class="side"><div class="seg" data-seg role="tablist" aria-label="Workspace"></div><nav class="nav" data-nav aria-label="Dashboard sections"></nav>
+      <div class="side-foot">
+        <div class="guide"><a class="guide-row" href="#" data-action="learning"><span>${ic('book')}</span><span><b>Learning guide</b><small>13-step program</small></span><span style="margin-left:auto">${ic('chevR', 'i chev')}</span></a>
+          <div class="bar"><span style="width:46%"></span></div><div class="step">Step 6 of 13</div></div>
+        <button type="button" class="avail" data-action="teacher" aria-label="Open your teacher"><span class="live-dot"></span><span><b>Teacher available</b><small>Typically replies in minutes</small></span><span style="margin-left:auto">${ic('msg')}</span></button>
+      </div></aside>
+    <main class="main" data-main></main></div></div></div>`;
 }
-document.querySelector('#user').innerHTML = ic('user');
-document.querySelector('#guide-icons').innerHTML = ic('book');
-document.querySelector('#guide-chev').innerHTML = ic('chevR', 'i chev');
-document.querySelector('#avail-icon').innerHTML = ic('msg');
-window.addEventListener('hashchange', () => { render(); window.scrollTo(0, 0); });
-render();
+
+function draw(root) {
+  const {ws} = route, items = ws === 'budget' ? BUDGET : INVESTING;
+  const view = items.some(([id]) => id === route.view) ? route.view : DEFAULT[ws];
+  route = {ws, view};
+  try { sessionStorage.setItem(DASH_KEY, JSON.stringify(route)); } catch {}
+  root.querySelector('[data-seg]').innerHTML = ['investing', 'budget'].map(w => `<a href="#" role="tab" aria-selected="${w === ws}" data-go="${w}" class="${w === ws ? 'on' : ''}">${w === 'budget' ? 'Budget' : 'Investing'}</a>`).join('');
+  root.querySelector('[data-nav]').innerHTML = items.map(([id, label, icon]) => `<a href="#" data-go="${ws}/${id}" class="${id === view ? 'on' : ''}" ${id === view ? 'aria-current="page"' : ''}>${ic(icon)}${label}</a>`).join('');
+  const fn = SCREENS[ws][view], label = items.find(([id]) => id === view)[1];
+  root.querySelector('[data-main]').innerHTML = fn ? fn() : placeholder(ws, label, Object.keys(SCREENS[ws]).map(v => [v, items.find(([id]) => id === v)[1]]));
+  document.dispatchEvent(new CustomEvent('mentor:dashboard-view', {detail: {...route}}));
+}
+
+// Simple, honest interactivity: navigation goes where it says; segmented controls and options toggle.
+function onClick(root, e) {
+  const go = e.target.closest('[data-go]');
+  if (go) { e.preventDefault(); const [ws, view] = go.dataset.go.split('/'); route = {ws, view: view || DEFAULT[ws]}; draw(root); window.scrollTo(0, 0); return; }
+  const act = e.target.closest('[data-action]');
+  if (act) {
+    e.preventDefault();
+    const a = act.dataset.action;
+    if (a === 'learning') document.querySelector('#app-nav [data-open-learning]')?.click();
+    else if (a === 'teacher') document.querySelector('#teacher-launcher')?.click();
+    else if (a === 'context') document.querySelector('[data-context]')?.click();
+    else if (a === 'privacy') window.open('/privacy.html', '_blank', 'noopener');
+    return;
+  }
+  const seg = e.target.closest('.pill-group button');
+  if (seg) { seg.parentElement.querySelectorAll('button').forEach(b => b.classList.toggle('on', b === seg)); return; }
+  const opt = e.target.closest('.option');
+  if (opt) opt.parentElement.querySelectorAll('.option').forEach(o => { o.classList.toggle('on', o === opt); o.querySelector('.radio')?.classList.toggle('on', o === opt); });
+}
+
+export function mountDashboard(root, ws) {
+  if (ws === 'investing' || ws === 'budget') route = {ws, view: route.ws === ws ? route.view : DEFAULT[ws]};
+  if (!root.dataset.mounted) {
+    root.innerHTML = shell(); root.dataset.mounted = '1';
+    root.addEventListener('click', e => onClick(root, e));
+    root.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.matches('[data-action]')) onClick(root, e); });
+  }
+  draw(root);
+}
+export const dashboardRoute = () => ({...route});
