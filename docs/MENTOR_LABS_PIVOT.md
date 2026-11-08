@@ -56,3 +56,8 @@ The Portfolio tab now embeds the actual copied Sentinel demo HTML/CSS/JavaScript
 ## Latest dashboard design reference
 
 The newer supplied Monarch screenshot supersedes the earlier Sentinel visual geometry. Budgeting and investing now use a slim neutral sidebar, four centered white summary cards, a wide primary chart, and lower two-column detail/planning panels with Mentor green accents. Investing retains the copied Sentinel engines, controls and same-origin bridge. Budgeting compares saved monthly income with the current planned cost line; it does not invent historical spending or future forecasts. The sample/personal separation and shared teacher chat remain intact.
+
+
+### Approved dashboard concept
+
+The approved generated concept replaces the earlier centered-card layout with light ivory navigation, sage selected rows, label-first summary cards, forest-green charts and compact detail panels. Keep the existing Mentor Labs image logo. Investing retains the Sentinel tools and same-origin holdings bridge; budgeting retains exact saved inputs and the lowest-income planning basis. Teacher access remains part of both dashboards. Manual budget entries and portfolio CSV imports work; MCP brokerage/bank connectivity is future work, not an active connection.

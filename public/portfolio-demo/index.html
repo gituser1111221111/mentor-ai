@@ -11,6 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="mentor-palette.css" />
+  <link rel="stylesheet" href="redesign.css" />
   <script src="vendor/chart.umd.min.js" defer></script>
   <script src="app.js" defer></script>
 </head>
@@ -21,7 +22,7 @@
       <div class="brand">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m8 12 3 3 5-6"/></svg>
         <span>Mentor Labs</span>
-        <span class="tag">demo</span>
+        <span class="tag">Investing</span>
       </div>
       <nav class="nav" role="tablist" aria-label="Sections">
         <button role="tab" data-view="overview" aria-selected="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>Overview</button>
@@ -47,7 +48,7 @@
         </div>
         <div class="top-actions">
           <button class="btn ghost" id="exportBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>Export review</button>
-          <button class="btn primary" id="linkBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Link portfolio</button>
+          <button class="btn primary" id="linkBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Import holdings</button>
         </div>
       </header>
 
@@ -70,10 +71,14 @@
             <article class="card monarch-risk-card">
               <header class="card-h"><h2>Risk health</h2><span><button class="link" data-goto="risk" type="button">Review</button> <button class="link accent" data-goto="improve" type="button">How to improve →</button></span></header>
               <div class="score" id="score"></div>
-              <ul class="alerts compact" id="alertsMini"></ul>
+              <ul class="alerts compact" id="alertsMini"></ul><div id="overviewExposure" class="mentor-exposure" aria-label="Largest sector exposures"></div>
             </article>
           </div>
-          <div class="grid g-1-1-1">
+          <div class="grid mentor-summary-row">
+            <article class="card mentor-key-card"><header class="card-h"><h2>Key metrics</h2><button class="link" data-goto="risk" type="button">All metrics →</button></header><dl id="overviewMetrics" class="mentor-key-metrics"></dl></article>
+            <article class="card mentor-teacher-card"><div class="mentor-teacher-heading"><img src="/img/mentor-logo-suede.webp" width="32" height="32" alt="Mentor Labs"><div><h2>Ask your teacher</h2><p>Make sense of the numbers, together.</p></div></div><button class="mentor-ask-input" id="overviewTeacher" type="button"><span>Ask about these numbers…</span><span aria-hidden="true">↗</span></button></article>
+          </div>
+          <details class="mentor-more"><summary>Explore allocation, upcoming events &amp; news</summary><div class="grid g-1-1-1">
             <article class="card">
               <header class="card-h"><h2>Sector exposure</h2></header>
               <div class="chart-box"><canvas id="sectorChart" aria-label="Sector allocation donut chart"></canvas></div>
@@ -87,7 +92,7 @@
               <header class="card-h"><h2>Latest on your holdings</h2><button class="link" data-goto="news" type="button">All news →</button></header>
               <ul class="news compact" id="newsMini"></ul>
             </article>
-          </div>
+          </div></details>
         </section>
 
         <!-- RISK -->

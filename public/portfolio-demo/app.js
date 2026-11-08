@@ -523,7 +523,7 @@
       ["Portfolio value", fmtUSD(A.total), mentorPayload&&!mentorPayload.sample?`<span class="muted">Daily change unavailable</span>`:`<span class="${cls(A.dayChg)}">${A.dayChg >= 0 ? "+" : ""}${fmtUSD(A.dayChg)} today</span>`],
       ["Unrealized P/L", `<span class="${cls(plTot)}">${isNum(plTot) && plTot >= 0 ? "+" : ""}${fmtUSD(plTot)}</span>`, `<span class="${cls(plTot)}">${fmtPct(isNum(plTot) ? (plTot / A.costTotal) * 100 : null, 1, true)} on cost</span>`],
       [mentorPayload&&!mentorPayload.sample?"Historical mix return":"1Y return", `<span class="${cls(A.ret1y)}">${fmtPct(A.ret1y, 1, true)}</span>`, `<span class="muted">S&amp;P ${fmtPct(A.spyRet, 1, true)}</span>`],
-      ["Beta · Volatility", `${isNum(A.beta) ? A.beta.toFixed(2) : "—"} · ${fmtPct(A.vol, 0)}`, `<span class="muted">Top five ${fmtPct(A.top5,0)} · ${A.effN.toFixed(1)} effective holdings</span>`],
+      ["Risk health", `${A.score}<small class="mentor-score-outof">/100</small>`, `<span class="muted">${mentorPayload?.sample?"Example":mentorDraft?"Draft":"Saved"} guideline review</span>`],
     ];
     $("#kpis").innerHTML = k.map(([a, b, c]) => `<div class="kpi"><div class="k">${a}</div><div class="v">${b}</div><div class="d">${c}</div></div>`).join("");
 
@@ -540,6 +540,8 @@
     const nw = allNews().slice(0, 5);
     $("#newsMini").innerHTML = nw.length ? nw.map(newsHTML).join("") : `<li class="empty">No recent headlines in the snapshot.</li>`;
     $("#overviewHoldings tbody").innerHTML=A.rows.slice().sort((a,b)=>b.value-a.value).slice(0,6).map(r=>`<tr><td><span class="monarch-asset-icon">${esc(r.ticker.slice(0,1))}</span><span><strong>${esc(r.ticker)}</strong><small>${esc(r.name||r.sector)}</small></span></td><td class="num">${fmtUSD(r.value,2)}</td><td class="num">${fmtPct(r.weight)}</td></tr>`).join('');
+    $("#overviewExposure").innerHTML = A.sectorList.slice(0,4).map(([sector,weight])=>`<div><span>${esc(sector)}</span><i><b style="width:${Math.max(0,Math.min(100,weight))}%"></b></i><strong>${fmtPct(weight)}</strong></div>`).join("");
+    $("#overviewMetrics").innerHTML = [["Beta",isNum(A.beta)?A.beta.toFixed(2):"—"],["Volatility",fmtPct(A.vol)],["Sharpe",isNum(A.sharpe)?A.sharpe.toFixed(2):"—"],["Max drawdown",fmtPct(A.maxDD)]].map(([label,value])=>`<div><dt>${label}</dt><dd>${value}</dd></div>`).join("");
     drawOverviewCharts();
   }
 
@@ -791,7 +793,7 @@
     state.view = v;
     $$(".nav button").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.view === v)));
     $$(".view").forEach((s) => (s.hidden = s.id !== "view-" + v));
-    $("#viewTitle").textContent = TITLES[v];
+    $("#viewTitle").textContent = v === "overview" ? "Your portfolio" : TITLES[v];
     if (location.hash !== "#" + v) history.replaceState(null, "", "#" + v);
     render();
     window.scrollTo({ top: 0 });
@@ -931,7 +933,8 @@
       $$(".ltab").forEach((p) => (p.hidden = p.dataset.lpanel !== ltab));
     }));
     $("#brokers").innerHTML = BROKERS.map(([n, s]) => `<button type="button" class="broker" data-broker="${esc(n)}"><b>${esc(n)}</b><small>${esc(s)}</small></button>`).join("");
-    $("#brokers").addEventListener("click", (e) => { const b = e.target.closest("[data-broker]"); if (b) toast(`Demo: ${b.dataset.broker} read-only OAuth would open here. Use Paste or CSV for now.`); });
+    const goTab = (name) => { const t = document.querySelector(`.tabs2 button[data-ltab="${name}"]`); if (t) t.click(); };
+    $("#brokers").addEventListener("click", (e) => { const b = e.target.closest("[data-broker]"); if (b) { goTab("paste"); $("#pasteErr").textContent = `${b.dataset.broker} connections are a placeholder in this demo. Paste your holdings here instead, or upload a CSV.`; } });
     const readFile = (file) => {
       const r = new FileReader();
       r.onload = () => { pendingCSV=String(r.result); try { pending = parseCSV(String(r.result)); $("#csvMsg").className = "ok"; $("#csvMsg").textContent = `Parsed ${pending.length} positions from ${file.name}.`; } catch (err) { pending = null; $("#csvMsg").className = "err"; $("#csvMsg").textContent = parent!==window&&pendingCSV?"File selected. Review portfolio will validate it against your saved workspace.":err.message; } };
@@ -952,7 +955,7 @@
         if(parent!==window&&pendingCSV){emit("mentor-portfolio-import",{csv:pendingCSV});dlg.close();return;}
         if (!pending?.length) { $("#csvMsg").className = "err"; $("#csvMsg").textContent = "Choose a CSV first."; return; }
         saveHoldings(pending, "Imported portfolio"); dlg.close(); toast(`Imported ${pending.length} positions`); setView("risk");
-      } else toast("Pick Paste holdings or Upload CSV to review real positions in this demo.");
+      } else { goTab("paste"); $("#pasteErr").textContent = "Broker links aren't live in this demo. Paste your holdings below, upload a CSV, or load the demo portfolio."; }
     });
     $("#loadDemo").addEventListener("click", () => { saveHoldings(DEMO_HOLDINGS, "Demo portfolio"); dlg.close(); toast("Demo portfolio loaded"); });
   }
@@ -995,6 +998,7 @@
     if (!Object.keys(DATA.assets).length) toast("Market data snapshot failed to load.");
     mentorReady=true;
     const settings=$('#view-settings');const actions=document.createElement('div');actions.className='mentor-approval';actions.innerHTML='<button type="button" class="btn primary" id="mentor-approve">Review &amp; approve guidelines</button><button type="button" class="btn ghost" id="mentor-refresh">Refresh market context</button><button type="button" class="btn ghost" id="mentor-teacher">Ask your teacher</button>';settings.prepend(actions);
+    $('#overviewTeacher').onclick=()=>emit('mentor-portfolio-teacher',{question:mentorPayload?.sample?'Teach me how to read this example portfolio without treating it as my own holdings.':'Help me understand my portfolio, its risk metrics, and the tradeoffs in my holdings.'});
     $('#mentor-approve').onclick=()=>emit('mentor-portfolio-guidelines',{settings:structuredClone(state.settings)});$('#mentor-refresh').onclick=()=>emit('mentor-portfolio-refresh');$('#mentor-teacher').onclick=()=>emit('mentor-portfolio-teacher',{question:mentorPayload?.sample?'The screen shows a display-only sample portfolio. Teach me how to read its risk metrics; do not treat sample holdings as my personal finances.':'Explain the risk metrics and guidelines in my portfolio.'});
     if(mentorPayload)hydrate(mentorPayload);setView(state.view);emit('mentor-portfolio-ready');
   }

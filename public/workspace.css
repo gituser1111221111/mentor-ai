@@ -13,3 +13,13 @@
 @media(min-width:1350px){body.exact-portfolio-active.teacher-docked main{width:auto;margin-right:500px}}
 
 body.dashboard-open main{max-width:none;width:100%;padding-left:24px;padding-right:24px}body.dashboard-open #v-workspace{padding-top:12px}.exact-workspace-tabs{gap:22px;padding:6px 8px 12px}.exact-workspace-tabs .btn{border:0;border-radius:0;padding:10px 2px;background:transparent;color:var(--muted);font-size:.83rem}.exact-workspace-tabs .btn.primary{color:var(--green);border-bottom:2px solid var(--green)}@media(min-width:1350px){body.dashboard-open.teacher-docked main{width:auto;margin-right:500px}}@media(max-width:650px){body.dashboard-open main{padding-left:10px;padding-right:10px}}
+/* Approved dashboard concept: shared light application header, original logo retained. */
+body.dashboard-open header.site{background:#faf9f5;color:#193b31;border-bottom:1px solid #e5e7df;backdrop-filter:none;padding-left:24px;padding-right:24px;min-height:72px}
+body.dashboard-open header.site .wordmark,body.dashboard-open header.site #restart,body.dashboard-open header.site #engine{color:#193b31}
+body.dashboard-open header.site #engine{border-color:#dfe6dc;background:#f1f5ee}
+body.dashboard-open header.site .header-context{color:#193b31;border-color:#dce2d7;background:#fff}
+body.dashboard-open .app-nav{background:transparent;border:0;border-radius:8px}
+body.dashboard-open .app-nav button{border-radius:7px;color:#344b41}
+body.dashboard-open .app-nav button[aria-current=page]{background:#e1edd9;color:#173c2f}
+body.dashboard-open #teacher-launcher{border-radius:10px;background:#155840;color:#fff}
+@media(max-width:650px){body.dashboard-open header.site{padding:10px 14px;gap:8px}body.dashboard-open header.site .head-right{font-size:11px}body.dashboard-open .app-nav{padding:0}}
