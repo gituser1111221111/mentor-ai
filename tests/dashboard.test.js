@@ -71,3 +71,22 @@ test('saving the example plan as your own keeps its debts so totals match what w
   assert.equal(p.debts.reduce((t, x) => t + Number(x.minPayment), 0), 700);
   assert.throws(() => savePlan({categories: [], debts: [{name: 'Card', balance: '10', rateBps: 99999, minPayment: '1'}]}, {}), /APR/);
 });
+
+test('every response carries clickjacking, referrer and permission headers', async () => {
+  for (const path of ['/', '/api/health', '/api/workspace/demo']) {
+    const r = await fetch(base + path, {headers: {'X-Session-Id': 'dashboard-headers-0001'}});
+    assert.equal(r.headers.get('x-frame-options'), 'SAMEORIGIN', path);
+    assert.equal(r.headers.get('content-security-policy'), "frame-ancestors 'self'", path);
+    assert.equal(r.headers.get('referrer-policy'), 'strict-origin-when-cross-origin', path);
+    assert.match(r.headers.get('permissions-policy'), /camera=\(\)/, path);
+  }
+});
+
+test('the cached example cannot be altered by one visitor for the next', async () => {
+  const first = await (await fetch(base + '/api/workspace/demo')).json();
+  const sid = 'dashboard-cache-000001';
+  await call(sid, '/api/workspace/whatif', {sample: true, symbol: 'NVDA', toPercent: 5});
+  const second = await (await fetch(base + '/api/workspace/demo')).json();
+  assert.equal(second.review.marketValue, first.review.marketValue);
+  assert.equal(second.profile.portfolio.securities.length, first.profile.portfolio.securities.length);
+});

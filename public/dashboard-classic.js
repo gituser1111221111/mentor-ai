@@ -86,12 +86,12 @@ function goalChart() {
 
 const debt = () => { const p = PLANS[debtPlan]; return `
   <div class="head"><h1>Debt plan${inf}</h1><span class="spacer"></span><span class="plan-label">Plan:</span><div class="pill-group">${Object.keys(PLANS).map(k => `<button data-plan="${k}" class="${k === debtPlan ? 'on' : ''}" style="padding:5px 18px">${k === 'snowball' ? 'Snowball' : 'Avalanche'}</button>`).join('')}</div>
-    <button class="btn" style="margin-left:16px">${ic('gear')}Rate assumptions</button></div>
+    </div>
   <div class="grid g4">${kpi('Total balance', '$16,640')}${kpi('Total minimum payments', '$700 <small>/ mo</small>')}${kpi('Extra payment', '$300 <small>/ mo</small>')}${kpi('Payoff horizon', p.months + ' months', 'pos')}</div>
   <div class="card mt"><h2>Projected debt balance${inf}</h2><div class="legend" style="margin-top:10px"><span><i class="dotline"></i>With extra payment ($300/mo)</span><span><i class="dash"></i>Minimum payments only (27 months)</span></div>${debtChart(p)}
     <div class="foot-note">Projection using your current APRs and payments, month by month in exact cents. Not a guarantee of results.</div></div>
   <div class="grid mt split" style="grid-template-columns:1.12fr 1fr">
-    <div class="card"><div class="card-head"><h2>Your debts (3)${inf}</h2><button class="btn sm">${ic('pencil')}Edit</button></div><table><thead><tr><th>Debt${S}</th><th>APR${S}</th><th>Balance${S}</th><th>Minimum${S}</th></tr></thead><tbody>
+    <div class="card"><div class="card-head"><h2>Your debts (3)${inf}</h2><button class="btn sm" data-go="budget/settings">${ic('pencil')}Edit</button></div><table><thead><tr><th>Debt${S}</th><th>APR${S}</th><th>Balance${S}</th><th>Minimum${S}</th></tr></thead><tbody>
       ${[['card', 'Credit card', '21.49%', '$6,040', '$300'], ['car', 'Auto loan', '6.25%', '$8,400', '$250'], ['cap', 'Student loan', '4.75%', '$2,200', '$150']].map(([i, n, a, b, m]) => `<tr><td><span class="debt-name">${ic(i)}${n}</span></td><td>${a}</td><td><span class="cellbox">${b}</span></td><td><span class="cellbox">${m}</span></td></tr>`).join('')}</tbody></table></div>
     <div class="card"><h2>Plan details${inf}</h2><div class="detail-row" style="margin-top:14px"><span>Strategy</span><span class="select">${p.label}</span></div>
       <div class="detail-row"><span>Payoff order</span><span class="small">${p.order}</span></div>
