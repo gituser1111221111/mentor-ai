@@ -748,7 +748,8 @@ function updateTeacherDockContext(){
   const context=teacherLessonContext();
   if(context){$('#teacher-dock-context').textContent='Alongside '+context.title;return;}
   const tab=document.querySelector('[data-workspace-tab][aria-pressed="true"]')?.dataset.workspaceTab;
-  const isSample=document.querySelector('#workspace-content')?.dataset[tab==='portfolio'?'samplePortfolio':'sampleBudget']==='true';
+  let isSample=document.querySelector('#workspace-content')?.dataset[tab==='portfolio'?'samplePortfolio':'sampleBudget']==='true';
+  if(tab==='portfolio'){try{isSample=document.querySelector('#exact-portfolio-frame')?.contentWindow.MentorPortfolio?.getState()?.sample??isSample;}catch{}}
   $('#teacher-dock-context').textContent=isSample?'Sample '+tab+' - your personal inputs remain separate':'Your saved budget and portfolio';
 }
 document.addEventListener('mentor:workspace-rendered',()=>{if(!teacherDock.hidden)updateTeacherDockContext();});

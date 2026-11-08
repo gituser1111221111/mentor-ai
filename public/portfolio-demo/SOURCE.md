@@ -1,0 +1,1 @@
+Source files copied from gituser1111221111/demo-, main c50a6af8ab60af9f34d5d5b45b364f33d47ee1ed. Original HTML, CSS, renderer, charts and controls retained. Mentor changes: palette/logo, read-only automatic demo, same-origin import/approval/API bridge, and preservation of imported valuations.

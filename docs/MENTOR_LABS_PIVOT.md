@@ -48,3 +48,7 @@ Live configuration checked: Alpha Vantage and FRED keys are recognized, and FRED
 ## Automatic dashboard previews
 
 Dashboard fills missing budget and portfolio sections independently with labeled display-only examples. Read-only GET /api/workspace/demo never mutates a session. Editors show actual partial inputs or blank fields; real saved inputs replace the corresponding preview immediately. Sample exports retain sample labels, and personal teacher context continues to use only the real profile.
+
+## Original portfolio interface
+
+The Portfolio tab now embeds the actual copied Sentinel demo HTML/CSS/JavaScript/data under public/portfolio-demo, retaining its original five KPI cards, seven views, Chart.js charts and all settings controls. The base stylesheet is byte-identical to demo- c50a6af; Mentor palette overrides are separate. A same-origin bridge forwards imports, explicit guideline approval and market refresh to the existing session APIs. Source demo holdings remain display-only. Real imported valuations, cost basis, unknown coverage and historical-illustration labels are preserved. Source what-if operations stay local and reconcile cash to cents. Chart.js4.4.1 is vendored with its license.

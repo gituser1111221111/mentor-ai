@@ -1,0 +1,5 @@
+/* Palette and shared logo only; source dashboard geometry remains unchanged. */
+:root{--bg:#f4f1ea;--bg-2:#eaf0e8;--card:#fffefa;--card-2:#dfe8e0;--line:#d8dfd4;--line-2:#b3c3b4;--fg:#17332b;--fg-2:#385348;--muted:#677b6e;--accent:#155c49;--accent-ink:#ffffff;--up:#1f6b4b;--down:#b54537;--warn:#9e6a15;--info:#376b85;--violet:#766193;color-scheme:light}
+.topbar{background:rgba(244,241,234,.94)}.brand>svg{display:none}.brand:before{content:'';width:24px;height:24px;flex:none;background:url('/img/mentor-logo-suede.webp') center/contain no-repeat}.tag{background:var(--card-2);border-color:var(--line-2);color:var(--accent)}.badge{background:#f5dfd8;color:#922f27}.footer #mentor-context-note{display:block;margin-bottom:6px}.mentor-approval{margin-bottom:18px}.mentor-approval .btn{margin-right:8px}
+
+.brand{white-space:nowrap}
