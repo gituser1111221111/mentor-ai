@@ -245,6 +245,7 @@ function starterPrompts() {
 }
 // Empty-state starters: visible questions instead of a blank log. Removed on the first send.
 function showStarters() {
+  $('#log').querySelectorAll('.starter').forEach(x => x.remove()); // only one set of suggestions at a time
   const el = document.createElement('div'); el.className = 'starter';
   el.innerHTML = `<p class="fine">Try one of these, or ask your own.</p><div class="chips">${starterPrompts().map(t => `<button class="chip" type="button">${esc(t)}</button>`).join('')}</div><button class="btn text" type="button" data-add-numbers title="Import is coming soon">Import my data <span class="tag quiet">Soon</span></button>`;
   el.querySelectorAll('.chip').forEach(c => c.onclick = () => send(c.textContent));
@@ -271,7 +272,14 @@ async function pickPersona(id) {
   const p = persona(id); if (id === state.personaId || blocked(p)) return;
   if (voice.active) endConversation();
   state.personaId = id; rememberChoice(); renderChatChrome();
-  if (!state.lastTurn) { note(`${p.name} is ready. Ask a question or explore a starting point below.`); showStarters(); return; }
+  if (!state.lastTurn) {
+    // Before the first question, switching teachers replaces the welcome instead of stacking copies.
+    const fresh = !$('#log .msg.user');
+    if (fresh) $('#log').innerHTML = '';
+    note(`${p.name} is ready. Ask a question or explore a starting point below.`);
+    if (fresh) showStarters();
+    return;
+  }
   const sk = skeleton();
   try { botMessage(await api('/api/repick', {method: 'POST', body: {turnId: state.lastTurn, personaId: id}})); }
   catch (e) { handleError(e); } finally { sk.stop(); }
