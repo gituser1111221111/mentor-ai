@@ -367,7 +367,7 @@ async function send(text, {spoken = false, voiceSession = null} = {}) {
   $('#msg').value = ''; const btn = $('#composer button[type="submit"]'); btn.disabled = true;
   const sk = skeleton();
   try {
-    const r = await api('/api/chat', {method: 'POST', body: {message: text, demoProfile: true, personaId: state.personaId, agentId: state.agentId, learningModuleId: teacherLessonContext()?.id, learningToolTitle: teacherLessonContext()?.id ? undefined : teacherLessonContext()?.title}}); state.lastTurn = r.turnId;
+    const r = await api('/api/chat', {method: 'POST', body: {message: text, demoProfile: !(state.profile?.incomeHistory?.length || state.profile?.portfolio?.securities?.length), personaId: state.personaId, agentId: state.agentId, learningModuleId: teacherLessonContext()?.id, learningToolTitle: teacherLessonContext()?.id ? undefined : teacherLessonContext()?.title}}); state.lastTurn = r.turnId;
     const el = botMessage(r); refreshMemory();
     if (r.profileUpdated) el.insertAdjacentHTML('beforeend', '<p class="fine">Saved inputs updated from your message.</p>');
     if (voiceSession && voice.active && voice.session === voiceSession && canSpeak(r) && speechEpoch === voice.epoch) {
@@ -722,7 +722,7 @@ document.querySelector('#start-choice')?.addEventListener('submit', () => {
 // Dashboard design pass (Nov 7): the Dashboard opens the standalone Investing/Budget page.
 // The Dashboard (Investing/Budget design pass) mounts inside the app, under the shared header,
 // with the built-in teacher dock available. The previous workspace.js is kept but no longer loaded.
-function openWorkspace(tab) {show('v-workspace');import('/dashboard.js?v=6').then(m=>m.mountDashboard(document.querySelector('#dashboard-root'),tab==='portfolio'||tab==='investing'?'investing':tab==='budget'?'budget':undefined)).catch(e=>banner('The dashboard could not load: '+e.message,true));}
+function openWorkspace(tab) {show('v-workspace');import('/dashboard.js?v=7').then(m=>m.mountDashboard(document.querySelector('#dashboard-root'),tab==='portfolio'||tab==='investing'?'investing':tab==='budget'?'budget':undefined)).catch(e=>banner('The dashboard could not load: '+e.message,true));}
 function openLearning() {show('v-learning');}
 document.querySelectorAll('[data-open-workspace]').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();openWorkspace(b.dataset.openWorkspace);}));
 document.querySelectorAll('[data-open-learning]').forEach(b=>b.addEventListener('click',openLearning));
@@ -775,7 +775,7 @@ function updateTeacherDockContext(){
   const context=teacherLessonContext();
   if(context){$('#teacher-dock-context').textContent='Alongside '+context.title;return;}
   const tab=document.querySelector('[data-workspace-tab][aria-pressed="true"]')?.dataset.workspaceTab;
-  let isSample=document.querySelector('#workspace-content')?.dataset[tab==='portfolio'?'samplePortfolio':'sampleBudget']==='true';
+  let isSample=document.querySelector('#dashboard-root')?.dataset[tab==='portfolio'?'samplePortfolio':'sampleBudget']==='true';
   if(tab==='portfolio'){try{isSample=document.querySelector('#exact-portfolio-frame')?.contentWindow.MentorPortfolio?.getState()?.sample??isSample;}catch{}}
   $('#teacher-dock-context').textContent='Fictional demo profile · shared with your teacher';
 }

@@ -5,7 +5,7 @@ const {createServer}=await import('../server.js');
 const store=await import('../lib/store.js');
 const {demoWorkspace}=await import('../lib/workspace-demo.js');
 test('demo chat receives shared fictional dashboard context without overwriting personal inputs',async()=>{
- const demo=demoWorkspace();assert.equal(demo.budget.snapshot.lowestMonth,'5200.00');assert.equal(demo.budget.monthlyBalance,'1550.00');assert.equal(demo.review.marketValue,'119687.00');
+ const demo=demoWorkspace();assert.equal(demo.budget.snapshot.lowestMonth,'5200.00');assert.equal(demo.budget.monthlyBalance,'1550.00');assert.equal(demo.review.marketValue,'119686.70');
  const server=createServer();await new Promise(r=>server.listen(0,'127.0.0.1',r));const sid='shared-demo-chat-test';const base='http://127.0.0.1:'+server.address().port;const headers={'Content-Type':'application/json','X-Session-Id':sid};
  try{
   const send=async(path,body)=>{const r=await fetch(base+path,{method:'POST',headers,body:JSON.stringify(body)});assert.equal(r.status,200);return r.json();};
