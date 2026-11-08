@@ -75,3 +75,38 @@
 #workspace-content > .ws-shell .ws-preview{padding:10px 13px;margin-top:0;margin-bottom:12px;font-size:11px}
 #workspace-content > .ws-shell .ws-preview p{font-size:10px;line-height:1.45;margin:3px 0 0}
 @media(max-width:760px){#workspace-content > .ws-shell .budget-timeline{height:185px;max-height:185px}#workspace-content > .ws-shell .ws-preview{margin-bottom:10px}}
+/* Complete simulated budget programme, matching the approved light dashboard sheets. */
+#workspace-content .demo-budget-original{display:none!important}
+#demo-budget-tabs .workspace-stats{margin-bottom:16px}
+#demo-budget-tabs .ws-card{margin-bottom:14px;padding:16px;background:#fff;border:1px solid #e2e5dc;border-radius:8px;box-shadow:0 1px 2px #193a2504}
+#demo-budget-tabs .ws-card-h{padding:0 0 12px;margin-bottom:12px;border-bottom:1px solid #eff0eb}
+#demo-budget-tabs .ws-card-h h3{font-size:13px;color:#1c2920;font-weight:650}
+#demo-budget-tabs .demo-two{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(250px,1fr);gap:14px;align-items:start}
+#demo-budget-tabs .demo-table-wrap{overflow-x:auto}
+#demo-budget-tabs .demo-table{width:100%;border-collapse:collapse;font-size:12px;line-height:1.5}
+#demo-budget-tabs .demo-table th{text-align:left;font-weight:600;border-bottom:1px solid #e9ece4;padding:10px 8px;font-size:11px}
+#demo-budget-tabs .demo-table td{padding:14px 8px;border-bottom:1px solid #f0f1ec}
+#demo-budget-tabs .demo-table td:not(:first-child){white-space:nowrap}
+#demo-budget-tabs .demo-category{display:inline-grid;place-items:center;width:26px;height:26px;background:#edf3e8;color:#165640;border-radius:6px;margin-right:10px}
+#demo-budget-tabs .demo-share{width:95px;height:6px;background:#e9ece4;border-radius:8px;display:inline-block;margin-right:9px;vertical-align:middle;overflow:hidden}
+#demo-budget-tabs .demo-share i,#demo-budget-tabs .demo-progress i{display:block;height:100%;background:#23734d;border-radius:8px}
+#demo-budget-tabs .demo-progress{height:9px;background:#e7eae1;border-radius:8px;margin:16px 0 8px;overflow:hidden}
+#demo-budget-tabs .demo-teacher{background:#edf4e6;max-width:450px;margin-left:auto}
+#demo-budget-tabs .demo-teacher p{font-size:11px;margin-bottom:10px}
+#demo-budget-tabs .demo-ask{display:flex;justify-content:space-between;align-items:center;background:#fff;border:1px solid #dce5d6;border-radius:6px;padding:8px;width:100%;font-size:11px;color:#576652;cursor:pointer}
+#demo-budget-tabs .demo-ask b{padding:4px 8px;border-radius:4px;background:#12583c;color:white;font-size:18px}
+#demo-budget-tabs .demo-check{padding:13px 0;border-bottom:1px solid #edf0e7;color:#27603e}
+#demo-budget-tabs hr{border:0;border-top:1px solid #e6e9e0;margin:18px 0}
+#demo-budget-tabs h4{font-size:12px;margin:12px 0}
+#demo-budget-tabs select{width:100%;margin-top:12px;border:1px solid #dce3d5;border-radius:6px;padding:10px;background:#fff;color:#21452f;font:inherit}
+#demo-budget-tabs .budget-timeline{width:100%;height:250px;stroke:none;fill:none}
+#demo-budget-tabs .budget-timeline text{fill:#819080;stroke:none;font-size:10px}
+#demo-budget-tabs .budget-chart-area{fill:#e8f2e8;stroke:none}
+#demo-budget-tabs .budget-chart-income{stroke:#145a42;stroke-width:2;fill:none}
+#demo-budget-tabs .budget-chart-cost{stroke:#94b67b;stroke-width:2}
+#demo-budget-tabs .budget-chart-grid{stroke:#edf0e9;stroke-width:1}
+#demo-budget-tabs .budget-chart-dot{fill:#145a42}
+@media(max-width:850px){#demo-budget-tabs .demo-two{grid-template-columns:minmax(0,1fr)}#demo-budget-tabs .demo-teacher{max-width:none}#demo-budget-tabs .demo-share{width:50px}}
+@media(max-width:500px){#demo-budget-tabs .ws-card{padding:12px}#demo-budget-tabs .demo-table{font-size:10px}#demo-budget-tabs .demo-table td{padding:12px 5px}#demo-budget-tabs .demo-category{display:none}#demo-budget-tabs .budget-timeline{height:185px}}
+#workspace-content>.ws-shell .ws-badge{display:none!important}
+#demo-budget-tabs .demo-teacher{background:#edf4e6!important;border-color:#dce6d4!important}

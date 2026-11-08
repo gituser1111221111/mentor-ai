@@ -33,7 +33,7 @@
         <button role="tab" data-view="news" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8M15 18h-5M10 6h8v4h-8z"/></svg>News</button>
         <button role="tab" data-view="settings" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>Guidelines</button>
       </nav>
-      <div class="sources">
+      <button class="demo-learning" data-demo-teacher type="button"><strong>Ask your teacher</strong><span>Explore this sample profile →</span></button><div class="sources">
         <p class="eyebrow">Data sources</p>
         <ul id="sourceList"></ul>
         <p class="asof" id="asOf"></p>
@@ -48,7 +48,7 @@
         </div>
         <div class="top-actions">
           <button class="btn ghost" id="exportBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>Export review</button>
-          <button class="btn primary" id="linkBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Import holdings</button>
+          <button class="btn primary" id="linkBtn" type="button" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Import holdings</button>
         </div>
       </header>
 
@@ -96,7 +96,7 @@
         </section>
 
         <!-- RISK -->
-        <section class="view" id="view-risk" role="tabpanel" hidden>
+        <section class="view" id="view-risk" role="tabpanel" hidden><div class="kpis" id="riskSummary"></div>
           <div class="grid g-1-1">
             <article class="card">
               <header class="card-h"><h2>Guideline checks</h2><span class="muted" id="ruleSummary"></span></header>
@@ -126,7 +126,7 @@
               <header class="card-h"><h2>Risk vs return by holding</h2><span class="muted">bubble = weight</span></header>
               <div class="chart-box"><canvas id="scatterChart" aria-label="Annualized volatility versus return per holding"></canvas></div>
             </article>
-          </div>
+          </div><article class="card mentor-teacher-card demo-tab-teacher"><div class="mentor-teacher-heading"><img src="/img/mentor-logo-suede.webp" width="32" height="32" alt="Mentor Labs"><div><h2>Ask your teacher</h2><p>Understand Alex Morgan’s sample finances.</p></div></div><button type="button" class="mentor-ask-input" data-demo-teacher><span>Ask about these numbers…</span><span aria-hidden="true">↗</span></button></article>
         </section>
 
         <!-- IMPROVE -->
@@ -159,11 +159,11 @@
               </table>
             </div>
             <p class="hint">Mechanical math against the limits you set, not a recommendation. "Apply as what-if" swaps the holdings in this browser so every chart and check reflects the plan; revert anytime.</p>
-          </article>
+          </article><article class="card mentor-teacher-card demo-tab-teacher"><div class="mentor-teacher-heading"><img src="/img/mentor-logo-suede.webp" width="32" height="32" alt="Mentor Labs"><div><h2>Ask your teacher</h2><p>Understand Alex Morgan’s sample finances.</p></div></div><button type="button" class="mentor-ask-input" data-demo-teacher><span>Ask about these numbers…</span><span aria-hidden="true">↗</span></button></article>
         </section>
 
         <!-- HOLDINGS -->
-        <section class="view" id="view-holdings" role="tabpanel" hidden>
+        <section class="view" id="view-holdings" role="tabpanel" hidden><div class="kpis" id="holdingsSummary"></div><p class="demo-note">Alex Morgan’s fictional holdings · Personal portfolio imports are coming later.</p>
           <article class="card">
             <header class="card-h">
               <h2>Positions</h2>
@@ -182,11 +182,11 @@
                 <tbody></tbody>
               </table>
             </div>
-          </article>
+          </article><article class="card mentor-teacher-card demo-tab-teacher"><div class="mentor-teacher-heading"><img src="/img/mentor-logo-suede.webp" width="32" height="32" alt="Mentor Labs"><div><h2>Ask your teacher</h2><p>Understand Alex Morgan’s sample finances.</p></div></div><button type="button" class="mentor-ask-input" data-demo-teacher><span>Ask about these numbers…</span><span aria-hidden="true">↗</span></button></article>
         </section>
 
         <!-- CALENDAR -->
-        <section class="view" id="view-calendar" role="tabpanel" hidden>
+        <section class="view" id="view-calendar" role="tabpanel" hidden><article class="card"><header class="card-h"><h2>November 2026</h2><span class="tag">Dated example events</span></header><div id="calendarGrid" class="calendar-grid"></div></article>
           <div class="grid g-2-1">
             <article class="card">
               <header class="card-h"><h2>Upcoming catalysts</h2><span class="muted" id="calNote"></span></header>
@@ -197,18 +197,18 @@
               <dl class="metrics" id="macroList"></dl>
               <p class="foot-note">Rates and inflation shift the discount rate on growth-heavy portfolios. Compare your beta and sector mix against this backdrop.</p>
             </article>
-          </div>
+          </div><article class="card mentor-teacher-card demo-tab-teacher"><div class="mentor-teacher-heading"><img src="/img/mentor-logo-suede.webp" width="32" height="32" alt="Mentor Labs"><div><h2>Ask your teacher</h2><p>Understand Alex Morgan’s sample finances.</p></div></div><button type="button" class="mentor-ask-input" data-demo-teacher><span>Ask about these numbers…</span><span aria-hidden="true">↗</span></button></article>
         </section>
 
         <!-- NEWS -->
-        <section class="view" id="view-news" role="tabpanel" hidden>
+        <section class="view" id="view-news" role="tabpanel" hidden><div class="demo-news-intro"><h2>News on your holdings</h2><p>Dated snapshot coverage for the fictional portfolio.</p></div><aside class="card demo-watchlist"><header class="card-h"><h2>Portfolio watchlist</h2></header><div id="newsWatchlist"></div></aside>
           <article class="card">
             <header class="card-h">
               <h2>News feed</h2>
               <div class="chips" id="newsChips" role="group" aria-label="Filter news"></div>
             </header>
             <ul class="news" id="newsFull"></ul>
-          </article>
+          </article><article class="card mentor-teacher-card demo-tab-teacher"><div class="mentor-teacher-heading"><img src="/img/mentor-logo-suede.webp" width="32" height="32" alt="Mentor Labs"><div><h2>Ask your teacher</h2><p>Understand Alex Morgan’s sample finances.</p></div></div><button type="button" class="mentor-ask-input" data-demo-teacher><span>Ask about these numbers…</span><span aria-hidden="true">↗</span></button></article>
         </section>
 
         <!-- SETTINGS -->
@@ -278,7 +278,7 @@
                 <p class="hint">Ideas: each holding Upside to analyst target ≥ 0 · Portfolio Dividend yield ≥ 1.5 · Portfolio Number of sectors held ≥ 6 · each holding Volatility ≤ 45</p>
               </article>
             </div>
-          </form>
+          </form><article class="card mentor-teacher-card demo-tab-teacher"><div class="mentor-teacher-heading"><img src="/img/mentor-logo-suede.webp" width="32" height="32" alt="Mentor Labs"><div><h2>Ask your teacher</h2><p>Understand Alex Morgan’s sample finances.</p></div></div><button type="button" class="mentor-ask-input" data-demo-teacher><span>Ask about these numbers…</span><span aria-hidden="true">↗</span></button></article>
         </section>
       </main>
 

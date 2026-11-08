@@ -243,7 +243,7 @@
       ...DATA.econ.filter((e) => e.date && daysUntil(e.date) >= 0).map((e) => ({ ...e, kind: "macro", days: daysUntil(e.date) })),
     ].sort((a, b) => a.days - b.days);
 
-    const authoritative=mentorPayload&&!mentorPayload.sample&&!state.label.startsWith('What-if')&&holdings===state.holdings?(mentorPayload.market?.riskAnalysis||mentorPayload.workspace?.advancedRisk):null;
+    const authoritative=mentorPayload&&!state.label.startsWith('What-if')&&holdings===state.holdings?(mentorPayload.market?.riskAnalysis||mentorPayload.workspace?.advancedRisk):null;
     if(authoritative){const m=authoritative.metrics,h=authoritative.history;
       costTotal=authoritative.rows.every(r=>r.isCash||isNum(r.costBasis))?authoritative.rows.reduce((sum,r)=>sum+(r.isCash?r.value:r.costBasis),0):null;
       dayChg=null;beta=m.beta;vol=m.vol;ret1y=m.ret1y;spyRet=m.spyRet;maxDD=isNum(m.maxDD)?-m.maxDD:null;sharpe=m.sharpe;te=m.trackingError;hhi=m.hhi??0;effN=m.effN??0;crypto=m.crypto;wPE=m.wPE;divYield=m.divYield;rf=authoritative.provenance.riskFreeRate;
@@ -520,9 +520,9 @@
   function renderOverview() {
     const plTot = isNum(A.costTotal)?A.total-A.costTotal:null;
     const k = [
-      ["Portfolio value", fmtUSD(A.total), mentorPayload&&!mentorPayload.sample?`<span class="muted">Daily change unavailable</span>`:`<span class="${cls(A.dayChg)}">${A.dayChg >= 0 ? "+" : ""}${fmtUSD(A.dayChg)} today</span>`],
+      ["Portfolio value", fmtUSD(A.total), mentorPayload?`<span class="muted">Fictional demo portfolio</span>`:`<span class="${cls(A.dayChg)}">${A.dayChg >= 0 ? "+" : ""}${fmtUSD(A.dayChg)} today</span>`],
       ["Unrealized P/L", `<span class="${cls(plTot)}">${isNum(plTot) && plTot >= 0 ? "+" : ""}${fmtUSD(plTot)}</span>`, `<span class="${cls(plTot)}">${fmtPct(isNum(plTot) ? (plTot / A.costTotal) * 100 : null, 1, true)} on cost</span>`],
-      [mentorPayload&&!mentorPayload.sample?"Historical mix return":"1Y return", `<span class="${cls(A.ret1y)}">${fmtPct(A.ret1y, 1, true)}</span>`, `<span class="muted">S&amp;P ${fmtPct(A.spyRet, 1, true)}</span>`],
+      [mentorPayload?"Historical mix return":"1Y return", `<span class="${cls(A.ret1y)}">${fmtPct(A.ret1y, 1, true)}</span>`, `<span class="muted">S&amp;P ${fmtPct(A.spyRet, 1, true)}</span>`],
       ["Risk health", `${A.score}<small class="mentor-score-outof">/100</small>`, `<span class="muted">${mentorPayload?.sample?"Example":mentorDraft?"Draft":"Saved"} guideline review</span>`],
     ];
     $("#kpis").innerHTML = k.map(([a, b, c]) => `<div class="kpi"><div class="k">${a}</div><div class="v">${b}</div><div class="d">${c}</div></div>`).join("");
@@ -786,6 +786,7 @@
     A = analyze();
     renderChrome();
     (RENDER[state.view] || renderOverview)();
+    renderDesignDetails();
   }
 
   function setView(v) {
@@ -960,19 +961,27 @@
     $("#loadDemo").addEventListener("click", () => { saveHoldings(DEMO_HOLDINGS, "Demo portfolio"); dlg.close(); toast("Demo portfolio loaded"); });
   }
 
+  function renderDesignDetails(){
+    const kpi=(label,value)=>`<article class="kpi"><div class="k">${label}</div><div class="v">${value}</div></article>`;
+    $('#riskSummary').innerHTML=[['Beta',isNum(A.beta)?A.beta.toFixed(2):'—'],['Volatility',fmtPct(A.vol)],['Max drawdown',fmtPct(A.maxDD)],['Sharpe ratio',isNum(A.sharpe)?A.sharpe.toFixed(2):'—']].map(x=>kpi(...x)).join('');
+    $('#holdingsSummary').innerHTML=[['Total value',fmtUSD(A.total)],['Total cost',fmtUSD(A.costTotal)],['Unrealized gain',fmtUSD(isNum(A.costTotal)?A.total-A.costTotal:null)],['Holdings',String(A.rows.length)]].map(x=>kpi(...x)).join('');
+    const cells=Array.from({length:35},(_,i)=>{const day=i;return `<div class="calendar-cell">${day>0&&day<=30?`<span>${day}</span>${A.events.filter(e=>String(e.date).startsWith('2026-11')&&new Date(e.date).getUTCDate()===day).slice(0,2).map(e=>`<small>${esc(e.ticker||e.name||'Event')}</small>`).join('')}`:''}</div>`;});
+    $('#calendarGrid').innerHTML=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(x=>`<b>${x}</b>`).join('')+cells.join('');
+    $('#newsWatchlist').innerHTML=A.rows.slice(0,5).map(r=>`<div><span>${esc(r.ticker)}</span><strong>${fmtUSD(r.value)}</strong></div>`).join('');
+  }
   // ---------- Mentor same-origin integration ----------
   const settingMap={maxPosition:'maxPositionPercent',maxSector:'maxSectorPercent',maxTop5:'maxTop5Percent',maxCrypto:'maxCryptoPercent',maxBeta:'maxBeta',maxVol:'maxVolatilityPercent',maxDrawdown:'maxDrawdownPercent',maxPE:'maxPE',minHoldings:'minHoldings',earningsWindow:'earningsWindowDays',maxLossFromCost:'maxLossFromCostPercent',maxFromHigh:'maxFromHighPercent',maxCorr:'maxCorrelation'};
   function hydrate(payload){
     mentorPayload=payload;if(!mentorReady)return;
     DATA=structuredClone(originalData);bridgeMemory.set('sentinel.original',null);
-    if(payload.sample){state.holdings=structuredClone(DEMO_HOLDINGS);state.label='Sample portfolio';state.settings={...PRESETS.moderate,excluded:[],tickerLimits:{},sectorLimits:{},customRules:structuredClone(DEFAULT_RULES)};today=new Date('2026-11-06T12:00:00Z');}
+    if(payload.sample&&!payload.workspace?.profile?.portfolio){state.holdings=structuredClone(DEMO_HOLDINGS);state.label='Sample portfolio';state.settings={...PRESETS.moderate,excluded:[],tickerLimits:{},sectorLimits:{},customRules:structuredClone(DEFAULT_RULES)};today=new Date('2026-11-06T12:00:00Z');}
     else{
       const w=payload.workspace,p=w.profile?.portfolio,g=w.guidelines||{},risk=payload.market?.riskAnalysis||w.advancedRisk;
       state.settings={...PRESETS.moderate,excluded:g.excludedSectors||[],tickerLimits:g.tickerLimits||{},sectorLimits:g.sectorLimits||{},customRules:(g.customRules||[]).map(r=>({...r,sev:r.severity||r.sev||'info'}))};
       for(const[k,v]of Object.entries(settingMap))if(isNum(g[v]))state.settings[k]=g[v];
       const positions=new Map((p?.positions||[]).map(x=>[x.symbol,x]));
       state.holdings=(p?.securities||[]).map(x=>{const position=positions.get(x.name)||{};return{ticker:x.name,shares:position.quantity??null,cost:position.quantity>0&&position.costBasis!=null?Number(position.costBasis)/position.quantity:null,importedValue:Number(x.value)};});
-      mentorDraft=!g.version;state.label='Your imported portfolio';today=new Date();
+      mentorDraft=!g.version;state.label=payload.sample?'Alex Morgan · fictional portfolio':'Your imported portfolio';today=payload.sample?new Date('2026-11-06T12:00:00Z'):new Date();
       for(const r of risk?.rows||[]){const asset=DATA.assets[r.symbol]||{};DATA.assets[r.symbol]={...asset,name:r.company,price:r.price,_quoteSource:r.priceSource,_quoteAsOf:r.priceAsOf,sector:r.sector,pe:r.pe,dividendYield:r.divYield==null?null:r.divYield/100,analyst:asset.analyst||null};}
       for(const h of payload.market?.holdings||[])if(DATA.assets[h.symbol]){DATA.assets[h.symbol].price=h.price;DATA.assets[h.symbol]._quoteSource=h.priceSource;DATA.assets[h.symbol]._quoteAsOf=h.priceAsOf;}
       DATA.sources=payload.market?.sources||['Dated snapshot'];DATA.asOf=risk?.provenance?.snapshotAsOf||DATA.asOf;
@@ -982,8 +991,8 @@
       if(payload.market?.news){for(const asset of Object.values(DATA.assets))asset.news=[];for(const n of payload.market.news){if(DATA.assets[n.symbol])(DATA.assets[n.symbol].news||=[]).push(n);}}
       bridgeMemory.set('mentor.baseline',state.holdings);
     }
-    document.querySelector('#view-overview .card-h h2').textContent=payload.sample?'Performance vs S&P 500':'Historical current mix vs S&P 500';
-    $('#mentor-context-note').textContent=payload.sample?'Sample portfolio - display only. Add your holdings to replace it.':'Imported values remain unchanged by quote refresh. History illustrates the current mix, not account returns. Unsaved controls are draft guidelines. What-if values and tax notes are estimates, not tax-lot accounting. Quote context: '+(payload.market?.holdings||[]).map(h=>h.symbol+' '+h.priceSource+' '+(h.priceAsOf||'date unknown')).join('; ')+'. Macro: '+(payload.market?.macro?.source||'dated snapshot')+'.';
+    document.querySelector('#view-overview .card-h h2').textContent=payload.sample?'Historical mix vs S&P 500':'Historical current mix vs S&P 500';
+    $('#mentor-context-note').textContent=payload.sample?'Alex Morgan is a fictional demo profile. Your teacher uses these same sample holdings and budget.':'Imported values remain unchanged by quote refresh. History illustrates the current mix, not account returns. Unsaved controls are draft guidelines. What-if values and tax notes are estimates, not tax-lot accounting. Quote context: '+(payload.market?.holdings||[]).map(h=>h.symbol+' '+h.priceSource+' '+(h.priceAsOf||'date unknown')).join('; ')+'. Macro: '+(payload.market?.macro?.source||'dated snapshot')+'.';
     $('#mentor-base-disclosure').textContent=payload.sample?'Market data is a dated snapshot for illustration. Flags compare the example holdings against example limits; not investment advice.':'Quotes and economic data may come from configured providers or dated fallback sources; see quote dates and sources above. Imported values are unchanged. Flags compare holdings against saved or explicitly labeled draft review limits; not investment advice.';
     render();
   }
@@ -998,8 +1007,9 @@
     if (!Object.keys(DATA.assets).length) toast("Market data snapshot failed to load.");
     mentorReady=true;
     const settings=$('#view-settings');const actions=document.createElement('div');actions.className='mentor-approval';actions.innerHTML='<button type="button" class="btn primary" id="mentor-approve">Review &amp; approve guidelines</button><button type="button" class="btn ghost" id="mentor-refresh">Refresh market context</button><button type="button" class="btn ghost" id="mentor-teacher">Ask your teacher</button>';settings.prepend(actions);
-    $('#overviewTeacher').onclick=()=>emit('mentor-portfolio-teacher',{question:mentorPayload?.sample?'Teach me how to read this example portfolio without treating it as my own holdings.':'Help me understand my portfolio, its risk metrics, and the tradeoffs in my holdings.'});
-    $('#mentor-approve').onclick=()=>emit('mentor-portfolio-guidelines',{settings:structuredClone(state.settings)});$('#mentor-refresh').onclick=()=>emit('mentor-portfolio-refresh');$('#mentor-teacher').onclick=()=>emit('mentor-portfolio-teacher',{question:mentorPayload?.sample?'The screen shows a display-only sample portfolio. Teach me how to read its risk metrics; do not treat sample holdings as my personal finances.':'Explain the risk metrics and guidelines in my portfolio.'});
+    document.querySelectorAll('[data-demo-teacher]').forEach(b=>b.onclick=()=>emit('mentor-portfolio-teacher',{question:'Explain Alex Morgan’s sample '+(TITLES[state.view]||'portfolio')+' and help me understand these numbers.'}));
+    $('#overviewTeacher').onclick=()=>emit('mentor-portfolio-teacher',{question:mentorPayload?.sample?'Summarize Alex Morgan’s sample portfolio, its holdings and risk metrics.':'Help me understand my portfolio, its risk metrics, and the tradeoffs in my holdings.'});
+    $('#mentor-approve').onclick=()=>emit('mentor-portfolio-guidelines',{settings:structuredClone(state.settings)});$('#mentor-refresh').onclick=()=>emit('mentor-portfolio-refresh');$('#mentor-teacher').onclick=()=>emit('mentor-portfolio-teacher',{question:mentorPayload?.sample?'Explain Alex Morgan’s demo portfolio risk metrics and guidelines.':'Explain the risk metrics and guidelines in my portfolio.'});
     if(mentorPayload)hydrate(mentorPayload);setView(state.view);emit('mentor-portfolio-ready');
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot); else boot();

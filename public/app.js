@@ -223,11 +223,7 @@ function renderChatChrome() {
   document.querySelectorAll('#suggest .chip').forEach(c => c.onclick = () => send(c.textContent));
 }
 function starterPrompts() {
-  if (state.need === 'retirement') return ['What assumptions matter when exploring retirement?', 'How do debt, reserves, and retirement contributions interact?', 'What should I understand about retirement account fees?'];
-  if (state.agentId === 'budget' && state.personaId === 'value-investor') return ['What makes a business worth owning?', 'How do I recognize a durable competitive advantage?', 'How can growth create or destroy value?'];
-  if (state.agentId === 'budget' && state.personaId === 'disruptive-growth') return ['How do I evaluate an innovation thesis?', 'What would make you change your mind about a company?', 'How do falling costs affect adoption and value?'];
-  const prompts = {budget: ['How should I budget when my pay keeps changing?', 'What do I do in my slow months?', 'Where should extra money go in a good month?'], debt: ['How fast can I get rid of my debt?', 'Which debt should I pay first?', 'Should I pay off debt or save first?'], savings: ['How big should my emergency fund be?', 'How do I save when my income drops?', 'Should I stop investing until I have savings?'], investing: ['Review my portfolio', 'Which earnings calls are coming up for my holdings?', 'What are the biggest risks in my portfolio?'], equity: ['What should I listen for on NVIDIA’s next earnings call?', 'How did my largest holdings do last quarter?', 'What do analysts and recent filings say about what I own?']};
-  return prompts[state.agentId] || prompts.budget;
+  return ['Summarize this demo profile', 'Explain the sample portfolio risks', 'Walk me through the sample budget'];
 }
 // Empty-state starters: visible questions instead of a blank log. Removed on the first send.
 function showStarters() {
@@ -345,7 +341,7 @@ async function send(text, {spoken = false, voiceSession = null} = {}) {
   $('#msg').value = ''; const btn = $('#composer button[type="submit"]'); btn.disabled = true;
   const sk = skeleton();
   try {
-    const r = await api('/api/chat', {method: 'POST', body: {message: text, personaId: state.personaId, agentId: state.agentId, learningModuleId: teacherLessonContext()?.id, learningToolTitle: teacherLessonContext()?.id ? undefined : teacherLessonContext()?.title}}); state.lastTurn = r.turnId;
+    const r = await api('/api/chat', {method: 'POST', body: {message: text, demoProfile: true, personaId: state.personaId, agentId: state.agentId, learningModuleId: teacherLessonContext()?.id, learningToolTitle: teacherLessonContext()?.id ? undefined : teacherLessonContext()?.title}}); state.lastTurn = r.turnId;
     const el = botMessage(r); refreshMemory();
     if (r.profileUpdated) el.insertAdjacentHTML('beforeend', '<p class="fine">Saved inputs updated from your message.</p>');
     if (voiceSession && voice.active && voice.session === voiceSession && canSpeak(r) && speechEpoch === voice.epoch) {
@@ -355,7 +351,7 @@ async function send(text, {spoken = false, voiceSession = null} = {}) {
   }
   catch (e) { handleError(e); }
   finally {
-    try { const saved = await api('/api/profile'); state.profile=saved.profile; state.snapshot=saved.snapshot; renderChatChrome(); } catch {}
+    try { const saved = await api('/api/workspace/demo'); state.profile=saved.profile; state.snapshot=saved.budget.snapshot; renderChatChrome(); } catch {}
     sk.stop(); btn.disabled = false; if (!voice.active) $('#msg').focus();
   }
 }
@@ -634,6 +630,7 @@ function setupVoice() {
 // ---------- boot ----------
 async function boot() {
   state.config = await api('/api/config');
+  try { const demo = await api('/api/workspace/demo'); state.profile=demo.profile; state.snapshot=demo.budget.snapshot; } catch {}
   state.config.catalog.personas.forEach(p => { p.name = displayName(p.name); });
   try { state.tier = (await api('/api/me')).tier; } catch {}
   $('#tier').hidden = true;
@@ -751,7 +748,7 @@ function updateTeacherDockContext(){
   const tab=document.querySelector('[data-workspace-tab][aria-pressed="true"]')?.dataset.workspaceTab;
   let isSample=document.querySelector('#workspace-content')?.dataset[tab==='portfolio'?'samplePortfolio':'sampleBudget']==='true';
   if(tab==='portfolio'){try{isSample=document.querySelector('#exact-portfolio-frame')?.contentWindow.MentorPortfolio?.getState()?.sample??isSample;}catch{}}
-  $('#teacher-dock-context').textContent=isSample?'Sample '+tab+' - your personal inputs remain separate':'Your saved budget and portfolio';
+  $('#teacher-dock-context').textContent='Fictional demo profile · shared with your teacher';
 }
 document.addEventListener('mentor:workspace-rendered',()=>{if(!teacherDock.hidden)updateTeacherDockContext();});
 document.addEventListener('click',e=>{if(e.target.closest('[data-workspace-tab]')&&!teacherDock.hidden)updateTeacherDockContext();});

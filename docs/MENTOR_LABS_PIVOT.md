@@ -61,3 +61,8 @@ The newer supplied Monarch screenshot supersedes the earlier Sentinel visual geo
 ### Approved dashboard concept
 
 The approved generated concept replaces the earlier centered-card layout with light ivory navigation, sage selected rows, label-first summary cards, forest-green charts and compact detail panels. Keep the existing Mentor Labs image logo. Investing retains the Sentinel tools and same-origin holdings bridge; budgeting retains exact saved inputs and the lowest-income planning basis. Teacher access remains part of both dashboards. Manual budget entries and portfolio CSV imports work; MCP brokerage/bank connectivity is future work, not an active connection.
+
+
+### Final demo scope
+
+Use a single fictional financial profile across both dashboards and teacher chat. The frontend requests demoProfile on chat turns; the backend supplies the same sample profile used by /api/workspace/demo. This supersedes the earlier rule that examples were unavailable to chat. Keep fictional data clearly identified and do not overwrite stored personal profiles. Personal imports and bank/MCP connections are deferred from the demo flow. Follow the approved per-tab visual sheets, retain the real logo, and use coherent computed figures instead of inconsistent generated mockup numbers.
