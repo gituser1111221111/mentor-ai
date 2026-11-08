@@ -722,7 +722,7 @@ teacherLauncher.id='teacher-launcher';teacherLauncher.type='button';teacherLaunc
 teacherLauncher.setAttribute('aria-controls','teacher-dock');teacherLauncher.setAttribute('aria-expanded','false');document.body.append(teacherLauncher);
 function teacherLessonContext(){
   if(document.querySelector('#v-learning').hidden)return null;
-  try{const frame=document.querySelector('#learning-frame'),url=new URL(frame.src),title=frame.contentDocument.querySelector('#detail-title')?.textContent;return {id:url.pathname.endsWith('/lesson.html')?url.searchParams.get('topic'):null,title:title||'Learning guide'};}catch{return null;}
+  try{const frame=document.querySelector('#learning-frame'),url=new URL(frame.contentWindow.location.href),title=frame.contentDocument.querySelector('#detail-title')?.textContent;return {id:url.pathname.endsWith('/lesson.html')?url.searchParams.get('topic'):null,title:title||'Learning guide'};}catch{return null;}
 }
 function closeTeacherDock(focus=false){
   teacherChatAnchor.after(teacherChatPane);teacherDock.hidden=true;teacherLauncher.setAttribute('aria-expanded','false');document.body.classList.remove('teacher-docked');if(focus&&!teacherLauncher.hidden)teacherLauncher.focus();
@@ -737,9 +737,19 @@ function openTeacherDock(){
   const currentView=views.find(id=>!$('#'+id).hidden);
   if(!$('#log').children.length){startChat();show(currentView);}
   renderChatChrome();document.querySelector('#teacher-dock-body').append(teacherChatPane);
-  const context=teacherLessonContext();$('#teacher-dock-context').textContent=context?'Alongside '+context.title:'Your saved budget and portfolio';
+  updateTeacherDockContext();
   teacherDock.hidden=false;teacherLauncher.setAttribute('aria-expanded','true');document.body.classList.add('teacher-docked');$('#msg').focus();
 }
 teacherLauncher.onclick=openTeacherDock;$('#teacher-dock-close').onclick=()=>closeTeacherDock(true);
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!teacherDock.hidden&&!document.querySelector('dialog[open]')){e.preventDefault();closeTeacherDock(true);}});
 document.addEventListener('mentor:learning-page',()=>{if(!teacherDock.hidden){const context=teacherLessonContext();$('#teacher-dock-context').textContent=context?'Alongside '+context.title:'Your teacher';}});
+
+function updateTeacherDockContext(){
+  const context=teacherLessonContext();
+  if(context){$('#teacher-dock-context').textContent='Alongside '+context.title;return;}
+  const tab=document.querySelector('[data-workspace-tab][aria-pressed="true"]')?.dataset.workspaceTab;
+  const isSample=document.querySelector('#workspace-content')?.dataset[tab==='portfolio'?'samplePortfolio':'sampleBudget']==='true';
+  $('#teacher-dock-context').textContent=isSample?'Sample '+tab+' - your personal inputs remain separate':'Your saved budget and portfolio';
+}
+document.addEventListener('mentor:workspace-rendered',()=>{if(!teacherDock.hidden)updateTeacherDockContext();});
+document.addEventListener('click',e=>{if(e.target.closest('[data-workspace-tab]')&&!teacherDock.hidden)updateTeacherDockContext();});

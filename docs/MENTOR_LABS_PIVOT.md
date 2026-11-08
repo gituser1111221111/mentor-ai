@@ -44,3 +44,7 @@ Monthly contribution per payer = $2.99 minus payment fees, model usage, voice mi
 The mentor conversation leads the program; lessons and financial tools support it. A persistent Ask your teacher drawer reuses the same composer and conversation on the Learning guide and Dashboard. Lesson questions include the current module title/summary for the model while displayed history keeps the original question. The context dialog keeps its header and Done action visible while only its contents scroll.
 
 Live configuration checked: Alpha Vantage and FRED keys are recognized, and FRED appeared in a successful market-context response. The tested equity quote used its labeled snapshot fallback. API configuration alone does not establish quote freshness or model accuracy.
+
+## Automatic dashboard previews
+
+Dashboard fills missing budget and portfolio sections independently with labeled display-only examples. Read-only GET /api/workspace/demo never mutates a session. Editors show actual partial inputs or blank fields; real saved inputs replace the corresponding preview immediately. Sample exports retain sample labels, and personal teacher context continues to use only the real profile.
