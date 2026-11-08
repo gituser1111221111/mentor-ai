@@ -3,8 +3,9 @@ import fs from 'node:fs/promises';
 import {pathToFileURL} from 'node:url';
 import {parseCSV} from './lib/csv.js';
 import {analyzeInvoices,runway} from './lib/finance.js';
-import {authenticate,checked,importRows} from './lib/supabase.js';
-import {uploadDocument,startParse,getParse,saveText} from './lib/documents.js';
+// Supabase and LlamaParse back only the legacy starter routes below (teams, datasets, documents).
+// The Mentor Labs app never calls them, so they load on first use instead of at startup.
+const legacy=async()=>({...(await import('./lib/supabase.js')),...(await import('./lib/documents.js'))});
 import {searchEvidence} from './lib/citations.js';
 import {mentorRoutes,serveStatic,voiceRoutes} from './lib/routes.js';
 const uuid=x=>typeof x==='string'&&/^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(x);
@@ -15,7 +16,7 @@ export function createServer(){return http.createServer(async(req,res)=>{
   // Local backend only. Reject browser cross-origin calls; no wildcard CORS.
   if(req.headers.origin&&new URL(req.headers.origin).host!==req.headers.host)return send(403,{error:'Cross-origin requests disabled'});
   const url=new URL(req.url,'http://localhost');const p=url.pathname;
-  if(req.method==='GET'&&p==='/api/health')return send(200,{ok:true,mode:'backend-only',supabaseConfigured:Boolean(process.env.SUPABASE_URL&&process.env.SUPABASE_PUBLISHABLE_KEY),llamaParseConfigured:Boolean(process.env.LLAMA_CLOUD_API_KEY),note:'Configured does not mean connection verified.'});
+  if(req.method==='GET'&&p==='/api/health')return send(200,{ok:true,mode:'backend-only',mentorConfigured:Boolean(process.env.MENTOR_API_KEY||process.env.ANTHROPIC_API_KEY),voiceConfigured:Boolean((process.env.ELEVENLABS_API_KEY||'').trim()),supabaseConfigured:Boolean(process.env.SUPABASE_URL&&process.env.SUPABASE_PUBLISHABLE_KEY),llamaParseConfigured:Boolean(process.env.LLAMA_CLOUD_API_KEY),note:'Configured does not mean connection verified.'});
   if(req.method==='GET'&&p==='/api/sample')return send(200,analyzeInvoices(parseCSV(await fs.readFile(new URL('./data/invoices.csv',import.meta.url),'utf8'))));
   if(req.method==='POST'&&p==='/api/analyze'){const b=await body(req);return send(200,analyzeInvoices(parseCSV(b.csv),{asOf:b.asOf||'2026-09-30'}));}
   if(req.method==='POST'&&p==='/api/runway')return send(200,runway(await body(req)));
@@ -24,6 +25,7 @@ export function createServer(){return http.createServer(async(req,res)=>{
   if(!p.startsWith('/api/')&&await serveStatic(req,res,p))return;
   if(!p.startsWith('/api/'))return send(404,{error:'API-only starter. See README.txt.'});
   const token=req.headers.authorization?.match(/^Bearer (.+)$/)?.[1];if(!token)return send(401,{error:'Signed-in Supabase user token required'});
+  const {authenticate,checked,importRows,uploadDocument,startParse,getParse,saveText}=await legacy();
   let db;try{db=await authenticate(token);}catch{return send(401,{error:'Supabase configuration or user authentication failed'});}
   if(p==='/api/teams'&&req.method==='GET')return send(200,checked(await db.from('rhb_teams').select('*')));
   if(p==='/api/teams'&&req.method==='POST'){const b=await body(req);if(typeof b.name!=='string'||!b.name.trim())throw Error('Team name required');return send(201,checked(await db.from('rhb_teams').insert({name:b.name}).select().single()));}
