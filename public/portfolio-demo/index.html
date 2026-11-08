@@ -8,7 +8,7 @@
   <link rel="icon" href="/img/mentor-logo-suede.webp" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Fira+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="mentor-palette.css" />
   <script src="vendor/chart.umd.min.js" defer></script>
@@ -55,8 +55,7 @@
         <!-- OVERVIEW -->
         <section class="view" id="view-overview" role="tabpanel">
           <div class="kpis" id="kpis"></div>
-          <div class="grid g-2-1">
-            <article class="card">
+          <article class="card monarch-overview-chart">
               <header class="card-h">
                 <h2>Performance vs S&amp;P 500</h2>
                 <div class="leg-inline" aria-hidden="true"><span><i class="l-port"></i>Your portfolio</span><span><i class="l-spy"></i>S&amp;P 500 (SPY)</span></div>
@@ -66,7 +65,9 @@
               </header>
               <div class="chart-box tall"><canvas id="perfChart" aria-label="Portfolio value versus S&P 500, indexed to 100"></canvas></div>
             </article>
-            <article class="card">
+          <div class="grid monarch-overview-lower">
+            <article class="card monarch-holdings-card"><header class="card-h"><h2>Your holdings</h2><button class="link" data-goto="holdings" type="button">View all holdings</button></header><div class="table-wrap"><table class="tbl" id="overviewHoldings"><thead><tr><th>Asset</th><th class="num">Value</th><th class="num">Portfolio share</th></tr></thead><tbody></tbody></table></div></article>
+            <article class="card monarch-risk-card">
               <header class="card-h"><h2>Risk health</h2><span><button class="link" data-goto="risk" type="button">Review</button> <button class="link accent" data-goto="improve" type="button">How to improve →</button></span></header>
               <div class="score" id="score"></div>
               <ul class="alerts compact" id="alertsMini"></ul>

@@ -52,3 +52,7 @@ Dashboard fills missing budget and portfolio sections independently with labeled
 ## Original portfolio interface
 
 The Portfolio tab now embeds the actual copied Sentinel demo HTML/CSS/JavaScript/data under public/portfolio-demo, retaining its original five KPI cards, seven views, Chart.js charts and all settings controls. The base stylesheet is byte-identical to demo- c50a6af; Mentor palette overrides are separate. A same-origin bridge forwards imports, explicit guideline approval and market refresh to the existing session APIs. Source demo holdings remain display-only. Real imported valuations, cost basis, unknown coverage and historical-illustration labels are preserved. Source what-if operations stay local and reconcile cash to cents. Chart.js4.4.1 is vendored with its license.
+
+## Latest dashboard design reference
+
+The newer supplied Monarch screenshot supersedes the earlier Sentinel visual geometry. Budgeting and investing now use a slim neutral sidebar, four centered white summary cards, a wide primary chart, and lower two-column detail/planning panels with Mentor green accents. Investing retains the copied Sentinel engines, controls and same-origin bridge. Budgeting compares saved monthly income with the current planned cost line; it does not invent historical spending or future forecasts. The sample/personal separation and shared teacher chat remain intact.

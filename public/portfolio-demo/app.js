@@ -426,16 +426,16 @@
   // ---------- Charts ----------
   function chartDefaults() {
     if (!window.Chart) return;
-    Chart.defaults.color = "#677b6e";
-    Chart.defaults.font.family = '"Fira Sans", system-ui, sans-serif';
-    Chart.defaults.font.size = 12;
-    Chart.defaults.borderColor = "#d8dfd4";
+    Chart.defaults.color = "#8a8781";
+    Chart.defaults.font.family = 'Inter, Arial, sans-serif';
+    Chart.defaults.font.size = 10;
+    Chart.defaults.borderColor = "#efeeeb";
     Chart.defaults.plugins.tooltip.backgroundColor = "#dfe8e0";
     Chart.defaults.plugins.tooltip.borderColor = "#b3c3b4";
     Chart.defaults.plugins.tooltip.borderWidth = 1;
     Chart.defaults.plugins.tooltip.padding = 10;
-    Chart.defaults.plugins.tooltip.titleFont = { family: '"Fira Code", monospace', weight: "600" };
-    Chart.defaults.plugins.tooltip.bodyFont = { family: '"Fira Code", monospace' };
+    Chart.defaults.plugins.tooltip.titleFont = { family: 'Inter, Arial, sans-serif', weight: "600" };
+    Chart.defaults.plugins.tooltip.bodyFont = { family: 'Inter, Arial, sans-serif' };
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) Chart.defaults.animation = false;
   }
   function draw(id, cfg) {
@@ -492,7 +492,7 @@
       type: "bar",
       data: { labels, datasets: [{ data: values, backgroundColor: values.map(colorFn), borderRadius: 4, barThickness: 14 }] },
       options: { indexAxis: "y", maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => ` ${c.parsed.x.toFixed(1)}% (limit ${limit}%)` } } },
-        scales: { x: { suggestedMax: Math.max(limit * 1.25, ...values) , ticks: { callback: (v) => v + "%" } }, y: { grid: { display: false }, ticks: { font: { family: '"Fira Code", monospace', size: 11 } } } } },
+        scales: { x: { suggestedMax: Math.max(limit * 1.25, ...values) , ticks: { callback: (v) => v + "%" } }, y: { grid: { display: false }, ticks: { font: { family: 'Inter, Arial, sans-serif', size: 11 } } } } },
       plugins: [limitLine(limit, labels.length)],
     });
     draw("weightChart", bar(pos.map((r) => r.ticker), pos.map((r) => +r.weight.toFixed(2)), S.maxPosition, (v, i) => (v > posLimit(S, pos[i].ticker) ? "#f87171" : "#60a5fa")));
@@ -523,8 +523,7 @@
       ["Portfolio value", fmtUSD(A.total), mentorPayload&&!mentorPayload.sample?`<span class="muted">Daily change unavailable</span>`:`<span class="${cls(A.dayChg)}">${A.dayChg >= 0 ? "+" : ""}${fmtUSD(A.dayChg)} today</span>`],
       ["Unrealized P/L", `<span class="${cls(plTot)}">${isNum(plTot) && plTot >= 0 ? "+" : ""}${fmtUSD(plTot)}</span>`, `<span class="${cls(plTot)}">${fmtPct(isNum(plTot) ? (plTot / A.costTotal) * 100 : null, 1, true)} on cost</span>`],
       [mentorPayload&&!mentorPayload.sample?"Historical mix return":"1Y return", `<span class="${cls(A.ret1y)}">${fmtPct(A.ret1y, 1, true)}</span>`, `<span class="muted">S&amp;P ${fmtPct(A.spyRet, 1, true)}</span>`],
-      ["Beta · Volatility", `${isNum(A.beta) ? A.beta.toFixed(2) : "—"} · ${fmtPct(A.vol, 0)}`, `<span class="muted">Sharpe ${isNum(A.sharpe) ? A.sharpe.toFixed(2) : "—"}</span>`],
-      ["Concentration", `${fmtPct(A.top5, 0)}`, `<span class="muted">top 5 · ${A.effN.toFixed(1)} effective names</span>`],
+      ["Beta · Volatility", `${isNum(A.beta) ? A.beta.toFixed(2) : "—"} · ${fmtPct(A.vol, 0)}`, `<span class="muted">Top five ${fmtPct(A.top5,0)} · ${A.effN.toFixed(1)} effective holdings</span>`],
     ];
     $("#kpis").innerHTML = k.map(([a, b, c]) => `<div class="kpi"><div class="k">${a}</div><div class="v">${b}</div><div class="d">${c}</div></div>`).join("");
 
@@ -540,6 +539,7 @@
     $("#eventsMini").innerHTML = ev.length ? ev.map(eventHTML).join("") : `<li class="empty">No scheduled catalysts for your holdings in the next 30 days.</li>`;
     const nw = allNews().slice(0, 5);
     $("#newsMini").innerHTML = nw.length ? nw.map(newsHTML).join("") : `<li class="empty">No recent headlines in the snapshot.</li>`;
+    $("#overviewHoldings tbody").innerHTML=A.rows.slice().sort((a,b)=>b.value-a.value).slice(0,6).map(r=>`<tr><td><span class="monarch-asset-icon">${esc(r.ticker.slice(0,1))}</span><span><strong>${esc(r.ticker)}</strong><small>${esc(r.name||r.sector)}</small></span></td><td class="num">${fmtUSD(r.value,2)}</td><td class="num">${fmtPct(r.weight)}</td></tr>`).join('');
     drawOverviewCharts();
   }
 

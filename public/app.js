@@ -29,6 +29,7 @@ function show(id) {
   $('#nav').hidden = !landing; $('#head-start').hidden = !landing; $('#restart').hidden = landing;
   $('#engine').hidden = landing;
   document.body.classList.toggle('app-open', !landing);
+  document.body.classList.toggle('dashboard-open', id === 'v-workspace');
   document.body.classList.toggle('onboarding-open', id === 'v-quiz');
   $('#app-nav').hidden = landing || id === 'v-quiz';
   document.querySelectorAll('#app-nav button').forEach(b => b.setAttribute('aria-current', (b.hasAttribute('data-return-chat') ? id === 'v-chat' : b.hasAttribute('data-open-learning') ? id === 'v-learning' : id === 'v-workspace') ? 'page' : 'false'));
