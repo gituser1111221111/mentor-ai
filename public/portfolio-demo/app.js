@@ -461,7 +461,8 @@
 
   function drawOverviewCharts() {
     const n = Math.min(state.range + 1, A.dates.length);
-    const dates = A.dates.slice(-n), p = A.port.slice(-n), s = A.spySeries.slice(-n);
+    let dates = A.dates.slice(-n), p = A.port.slice(-n), s = A.spySeries.slice(-n);
+    if(mentorPayload?.sample&&!dates.length){const count=53;dates=Array.from({length:count},(_,i)=>new Date(Date.UTC(2025,10,7+i*7)).toISOString().slice(0,10));p=dates.map((_,i)=>A.total*(1+.082*i/(count-1)+.018*Math.sin(i*.9)*Math.sin(Math.PI*i/(count-1))));s=dates.map((_,i)=>100*(1+.061*i/(count-1)+.012*Math.sin(i*.6)*Math.sin(Math.PI*i/(count-1))));const heading=document.querySelector('.monarch-overview-chart h2');if(heading)heading.textContent='Simulated performance';}
     const pi = p.map((v) => (v / p[0]) * 100), si = s.map((v) => (v / s[0]) * 100);
     draw("perfChart", {
       type: "line",

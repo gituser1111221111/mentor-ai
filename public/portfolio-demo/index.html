@@ -24,7 +24,7 @@
         <span>Mentor Labs</span>
         <span class="tag">Investing</span>
       </div>
-      <nav class="nav" role="tablist" aria-label="Sections">
+      <div class="preview-workspace-switch"><button class="on" type="button">Investing</button><button type="button" onclick="parent.postMessage({type:'mentor-portfolio-budget'},location.origin)">Budget</button></div><nav class="nav" role="tablist" aria-label="Sections">
         <button role="tab" data-view="overview" aria-selected="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>Overview</button>
         <button role="tab" data-view="risk" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Risk review<span class="badge" id="alertCount" hidden>0</span></button>
         <button role="tab" data-view="improve" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1V17h6v-.2c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/></svg>Improve</button>
@@ -33,7 +33,7 @@
         <button role="tab" data-view="news" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8M15 18h-5M10 6h8v4h-8z"/></svg>News</button>
         <button role="tab" data-view="settings" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>Guidelines</button>
       </nav>
-      <button class="demo-learning" data-demo-teacher type="button"><strong>Ask your teacher</strong><span>Explore this sample profile →</span></button><div class="sources">
+      <button class="demo-learning" onclick="parent.postMessage({type:'mentor-portfolio-learning'},location.origin)" type="button"><strong>▣ &nbsp; Learning guide &nbsp; ›</strong><span>13-step program</span></button><div class="sources">
         <p class="eyebrow">Data sources</p>
         <ul id="sourceList"></ul>
         <p class="asof" id="asOf"></p>
