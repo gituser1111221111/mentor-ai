@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Market Is Made of People | Ryan Barone on AI and Wealth Management</title>
+  <meta name="description" content="An experiment giving an AI access to a live brokerage account, and what it revealed about the real future of artificial intelligence in wealth management." />
+
+  <!-- Open Graph / LinkedIn preview -->
+  <!-- DEPLOY: set og:url + og:image to the absolute Netlify URL (LinkedIn needs absolute image URLs to render the card). -->
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://www.baroneinvestment.site/market-made-of-people/" />
+  <meta property="og:title" content="The Market Is Made of People" />
+  <meta property="og:description" content="I gave an AI a live brokerage account, not to beat the market, but to find out who AI in finance can actually help." />
+  <meta property="og:image" content="https://www.baroneinvestment.site/market-made-of-people/media/og-cover.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="The Market Is Made of People" />
+  <meta name="twitter:description" content="I gave an AI a live brokerage account, not to beat the market, but to find out who AI in finance can actually help." />
+  <meta name="twitter:image" content="https://www.baroneinvestment.site/market-made-of-people/media/og-cover.jpg" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css?v=20260607p" />
+</head>
+<body>
+
+  <!-- Sticky navigation (fades in on scroll) -->
+  <nav class="nav" id="nav" aria-label="Section navigation">
+    <a class="nav__brand" href="#hero">
+      <img class="nav__logo" src="/img/mentor-logo-suede.webp" alt="Mentor Labs" />
+      <span class="nav__title">The Market Is Made of People</span>
+    </a>
+    <div class="nav__links">
+      <a class="nav__back" href="/#top">&larr; Barone Investment Group</a>
+      <a class="nav__section" href="#build">The build</a>
+      <a class="nav__section" href="#system">The desk</a>
+      <a class="nav__section" href="#access">The value</a>
+      <a href="https://www.linkedin.com/in/ryan-barone-779047328/" class="nav__cta" target="_blank" rel="noopener">Connect</a>
+    </div>
+  </nav>
+
+  <!-- Progress bar -->
+  <div class="scroll-progress" aria-hidden="true"><span id="progressBar"></span></div>
+
+  <!-- ============ HERO ============ -->
+  <section class="hero" id="hero">
+    <div class="hero__media" aria-hidden="true">
+      <img class="hero__photo" src="media/hero.jpg" alt="" />
+      <!-- Horizontal scrim: solid navy on the left for legible text, clearing to the right. -->
+      <div class="hero__scrim"></div>
+      <div class="hero__grain"></div>
+    </div>
+
+    <div class="hero__inner">
+      <div class="hero__col">
+        <p class="eyebrow reveal">An experiment in AI and wealth management</p>
+        <h1 class="hero__title">
+          <span class="reveal-line">The market is made</span>
+          <span class="reveal-line">of people.</span>
+          <span class="reveal-line hero__title--muted">I don&rsquo;t think AI is here to outsmart it.</span>
+        </h1>
+        <p class="hero__sub reveal">
+          So I gave an AI access to a live brokerage account. Not to chase alpha,
+          but to find out what artificial intelligence is actually <em>good for</em> in
+          finance. What I found has less to do with beating the market and more to
+          do with who finally gets a seat at&nbsp;the&nbsp;table.
+        </p>
+        <p class="hero__byline reveal">
+          Ryan Barone &nbsp;&middot;&nbsp; Finance, Farmer School of Business, Miami University
+        </p>
+      </div>
+    </div>
+
+    <div class="scroll-cue" aria-hidden="true">
+      <span>Scroll</span>
+      <div class="scroll-cue__line"></div>
+    </div>
+  </section>
+
+  <!-- ============ 01 -PREMISE ============ -->
+  <section class="panel panel--dark panel--split" id="premise">
+    <div class="panel__bg bg-aurora" aria-hidden="true"></div>
+    <div class="split">
+      <div class="split__text">
+        <p class="eyebrow reveal">01 / The question</p>
+        <h2 class="reveal">Not &ldquo;can AI beat the market?&rdquo;<br /><span class="accent">but &ldquo;who can AI actually help?&rdquo;</span></h2>
+        <div class="lede reveal">
+          <p>
+            Almost every conversation about AI in finance is a race to predict prices.
+            I think that&rsquo;s the wrong race. So I connected an autonomous AI system to a
+            real, sandboxed brokerage account and let it research and propose trades
+            under strict rules.
+          </p>
+          <p>
+            Not to find a money machine. To pressure-test a more honest question:
+            where does this technology create real value for real people?
+          </p>
+        </div>
+      </div>
+      <div class="split__media reveal">
+        <figure class="media-frame media-frame--photo" data-parallax>
+          <img src="media/premise.jpg" alt="A young woman sits alone on her couch, phone in one hand and a paper statement in the other, sorting out her own finances without an advisor." loading="lazy" />
+          <figcaption>For most people, &ldquo;wealth management&rdquo; is a phone, a stack of bills, and no one to call.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 02 -THE BUILD ============ -->
+  <section class="panel panel--dark panel--split" id="build">
+    <div class="panel__bg bg-grid" aria-hidden="true"></div>
+    <div class="split">
+      <div class="split__text">
+        <p class="eyebrow reveal">02 / The build</p>
+        <h2 class="reveal">So I built my own quant desk.<br /><span class="accent">Then I gave it a real account.</span></h2>
+        <div class="lede reveal">
+          <p>
+            I connected Claude to a live, self-funded brokerage account and turned it
+            into something a student could never otherwise access: a personal quant desk.
+            Not a chatbot answering questions. A system that researches, debates, and
+            proposes real positions.
+          </p>
+          <p>
+            The point was never the money. It was to find out what an AI desk is genuinely
+            good at when it has skin in the game: real prices, real rules, and a human
+            holding the trigger.
+          </p>
+        </div>
+      </div>
+      <div class="split__media reveal">
+        <div class="console" id="console" aria-hidden="true">
+          <div class="console__bar">
+            <span class="console__dot"></span><span class="console__dot"></span><span class="console__dot"></span>
+            <p class="console__tag">scout-desk &middot; live</p>
+          </div>
+          <div class="console__body" id="consoleBody">
+            <p class="cl"><b class="cl--orc">orchestrator</b> session started, account linked</p>
+            <p class="cl"><b class="cl--agent">screener</b> scanning the market for candidates</p>
+            <p class="cl"><b class="cl--agent">fundamentals</b> building valuations on the shortlist</p>
+            <p class="cl"><b class="cl--agent">technicals</b> mapping trend and momentum</p>
+            <p class="cl"><b class="cl--agent">macro</b> checking the catalyst calendar</p>
+            <p class="cl"><b class="cl--bear">red-team</b> arguing the bear case</p>
+            <p class="cl"><b class="cl--risk">risk</b> position sizing within limits</p>
+            <p class="cl cl--final"><b class="cl--orc">orchestrator</b> proposal ready, awaiting your confirmation</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="split-foot">
+      <ol class="steps steps--row">
+        <li class="step reveal" data-reveal="up">
+          <span class="step__n">1</span>
+          <div><h4>Connect</h4><p>Claude wired to a live, agentic brokerage account.</p></div>
+        </li>
+        <li class="step reveal" data-reveal="up">
+          <span class="step__n">2</span>
+          <div><h4>Delegate</h4><p>Specialized sub-agents research, value, and stress-test every idea.</p></div>
+        </li>
+        <li class="step reveal" data-reveal="up">
+          <span class="step__n">3</span>
+          <div><h4>Decide</h4><p>Nothing executes without my order-level confirmation.</p></div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ============ 03 -THE DESK (system) ============ -->
+  <section class="panel panel--dark panel--system" id="system">
+    <div class="panel__bg bg-paths" aria-hidden="true">
+      <svg class="flow-paths" viewBox="0 0 1200 600" fill="none" preserveAspectRatio="xMidYMid slice"></svg>
+    </div>
+    <div class="wrap">
+      <p class="eyebrow reveal">03 / How the desk works</p>
+      <h2 class="reveal">A research desk that argues with itself,<br /><span class="accent">and can&rsquo;t trade without me.</span></h2>
+      <div class="lede reveal">
+        <p>
+          The desk runs as a team of specialized agents. A screener hunts for
+          candidates; analysts dig into fundamentals and technicals; a macro and
+          catalyst desk sets the backdrop. Then the two that matter most:
+          a <strong>red-team</strong> whose only job is to argue the bear case, and a
+          <strong>risk manager</strong> with veto power over every position size.
+        </p>
+        <p>
+          Every idea is logged with a probability and graded later, so confidence
+          has to be <em>earned</em>, not asserted.
+        </p>
+      </div>
+    </div>
+
+    <!-- Animated agent spider-web: orchestrator at the hub, specialists on the ring -->
+    <div class="mesh" id="mesh" aria-label="Diagram of the AI agent system: an orchestrator at the center connected to six specialist agents">
+      <svg class="mesh__lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+        <g class="mesh__edges" stroke="currentColor" fill="none" stroke-width="1" vector-effect="non-scaling-stroke" stroke-linecap="round">
+          <!-- spokes: hub to each specialist -->
+          <path d="M50,50 L66.5,20.6" /><path d="M50,50 L33.5,20.6" />
+          <path d="M50,50 L17,50" /><path d="M50,50 L33.5,79.4" />
+          <path d="M50,50 L66.5,79.4" /><path d="M50,50 L83,50" />
+          <!-- web ring: specialist to specialist -->
+          <path d="M66.5,20.6 L33.5,20.6" /><path d="M33.5,20.6 L17,50" />
+          <path d="M17,50 L33.5,79.4" /><path d="M33.5,79.4 L66.5,79.4" />
+          <path d="M66.5,79.4 L83,50" /><path d="M83,50 L66.5,20.6" />
+        </g>
+      </svg>
+      <div class="node node--top" style="--x:50%; --y:50%;"><span>Claude</span><small>orchestrator &middot; holds the account</small></div>
+      <div class="node" style="--x:33.5%; --y:20.6%;"><span>Screener</span><small>finds candidates</small></div>
+      <div class="node" style="--x:66.5%; --y:20.6%;"><span>Fundamentals</span><small>values the business</small></div>
+      <div class="node" style="--x:17%; --y:50%;"><span>Technicals</span><small>reads the tape</small></div>
+      <div class="node" style="--x:33.5%; --y:79.4%;"><span>Macro</span><small>sets the backdrop</small></div>
+      <div class="node node--bear" style="--x:66.5%; --y:79.4%;"><span>Red-Team</span><small>argues the bear case</small></div>
+      <div class="node node--risk" style="--x:83%; --y:50%;"><span>Risk Manager</span><small>holds the veto</small></div>
+    </div>
+
+    <div class="wrap">
+      <div class="hardline reveal">
+        <span class="hardline__mark">&#9888;</span>
+        <p>
+          <strong>One rule never bends:</strong> the AI never places a trade without my
+          explicit, order-level confirmation. <em>Simulate, show, confirm, place.</em>
+          The machine does the work. A human still makes the call.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 04 -THESIS ============ -->
+  <section class="panel panel--dark panel--split" id="thesis">
+    <div class="panel__bg bg-aurora bg-aurora--deep" aria-hidden="true"></div>
+    <div class="split">
+      <div class="split__text">
+        <p class="eyebrow reveal">04 / The thesis</p>
+        <h2 class="reveal">Markets are a conversation between humans.<br /><span class="accent">AI doesn&rsquo;t get to skip it.</span></h2>
+        <div class="lede reveal">
+          <p>
+            Prices aren&rsquo;t a math problem with a hidden solution. They&rsquo;re the live
+            aggregate of fear, narrative, and conviction: reflexive, reactive, and
+            deeply human. An AI can read faster and remember more than any analyst alive,
+            but it can&rsquo;t stand outside the crowd it&rsquo;s part of.
+          </p>
+          <p>
+            I don&rsquo;t see a future where AI reliably predicts the market. I see a future
+            where it makes everyone <em>inside</em> the market more disciplined.
+          </p>
+          <p>
+            The edge was never prediction. It&rsquo;s <strong>process</strong>: a repeatable way
+            to stay rational when everyone else, the machine included, is tempted not to be.
+          </p>
+        </div>
+      </div>
+      <div class="split__media reveal">
+        <figure class="media-frame media-frame--people" data-parallax>
+          <img src="media/people.jpg" alt="A dense crowd of people filling a street, backlit, receding into the distance" onerror="this.style.display='none';this.parentNode.classList.add('is-empty');" />
+          <figcaption>Every price is a crowd of people, talking.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 05 -DEMOCRATIZING (core) ============ -->
+  <section class="panel panel--light panel--split panel--split-rev" id="access">
+    <div class="panel__bg bg-grid bg-grid--light" aria-hidden="true"></div>
+    <div class="split">
+      <div class="split__media reveal">
+        <figure class="media-frame" data-parallax>
+          <img src="media/access.jpg" alt="A young first-time investor reviewing a plan on a laptop" onerror="this.style.display='none';this.parentNode.classList.add('is-empty');" />
+        </figure>
+      </div>
+      <div class="split__text">
+        <p class="eyebrow reveal">05 / Where the value is</p>
+        <h2 class="reveal">The person a financial advisor<br /><span class="accent-gold">won&rsquo;t call back.</span></h2>
+        <div class="lede reveal">
+          <p>
+            If you have under about <strong>$15,000</strong> to invest, the traditional
+            advice industry mostly isn&rsquo;t built for you. The minimums are too high, the
+            economics don&rsquo;t work, and good guidance stays a privilege of people who
+            already have money.
+          </p>
+          <p>
+            That gap is exactly where AI earns its place. A well-governed system can give
+            that investor something they&rsquo;ve never had: patient, unbiased,
+            always-available analysis, and more importantly, <em>discipline</em>.
+            Not stock tips. A process they could never afford to rent from a human.
+          </p>
+          <p>
+            Concretely, that looks less like a crystal ball and more like a junior advisor
+            who never sleeps:
+          </p>
+          <ul class="ticks reveal">
+            <li>A goal-based plan instead of a hot tip</li>
+            <li>Risk-appropriate allocation, explained in plain English</li>
+            <li>A second opinion that never gets bored, tired, or emotional</li>
+            <li>Behavioral guardrails that flag panic-selling and performance-chasing</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrap">
+      <div class="stats reveal">
+        <div class="stat">
+          <span class="stat__num" data-count="15" data-prefix="&lt;$" data-suffix="k">&lt;$15k</span>
+          <span class="stat__label">The threshold below which professional advice gets scarce</span>
+        </div>
+        <div class="stat">
+          <span class="stat__num">24/7</span>
+          <span class="stat__label">Availability. No calendar, no minimum, no waiting room</span>
+        </div>
+        <div class="stat">
+          <span class="stat__num" data-count="0" data-suffix="">0</span>
+          <span class="stat__label">Minutes of judgment lost to ego, fatigue, or fear</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 06 -THE LIMIT ============ -->
+  <section class="panel panel--dark panel--split" id="line">
+    <div class="panel__bg bg-aurora" aria-hidden="true"></div>
+    <div class="split">
+      <div class="split__text">
+        <p class="eyebrow reveal">06 / The limit</p>
+        <h2 class="reveal">What AI can&rsquo;t do is<br /><span class="accent">the part that matters most.</span></h2>
+        <div class="lede reveal">
+          <p>
+            It can&rsquo;t build trust. It can&rsquo;t read the client across the table who&rsquo;s
+            scared in a downturn. It can&rsquo;t manage a relationship, hold someone to a plan
+            through a hard year, or replace the judgment of an advisor who knows a
+            family&rsquo;s whole story.
+          </p>
+          <p>
+            The future of wealth management isn&rsquo;t human <em>or</em> AI. It&rsquo;s an advisor
+            made far more capable by AI: spending less time on spreadsheets, and far
+            more time with people. The machine handles the analysis. The human handles
+            the meaning.
+          </p>
+        </div>
+      </div>
+      <div class="split__media reveal">
+        <figure class="media-frame" data-parallax>
+          <img src="media/trust.jpg" alt="Two people in conversation across a table" onerror="this.style.display='none';this.parentNode.classList.add('is-empty');" />
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 07 -THE REPORTING (corroboration) ============ -->
+  <section class="panel panel--light" id="reporting">
+    <div class="panel__bg bg-grid bg-grid--light" aria-hidden="true"></div>
+    <div class="wrap">
+      <p class="eyebrow reveal">07 / Pressure-testing it</p>
+      <h2 class="reveal">I didn&rsquo;t reach this alone.<br /><span class="accent-gold">I tested it against people who do this for a living.</span></h2>
+      <div class="lede reveal">
+        <p>
+          A single student experiment proves very little on its own. So as the project
+          went on, I took what I was finding to people who actually manage money:
+          advisors, analysts, and mentors in the industry. I asked them where my read
+          held up, and where my inexperience was showing.
+        </p>
+        <p>
+          Some pushed back. Some sharpened the argument. A few changed my mind. The views
+          you have just read are not a hot take from one account in a sandbox. They are my
+          conclusions after weighing my own results against the people who live this work
+          every day.
+        </p>
+        <p>
+          Where their experience and my findings lined up, I gained conviction. Where we
+          disagreed, I kept the tension on the page instead of smoothing it over. What
+          follows is the view that survived that scrutiny.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 08 -OUTLOOK ============ -->
+  <section class="panel panel--dark panel--outlook" id="outlook">
+    <div class="outlook__bg" aria-hidden="true">
+      <img src="media/charlotte.jpg" alt="" onerror="this.style.display='none';this.parentNode.classList.add('is-empty');" />
+    </div>
+    <div class="wrap">
+      <p class="eyebrow reveal">08 / My outlook</p>
+      <h2 class="reveal">Augmentation, not replacement,<br /><span class="accent">and that&rsquo;s the opportunity.</span></h2>
+      <div class="lede reveal">
+        <p>
+          I&rsquo;m betting my career on the human side of this business, sharpened by the
+          tools. AI will compress the cost of good analysis toward zero and push real
+          financial guidance down-market, to the people who&rsquo;ve never had it.
+        </p>
+        <p>
+          The advisors who win won&rsquo;t be the ones who resist it, or the ones who hide
+          behind it. They&rsquo;ll be the ones who use it to serve more people, better.
+        </p>
+        <p>
+          That is the seat I&rsquo;m working toward: the advisor who finally reaches the
+          people the old model priced out.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ABOUT / CONNECT ============ -->
+  <section class="panel panel--about" id="connect">
+    <div class="wrap about">
+      <div class="about__photo reveal">
+        <div class="about__photo-frame">
+          <img src="media/headshot.jpg" alt="Ryan Barone" onerror="this.style.display='none';this.parentNode.classList.add('is-empty');" />
+        </div>
+      </div>
+      <div class="about__body">
+        <p class="eyebrow reveal">The person behind the experiment</p>
+        <h2 class="reveal">Ryan Barone</h2>
+        <p class="about__headline reveal">
+          Finance and Entrepreneurship student building toward a career in wealth
+          management, convinced the future of advice is human, sharpened by AI.
+        </p>
+
+        <ul class="creds reveal">
+          <li>Corporate Finance Intern, <strong>SentriLock</strong></li>
+          <li>Junior Analyst, <strong>Miami Equity Research Club</strong></li>
+          <li>Incoming Analyst, <strong>Blue Sapphire Equities</strong></li>
+          <li>Founder, <strong>Barone Investment Group</strong></li>
+          <li><strong>Farmer School of Business</strong>, Miami University</li>
+        </ul>
+
+        <div class="cta reveal">
+          <a class="btn btn--primary" href="https://www.linkedin.com/in/ryan-barone-779047328/" data-cta="linkedin" target="_blank" rel="noopener">Connect on LinkedIn</a>
+          <a class="btn btn--ghost" href="#" data-cta="email">Get in touch</a>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <p class="footer__disclaimer">
+        <strong>Disclaimer.</strong> This site describes a personal research project and
+        reflects the author&rsquo;s own views. It is provided for informational and
+        educational purposes only and is <strong>not financial, investment, tax, or legal
+        advice</strong>, nor a recommendation, solicitation, or offer to buy or sell any
+        security or to adopt any strategy. The project was run on a small, self-funded
+        sandbox account; no client funds were involved. Any results described are personal
+        and hypothetical, and past or simulated performance does not guarantee future
+        results. Investing involves risk, including the possible loss of principal. Consult
+        a licensed financial professional before making any investment decision.
+      </p>
+      <p class="footer__copy">&copy; 2026 Ryan Barone</p>
+    </footer>
+  </section>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+  <script src="js/main.js?v=20260607p"></script>
+</body>
+</html>

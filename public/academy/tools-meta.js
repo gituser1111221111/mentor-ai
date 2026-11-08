@@ -1,0 +1,30 @@
+// Tool categories and short labels, shared by the homepage directory and quick search.
+window.BIG_TOOL_CATS = [
+  ["pay", "Pay and taxes"],
+  ["budget", "Budget and spending"],
+  ["debt", "Debt and credit"],
+  ["save", "Save"],
+  ["invest", "Invest and plan"],
+  ["career", "Career and AI"],
+];
+window.BIG_TOOL_META = {
+  paycheck: { cat: "pay", short: "Salary to take-home, by state" },
+  salary: { cat: "pay", short: "Annual pay to monthly, weekly, hourly" },
+  budget: { cat: "budget", short: "Does your budget leave room?" },
+  subscriptions: { cat: "budget", short: "Find the yearly cost of subscriptions" },
+  afford: { cat: "budget", short: "Pause before a purchase" },
+  car_afford: { cat: "budget", short: "Car costs vs. take-home pay" },
+  net_worth: { cat: "budget", short: "Assets minus debts" },
+  credit: { cat: "debt", short: "Utilization and target balances" },
+  debt_planner: { cat: "debt", short: "Payoff time and interest saved" },
+  student_loan: { cat: "debt", short: "Payment and what extra payments save" },
+  emergency: { cat: "save", short: "1-, 3-, 6-month cushion targets" },
+  savings_goal: { cat: "save", short: "How long a goal takes" },
+  compound: { cat: "invest", short: "Contributions vs. growth over time" },
+  roth_vs_trad: { cat: "invest", short: "Which retirement account wins" },
+  inflation: { cat: "invest", short: "Buying power and the Rule of 72" },
+  retirement_number: { cat: "invest", short: "Nest egg and monthly saving needed" },
+  invest_guide: { cat: "invest", short: "A beginner roadmap by experience level" },
+  finder: { cat: "career", short: "Pick a responsible AI workflow" },
+  email_gen: { cat: "career", short: "Networking email templates" },
+};

@@ -120,6 +120,6 @@ test('an existing plain session file is read with a key set and encrypted on the
   write(data, file, key);
   assert.match(fs.readFileSync(file, 'utf8'), /mentor-store-encrypted/);
   assert.deepEqual(load(file, key), sample);
-  assert.equal((fs.statSync(file).mode & 0o777).toString(8), '600');
+  if(process.platform !== 'win32') assert.equal((fs.statSync(file).mode & 0o777).toString(8), '600');
   fs.rmSync(dir, {recursive: true, force: true});
 });

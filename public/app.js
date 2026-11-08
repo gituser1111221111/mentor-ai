@@ -14,18 +14,26 @@ async function api(path, {method = 'GET', body} = {}) {
   const r = await fetch(path, {method, headers: {'Content-Type': 'application/json', 'X-Session-Id': sid}, body: body ? JSON.stringify(body) : undefined});
   const data = await r.json().catch(() => ({}));
   if (!r.ok) { const e = new Error(data.error || (data.errors || []).map(x => x.error).join('; ') || 'Something went wrong. Try again.'); e.status = r.status; e.data = data; throw e; }
+  if (method === 'POST' && path === '/api/portfolio/upload') document.dispatchEvent(new CustomEvent('mentor:inputs-updated'));
   return data;
 }
 
 const state = {config: null, tier: 'free', answers: {}, i: 0, profile: null, snapshot: null, personaId: null, agentId: 'budget', need: 'question', lastTurn: null};
-const views = ['v-landing', 'v-quiz', 'v-chat', 'v-workspace'];
+const views = ['v-landing', 'v-quiz', 'v-chat', 'v-workspace', 'v-learning'];
 function show(id) {
+  syncTeacherDock(id);
   if (id !== 'v-chat' && voice.active) endConversation();
   views.forEach(v => { $('#' + v).hidden = v !== id; });
   document.body.classList.toggle('chat-open', id === 'v-chat');
   const landing = id === 'v-landing';
   $('#nav').hidden = !landing; $('#head-start').hidden = !landing; $('#restart').hidden = landing;
   $('#engine').hidden = landing;
+  document.body.classList.toggle('app-open', !landing);
+  document.body.classList.toggle('dashboard-open', id === 'v-workspace');
+  document.body.classList.toggle('onboarding-open', id === 'v-quiz');
+  $('#app-nav').hidden = landing || id === 'v-quiz';
+  document.querySelectorAll('#app-nav button').forEach(b => b.setAttribute('aria-current', (b.hasAttribute('data-return-chat') ? id === 'v-chat' : b.hasAttribute('data-open-learning') ? id === 'v-learning' : id === 'v-workspace') ? 'page' : 'false'));
+  document.querySelectorAll('.header-context').forEach(b => b.hidden = landing || id === 'v-quiz');
   window.scrollTo(0, 0);
 }
 function banner(text, warn = false) { const b = $('#banner'); b.textContent = text; b.className = 'banner' + (warn ? ' warn' : ''); b.hidden = !text; }
@@ -36,6 +44,7 @@ const agents = () => state.config.catalog.agents;
 const persona = id => personas().find(p => p.id === id);
 const agent = id => agents().find(a => a.id === id);
 const usable = x => Boolean(x?.built);
+const orderedPersonas = () => personas().slice().sort((a,b) => Number(usable(b)) - Number(usable(a)));
 const statusLabel = x => usable(x) ? 'Available' : 'Preview';
 const badge = x => `<span class="tag ${usable(x) ? 'free' : 'plus'}">${statusLabel(x)}</span>`;
 const initials = name => name.replace(/^The /, '').split(/[\s-]+/).map(w => w[0]).join('').slice(0, 2).toUpperCase();
@@ -49,8 +58,10 @@ const agentSymbol = id => {
 
 // ---------- landing ----------
 function renderLanding() {
-  $('#personas').innerHTML = personas().map(p => `<div class="portrait">${art(p)}${badge(p)}
-    <h3>${esc(p.name)}</h3><p class="portrait-source">${p.textOnly ? 'AI perspective · Text chat' : 'AI-inspired perspective'}</p><p>${esc(p.philosophy)}.</p><button class="btn outline" type="button" data-chat-mentor="${esc(p.id)}">${usable(p) ? 'Choose perspective' : 'Explore preview'}</button></div>`).join('');
+  const portrait = p => `<article class="portrait">${art(p)}${badge(p)}<h3>${esc(p.name)}</h3><p class="portrait-source">${usable(p) ? (p.textOnly ? 'Text chat' : 'Voice & text chat') : 'Not available yet'}</p><p>${esc(p.philosophy)}.</p><button class="btn outline" type="button" data-chat-mentor="${esc(p.id)}">${usable(p) ? 'Choose teacher' : 'Explore preview'}</button></article>`;
+  const ready = personas().filter(usable), previews = personas().filter(p => !usable(p));
+  $('#personas').innerHTML = `<h3 class="teacher-group-label">Available now</h3><div class="available-portraits">${ready.map(portrait).join('')}</div><details class="teacher-previews"><summary>Explore ${previews.length} upcoming perspectives <span class="tag quiet">Preview</span></summary><div class="preview-portraits">${previews.map(portrait).join('')}</div></details>`;
+  $('#hero-perspectives').innerHTML = orderedPersonas().map(p => `<div class="collection-portrait">${p.image ? `<img src="${esc(p.image)}" alt="AI-generated portrait inspired by ${esc(p.inspiredBy)}" width="160" height="200" loading="eager">` : `<span>${esc(initials(p.name))}</span>`}<strong>${esc(p.inspiredBy || p.name)}</strong><small>${usable(p) ? 'Available' : 'Preview'}</small></div>`).join('');
   const groups = [...new Set(agents().map(a => a.category || 'Other specialties'))];
   $('#agents').innerHTML = groups.map(category => `<details class="specialist-group"><summary>${esc(category)} <span class="fine">${agents().filter(a => a.category === category).length} specialties</span></summary><div class="agent-grid">${agents().filter(a => (a.category || 'Other specialties') === category).map((a,i) => `<button type="button" class="agent-card tone-${i%4}" data-a="${esc(a.id)}">${agentSymbol(a.id)}<span class="agent-card-top"><strong>${esc(a.name)}</strong>${badge(a)}</span><span class="agent-card-job">${esc(a.job)}</span></button>`).join('')}</div></details>`).join('');
   document.querySelectorAll('#agents [data-a]').forEach(b => b.onclick = () => showAgent(agent(b.dataset.a)));
@@ -62,10 +73,11 @@ function renderLanding() {
 let pendingAgent = null;
 function openStartChoice({personaId = state.personaId, need = state.need, agentId = null} = {}) {
   pendingAgent = agentId;
-  $('#start-personas').innerHTML = '<option value="">Choose a perspective</option>' + personas().map(p => `<option value="${esc(p.id)}" ${usable(p) ? '' : 'disabled'}>${esc(p.name)}${usable(p) ? '' : ' · Preview'}</option>`).join('');
+  $('#start-personas').innerHTML = '<option value="">Choose a perspective</option>' + personas().slice().sort((a,b) => Number(usable(b)) - Number(usable(a))).map(p => `<option value="${esc(p.id)}" ${usable(p) ? '' : 'disabled'}>${esc(p.name)}${usable(p) ? '' : ' · Preview'}</option>`).join('');
   $('#start-personas').value = usable(persona(personaId)) ? personaId : '';
   $('#start-need').value = ['question','everyday','future','retirement'].includes(need) ? need : 'question';
   $('#start-choice-error').textContent = '';
+  $('#start-step').value = (state.profile || $('#v-landing').hidden !== false) ? 'chat' : 'snapshot';
   $('#start-choice').showModal();
 }
 function submitStartChoice(e) {
@@ -74,7 +86,8 @@ function submitStartChoice(e) {
   if (!usable(selected)) { $('#start-choice-error').textContent = 'Choose an available perspective to start.'; return; }
   state.personaId = selected.id; state.need = $('#start-need').value;
   state.agentId = pendingAgent || (state.need === 'future' && usable(agent('investing')) ? 'investing' : 'budget');
-  rememberChoice(); $('#start-choice').close(); startChat();
+  rememberChoice(); $('#start-choice').close();
+  if ($('#start-step').value === 'snapshot' && !learningQuestion) renderIntake(); else startChat();
 }
 function rememberChoice() {
   try { localStorage.setItem('mentor-labs-choice', JSON.stringify({personaId:state.personaId,agentId:state.agentId,need:state.need})); } catch {}
@@ -124,6 +137,8 @@ async function submitQuiz(answers) {
 }
 
 function renderIntake() {
+  if (!usable(persona(state.personaId))) return openStartChoice();
+  $('#intake-teacher').textContent = 'Getting started with ' + persona(state.personaId).name;
   $('#income-months').innerHTML = lastMonths(6).map(m => `<label class="f">${esc(new Date(m + '-15T12:00:00Z').toLocaleString('en-US', {month: 'short', year: 'numeric', timeZone: 'UTC'}))}<input inputmode="decimal" data-month="${m}" placeholder="0.00"></label>`).join('');
   const p = state.profile;
   if (p) {
@@ -201,7 +216,7 @@ function connectPortfolio() { uploadNote('Direct brokerage connections are not a
 function renderChatChrome() {
   const p = persona(state.personaId), a = agent(state.agentId), s = state.snapshot;
   $('#chat-head').innerHTML = `${thumb(p)}<div><strong>${esc(p.name)}</strong><small>${p.textOnly ? 'Text conversation · Your AI teacher' : 'Your AI teacher · Learn along the way'} · AI-inspired, not affiliated</small></div>${s?.status === 'ok' ? `<div class="snap-mini">lowest ${usd(s.lowestMonth)}<br>essentials ${usd(s.essentialsTotal)}</div>` : ''}`;
-  $('#persona-switch').innerHTML = personas().map(x => `<button type="button" class="rail-item ${x.id === state.personaId ? 'on' : ''}" data-p="${esc(x.id)}">${thumb(x)}<span>${esc(displayName(x.name))}</span>${badge(x)}</button>`).join('');
+  $('#persona-switch').innerHTML = orderedPersonas().map(x => `<button type="button" class="rail-item ${x.id === state.personaId ? 'on' : ''}" data-p="${esc(x.id)}">${thumb(x)}<span>${esc(displayName(x.name))}</span>${badge(x)}</button>`).join('');
   $('#agent-list').innerHTML = agents().map((x,i) => `<button type="button" class="rail-item coach-item tone-${i%4} ${x.id === state.agentId ? 'on' : ''}" data-a="${esc(x.id)}">${agentSymbol(x.id)}<span>${esc(displayName(x.name))}</span>${badge(x)}</button>`).join('');
   document.querySelectorAll('#persona-switch [data-p]').forEach(b => b.onclick = () => pickPersona(b.dataset.p));
   document.querySelectorAll('#agent-list [data-a]').forEach(b => b.onclick = () => pickAgent(b.dataset.a));
@@ -210,11 +225,7 @@ function renderChatChrome() {
   document.querySelectorAll('#suggest .chip').forEach(c => c.onclick = () => send(c.textContent));
 }
 function starterPrompts() {
-  if (state.need === 'retirement') return ['What assumptions matter when exploring retirement?', 'How do debt, reserves, and retirement contributions interact?', 'What should I understand about retirement account fees?'];
-  if (state.agentId === 'budget' && state.personaId === 'value-investor') return ['What makes a business worth owning?', 'How do I recognize a durable competitive advantage?', 'How can growth create or destroy value?'];
-  if (state.agentId === 'budget' && state.personaId === 'disruptive-growth') return ['How do I evaluate an innovation thesis?', 'What would make you change your mind about a company?', 'How do falling costs affect adoption and value?'];
-  const prompts = {budget: ['How should I budget when my pay keeps changing?', 'What do I do in my slow months?', 'Where should extra money go in a good month?'], debt: ['How fast can I get rid of my debt?', 'Which debt should I pay first?', 'Should I pay off debt or save first?'], savings: ['How big should my emergency fund be?', 'How do I save when my income drops?', 'Should I stop investing until I have savings?'], investing: ['Review my portfolio', 'Which earnings calls are coming up for my holdings?', 'What are the biggest risks in my portfolio?'], equity: ['What should I listen for on NVIDIA’s next earnings call?', 'How did my largest holdings do last quarter?', 'What do analysts and recent filings say about what I own?']};
-  return prompts[state.agentId] || prompts.budget;
+  return ['Summarize this demo profile', 'Explain the sample portfolio risks', 'Walk me through the sample budget'];
 }
 // Empty-state starters: visible questions instead of a blank log. Removed on the first send.
 function showStarters() {
@@ -332,7 +343,7 @@ async function send(text, {spoken = false, voiceSession = null} = {}) {
   $('#msg').value = ''; const btn = $('#composer button[type="submit"]'); btn.disabled = true;
   const sk = skeleton();
   try {
-    const r = await api('/api/chat', {method: 'POST', body: {message: text, personaId: state.personaId, agentId: state.agentId}}); state.lastTurn = r.turnId;
+    const r = await api('/api/chat', {method: 'POST', body: {message: text, demoProfile: true, personaId: state.personaId, agentId: state.agentId, learningModuleId: teacherLessonContext()?.id, learningToolTitle: teacherLessonContext()?.id ? undefined : teacherLessonContext()?.title}}); state.lastTurn = r.turnId;
     const el = botMessage(r); refreshMemory();
     if (r.profileUpdated) el.insertAdjacentHTML('beforeend', '<p class="fine">Saved inputs updated from your message.</p>');
     if (voiceSession && voice.active && voice.session === voiceSession && canSpeak(r) && speechEpoch === voice.epoch) {
@@ -342,7 +353,7 @@ async function send(text, {spoken = false, voiceSession = null} = {}) {
   }
   catch (e) { handleError(e); }
   finally {
-    try { const saved = await api('/api/profile'); state.profile=saved.profile; state.snapshot=saved.snapshot; renderChatChrome(); } catch {}
+    try { const saved = await api('/api/workspace/demo'); state.profile=saved.profile; state.snapshot=saved.budget.snapshot; renderChatChrome(); } catch {}
     sk.stop(); btn.disabled = false; if (!voice.active) $('#msg').focus();
   }
 }
@@ -367,7 +378,7 @@ function startChat() {
   if (!usable(persona(state.personaId))) return openStartChoice();
   if (!usable(agent(state.agentId))) state.agentId = 'budget';
   rememberChoice();
-  state.lastTurn = null; renderChatChrome(); refreshMemory(); show('v-chat');
+  if (!$('#log .msg.user')) state.lastTurn = null; renderChatChrome(); refreshMemory(); show('v-chat');
   if ($('#log .msg.user')) { $('#msg').focus(); return; }
   $('#log').innerHTML = '';
   const p = persona(state.personaId), a = agent(state.agentId);
@@ -405,7 +416,7 @@ function renderSavedDocuments() {
 function setupContextHub() {
   const dialog = $('#context-dialog');
   document.querySelectorAll('[data-context]').forEach(b => b.onclick = async () => { dialog.showModal(); renderSavedDocuments(); try { const r = await api('/api/profile'); state.profile=r.profile; state.snapshot=r.snapshot; renderSavedDocuments(); } catch {} });
-  $('#context-done').onclick = () => { dialog.close(); if ($('#v-chat').hidden && $('#v-workspace').hidden) startChat(); };
+  $('#context-done').onclick = () => { dialog.close(); if ($('#v-chat').hidden && $('#v-workspace').hidden && $('#v-learning').hidden) startChat(); };
   $('#context-close').onclick = () => dialog.close();
   $('#feature-close').onclick = () => $('#feature-preview').close();
   $('#feature-plus').onclick = () => { $('#feature-preview').close(); openUnlock(); };
@@ -621,6 +632,7 @@ function setupVoice() {
 // ---------- boot ----------
 async function boot() {
   state.config = await api('/api/config');
+  try { const demo = await api('/api/workspace/demo'); state.profile=demo.profile; state.snapshot=demo.budget.snapshot; } catch {}
   state.config.catalog.personas.forEach(p => { p.name = displayName(p.name); });
   try { state.tier = (await api('/api/me')).tier; } catch {}
   $('#tier').hidden = true;
@@ -628,7 +640,8 @@ async function boot() {
   $('#engine').textContent = state.config.engine === 'live' ? 'Live AI' : state.config.engine === 'mock' ? 'Local test mode' : 'AI unavailable';
   renderLanding();
   $('#home').onclick = e => { e.preventDefault(); show('v-landing'); };
-  $('#start').onclick = renderIntake;
+  $('#start').onclick = () => openStartChoice();
+  $('#intake-skip').onclick = startChat;
   $('#head-start').onclick = () => openStartChoice(); $('#try-chat').onclick = () => openStartChoice();
   $('#start-choice-form').onsubmit = submitStartChoice;
   $('#start-choice-close').onclick = () => $('#start-choice').close();
@@ -654,7 +667,12 @@ async function boot() {
   try { const r = await api('/api/profile'); state.profile = r.profile; state.snapshot = r.snapshot; const {history} = await api('/api/history'); if (history.length) { await restoreChat(history); return; } if (r.profile?.incomeHistory?.length) { startChat(); return; } } catch {}
   show('v-landing');
 }
-boot().catch(e => banner(`The app could not load: ${e.message}`, true));
+boot().then(() => {
+  const preview = new URLSearchParams(location.search);
+  if (preview.get('view') === 'landing') show('v-landing');
+  if (preview.get('view') === 'workspace') openWorkspace(preview.get('tab') === 'portfolio' ? 'portfolio' : 'budget');
+  if (preview.get('view') === 'learning') openLearning();
+}).catch(e => banner(`The app could not load: ${e.message}`, true));
 // Animate each landing section once as it enters view, without hiding content.
 if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
   const sections = new IntersectionObserver(entries => {
@@ -678,7 +696,7 @@ document.querySelector('#start-choice')?.addEventListener('submit', () => {
 
 // One teacher conversation, shared with the learning and planning workspace.
 function openWorkspace(tab) {show('v-workspace');document.dispatchEvent(new CustomEvent('mentor:workspace-open'));if(tab)document.querySelector('[data-workspace-tab="'+tab+'"]')?.click();}
-function openLearning() {show('v-landing');document.querySelector('#learn > details').open=true;document.querySelector('#learn').scrollIntoView({block:'start'});}
+function openLearning() {show('v-learning');}
 document.querySelectorAll('[data-open-workspace]').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();openWorkspace(b.dataset.openWorkspace);}));
 document.querySelectorAll('[data-open-learning]').forEach(b=>b.addEventListener('click',openLearning));
 document.querySelectorAll('[data-return-chat]').forEach(b=>b.addEventListener('click',()=>{if(state.personaId)startChat();else openStartChoice();}));
@@ -688,3 +706,51 @@ document.addEventListener('mentor:inputs-updated',async()=>{if(voice.active)endC
 document.addEventListener('mentor:workspace-question',e=>{learningQuestion=String(e.detail?.question||'').slice(0,2000);openStartChoice({need:/portfolio|holdings|earnings/.test(learningQuestion)?'future':'question'});});
 
 document.addEventListener('mentor:guidelines-updated',()=>{state.lastTurn=null;if(voice.active)endConversation('Your saved review guidelines changed.');});
+
+// One persistent conversation, available alongside lessons and financial tools.
+const teacherDockStyle=document.createElement('link');teacherDockStyle.rel='stylesheet';teacherDockStyle.href='/teacher-dock.css';document.head.append(teacherDockStyle);
+const teacherChatPane = document.querySelector('#v-chat .chat-main');
+const teacherChatAnchor = document.createComment('Teacher chat home');
+teacherChatPane.before(teacherChatAnchor);
+const teacherDock = document.createElement('aside');
+teacherDock.id = 'teacher-dock';teacherDock.hidden = true;
+teacherDock.setAttribute('aria-label','Ask your teacher');
+teacherDock.innerHTML = '<header class="teacher-dock-header"><div><strong>Ask your teacher</strong><small id="teacher-dock-context"></small></div><button type="button" class="btn text" id="teacher-dock-close" aria-label="Close teacher chat">Close</button></header><div id="teacher-dock-body"></div>';
+document.body.append(teacherDock);
+const teacherLauncher = document.createElement('button');
+teacherLauncher.id='teacher-launcher';teacherLauncher.type='button';teacherLauncher.className='btn primary';teacherLauncher.textContent='Ask your teacher';teacherLauncher.hidden=true;
+teacherLauncher.setAttribute('aria-controls','teacher-dock');teacherLauncher.setAttribute('aria-expanded','false');document.body.append(teacherLauncher);
+function teacherLessonContext(){
+  if(document.querySelector('#v-learning').hidden)return null;
+  try{const frame=document.querySelector('#learning-frame'),url=new URL(frame.contentWindow.location.href),title=frame.contentDocument.querySelector('#detail-title')?.textContent;return {id:url.pathname.endsWith('/lesson.html')?url.searchParams.get('topic'):null,title:title||'Learning guide'};}catch{return null;}
+}
+function closeTeacherDock(focus=false){
+  teacherChatAnchor.after(teacherChatPane);teacherDock.hidden=true;teacherLauncher.setAttribute('aria-expanded','false');document.body.classList.remove('teacher-docked');if(focus&&!teacherLauncher.hidden)teacherLauncher.focus();
+}
+function syncTeacherDock(id){
+  const eligible=['v-learning','v-workspace'].includes(id);
+  if(typeof teacherLauncher==='undefined')return;
+  teacherLauncher.hidden=!eligible;if(!eligible)closeTeacherDock();
+}
+function openTeacherDock(){
+  if(!usable(persona(state.personaId))){openStartChoice();return;}
+  const currentView=views.find(id=>!$('#'+id).hidden);
+  if(!$('#log').children.length){startChat();show(currentView);}
+  renderChatChrome();document.querySelector('#teacher-dock-body').append(teacherChatPane);
+  updateTeacherDockContext();
+  teacherDock.hidden=false;teacherLauncher.setAttribute('aria-expanded','true');document.body.classList.add('teacher-docked');$('#msg').focus();
+}
+teacherLauncher.onclick=openTeacherDock;$('#teacher-dock-close').onclick=()=>closeTeacherDock(true);
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!teacherDock.hidden&&!document.querySelector('dialog[open]')){e.preventDefault();closeTeacherDock(true);}});
+document.addEventListener('mentor:learning-page',()=>{if(!teacherDock.hidden){const context=teacherLessonContext();$('#teacher-dock-context').textContent=context?'Alongside '+context.title:'Your teacher';}});
+
+function updateTeacherDockContext(){
+  const context=teacherLessonContext();
+  if(context){$('#teacher-dock-context').textContent='Alongside '+context.title;return;}
+  const tab=document.querySelector('[data-workspace-tab][aria-pressed="true"]')?.dataset.workspaceTab;
+  let isSample=document.querySelector('#workspace-content')?.dataset[tab==='portfolio'?'samplePortfolio':'sampleBudget']==='true';
+  if(tab==='portfolio'){try{isSample=document.querySelector('#exact-portfolio-frame')?.contentWindow.MentorPortfolio?.getState()?.sample??isSample;}catch{}}
+  $('#teacher-dock-context').textContent='Fictional demo profile · shared with your teacher';
+}
+document.addEventListener('mentor:workspace-rendered',()=>{if(!teacherDock.hidden)updateTeacherDockContext();});
+document.addEventListener('click',e=>{if(e.target.closest('[data-workspace-tab]')&&!teacherDock.hidden)updateTeacherDockContext();});

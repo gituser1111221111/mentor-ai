@@ -4,7 +4,7 @@ November 7, 2026. The founder's direct request supersedes historical flagship, a
 
 ## This branch
 
-Latest clarification: one chatbot guided by the selected teacher, optional learning modules, and a personal Budget/Portfolio workspace. Specialist tools are internal implementation details, not a bot catalog to navigate. Pricing remains one free month, then $2.99/month for everything.
+Latest clarification: a concise teacher-first landing showcases all ten perspectives, with available teachers grouped first and previews separate. Teacher selection leads to an optional money snapshot and holdings/document import, then chat. Teacher chat, Dashboard, and the 13-step Learning guide have distinct app tabs; dashboard and lesson content are not embedded on the marketing page. Specialist tools are internal implementation details, not a bot catalog to navigate. Pricing remains one free month, then $2.99/month for everything.
 
 The workspace now includes an exact-cent monthly budget builder and cash-cushion goal, holdings import, personal single-security/sector/top-five/count metrics, an earnings review window, and explanation pop-ups for each metric. Values are drafted and explicitly approved before taking effect. Changing guidelines invalidates prior cached analysis. Missing sector data remains unknown. What-if scenarios recheck supported constraints and disclose unsatisfied/unknown conditions.
 
@@ -19,16 +19,16 @@ Market context supports on-demand and optional five-minute foreground refresh us
 
 ## Source provenance and limits
 
-Learning content: `gituser1111221111/barone-investment-group`, commit `b8b165e3266cad4532ec9a1bbb3f49b81535b63f`, `content.js`. Reused at the founder's express request. Existing lesson text is preserved as educational source material; rates, historical claims, tax details and examples have not received a new methodology audit. Product recommendations from the source's app directory are not imported. Lesson discussion currently passes the topic into chat, not the full lesson text as a verified research source.
+Learning content: `gituser1111221111/barone-investment-group`, commit `b8b165e3266cad4532ec9a1bbb3f49b81535b63f`, `content.js`. Reused at the founder's express request. Existing lesson text is preserved as educational source material; rates, historical claims, tax details and examples have not received a new methodology audit. The integrated academy now copies the lesson layouts, interactive calculator tools, and knowledge checks from that revision. Copied tool pages use Mentor colors and remain educational estimates; source app links retain their original labels. Lesson discussion currently passes the topic into chat, not the full lesson text as a verified research source.
 
-Sentinel: inspected `gituser1111221111/demo-/app.js`. The implemented concentration workflow uses Mentor Labs' exact-cent utilities rather than copying its standalone dashboard, historical statistics or default analyst rule. This is not the full thirteen-rule Sentinel integration.
+Sentinel: dashboard layout adapted from `gituser1111221111/demo-`, revision `c50a6af8ab60af9f34d5d5b45b364f33d47ee1ed`. Its sidebar navigation, KPI cards, allocation panels, holdings, calendar, news and guideline views are adapted to Mentor's saved portfolio and budgeting APIs. Portfolio checks retain Mentor's exact-cent utilities. Imported values remain separate from market quotes; unsupported historical performance and risk statistics are not fabricated. The expanded review now includes all thirteen Sentinel parameter families, per-ticker/sector exceptions, exclusions and custom rules. Historical metrics use the current imported mix and dated, aligned weekly closes as a constant-holdings illustration, not actual account returns. Unknown history, cost basis, sector and provider coverage remain explicit.
 
 ## What remains future work
 
 1. Authenticated durable accounts, migration, retention/deletion, backup and cross-device context. Existing anonymous session storage remains a prototype.
 2. Document fact review with source evidence, units and period confirmation before calculation.
 3. Retirement scenarios with explicit assumptions and evaluated source coverage across all teacher perspectives.
-4. Expanded Sentinel rules, exceptions, conflicts, tax-lot and historical-methodology review.
+4. Professional methodology review of expanded Sentinel rules and historical illustrations; tax-lot accounting and real transaction/performance history remain future work.
 5. Supported read-only account connections, actual freshness, event reconciliation and opt-in notifications. No trade or money-movement execution.
 6. Billing specification: calendar versus fixed trial duration, payment-method collection, conversion consent/notices, cancellation and post-cancellation data behavior.
 7. Professional review of actual service outputs, identity/content rights, privacy and paid-service scope before production launch.
@@ -38,3 +38,31 @@ Sentinel: inspected `gituser1111221111/demo-/app.js`. The implemented concentrat
 Evaluate both money paths against a neutral teacher: principle fidelity, source attribution, arithmetic, unknown/stale inputs, follow-up comprehension and user ability to explain the next step. Offline engineering tests do not prove model quality or financial outcomes.
 
 Monthly contribution per payer = $2.99 minus payment fees, model usage, voice minutes, data connections/refreshes, notifications, hosting/storage and variable support. Record quantity × contracted unit price per component for trial and paid cohorts; add conversion, refunds and acquisition separately. Inputs remain unmeasured. Do not promise unlimited usage or silently introduce new tiers.
+
+## Chat as the flagship
+
+The mentor conversation leads the program; lessons and financial tools support it. A persistent Ask your teacher drawer reuses the same composer and conversation on the Learning guide and Dashboard. Lesson questions include the current module title/summary for the model while displayed history keeps the original question. The context dialog keeps its header and Done action visible while only its contents scroll.
+
+Live configuration checked: Alpha Vantage and FRED keys are recognized, and FRED appeared in a successful market-context response. The tested equity quote used its labeled snapshot fallback. API configuration alone does not establish quote freshness or model accuracy.
+
+## Automatic dashboard previews
+
+Dashboard fills missing budget and portfolio sections independently with labeled display-only examples. Read-only GET /api/workspace/demo never mutates a session. Editors show actual partial inputs or blank fields; real saved inputs replace the corresponding preview immediately. Sample exports retain sample labels, and personal teacher context continues to use only the real profile.
+
+## Original portfolio interface
+
+The Portfolio tab now embeds the actual copied Sentinel demo HTML/CSS/JavaScript/data under public/portfolio-demo, retaining its original five KPI cards, seven views, Chart.js charts and all settings controls. The base stylesheet is byte-identical to demo- c50a6af; Mentor palette overrides are separate. A same-origin bridge forwards imports, explicit guideline approval and market refresh to the existing session APIs. Source demo holdings remain display-only. Real imported valuations, cost basis, unknown coverage and historical-illustration labels are preserved. Source what-if operations stay local and reconcile cash to cents. Chart.js4.4.1 is vendored with its license.
+
+## Latest dashboard design reference
+
+The newer supplied Monarch screenshot supersedes the earlier Sentinel visual geometry. Budgeting and investing now use a slim neutral sidebar, four centered white summary cards, a wide primary chart, and lower two-column detail/planning panels with Mentor green accents. Investing retains the copied Sentinel engines, controls and same-origin bridge. Budgeting compares saved monthly income with the current planned cost line; it does not invent historical spending or future forecasts. The sample/personal separation and shared teacher chat remain intact.
+
+
+### Approved dashboard concept
+
+The approved generated concept replaces the earlier centered-card layout with light ivory navigation, sage selected rows, label-first summary cards, forest-green charts and compact detail panels. Keep the existing Mentor Labs image logo. Investing retains the Sentinel tools and same-origin holdings bridge; budgeting retains exact saved inputs and the lowest-income planning basis. Teacher access remains part of both dashboards. Manual budget entries and portfolio CSV imports work; MCP brokerage/bank connectivity is future work, not an active connection.
+
+
+### Final demo scope
+
+Use a single fictional financial profile across both dashboards and teacher chat. The frontend requests demoProfile on chat turns; the backend supplies the same sample profile used by /api/workspace/demo. This supersedes the earlier rule that examples were unavailable to chat. Keep fictional data clearly identified and do not overwrite stored personal profiles. Personal imports and bank/MCP connections are deferred from the demo flow. Follow the approved per-tab visual sheets, retain the real logo, and use coherent computed figures instead of inconsistent generated mockup numbers.

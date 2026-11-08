@@ -1,0 +1,168 @@
+/* Approved Mentor Labs concept: light workspace, green accents, clear chart hierarchy. */
+#workspace-content > .ws-shell{--green:#124e40;grid-template-columns:190px minmax(0,1fr);border:1px solid #dfdfd8;border-radius:10px;box-shadow:0 2px 6px #263c2c08;overflow:hidden;background:#f7f6f2;font-size:13px;min-height:790px}
+#workspace-content > .ws-shell .ws-sidebar{background:#faf9f6;border-right:1px solid #e6e5df;padding:20px 14px;gap:22px;color:#202822}
+#workspace-content > .ws-shell .ws-brand{font-size:16px;font-weight:650;color:#183b2e;gap:9px}
+#workspace-content > .ws-shell .ws-brand img{width:32px;height:32px;border-radius:7px}
+#workspace-content > .ws-shell .ws-brand small{font-size:10px;color:#7c857c}
+#workspace-content > .ws-shell .workspace-tabs{background:transparent;border:1px solid #d8dad2;border-radius:6px;padding:3px}
+#workspace-content > .ws-shell .workspace-tabs button{min-height:31px;border-radius:4px;color:#26352c;font-size:11px}
+#workspace-content > .ws-shell .workspace-tabs button[aria-pressed=true]{background:var(--green);color:#fff}
+#workspace-content > .ws-shell .ws-nav button{min-height:37px;padding:9px 10px;font-size:12px;color:#29362e;border-radius:6px;gap:10px}
+#workspace-content > .ws-shell .ws-nav button svg{width:17px;height:17px}
+#workspace-content > .ws-shell .ws-nav button:hover{background:#eef2e9}
+#workspace-content > .ws-shell .ws-nav button[aria-pressed=true]{background:#e0ecd8;color:#183c2c;font-weight:650;box-shadow:none}
+#workspace-content > .ws-shell .ws-sources{border:1px solid #e3e5dc;border-radius:8px;background:#fafaf7;padding:12px;color:#6c796d}
+#workspace-content > .ws-shell .ws-topbar{padding:23px 24px 16px;min-height:85px;background:transparent}
+#workspace-content > .ws-shell #ws-view-title{font:650 23px/1.2 var(--sans);letter-spacing:-.025em;color:#1f2c24}
+#workspace-content > .ws-shell .ws-sub{font-size:11px;color:#748074}
+#workspace-content > .ws-shell .btn{border-radius:6px;min-height:34px;padding:8px 12px;font-size:11px;font-weight:600}
+#workspace-content > .ws-shell .ws-main{padding:0 24px 24px}
+#workspace-content > .ws-shell .workspace-stats{gap:10px;grid-template-columns:repeat(4,minmax(0,1fr))}
+#workspace-content > .ws-shell .workspace-stats article{align-items:flex-start;text-align:left;min-height:95px;padding:15px 17px;border:1px solid #e0e2d9;border-radius:8px;background:#fff;box-shadow:0 1px 2px #263c2c05}
+#workspace-content > .ws-shell .workspace-stats article > span{order:0;font-size:11px;color:#59665b;line-height:1.5}
+#workspace-content > .ws-shell .workspace-stats strong{order:1;font:650 25px/1.2 var(--sans);letter-spacing:-.03em;margin:5px 0 3px;color:#15271d}
+#workspace-content > .ws-shell .workspace-stats small{order:2;font-size:10px;color:#7c8579}
+#workspace-content > .ws-shell .workspace-stats article:nth-child(3) strong{color:var(--green)}
+#workspace-content > .ws-shell .ws-card{border:1px solid #e0e2d9;border-radius:8px;padding:17px;background:#fff;box-shadow:0 1px 2px #263c2c05}
+#workspace-content > .ws-shell .ws-card-h h3,#workspace-content > .ws-shell .ws-main h3{font-size:13px;font-weight:650;color:#25372a}
+#workspace-content > .ws-shell .ws-card p{font-size:12px;line-height:1.55}
+#workspace-content > .ws-shell .ws-card .fine{font-size:10px;color:#788272}
+#workspace-content > .ws-shell .budget-dashboard-overview{margin:12px 0;padding:17px 18px 10px}
+#workspace-content > .ws-shell .budget-chart-key{justify-content:flex-start;font-size:10px;gap:22px}
+#workspace-content > .ws-shell .budget-chart-key i.planned{background:#91b47b}
+#workspace-content > .ws-shell .budget-chart-cost{stroke:#91b47b;stroke-dasharray:none;stroke-width:2}
+#workspace-content > .ws-shell .budget-chart-area{fill:#dcebdd;fill-opacity:.65}
+#workspace-content > .ws-shell .budget-timeline{min-height:235px}
+#workspace-content > .ws-shell .budget-dashboard-lower{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(250px,1fr);gap:12px;align-items:start}
+#workspace-content > .ws-shell .budget-planning-column{display:grid;gap:12px;min-width:0}
+#workspace-content > .ws-shell .budget-spending-list{margin:0 -17px -17px}
+#workspace-content > .ws-shell .budget-spending-row{grid-template-columns:28px minmax(0,1fr) auto minmax(100px,.9fr);min-height:74px;padding:13px 17px;gap:10px}
+#workspace-content > .ws-shell .budget-spending-row strong{font-size:12px;color:#304535;font-weight:600}
+#workspace-content > .ws-shell .budget-spending-row small{font-size:10px}
+#workspace-content > .ws-shell .budget-spending-row b{font-size:12px}
+#workspace-content > .ws-shell .budget-row-icon{border-radius:6px;background:#edf3e7;color:#39653d}
+#workspace-content > .ws-shell .budget-spending-share{display:flex;align-items:center;gap:9px;min-width:0}
+#workspace-content > .ws-shell .budget-spending-share small{min-width:37px;text-align:right;color:#6e7a6c;font-variant-numeric:tabular-nums}
+#workspace-content > .ws-shell .budget-category-track{height:7px;border-radius:5px;background:#e8eae3;flex:1;overflow:hidden}
+#workspace-content > .ws-shell .budget-category-track i{display:block;height:100%;background:#427956;border-radius:5px}
+#workspace-content > .ws-shell .budget-spending-row:nth-child(2) .budget-category-track i{background:#739b72}
+#workspace-content > .ws-shell .budget-spending-row:nth-child(3) .budget-category-track i{background:#a5bd91}
+#workspace-content > .ws-shell .budget-goal-heading{display:flex;justify-content:space-between;gap:12px;font-size:12px;color:#334833}
+#workspace-content > .ws-shell .budget-goal-heading span{font-weight:600;color:var(--green)}
+#workspace-content > .ws-shell .budget-goal-amount{margin:10px 0;font-weight:600;color:#293e2d}
+#workspace-content > .ws-shell .budget-goal-amount span{font-weight:400;color:#7a8475}
+#workspace-content > .ws-shell .budget-goal-track{height:9px;border-radius:8px;overflow:hidden;background:#e6e8df}
+#workspace-content > .ws-shell .budget-goal-track > span{display:block;height:100%;background:var(--green);border-radius:8px}
+#workspace-content > .ws-shell #budget-next{border-top:1px solid #edf0e8;margin-top:16px;padding-top:3px}
+#workspace-content > .ws-shell .budget-coaching-actions{gap:12px;margin-top:12px;padding-top:12px}
+#workspace-content > .ws-shell .budget-teacher-card{padding:13px;background:#edf3e5;border:1px solid #dce6d2;border-radius:8px;min-width:0}
+#workspace-content > .ws-shell .budget-teacher-heading{display:flex;align-items:center;gap:9px}
+#workspace-content > .ws-shell .budget-teacher-heading img{border-radius:7px;flex:none}
+#workspace-content > .ws-shell .budget-teacher-heading strong{font-size:12px;color:#263b29}
+#workspace-content > .ws-shell .budget-teacher-heading p{font-size:10px;line-height:1.5;margin:3px 0;color:#64735e}
+#workspace-content > .ws-shell .budget-teacher-dot{width:6px;height:6px;background:#579b3d;border-radius:50%;flex:none}
+#workspace-content > .ws-shell .budget-teacher-prompt{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;margin-top:10px;background:#fff;border:1px solid #dce4d5;border-radius:6px;padding:10px;color:#78856f;font:11px var(--sans);text-align:left;cursor:pointer}
+#workspace-content > .ws-shell .budget-teacher-prompt span{display:grid;place-items:center;width:24px;height:24px;border-radius:5px;color:#fff;background:var(--green);font-size:17px;margin:-5px -5px -5px 0}
+#workspace-content > .ws-shell button:focus-visible{outline:2px solid #34765d;outline-offset:3px}
+@media(max-width:1100px){#workspace-content > .ws-shell{grid-template-columns:170px minmax(0,1fr)}#workspace-content > .ws-shell .workspace-stats article{padding:13px 11px}#workspace-content > .ws-shell .workspace-stats strong{font-size:21px}#workspace-content > .ws-shell .budget-dashboard-lower{grid-template-columns:minmax(0,1.3fr) minmax(240px,1fr)}#workspace-content > .ws-shell .budget-spending-row{grid-template-columns:24px minmax(0,1fr) auto}#workspace-content > .ws-shell .budget-spending-share{grid-column:2 / -1}}
+@media(max-width:760px){#workspace-content > .ws-shell{grid-template-columns:minmax(0,1fr);min-height:0}#workspace-content > .ws-shell .ws-sidebar{padding:14px;border-right:0;border-bottom:1px solid #e3e5dd;gap:12px}#workspace-content > .ws-shell .ws-nav{overflow-x:auto}#workspace-content > .ws-shell .ws-nav button{font-size:11px;flex-shrink:0}#workspace-content > .ws-shell .ws-topbar{padding:18px 14px 12px}#workspace-content > .ws-shell .ws-main{padding:0 14px 18px}#workspace-content > .ws-shell .workspace-stats{grid-template-columns:repeat(2,minmax(0,1fr))}#workspace-content > .ws-shell .workspace-stats article{min-height:94px}#workspace-content > .ws-shell .budget-dashboard-lower{grid-template-columns:minmax(0,1fr)}#workspace-content > .ws-shell .budget-timeline{min-height:185px}#workspace-content > .ws-shell .ws-card{padding:15px}#workspace-content > .ws-shell .budget-spending-list{margin:0 -15px -15px}#workspace-content > .ws-shell .budget-spending-row{padding:13px 15px}#workspace-content > .ws-shell .budget-spending-share{grid-column:auto}#workspace-content > .ws-shell .budget-spending-row{grid-template-columns:26px minmax(0,1fr) auto}#workspace-content > .ws-shell .budget-spending-share{grid-column:2 / -1}}
+#workspace-content > .ws-shell .budget-spending-labels{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(100px,.9fr);gap:14px;padding:0 17px 10px;font-size:9px;color:#7d8977;border-bottom:1px solid #edf0e8}
+#workspace-content > .ws-shell .budget-spending-labels span:last-child{text-align:right}
+@media(max-width:1100px){#workspace-content > .ws-shell .budget-spending-labels{grid-template-columns:minmax(0,1fr) auto}#workspace-content > .ws-shell .budget-spending-labels span:last-child{display:none}}
+/* Keep the full overview visible without pushing the planning cards below the fold. */
+#workspace-content > .ws-shell .budget-timeline{display:block;width:100%;height:250px;min-height:0;max-height:250px}
+#workspace-content > .ws-shell #budget-cashflow{min-height:0}
+#workspace-content > .ws-shell .ws-preview{padding:10px 13px;margin-top:0;margin-bottom:12px;font-size:11px}
+#workspace-content > .ws-shell .ws-preview p{font-size:10px;line-height:1.45;margin:3px 0 0}
+@media(max-width:760px){#workspace-content > .ws-shell .budget-timeline{height:185px;max-height:185px}#workspace-content > .ws-shell .ws-preview{margin-bottom:10px}}
+/* Complete simulated budget programme, matching the approved light dashboard sheets. */
+#workspace-content .demo-budget-original{display:none!important}
+#demo-budget-tabs .workspace-stats{margin-bottom:16px}
+#demo-budget-tabs .ws-card{margin-bottom:14px;padding:16px;background:#fff;border:1px solid #e2e5dc;border-radius:8px;box-shadow:0 1px 2px #193a2504}
+#demo-budget-tabs .ws-card-h{padding:0 0 12px;margin-bottom:12px;border-bottom:1px solid #eff0eb}
+#demo-budget-tabs .ws-card-h h3{font-size:13px;color:#1c2920;font-weight:650}
+#demo-budget-tabs .demo-two{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(250px,1fr);gap:14px;align-items:start}
+#demo-budget-tabs .demo-table-wrap{overflow-x:auto}
+#demo-budget-tabs .demo-table{width:100%;border-collapse:collapse;font-size:12px;line-height:1.5}
+#demo-budget-tabs .demo-table th{text-align:left;font-weight:600;border-bottom:1px solid #e9ece4;padding:10px 8px;font-size:11px}
+#demo-budget-tabs .demo-table td{padding:14px 8px;border-bottom:1px solid #f0f1ec}
+#demo-budget-tabs .demo-table td:not(:first-child){white-space:nowrap}
+#demo-budget-tabs .demo-category{display:inline-grid;place-items:center;width:26px;height:26px;background:#edf3e8;color:#165640;border-radius:6px;margin-right:10px}
+#demo-budget-tabs .demo-share{width:95px;height:6px;background:#e9ece4;border-radius:8px;display:inline-block;margin-right:9px;vertical-align:middle;overflow:hidden}
+#demo-budget-tabs .demo-share i,#demo-budget-tabs .demo-progress i{display:block;height:100%;background:#23734d;border-radius:8px}
+#demo-budget-tabs .demo-progress{height:9px;background:#e7eae1;border-radius:8px;margin:16px 0 8px;overflow:hidden}
+#demo-budget-tabs .demo-teacher{background:#edf4e6;max-width:450px;margin-left:auto}
+#demo-budget-tabs .demo-teacher p{font-size:11px;margin-bottom:10px}
+#demo-budget-tabs .demo-ask{display:flex;justify-content:space-between;align-items:center;background:#fff;border:1px solid #dce5d6;border-radius:6px;padding:8px;width:100%;font-size:11px;color:#576652;cursor:pointer}
+#demo-budget-tabs .demo-ask b{padding:4px 8px;border-radius:4px;background:#12583c;color:white;font-size:18px}
+#demo-budget-tabs .demo-check{padding:13px 0;border-bottom:1px solid #edf0e7;color:#27603e}
+#demo-budget-tabs hr{border:0;border-top:1px solid #e6e9e0;margin:18px 0}
+#demo-budget-tabs h4{font-size:12px;margin:12px 0}
+#demo-budget-tabs select{width:100%;margin-top:12px;border:1px solid #dce3d5;border-radius:6px;padding:10px;background:#fff;color:#21452f;font:inherit}
+#demo-budget-tabs .budget-timeline{width:100%;height:250px;stroke:none;fill:none}
+#demo-budget-tabs .budget-timeline text{fill:#819080;stroke:none;font-size:10px}
+#demo-budget-tabs .budget-chart-area{fill:#e8f2e8;stroke:none}
+#demo-budget-tabs .budget-chart-income{stroke:#145a42;stroke-width:2;fill:none}
+#demo-budget-tabs .budget-chart-cost{stroke:#94b67b;stroke-width:2}
+#demo-budget-tabs .budget-chart-grid{stroke:#edf0e9;stroke-width:1}
+#demo-budget-tabs .budget-chart-dot{fill:#145a42}
+@media(max-width:850px){#demo-budget-tabs .demo-two{grid-template-columns:minmax(0,1fr)}#demo-budget-tabs .demo-teacher{max-width:none}#demo-budget-tabs .demo-share{width:50px}}
+@media(max-width:500px){#demo-budget-tabs .ws-card{padding:12px}#demo-budget-tabs .demo-table{font-size:10px}#demo-budget-tabs .demo-table td{padding:12px 5px}#demo-budget-tabs .demo-category{display:none}#demo-budget-tabs .budget-timeline{height:185px}}
+#workspace-content>.ws-shell .ws-badge{display:none!important}
+#demo-budget-tabs .demo-teacher{background:#edf4e6!important;border-color:#dce6d4!important}
+/* Match the approved preview's single header, rail and content proportions. */
+body.dashboard-open header.site{height:76px;padding:14px 24px;gap:34px}
+body.dashboard-open header.site .head-right{display:none}
+body.dashboard-open .app-nav{margin-left:0;padding-left:24px;border-left:1px solid #e4e2dc;gap:18px}
+body.dashboard-open .app-nav button{font-family:Inter,sans-serif;font-size:12px;padding:9px 17px}
+body.dashboard-open main{padding:0!important;margin-top:0}
+body.dashboard-open #v-workspace{padding:0}
+body.dashboard-open #workspace-content>.ws-shell{border:0;border-radius:0;box-shadow:none;min-height:calc(100vh - 76px);grid-template-columns:190px minmax(0,1fr);font-family:Inter,sans-serif}
+#workspace-content>.ws-shell .ws-brand{display:none}
+#workspace-content>.ws-shell .ws-sidebar{padding:22px 14px;gap:24px;border-right:1px solid #e4e2dc}
+#workspace-content>.ws-shell .ws-sources{display:none}
+#workspace-content>.ws-shell .workspace-tabs{order:0;margin:0;border:1px solid #d9d8d1;background:transparent}
+#workspace-content>.ws-shell .workspace-tabs button{min-height:30px}
+#workspace-content>.ws-shell .ws-topbar{padding:20px 22px 14px;min-height:76px}
+#workspace-content>.ws-shell .ws-topbar h2{font-size:23px}
+#workspace-content>.ws-shell .ws-main{padding:0 22px 22px}
+#workspace-content>.ws-shell #workspace-status{display:none}
+#demo-budget-tabs .workspace-stats{gap:12px;margin-bottom:12px}
+#demo-budget-tabs .ws-stat{min-height:83px;padding:13px 16px}
+#demo-budget-tabs .ws-stat strong{font-size:25px;line-height:1.2}
+#demo-budget-tabs .ws-card{margin-bottom:12px;padding:14px;border-radius:8px}
+#demo-budget-tabs .ws-card-h{border:0;padding:0;margin-bottom:10px}
+#demo-budget-tabs .budget-timeline{height:235px;max-height:235px}
+#demo-budget-tabs .demo-two{gap:12px;grid-template-columns:minmax(0,1.55fr) minmax(250px,1fr)}
+#demo-budget-tabs .demo-table td{padding:10px 6px}
+#demo-budget-tabs .demo-table th{padding:7px 6px}
+#demo-budget-tabs .demo-category{background:transparent;width:20px;margin-right:6px;color:#165b45}
+#demo-budget-tabs .demo-progress{margin:12px 0 8px;height:8px}
+.preview-teacher{background:#edf3e7;border:1px solid #dce6d4;border-radius:8px;padding:10px;margin-top:8px}
+.preview-teacher-heading{display:flex;align-items:center;gap:9px;margin-bottom:8px;font:11px Inter,sans-serif}
+.preview-teacher-heading img{border-radius:6px}.preview-teacher-heading strong,.preview-teacher-heading small{display:block}.preview-teacher-heading small{font-size:10px;margin-top:4px}
+.preview-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#4a9b46;margin-right:4px}
+.preview-learning{margin-top:auto;display:grid;gap:18px}
+.preview-learning button{cursor:pointer;text-align:left;border:0;background:transparent;color:#1e352a;font:11px Inter,sans-serif;padding:10px 0}
+.preview-learning button:first-child{border:1px solid #e4e2dc;border-radius:8px;padding:12px}
+.preview-learning strong,.preview-learning small{display:block}.preview-learning small{font-size:10px;margin:6px 0}
+.preview-progress{height:7px;border-radius:8px;background:#e3e1da;margin-top:12px}.preview-progress i{display:block;width:45%;height:100%;background:#2c8550;border-radius:8px}
+body.dashboard-open #exact-portfolio .exact-workspace-tabs{display:none}
+body.dashboard-open #exact-portfolio-frame{border:0;border-radius:0;height:calc(100vh - 76px);min-height:700px}
+body.dashboard-open #teacher-launcher{opacity:0;pointer-events:none}
+@media(max-width:850px){body.dashboard-open #workspace-content>.ws-shell{grid-template-columns:1fr}.preview-learning{display:none}body.dashboard-open header.site{height:auto;gap:10px}.ws-sidebar .ws-nav{overflow:auto}#demo-budget-tabs .demo-two{grid-template-columns:1fr}body.dashboard-open .app-nav{padding:0;border:0;gap:2px}}
+#demo-budget-tabs>[data-ws-panel]{display:block}
+#demo-budget-tabs .workspace-stats>div{min-height:82px!important;padding:12px 16px!important;justify-content:center}
+#demo-budget-tabs .workspace-stats>div p{margin:0}
+#demo-budget-tabs .workspace-stats>div strong{margin:5px 0!important;font-size:25px!important;line-height:1.15}
+#demo-budget-tabs .workspace-stats>div small{font-size:9px}
+#demo-budget-tabs .ws-card{margin-bottom:12px}
+#demo-budget-tabs .budget-timeline{height:220px!important;max-height:220px!important}
+#demo-budget-tabs .demo-table td{padding:8px 6px}
+#demo-budget-tabs .demo-two>.ws-card:first-child{margin:0}
+#demo-budget-tabs .ws-card h4{margin:8px 0;font-weight:600}
+#demo-budget-tabs hr{margin:12px 0}
+#demo-budget-tabs .demo-two{align-items:start}
+#demo-budget-tabs .budget-chart-key{margin:0 0 8px}
+#demo-budget-tabs .ws-card-h{border:0!important;padding-bottom:0!important}
+@media(max-width:650px){body.dashboard-open #teacher-launcher{opacity:1;pointer-events:auto}#demo-budget-tabs .budget-timeline{height:180px!important}}

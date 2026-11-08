@@ -1,0 +1,1054 @@
+<!doctype html>
+<html lang="en"><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Barone Investment Group | AI Finance Education for Gen Z</title>
+    <meta name="description" content="Practical AI finance workflows, interactive chapters, and smart tools for Gen Z students and young professionals. Built by Ryan Barone.">
+
+    <!-- Open Graph / social sharing -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.baroneinvestment.site/">
+    <meta property="og:title" content="Barone Investment Group | AI Finance Education for Gen Z">
+    <meta property="og:description" content="Practical AI finance workflows, interactive chapters, and smart tools for Gen Z students and young professionals.">
+    <meta property="og:image" content="https://www.baroneinvestment.site/og-image.png">
+
+    <!-- Twitter / X card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Barone Investment Group | AI Finance Education for Gen Z">
+    <meta name="twitter:description" content="Practical AI finance workflows, interactive chapters, and smart tools for Gen Z students and young professionals.">
+    <meta name="twitter:image" content="https://www.baroneinvestment.site/og-image.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&amp;display=swap" rel="stylesheet">
+    <link rel="icon" type="image/webp" href="/img/mentor-logo-suede.webp">
+    <link rel="stylesheet" href="styles.css?v=20261105v4">
+      <link rel="stylesheet" href="mentor-theme.css?v=2" />
+  </head>
+  <body>
+
+    <!-- Cinematic Entrance Overlay -->
+    <div id="entrance-overlay" role="presentation" aria-hidden="true">
+      <canvas id="entrance-canvas"></canvas>
+      <div class="entrance-curtain entrance-curtain-left"></div>
+      <div class="entrance-curtain entrance-curtain-right"></div>
+      <div class="entrance-stage">
+        <div class="entrance-mark">
+          <span class="entrance-mark-letter">B</span>
+          <div class="entrance-mark-shimmer"></div>
+        </div>
+        <div class="entrance-wordmark">
+          <span class="entrance-wordmark-name">Barone</span>
+          <span class="entrance-wordmark-sub">Investment Group</span>
+        </div>
+        <div class="entrance-rule"></div>
+        <p class="entrance-tagline"></p>
+      </div>
+      <button class="entrance-skip" type="button">Skip</button>
+    </div>
+
+    <!-- Full-page animated background canvas (fixed, behind everything) -->
+    <canvas id="page-bg-canvas" aria-hidden="true" width="1625" height="1268"></canvas>
+
+    <!-- Slow-moving gradient orbs (CSS-driven, gold + blue) -->
+    <div class="ambient-bg" aria-hidden="true">
+      <span></span>
+      <span></span>
+      <span></span>
+      <span class="orb-blue"></span>
+      <span class="orb-blue"></span>
+    </div>
+
+    <!-- ── Header ─────────────────────────────────────────────────────────── -->
+    <header class="site-header" data-header="">
+      <a class="brand" href="#top" aria-label="Mentor Labs learning home">
+        <img class="mentor-brand-logo" src="/img/mentor-logo-suede.webp" alt="" width="44" height="44">
+        <span>
+          <strong class="bm-wordmark">Mentor Labs</strong>
+          <small>Learning studio</small>
+        </span>
+      </a>
+
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" data-nav-toggle="">
+        <span></span><span></span><span></span>
+      </button>
+
+      <nav id="site-nav" class="site-nav" data-nav="">
+        <a href="start.html">Start Here</a>
+        <a href="#quiz">Quiz</a>
+        <a href="#chapters">Chapters</a>
+        <a href="#tools">Tools</a>
+        <a href="#mission">About</a>
+        <a href="#advice">Ask Ryan</a>
+      </nav>
+    </header>
+
+    <main id="top">
+
+      <!-- ── 1. Hero ──────────────────────────────────────────────────────── -->
+      <section class="hero section" id="home">
+
+        <!-- Particle network canvas -->
+        <canvas id="hero-particle-canvas" aria-hidden="true" width="1610" height="1014"></canvas>
+
+        <div class="hero-copy reveal is-visible">
+          <p class="eyebrow">Finance education built for Gen Z</p>
+          <h1>The financial education<br>nobody gave you.</h1>
+          <p class="sub">Start with the quiz, work through the chapters, and use the tools to make real decisions with your money.</p>
+          <div class="hero-actions">
+            <a class="button primary hero-quiz-button" href="#quiz">Take the Money Type Quiz</a>
+            <a class="button secondary" href="start.html">Start Here</a>
+            <a class="button secondary" href="#tools">View Tools</a>
+          </div>
+          <div class="hero-proof-row" aria-label="Quiz details">
+            <span>60 seconds</span>
+            <span>No login</span>
+            <span>Personalized path</span>
+          </div>
+        </div>
+
+        <div class="hero-lab reveal is-visible" id="hero-lab" aria-label="Live take-home pay calculator">
+          <div class="hl-head">
+            <span class="eyebrow">Try it now</span>
+            <strong>What does your salary really pay?</strong>
+          </div>
+          <div class="hl-grid">
+            <div class="hl-controls">
+              <label>Salary <output id="hl-salary-v">$65,000</output>
+                <input id="hl-salary" type="range" min="20000" max="250000" step="1000" value="65000" /></label>
+              <label>401(k) saved <output id="hl-401k-v">5%</output>
+                <input id="hl-401k" type="range" min="0" max="25" step="1" value="5" /></label>
+              <label>State
+                <select id="hl-state"><option value="">No state tax / not sure</option></select></label>
+            </div>
+            <div class="hl-out">
+              <span class="hl-label">Take-home per paycheck (every two weeks)</span>
+              <strong class="hl-net" id="hl-net">$0</strong>
+              <small id="hl-month"></small>
+              <div class="hl-bar" id="hl-bar" role="img" aria-label="Breakdown of salary into take-home, taxes and 401(k)"></div>
+              <ul class="hl-legend" id="hl-legend"></ul>
+            </div>
+          </div>
+          <div class="hl-foot">
+            <a id="hl-open" href="tool.html?tool=paycheck">Open the full paycheck tool &rarr;</a>
+            <span>Single filer, 2026 estimate. Educational only.</span>
+          </div>
+        </div>
+        <nav class="hero-jump" aria-label="Jump to a tool">
+          <span>Or jump straight to:</span>
+          <a href="tool.html?tool=budget">Budget check</a>
+          <a href="tool.html?tool=student_loan">Student loans</a>
+          <a href="tool.html?tool=savings_goal">Savings goal</a>
+          <a href="tool.html?tool=roth_vs_trad">Roth vs. Traditional</a>
+          <a href="tool.html?tool=net_worth">Net worth</a>
+          <a href="#tool-hub">All tools</a>
+        </nav>
+
+        <script>
+(function () {
+  var canvas = document.getElementById('hero-particle-canvas');
+  var ctx    = canvas.getContext('2d');
+  var pts    = [];
+  var mouse  = { x: -9999, y: -9999 };
+  var RAF;
+
+  function resize() {
+    canvas.width  = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+  }
+
+  function seed() {
+    pts = [];
+    var count = Math.floor((canvas.width * canvas.height) / 14000);
+    count = Math.max(40, Math.min(count, 110));
+    for (var i = 0; i < count; i++) {
+      pts.push({
+        x:  Math.random() * canvas.width,
+        y:  Math.random() * canvas.height,
+        vx: (Math.random() - 0.5) * 0.38,
+        vy: (Math.random() - 0.5) * 0.38,
+        r:  1.4 + Math.random() * 1.2
+      });
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    var LINK       = 130;
+    var MOUSE_LINK = 180;
+
+    for (var i = 0; i < pts.length; i++) {
+      var p = pts[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      if (p.x < 0 || p.x > canvas.width)  p.vx *= -1;
+      if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+
+      /* lines between nearby particles */
+      for (var j = i + 1; j < pts.length; j++) {
+        var q  = pts[j];
+        var dx = p.x - q.x, dy = p.y - q.y;
+        var d  = Math.sqrt(dx * dx + dy * dy);
+        if (d < LINK) {
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(q.x, q.y);
+          ctx.strokeStyle = 'rgba(127,191,156,' + ((1 - d / LINK) * 0.22) + ')';
+          ctx.lineWidth   = 0.7;
+          ctx.stroke();
+        }
+      }
+
+      /* lines to mouse cursor */
+      var mx = p.x - mouse.x, my = p.y - mouse.y;
+      var md = Math.sqrt(mx * mx + my * my);
+      if (md < MOUSE_LINK) {
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+        ctx.lineTo(mouse.x, mouse.y);
+        ctx.strokeStyle = 'rgba(183,219,194,' + ((1 - md / MOUSE_LINK) * 0.55) + ')';
+        ctx.lineWidth   = 0.9;
+        ctx.stroke();
+      }
+
+      /* gold dot */
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(127,191,156,0.65)';
+      ctx.fill();
+    }
+
+    RAF = requestAnimationFrame(draw);
+  }
+
+  resize();
+  seed();
+  draw();
+
+  window.addEventListener('resize', function () {
+    cancelAnimationFrame(RAF);
+    resize();
+    seed();
+    draw();
+  });
+
+  var section = canvas.closest('section');
+  section.addEventListener('mousemove', function (e) {
+    var rect  = canvas.getBoundingClientRect();
+    mouse.x   = e.clientX - rect.left;
+    mouse.y   = e.clientY - rect.top;
+  });
+  section.addEventListener('mouseleave', function () {
+    mouse.x = -9999;
+    mouse.y = -9999;
+  });
+}());
+        </script>
+
+      </section>
+
+      <!-- ── Featured article ─────────────────────────────────────────────── -->
+      <section class="section feature-section" id="feature">
+        <a class="feature-card reveal" href="market-made-of-people/index.html">
+          <div class="feature-card-media">
+            <img src="market-made-of-people/media/hero.jpg" alt="The New York Stock Exchange" loading="lazy">
+            <span class="feature-badge">Featured read</span>
+          </div>
+          <div class="feature-card-body">
+            <p class="eyebrow">From the founder</p>
+            <h2 class="feature-card-title">The Market Is Made of People</h2>
+            <p class="feature-card-dek">
+              I gave an AI access to a live brokerage account, not to beat the market, but
+              to find out who artificial intelligence in finance can actually help. A short
+              read on the real future of AI in wealth management.
+            </p>
+            <span class="button primary feature-card-cta">Read the article &rarr;</span>
+          </div>
+        </a>
+      </section>
+
+            <!-- 2. Money Type Quiz -->
+      <section class="section quiz-section" id="quiz">
+        <div class="section-head reveal">
+          <p class="eyebrow">Find your money type</p>
+          <h2>What kind of financial person are you?</h2>
+          <p>Six quick questions. Instant result. Personalized chapter and tool recommendations. No login required.</p>
+        </div>
+
+        <div class="quiz-shell reveal" id="quiz-shell">
+          <div class="quiz-start" id="q-start">
+            <div class="quiz-start-inner">
+              <p class="quiz-start-copy">Answer honestly. There are no wrong answers. Every result gives you a practical starting point.</p>
+              <p class="quiz-disclaimer-inline">Educational only. Not financial advice.</p>
+              <button class="button primary" type="button" id="start-btn">Start the quiz &rarr;</button>
+            </div>
+          </div>
+
+          <div class="quiz-question-wrap" id="q-question" style="display:none">
+            <div class="quiz-progress-bar-wrap">
+              <span id="q-label" class="quiz-progress-label">Question 1 of 8</span>
+              <div class="quiz-bar"><div class="quiz-bar-fill" id="q-bar" style="width:0%"></div></div>
+            </div>
+            <h3 class="quiz-q-text" id="q-text"></h3>
+            <div class="quiz-options" id="q-options"></div>
+          </div>
+
+          <div class="quiz-result" id="q-result" style="display:none">
+            <div class="result-persona-icon" id="r-emoji" aria-hidden="true"></div>
+            <div class="result-body">
+              <p class="result-eyebrow-label">Your result</p>
+              <p class="result-tagline eyebrow" id="r-tagline"></p>
+              <h3 id="r-name"></h3>
+              <p id="r-desc"></p>
+              <div class="result-summary-grid" aria-label="Result summary">
+                <div class="result-cell">
+                  <svg class="cell-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="8" cy="8" r="5" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="8" r="2" fill="currentColor"/></svg>
+                  <span>Focus</span><strong id="r-focus"></strong>
+                </div>
+                <div class="result-cell">
+                  <svg class="cell-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  <span>First step</span><strong id="r-first-step"></strong>
+                </div>
+                <div class="result-cell">
+                  <svg class="cell-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="8" cy="8" r="5.5" stroke="currentColor" stroke-width="1.5"/><path d="M8 5.5V8l2 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  <span>Timeline</span><strong id="r-time"></strong>
+                </div>
+              </div>
+              <div class="result-action-plan">
+                <p class="result-plan-label">Your 3-step starter plan</p>
+                <ol class="result-checklist" id="r-action-list"></ol>
+              </div>
+              <div class="result-actions">
+                <a class="button primary" id="plan-btn" href="#chapters">Start my plan</a>
+                <button class="button secondary" type="button" id="retake-btn">Retake quiz</button>
+              </div>
+              <p class="quiz-disclaimer-inline">For educational purposes only. Not personalized financial advice.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <script>
+(function () {
+  var elStart    = document.getElementById('q-start');
+  var elQuestion = document.getElementById('q-question');
+  var elResult   = document.getElementById('q-result');
+  var elLabel    = document.getElementById('q-label');
+  var elBar      = document.getElementById('q-bar');
+  var elText     = document.getElementById('q-text');
+  var elOptions  = document.getElementById('q-options');
+
+  /* ── Questions ───────────────────────────────────────────────────────── */
+  var questions = [
+    { text: 'When you get paid, what usually happens first?', options: [
+      { label: 'I split it between bills, savings, and a budget right away', w: { saver: 3 } },
+      { label: 'I cover my bills and enjoy whatever is left', w: { spender: 3 } },
+      { label: 'I move money to investments before I spend anything else', w: { builder: 2, optimizer: 2 } },
+      { label: 'Honestly, I just try to make it work each month', w: { catchup: 2, avoider: 1 } }
+    ]},
+    { text: 'How honest are you about your bank balance right now?', options: [
+      { label: 'I know exactly. I check it daily and track everything.', w: { saver: 2, optimizer: 2 } },
+      { label: 'I know roughly, but I avoid looking too closely', w: { avoider: 3, spender: 1 } },
+      { label: 'I check when something comes up or when I need to decide', w: { spender: 2 } },
+      { label: 'I pay more attention to my investment accounts than my bank', w: { builder: 3, optimizer: 1 } }
+    ]},
+    { text: 'An unexpected $500 drops into your account. What do you do?', options: [
+      { label: 'Move it straight to savings or my emergency fund', w: { saver: 3 } },
+      { label: 'Spend it on something I have been wanting. I earned it.', w: { spender: 3 } },
+      { label: 'Invest it, probably in index fund shares', w: { builder: 2, optimizer: 2 } },
+      { label: 'Use it to pay off a bill or debt I have been carrying', w: { catchup: 3 } }
+    ]},
+    { text: 'Pick the statement that feels most true for you right now:', options: [
+      { label: 'I save consistently but my money feels like it is not growing', w: { saver: 3 } },
+      { label: 'I spend more than I should and feel guilty about it every month', w: { spender: 3 } },
+      { label: 'Money gives me real anxiety. I tend to avoid dealing with it.', w: { avoider: 3 } },
+      { label: 'I track every dollar and want to squeeze every percent of return', w: { optimizer: 3 } }
+    ]},
+    { text: 'What is your honest relationship with debt right now?', options: [
+      { label: 'Minimal. I hate carrying a balance and pay it off fast.', w: { saver: 2, optimizer: 1 } },
+      { label: 'I have some and am mostly making minimum payments', w: { spender: 2, avoider: 1 } },
+      { label: 'I use debt strategically when the math makes sense.', w: { builder: 2, optimizer: 2 } },
+      { label: 'I have debt I am genuinely not sure how to tackle', w: { catchup: 3 } }
+    ]},
+    { text: 'When you think about investing right now:', options: [
+      { label: 'I have savings but have not actually started investing yet', w: { saver: 3 } },
+      { label: 'I have thought about it a lot but something keeps stopping me', w: { avoider: 2, spender: 1 } },
+      { label: 'I am already in the market and always learning new strategies', w: { builder: 2, optimizer: 2 } },
+      { label: 'Investing feels like a future thing. I need stability first.', w: { catchup: 2, avoider: 1 } }
+    ]},
+    { text: 'How do you make spending decisions?', options: [
+      { label: 'I have a budget with real category limits and I follow it', w: { saver: 2, optimizer: 1 } },
+      { label: 'I go with how I feel. If I want it and can pay, I get it.', w: { spender: 3 } },
+      { label: 'I research obsessively before buying anything significant', w: { optimizer: 3 } },
+      { label: 'I avoid spending wherever I can because I feel behind', w: { catchup: 2, avoider: 1 } }
+    ]},
+    { text: 'Your top financial goal for the next 12 months?', options: [
+      { label: 'Build up or protect my savings and emergency fund', w: { saver: 3 } },
+      { label: 'Actually stick to a spending plan and stop the leaks', w: { spender: 2, avoider: 1 } },
+      { label: 'Grow my investment portfolio and maximize long-term returns', w: { builder: 2, optimizer: 2 } },
+      { label: 'Pay off debt and stop living month to month', w: { catchup: 3 } }
+    ]}
+  ];
+
+  /* ── Persona SVG illustrations ───────────────────────────────────────── */
+  var personaSVG = {
+    saver: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80" role="img" aria-label="Teal shield with coin — The Saver"><defs><radialGradient id="sav-bg" cx="40%" cy="35%" r="70%"><stop offset="0%" stop-color="#5eead4" stop-opacity="0.3"/><stop offset="100%" stop-color="#0f766e" stop-opacity="0"/></radialGradient><linearGradient id="sav-g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#5eead4"/><stop offset="100%" stop-color="#0d9488"/></linearGradient></defs><circle cx="40" cy="40" r="38" fill="url(#sav-bg)"/><path d="M40 15 L59 23 L59 42 Q59 57 40 65 Q21 57 21 42 L21 23 Z" fill="url(#sav-g)" opacity="0.92"/><circle cx="40" cy="40" r="11" fill="none" stroke="rgba(255,255,255,0.72)" stroke-width="1.8"/><text x="40" y="45" text-anchor="middle" font-size="14" font-weight="700" fill="white" font-family="system-ui,sans-serif">$</text></svg>',
+
+    builder: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80" role="img" aria-label="Blue rising bars — The Builder"><defs><radialGradient id="bld-bg" cx="40%" cy="35%" r="70%"><stop offset="0%" stop-color="#93c5fd" stop-opacity="0.3"/><stop offset="100%" stop-color="#2563eb" stop-opacity="0"/></radialGradient><linearGradient id="bld-g" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#93c5fd"/><stop offset="100%" stop-color="#2563eb"/></linearGradient></defs><circle cx="40" cy="40" r="38" fill="url(#bld-bg)"/><rect x="14" y="52" width="13" height="14" rx="2.5" fill="url(#bld-g)" opacity="0.52"/><rect x="34" y="39" width="13" height="27" rx="2.5" fill="url(#bld-g)" opacity="0.76"/><rect x="54" y="24" width="13" height="42" rx="2.5" fill="url(#bld-g)"/><polyline points="20.5,52 40.5,39 60.5,24" stroke="rgba(255,255,255,0.68)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="60.5" cy="24" r="3.5" fill="white"/></svg>',
+
+    spender: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80" role="img" aria-label="Amber credit card — The Spender"><defs><radialGradient id="spn-bg" cx="40%" cy="35%" r="70%"><stop offset="0%" stop-color="#fde68a" stop-opacity="0.3"/><stop offset="100%" stop-color="#d97706" stop-opacity="0"/></radialGradient><linearGradient id="spn-g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fde68a"/><stop offset="100%" stop-color="#f59e0b"/></linearGradient></defs><circle cx="40" cy="40" r="38" fill="url(#spn-bg)"/><rect x="15" y="27" width="50" height="32" rx="5.5" fill="url(#spn-g)" opacity="0.9"/><rect x="15" y="36" width="50" height="7" fill="rgba(0,0,0,0.22)"/><rect x="21" y="48" width="18" height="4" rx="2" fill="rgba(255,255,255,0.5)"/><rect x="44" y="48" width="10" height="4" rx="2" fill="rgba(255,255,255,0.35)"/><path d="M59 14 L55 23 L62 21 L57 32" stroke="#fde68a" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="59" cy="14" r="2" fill="#fde68a"/></svg>',
+
+    avoider: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80" role="img" aria-label="Lavender cloud — The Avoider"><defs><radialGradient id="avo-bg" cx="40%" cy="35%" r="70%"><stop offset="0%" stop-color="#c4b5fd" stop-opacity="0.3"/><stop offset="100%" stop-color="#7c3aed" stop-opacity="0"/></radialGradient><linearGradient id="avo-g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ddd6fe"/><stop offset="100%" stop-color="#7c3aed"/></linearGradient></defs><circle cx="40" cy="40" r="38" fill="url(#avo-bg)"/><ellipse cx="40" cy="47" rx="21" ry="11" fill="url(#avo-g)" opacity="0.85"/><circle cx="27" cy="44" r="11" fill="url(#avo-g)" opacity="0.85"/><circle cx="40" cy="38" r="14" fill="url(#avo-g)" opacity="0.85"/><circle cx="53" cy="43" r="10" fill="url(#avo-g)" opacity="0.85"/><circle cx="33" cy="44" r="2.8" fill="rgba(255,255,255,0.82)"/><circle cx="40" cy="44" r="2.8" fill="rgba(255,255,255,0.82)"/><circle cx="47" cy="44" r="2.8" fill="rgba(255,255,255,0.82)"/></svg>',
+
+    optimizer: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80" role="img" aria-label="Purple target — The Strategist"><defs><radialGradient id="str-bg" cx="40%" cy="35%" r="70%"><stop offset="0%" stop-color="#e879f9" stop-opacity="0.28"/><stop offset="100%" stop-color="#9333ea" stop-opacity="0"/></radialGradient><linearGradient id="str-g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#f0abfc"/><stop offset="100%" stop-color="#9333ea"/></linearGradient></defs><circle cx="40" cy="40" r="38" fill="url(#str-bg)"/><circle cx="40" cy="40" r="23" fill="none" stroke="#a855f7" stroke-width="1.5" opacity="0.42"/><circle cx="40" cy="40" r="15" fill="none" stroke="#a855f7" stroke-width="2" opacity="0.65"/><circle cx="40" cy="40" r="7" fill="url(#str-g)"/><line x1="40" y1="12" x2="40" y2="20" stroke="rgba(240,171,252,0.55)" stroke-width="1.8" stroke-linecap="round"/><line x1="40" y1="60" x2="40" y2="68" stroke="rgba(240,171,252,0.55)" stroke-width="1.8" stroke-linecap="round"/><line x1="12" y1="40" x2="20" y2="40" stroke="rgba(240,171,252,0.55)" stroke-width="1.8" stroke-linecap="round"/><line x1="60" y1="40" x2="68" y2="40" stroke="rgba(240,171,252,0.55)" stroke-width="1.8" stroke-linecap="round"/></svg>',
+
+    catchup: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80" role="img" aria-label="Coral rising arrow — The Comeback Kid"><defs><radialGradient id="ckd-bg" cx="40%" cy="35%" r="70%"><stop offset="0%" stop-color="#fda4af" stop-opacity="0.3"/><stop offset="100%" stop-color="#e11d48" stop-opacity="0"/></radialGradient><linearGradient id="ckd-g" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" stop-color="#fda4af"/><stop offset="100%" stop-color="#f43f5e"/></linearGradient></defs><circle cx="40" cy="40" r="38" fill="url(#ckd-bg)"/><line x1="13" y1="57" x2="67" y2="57" stroke="rgba(253,164,175,0.32)" stroke-width="1.5" stroke-dasharray="5 3.5" stroke-linecap="round"/><polyline points="14,60 27,50 40,55 58,28" stroke="#fb7185" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><polyline points="50,24 58,28 54,37" stroke="#fb7185" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="58" cy="28" r="4" fill="#fda4af"/></svg>'
+  };
+
+  /* ── Persona data ────────────────────────────────────────────────────── */
+  var results = {
+    saver: {
+      svg: personaSVG.saver,
+      badge: 'Saver',
+      name: 'The Saver',
+      tagline: 'Disciplined with cash. Ready to put it to work.',
+      focus: 'Start investing',
+      firstStep: 'Open Investing Basics',
+      time: 'This week',
+      desc: 'You are consistent and careful, which are genuinely rare traits. But cash sitting in a low-yield account quietly loses ground to inflation every year. Your next move is putting those saved dollars to work without taking on more risk than you need to.',
+      actions: [
+        'Check whether your emergency fund is in a high-yield savings account.',
+        'Read Investing Basics and learn the real difference between saving and investing.',
+        'Use the compound calculator to model what monthly investing looks like over 10 or 20 years.'
+      ],
+      chapters: [['investing','Investing Basics'],['budgeting','Budgeting Without Feeling Broke'],['ai','AI for Personal Finance']],
+      tools: [['compound','Compound Interest Calculator'],['invest_guide','Investing Learning Path'],['savings','Savings Goal Tracker']]
+    },
+    builder: {
+      svg: personaSVG.builder,
+      badge: 'Builder',
+      name: 'The Builder',
+      tagline: 'Long horizon. Steady hands. That is your edge.',
+      focus: 'Optimize and grow',
+      firstStep: 'Model a 10-year scenario',
+      time: 'This month',
+      desc: 'You already have the mindset that separates real wealth builders from everyone else. You invest consistently, think in decades, and do not panic. The goal now is sharpening your strategy, accelerating income, and letting compounding do the heavy lifting.',
+      actions: [
+        'Set one clear monthly investing target and automate it so it never gets skipped.',
+        'Use the compound calculator to model your current contributions out 10 and 20 years.',
+        'Read the career chapter and find one concrete move that could grow your income this year.'
+      ],
+      chapters: [['investing','Investing Basics'],['careers','Career and Income Growth'],['ai','AI for Personal Finance']],
+      tools: [['compound','Compound Interest Calculator'],['invest_guide','Investing Learning Path'],['email_gen','Career Email Generator']]
+    },
+    spender: {
+      svg: personaSVG.spender,
+      badge: 'Spender',
+      name: 'The Spender',
+      tagline: 'Great at living well. Build a system to keep it.',
+      focus: 'Spend with intention',
+      firstStep: 'Build a weekly budget',
+      time: '7 days',
+      desc: 'You know how to enjoy money, and that is not a flaw. But without a system, lifestyle creep quietly wins every month. A real budget does not restrict you. It makes your spending intentional so you can keep doing what you love without the guilt hanging over it.',
+      actions: [
+        'Pick one spending category to actually track for the next seven days. Just one.',
+        'Use the Budget Reality Check tool to set a realistic weekly spending number.',
+        'Set up one automatic transfer to savings before you spend anything else this month.'
+      ],
+      chapters: [['budgeting','Budgeting Without Feeling Broke'],['reset','Money Reset'],['credit','Credit Score Basics']],
+      tools: [['budget','Budget Builder'],['emergency','Emergency Fund Calculator'],['debt_planner','Debt Payoff Planner']]
+    },
+    avoider: {
+      svg: personaSVG.avoider,
+      badge: 'Avoider',
+      name: 'The Avoider',
+      tagline: 'Money anxiety is real. It is also very workable.',
+      focus: 'Reduce overwhelm',
+      firstStep: 'Do a money reset',
+      time: '20 minutes',
+      desc: 'Avoiding money is a stress response, not a character flaw. The goal is not to become a spreadsheet person overnight. Take one small step at a time, start with the simplest chapter, and build from there. You will find things get manageable much faster than you expect.',
+      actions: [
+        'Look at only your checking balance right now. Write the number down. That is it.',
+        'Open the Money Reset chapter and complete just the first exercise.',
+        'Choose one bill, balance, or habit to understand better this week. Only one.'
+      ],
+      chapters: [['reset','Money Reset'],['budgeting','Budgeting Without Feeling Broke'],['credit','Credit Score Basics']],
+      tools: [['budget','Budget Builder'],['emergency','Emergency Fund Calculator'],['credit_score','Credit Score Guide']]
+    },
+    optimizer: {
+      svg: personaSVG.optimizer,
+      badge: 'Strategist',
+      name: 'The Strategist',
+      tagline: 'The basics are solid. Time for precision moves.',
+      focus: 'Fine-tune and maximize',
+      firstStep: 'Audit one assumption',
+      time: 'This month',
+      desc: 'You track everything, question assumptions, and want to squeeze every percent of return. That is genuinely rare. The fundamentals are already in place. Your edge is in the details: tax efficiency, portfolio allocation, AI-assisted research, and income acceleration.',
+      actions: [
+        'Pick one account, fee structure, or investing assumption and pressure-test it this week.',
+        'Use an AI tool to compare two options in your current setup, then verify on official sources.',
+        'Identify one specific upgrade that either cuts a cost, improves a return, or raises your income.'
+      ],
+      chapters: [['investing','Investing Basics'],['ai','AI for Personal Finance'],['careers','Career and Income Growth']],
+      tools: [['compound','Compound Interest Calculator'],['tax','Tax Estimator'],['invest_guide','Investing Learning Path']]
+    },
+    catchup: {
+      svg: personaSVG.catchup,
+      badge: 'Comeback Kid',
+      name: 'The Comeback Kid',
+      tagline: 'Starting late or starting over. Here is your path.',
+      focus: 'Stabilize first',
+      firstStep: 'List debts and bills',
+      time: 'Today',
+      desc: 'You are dealing with real financial pressure, not theory. The goal right now is not perfection. It is stopping the bleeding, building a base, and stacking small wins that compound over time. You are not behind forever. You are just getting started for real this time.',
+      actions: [
+        'Write down every debt or unpaid bill with balance, interest rate, and minimum payment.',
+        'Use the Debt Payoff Optimizer to find the right first target to eliminate.',
+        'Set one small weekly cash buffer you protect before making any extra payments.'
+      ],
+      chapters: [['reset','Money Reset'],['debt_payoff','Debt Payoff Strategy'],['budgeting','Budgeting Without Feeling Broke']],
+      tools: [['debt_planner','Debt Payoff Planner'],['emergency','Emergency Fund Calculator'],['budget','Budget Builder']]
+    }
+  };
+
+  /* ── Quiz engine ─────────────────────────────────────────────────────── */
+  var scores = { saver: 0, spender: 0, builder: 0, avoider: 0, optimizer: 0, catchup: 0 };
+  var currentQ = 0;
+
+  function show(el) { el.style.display = ''; }
+  function hide(el) { el.style.display = 'none'; }
+
+  function renderQuestion(idx) {
+    var q = questions[idx];
+    elLabel.textContent = 'Question ' + (idx + 1) + ' of ' + questions.length;
+    elBar.style.width = ((idx / questions.length) * 100).toFixed(0) + '%';
+    elText.textContent = q.text;
+    elOptions.innerHTML = '';
+    q.options.forEach(function (opt) {
+      var btn = document.createElement('button');
+      btn.textContent = opt.label;
+      btn.addEventListener('click', function () {
+        btn.classList.add('is-selected');
+        Object.keys(opt.w).forEach(function (k) { scores[k] += opt.w[k]; });
+        currentQ++;
+        setTimeout(function () {
+          if (currentQ < questions.length) renderQuestion(currentQ);
+          else renderResult();
+        }, 160);
+      });
+      elOptions.appendChild(btn);
+    });
+  }
+
+  function renderResult() {
+    elBar.style.width = '100%';
+    elLabel.textContent = 'Complete';
+    var winner = Object.keys(scores).reduce(function (a, b) { return scores[a] >= scores[b] ? a : b; });
+    var r = results[winner];
+
+    /* Persona icon */
+    var iconEl = document.getElementById('r-emoji');
+    iconEl.innerHTML = r.svg;
+    iconEl.setAttribute('data-type', winner);
+
+    /* Text content */
+    document.getElementById('r-tagline').textContent = r.tagline;
+    document.getElementById('r-name').textContent = r.name;
+    document.getElementById('r-desc').textContent = r.desc;
+    document.getElementById('r-focus').textContent = r.focus;
+    document.getElementById('r-first-step').textContent = r.firstStep;
+    document.getElementById('r-time').textContent = r.time;
+
+    /* Numbered checklist */
+    document.getElementById('r-action-list').innerHTML = r.actions.map(function (step, i) {
+      return '<li class="result-checklist-item"><span class="checklist-num" aria-hidden="true">' + (i + 1) + '</span><span>' + step + '</span></li>';
+    }).join('');
+
+    /* CTA link */
+    document.getElementById('plan-btn').href = 'lesson.html?topic=' + r.chapters[0][0];
+
+    /* Apply persona type to result card for color theming */
+    elResult.setAttribute('data-type', winner);
+
+    /* Persist to localStorage */
+    try {
+      localStorage.setItem('bigProfile', JSON.stringify({ type: winner, name: r.name, badge: r.badge, tagline: r.tagline }));
+    } catch(e) {}
+
+    hide(elQuestion);
+    show(elResult);
+    elResult.classList.remove('is-revealed');
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () { elResult.classList.add('is-revealed'); });
+    });
+  }
+
+  function resetQuiz() {
+    Object.keys(scores).forEach(function (k) { scores[k] = 0; });
+    currentQ = 0;
+    elResult.classList.remove('is-revealed');
+    elResult.removeAttribute('data-type');
+    hide(elResult);
+    show(elQuestion);
+    renderQuestion(0);
+  }
+
+  document.getElementById('start-btn').addEventListener('click', function () {
+    hide(elStart); show(elQuestion); renderQuestion(0);
+  });
+
+  var heroQuizBtn = document.querySelector('.hero-quiz-button');
+  if (heroQuizBtn) {
+    heroQuizBtn.addEventListener('click', function () {
+      setTimeout(function () {
+        if (elStart && elStart.style.display !== 'none') {
+          hide(elStart); show(elQuestion); renderQuestion(0);
+        }
+      }, 400);
+    });
+  }
+
+  document.getElementById('retake-btn').addEventListener('click', resetQuiz);
+}());
+      </script>
+
+      <!-- ── 3. Financial Chapters ────────────────────────────────────────── -->
+      <section class="section chapters-section" id="chapters">
+        <div class="section-head reveal">
+          <p class="eyebrow">Financial chapters</p>
+          <h2>Learn money in clear, practical steps.</h2>
+          <p>Nine chapters built for Gen Z. Each one is focused, actionable, and connects to the tools and AI workflows on this site.</p>
+        </div>
+
+        <div class="progress-dash" id="progress-dash" hidden>
+          <div><strong id="pd-count">0 of 9</strong><span> chapters opened</span></div>
+          <div class="pd-bar" aria-hidden="true"><span id="pd-fill"></span></div>
+          <div id="pd-quiz"></div>
+          <a class="button primary" id="pd-next" href="lesson.html?topic=reset">Continue &rarr;</a>
+        </div>
+
+        <div class="chapters-grid">
+          <a class="chapter-card reveal" href="lesson.html?topic=reset">
+            <span class="chapter-num">01</span>
+            <div class="chapter-body">
+              <h3>Money Reset</h3>
+              <p class="chapter-for">For anyone starting fresh or feeling behind</p>
+              <p>Understand your real net worth, map income vs. expenses, and complete a 3-step financial reset.</p>
+              <span class="chapter-meta">~8 min · Beginner</span>
+            </div>
+          <div class="chapter-progress"></div>
+          </a>
+
+          <a class="chapter-card reveal" href="lesson.html?topic=budgeting">
+            <span class="chapter-num">02</span>
+            <div class="chapter-body">
+              <h3>Budgeting Without Feeling Broke</h3>
+              <p class="chapter-for">For anyone who avoids budgeting because it feels restrictive</p>
+              <p>Build a flexible weekly budget system using needs, wants, savings, and a realistic buffer.</p>
+              <span class="chapter-meta">~10 min · Beginner</span>
+            </div>
+          <div class="chapter-progress"></div>
+          </a>
+
+          <a class="chapter-card reveal" href="lesson.html?topic=credit">
+            <span class="chapter-num">03</span>
+            <div class="chapter-body">
+              <h3>Credit Score Basics</h3>
+              <p class="chapter-for">For anyone opening a first card or trying to understand their score</p>
+              <p>Learn payment history, utilization, hard inquiries, and how to build credit responsibly.</p>
+              <span class="chapter-meta">~9 min · Beginner</span>
+            </div>
+          <div class="chapter-progress"></div>
+          </a>
+
+          <a class="chapter-card reveal" href="lesson.html?topic=debt_payoff">
+            <span class="chapter-num">04</span>
+            <div class="chapter-body">
+              <h3>Debt Payoff Strategy</h3>
+              <p class="chapter-for">For anyone making minimum payments and wanting a real plan</p>
+              <p>Compare snowball vs. avalanche, understand compound interest on debt, and build a payoff order.</p>
+              <span class="chapter-meta">~10 min · Beginner–Intermediate</span>
+            </div>
+          <div class="chapter-progress"></div>
+          </a>
+
+          <a class="chapter-card reveal" href="lesson.html?topic=investing">
+            <span class="chapter-num">05</span>
+            <div class="chapter-body">
+              <h3>Investing Basics</h3>
+              <p class="chapter-for">For anyone curious about investing but afraid to start</p>
+              <p>Index funds, diversification, risk tolerance, dollar-cost averaging, and the long-term mindset.</p>
+              <span class="chapter-meta">~12 min · Beginner</span>
+            </div>
+          <div class="chapter-progress"></div>
+          </a>
+
+          <a class="chapter-card reveal" href="lesson.html?topic=ai">
+            <span class="chapter-num">06</span>
+            <div class="chapter-body">
+              <h3>AI for Personal Finance</h3>
+              <p class="chapter-for">For anyone who wants to use AI tools responsibly</p>
+              <p>Budget prompts, spending review workflows, career tools, and a safety guide for what not to share.</p>
+              <span class="chapter-meta">~8 min · All levels</span>
+            </div>
+          <div class="chapter-progress"></div>
+          </a>
+
+          <a class="chapter-card reveal" href="lesson.html?topic=careers">
+            <span class="chapter-num">07</span>
+            <div class="chapter-body">
+              <h3>Career and Income Growth</h3>
+              <p class="chapter-for">For students and early-career professionals building their first opportunities</p>
+              <p>Networking, internship tracking, resume improvement, side hustles, and asking better questions.</p>
+              <span class="chapter-meta">~10 min · All levels</span>
+            </div>
+          <div class="chapter-progress"></div>
+          </a>
+
+          <a class="chapter-card reveal" href="lesson.html?topic=taxes_paychecks">
+            <span class="chapter-num">08</span>
+            <div class="chapter-body">
+              <h3>Taxes and Paychecks</h3>
+              <p class="chapter-for">For anyone starting work, comparing offers, or confused by take-home pay</p>
+              <p>Learn pay stubs, W-4 basics, withholding, deductions, benefits, and how salary turns into real cash flow.</p>
+              <span class="chapter-meta">~11 min · Beginner</span>
+            </div>
+          <div class="chapter-progress"></div>
+          </a>
+
+          <a class="chapter-card reveal" href="lesson.html?topic=insurance_risk">
+            <span class="chapter-num">09</span>
+            <div class="chapter-body">
+              <h3>Insurance and Risk</h3>
+              <p class="chapter-for">For young adults choosing health, renters, auto, or basic protection</p>
+              <p>Understand premiums, deductibles, coverage limits, exclusions, and how insurance protects your financial base.</p>
+              <span class="chapter-meta">~10 min · Beginner</span>
+            </div>
+          <div class="chapter-progress"></div>
+          </a>
+        </div>
+      </section>
+
+      <section class="section tools-section" id="tools">
+        <div class="section-head reveal">
+          <p class="eyebrow">Interactive tools</p>
+          <h2>Calculators and helpers for real decisions.</h2>
+          <p>Click any card to preview the tool here. Each one opens a full interactive page.</p>
+          <p class="site-disclaimer">Tools are for education only. Results are estimates, not financial advice. Never enter real account numbers.</p>
+        </div>
+
+        <div class="tool-layout">
+          <div class="tool-grid">
+            <article class="tool-card reveal is-active" data-tool-card="compound">
+              <span class="tool-brand-icon" aria-hidden="true">$</span>
+              <span class="tool-kicker">Growth</span>
+              <h3>Compound Growth Simulator</h3>
+              <p>Model monthly investing, return rate, and time with a live contributed-vs-growth chart.</p>
+              <button type="button" data-tool-open="compound">Preview</button>
+              <a class="card-link" href="tool.html?tool=compound">Open full tool</a>
+            </article>
+
+            <article class="tool-card reveal" data-tool-card="budget">
+              <span class="tool-brand-icon" aria-hidden="true">%</span>
+              <span class="tool-kicker">Budget</span>
+              <h3>Budget Reality Check</h3>
+              <p>Enter income and real expenses to see leftover cash, weekly spending, and risk level.</p>
+              <button type="button" data-tool-open="budget">Preview</button>
+              <a class="card-link" href="tool.html?tool=budget">Open full tool</a>
+            </article>
+
+            <article class="tool-card reveal" data-tool-card="debt_planner">
+              <span class="tool-brand-icon" aria-hidden="true">-</span>
+              <span class="tool-kicker">Debt</span>
+              <h3>Debt Payoff Optimizer</h3>
+              <p>See payoff time, total interest, and how extra payments change the outcome.</p>
+              <button type="button" data-tool-open="debt_planner">Preview</button>
+              <a class="card-link" href="tool.html?tool=debt_planner">Open full tool</a>
+            </article>
+
+            <article class="tool-card reveal" data-tool-card="credit">
+              <span class="tool-brand-icon" aria-hidden="true">F</span>
+              <span class="tool-kicker">Credit</span>
+              <h3>Credit Utilization Planner</h3>
+              <p>Calculate utilization, target balances, paydown needed, and your current risk zone.</p>
+              <button type="button" data-tool-open="credit">Preview</button>
+              <a class="card-link" href="tool.html?tool=credit">Open full tool</a>
+            </article>
+
+          </div><!-- /.tool-grid -->
+
+          <div class="tool-hub" id="tool-hub" aria-label="All tools">
+            <div class="hub-head">
+              <div>
+                <p class="panel-label">Every tool</p>
+                <h3>Find the right calculator.</h3>
+              </div>
+              <label class="hub-search-wrap"><span class="visually-hidden" style="position:absolute;left:-9999px">Search tools</span>
+                <input id="hub-search" type="search" placeholder="Search tools: paycheck, loan, Roth…" autocomplete="off" /></label>
+            </div>
+            <div class="hub-chips" id="hub-chips" role="group" aria-label="Filter tools by category"></div>
+            <p class="hub-count" id="hub-count" aria-live="polite"></p>
+            <div class="hub-grid" id="hub-grid"></div>
+            <p class="hub-empty" id="hub-empty" hidden>No tools match that search.</p>
+          </div>
+
+          <!-- Tool preview panel -->
+          <div class="tool-panel" id="tool-panel">
+            <p class="panel-label" id="tool-panel-kicker">Growth</p>
+            <h3 id="tool-panel-title">Compound Growth Simulator</h3>
+            <p id="tool-panel-copy">Adjust contribution, starting amount, timeline, and return rate. The chart separates your money from investment growth.</p>
+            <div class="tool-preview" id="tool-preview">
+      <label class="tool-control-row">
+    <span>Monthly contribution <strong id="growth-monthly-value">$250</strong></span>
+    <input id="growth-monthly" type="range" min="25" max="2000" value="250" step="25">
+  </label>
+      <label class="tool-control-row">
+    <span>Starting amount <strong id="growth-start-value">$1000</strong></span>
+    <input id="growth-start" type="range" min="0" max="25000" value="1000" step="250">
+  </label>
+      <label class="tool-control-row">
+    <span>Years <strong id="growth-years-value">20 yrs</strong></span>
+    <input id="growth-years" type="range" min="1" max="40" value="20" step="1">
+  </label>
+      <label class="tool-control-row">
+    <span>Annual return <strong id="growth-rate-value">7%</strong></span>
+    <input id="growth-rate" type="range" min="0" max="12" value="7" step="0.5">
+  </label>
+      <div class="insight-chart" id="growth-chart" aria-hidden="true"><div class="insight-row">
+        <div class="insight-row-top"><span>Starting money</span><strong>$1,000</strong></div>
+        <div class="insight-track"><i style="width:6%; background:linear-gradient(90deg,#94a3b8,#cbd5e1)"></i></div>
+      </div><div class="insight-row">
+        <div class="insight-row-top"><span>Monthly contributions</span><strong>$60,000</strong></div>
+        <div class="insight-track"><i style="width:82%; background:linear-gradient(90deg,#38bdf8,#2563eb)"></i></div>
+      </div><div class="insight-row">
+        <div class="insight-row-top"><span>Investment growth</span><strong>$73,270</strong></div>
+        <div class="insight-track"><i style="width:100%; background:linear-gradient(90deg,#b7dbc2,#7fbf9c)"></i></div>
+      </div></div>
+      <div class="tool-metric-grid">
+        <div><span>Total value</span><strong id="growth-total">$134,270</strong></div>
+        <div><span>You contributed</span><strong id="growth-contributed">$61,000</strong></div>
+        <div><span>Investment growth</span><strong id="growth-earned">$73,270</strong></div>
+      </div>
+    </div>
+            <a class="button primary tool-panel-cta" id="tool-panel-link" href="tool.html?tool=compound">Open full tool →</a>
+          </div>
+
+        </div><!-- /.tools-section -->
+      </section>
+
+      <!-- ── 6. Mission ─────────────────────────────────────────────────────── -->
+      <section class="section" id="mission">
+        <div class="section-head reveal">
+          <p class="eyebrow">Why this exists</p>
+          <h2>Finance education built for how you actually learn.</h2>
+        </div>
+        <div class="mission-ticker-wrap" aria-hidden="true">
+          <div class="mission-ticker"><span>Compound interest</span><span>Index funds</span><span>Roth IRA</span><span>Dollar cost averaging</span><span>Net worth</span><span>Credit utilization</span><span>Emergency fund</span><span>Debt avalanche</span><span>401(k)</span><span>Budget reset</span><span>Tax brackets</span><span>Expense ratio</span><span>Diversification</span><span>Paycheck math</span><span>Side income</span><span>Financial independence</span><span>Compound interest</span><span>Index funds</span><span>Roth IRA</span><span>Dollar cost averaging</span><span>Net worth</span><span>Credit utilization</span><span>Emergency fund</span><span>Debt avalanche</span><span>401(k)</span><span>Budget reset</span><span>Tax brackets</span><span>Expense ratio</span><span>Diversification</span><span>Paycheck math</span><span>Side income</span><span>Financial independence</span></div>
+        </div>
+        <!-- Mission stat counters -->
+        <div class="mission-stats" id="mission-stats">
+          <div class="mission-stat">
+            <span class="mission-stat-num" data-target="9">0</span>
+            <span class="mission-stat-label">In-depth chapters</span>
+          </div>
+          <div class="mission-stat">
+            <span class="mission-stat-num" data-target="6">0</span>
+            <span class="mission-stat-label">Money type archetypes</span>
+          </div>
+          <div class="mission-stat">
+            <span class="mission-stat-num" data-target="4">0</span>
+            <span class="mission-stat-label">Interactive tools</span>
+          </div>
+          <div class="mission-stat">
+            <span class="mission-stat-num" data-suffix="%" data-target="100">0</span>
+            <span class="mission-stat-label">Free, always</span>
+          </div>
+        </div>
+
+        <div class="mission-grid">
+          <div class="reveal">
+            <h3>No fluff, no paywalls</h3>
+            <p>Every chapter, tool, and workflow on this site is free. No upsells, no email gates, no sponsored content. Just practical education.</p>
+          </div>
+          <div class="reveal">
+            <h3>AI-native by design</h3>
+            <p>Each chapter connects to real AI prompts you can use today. Not theory about AI. Actual workflows for budgeting, debt payoff, investing, and career growth.</p>
+          </div>
+          <div class="reveal">
+            <h3>Built for Gen Z realities</h3>
+            <p>Student loans, gig income, no 401k match, starting late. This content meets you where you are, not where a 1990s finance textbook assumes you'd be.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── 6b. Testimonials ──────────────────────────────────────────────── -->
+      <section class="section" id="honest" aria-label="How the numbers work">
+        <div class="section-head reveal">
+          <p class="eyebrow">Straight talk</p>
+          <h2>How this site keeps the numbers honest.</h2>
+          <p>No fake reviews, no hype. Here is what you can count on.</p>
+        </div>
+        <div class="more-tools-grid">
+          <div class="lesson-tool-card"><span>Math you can check</span><strong>Standard formulas</strong><p>Every calculator uses the same formulas your bank or the IRS uses. Change an input and you can verify the result by hand.</p></div>
+          <div class="lesson-tool-card"><span>Your data stays yours</span><strong>Nothing is uploaded</strong><p>Tools run in your browser. Saved progress and net worth never leave your device, and no login is required.</p></div>
+          <div class="lesson-tool-card"><span>Clearly labeled</span><strong>Estimates, not advice</strong><p>Tax figures are 2026 federal estimates. Results are for learning, not a replacement for a licensed professional.</p></div>
+        </div>
+        <p class="honest-cta">Found a mistake, or want a tool added? <a href="mailto:ryanbarone29@gmail.com?subject=Barone%20Investment%20Group%20feedback">Email Ryan</a>. Your suggestion could become the next tool.</p>
+      </section>
+
+      <!-- ── 7. Founder Story ───────────────────────────────────────────────── -->
+      <section class="section" id="story">
+        <div class="founder-card reveal">
+          <figure class="founder-photo">
+            <img src="founder-ryan-barone.jpg" alt="Ryan Barone, founder of Barone Investment Group" loading="lazy" onerror="this.style.display='none';this.parentElement.querySelector('.founder-initials').style.display='grid';">
+            <div class="founder-initials" style="display:none;width:100%;height:100%;min-height:460px;place-items:center;background:linear-gradient(145deg,rgba(127,191,156,0.12),rgba(127,191,156,0.04));border-radius:18px;">
+              <span style="font-size:clamp(4rem,8vw,7rem);font-weight:900;color:rgba(127,191,156,0.35);letter-spacing:-0.04em;">RB</span>
+            </div>
+          </figure>
+          <div class="founder-text">
+            <p class="eyebrow">From the founder</p>
+            <h2>I built this because nobody taught me this stuff either.</h2>
+            <p>I'm Ryan Barone, a finance student who spent years figuring out things that should have taken weeks. Compound interest, credit utilization, debt payoff strategy, how to actually start investing. Nobody handed me a roadmap.</p>
+            <p>Barone Investment Group is that roadmap, built for students and young professionals who want to be financially literate without wading through jargon, Reddit threads, or $400 courses.</p>
+            <p>Everything here is free. Everything is practical. And everything connects to AI tools that make the learning stick.</p>
+            <a class="founder-linkedin" href="https://www.linkedin.com/in/ryan-barone-779047328/" target="_blank" rel="noopener noreferrer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg> Ryan Barone on LinkedIn</a>
+          </div>
+        </div>
+      </section>
+
+            <!-- Advice Request -->
+      <section class="section advice-section" id="advice">
+        <div class="advice-card reveal">
+          <div class="advice-copy">
+            <p class="eyebrow">Reach out</p>
+            <h2>Have a question? Email me.</h2>
+            <p>Send a question, topic request, or money situation you want explained. I read every message and reply when I can.</p>
+            <p class="site-disclaimer">Educational only. Do not include account numbers, passwords, or private financial documents.</p>
+          </div>
+          <div class="advice-email-cta">
+            <a class="button primary advice-mailto" href="mailto:ryanbarone29@gmail.com?subject=Question%20for%20Ryan%20%E2%80%94%20Barone%20Investment%20Group">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"></rect><polyline points="2,4 12,13 22,4"></polyline></svg>
+              Email Ryan
+            </a>
+            <p class="advice-email-hint">Opens in your email app · ryanbarone29@gmail.com</p>
+          </div>
+        </div>
+      </section>
+      <!-- ── Footer ──────────────────────────────────────────────────────────── -->
+      <footer class="site-footer" id="contact">
+        <div>
+          <a class="brand footer-brand" href="#top" aria-label="Mentor Labs learning home">
+            <img class="mentor-brand-logo" src="/img/mentor-logo-suede.webp" alt="" width="44" height="44">
+            <span><strong>Mentor Labs</strong><small>Learning studio</small></span>
+          </a>
+          <p>Educational content only. Not personalized financial, investment, legal, or tax advice. Do not paste private account numbers or sensitive information into AI tools.</p>
+        </div>
+        <nav aria-label="Footer navigation">
+          <a href="#quiz">Quiz</a>
+          <a href="#chapters">Chapters</a>
+          <a href="#tools">Tools</a>
+          <a href="glossary.html">Glossary</a>
+          <a href="method.html">Method</a>
+          <a href="#mission">About</a>
+          <a href="#advice">Ask Ryan</a>
+        </nav>
+        <div class="social-links" aria-label="Social channels">
+          <a class="footer-linkedin" href="https://www.linkedin.com/in/ryan-barone-779047328/" target="_blank" rel="noopener noreferrer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg> Connect on LinkedIn</a>
+        </div>
+        <p class="footer-copy">© 2026 Barone Investment Group. Educational content only.</p>
+      </footer>
+    </main>
+
+  <script src="entrance.js?v=20260522v3"></script>
+  <script src="calc.js?v=20261105v4"></script>
+  <script src="states.js?v=20261105v4"></script>
+  <script src="tools-meta.js?v=20261105v4"></script>
+  <script src="content.js?v=20261105v4"></script>
+  <script src="script.js?v=20260522v3"></script>
+  <script src="home-tools.js?v=20261105v4"></script>
+  <script src="quick.js?v=20261105v4"></script>
+
+<script>
+/* --- Mission stat counter animation --- */
+(function () {
+  var stats = document.querySelectorAll('.mission-stat-num[data-target]');
+  if (!stats.length) return;
+
+  function animateCount(el) {
+    var target  = parseInt(el.getAttribute('data-target'), 10);
+    var suffix  = el.getAttribute('data-suffix') || '';
+    var dur     = 1200; // ms
+    var start   = null;
+
+    function step(ts) {
+      if (!start) start = ts;
+      var progress = Math.min((ts - start) / dur, 1);
+      // Ease out cubic
+      var eased = 1 - Math.pow(1 - progress, 3);
+      var val   = Math.round(eased * target);
+      el.textContent = val + suffix;
+      if (progress < 1) requestAnimationFrame(step);
+    }
+
+    requestAnimationFrame(step);
+  }
+
+  var obs = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        animateCount(entry.target);
+        obs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.4 });
+
+  stats.forEach(function (el) { obs.observe(el); });
+}());
+</script>
+
+
+
+<script>
+(function() {
+  // Chapter completion badges
+  try {
+    var done = JSON.parse(localStorage.getItem('completedChapters') || '[]');
+    if (done.length) {
+      document.querySelectorAll('.chapter-card').forEach(function(card) {
+        var href = card.getAttribute('href') || '';
+        var m = href.match(/topic=([^&]+)/);
+        if (m && done.indexOf(m[1]) !== -1) {
+          var prog = card.querySelector('.chapter-progress');
+          if (prog) {
+            prog.classList.add('is-done');
+            prog.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#7fbf9c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>';
+          }
+        }
+      });
+    }
+  } catch(e) {}
+}());
+</script>
+<script>
+(function() {
+  // Progress dashboard
+  try {
+    var order = ['reset','budgeting','credit','debt_payoff','investing','ai','careers','taxes_paychecks','insurance_risk'];
+    var done = JSON.parse(localStorage.getItem('completedChapters') || '[]').filter(function(k){return order.indexOf(k)!==-1;});
+    var scores = JSON.parse(localStorage.getItem('chapterScores') || '{}');
+    var dash = document.getElementById('progress-dash');
+    if (!dash || !done.length) return;
+    dash.hidden = false;
+    document.getElementById('pd-count').textContent = done.length + ' of ' + order.length;
+    document.getElementById('pd-fill').style.width = Math.round(done.length / order.length * 100) + '%';
+    var taken = Object.keys(scores).length;
+    var total = order.reduce(function(s,k){return s + (scores[k] || 0);}, 0);
+    document.getElementById('pd-quiz').textContent = taken ? ('Knowledge checks: ' + taken + ' taken, ' + total + '/' + (taken*4) + ' correct') : 'Take a chapter knowledge check to track your score.';
+    var next = order.filter(function(k){return done.indexOf(k)===-1;})[0];
+    var btn = document.getElementById('pd-next');
+    if (next) btn.href = 'lesson.html?topic=' + next; else { btn.textContent = 'Open the tools'; btn.href = '#tools'; }
+  } catch(e) {}
+}());
+</script>
+</body>
+</html>

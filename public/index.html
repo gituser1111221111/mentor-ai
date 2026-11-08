@@ -5,28 +5,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Mentor Labs · Learn, plan, understand</title>
   <meta name="description" content="Explore everyday money, investing, and retirement through researched mentor perspectives and specialist AI tools.">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2317191c'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-family='Arial' font-size='38' font-weight='bold' fill='white'%3EM%3C/text%3E%3C/svg%3E">
+  <link rel="icon" type="image/webp" href="/img/mentor-logo-suede.webp">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,500;1,6..72,500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/styles.css?v=mentor-pivot-24">
-  <link rel="stylesheet" href="/workspace.css?v=1">
+  <link rel="stylesheet" href="/styles.css?v=teacher-flow-25">
+  <link rel="stylesheet" href="/workspace.css?v=dashboard-2">
+  <link rel="stylesheet" href="/final-polish.css?v=1">
+  <link rel="stylesheet" href="/monarch-workspace.css?v=1">
+  <link rel="stylesheet" href="/redesign-workspace.css?v=1">
 </head>
 <body>
   <header class="site">
     <a href="/" class="wordmark" id="home"><img src="/img/mentor-logo-suede.webp" width="38" height="38" alt="">Mentor Labs</a>
     <nav class="links" id="nav">
-      <a href="#mentors">Teachers</a><a href="#learn">Learn</a>
+      <a href="#mentors">Teachers</a>
       <a href="#method">Our process</a>
-      <a href="#workspace" data-open-workspace>My workspace</a>
+
 
       <a href="#pricing">Pricing</a>
     </nav>
-    <div class="head-right"><button type="button" class="btn" data-open-workspace>My workspace</button>
+    <nav id="app-nav" class="app-nav" aria-label="Your Mentor space" hidden><button type="button" data-return-chat>Teacher chat</button><button type="button" data-open-workspace>Dashboard</button><button type="button" data-open-learning>Learning guide</button></nav><div class="head-right">
       <span id="tier" class="tag" hidden>Demo</span>
       <span id="engine" class="tag quiet" title="Which engine is answering"></span>
       <button id="restart" class="btn text" hidden>Start over</button>
-      <button class="btn header-context" data-context>Add portfolio or documents</button>
+      <span class="tag quiet header-context">Demo profile</span>
       <button id="head-start" class="btn">Choose your perspective</button>
     </div>
   </header>
@@ -40,80 +43,29 @@
         <div class="hero-copy">
           <p class="hero-eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span> MEET MENTOR LABS</p>
           <h1>Learn as you build.<em> Your path to financial freedom.</em></h1>
-          <p class="lead">Choose an <strong>AI teacher grounded in public teachings</strong>. Understand your budget, explore your portfolio, and build the skills to make your own financial decisions.</p>
-          <div class="row hero-actions">
-            <button id="try-chat" class="btn primary">Choose your perspective <span aria-hidden="true">↗</span></button>
-            <button class="btn hero-context" data-context>Add portfolio or documents</button>
-          </div>
+          <p class="lead">Choose an AI teacher inspired by public money teachings. Bring your questions and your numbers, then work through the thinking together.</p>
+          <div class="row hero-actions"><button id="try-chat" class="btn primary">Find my teacher <span aria-hidden="true">&#8599;</span></button><a class="hero-secondary" href="#method">How it works</a></div>
+          <p class="hero-assurance">Your pace. Your decisions. No account connection required.</p>
         </div>
-        <div class="hero-visual">
-          <figure class="featured-mentor">
-            <img src="/img/mentors/debt-free-coach.webp" alt="AI-generated likeness inspired by Dave Ramsey" width="640" height="800">
-            <figcaption><span>ONE OF TEN PERSPECTIVES</span><strong>Dave Ramsey</strong><small>Inspired AI mentor</small></figcaption>
-          </figure>
-
-        </div>
+        <div class="hero-visual teacher-collection"><p class="collection-label">TEN WAYS TO THINK ABOUT MONEY</p><div id="hero-perspectives" class="hero-perspectives" aria-label="Ten inspired teaching perspectives"></div><p class="collection-note">AI-generated portraits. Independent perspectives, not the people themselves.</p></div>
       </div>
-
-
-      <section id="entry-choices" class="band money-paths" aria-labelledby="entry-title">
-        <div class="band-head"><div><p class="section-eyebrow">YOUR NEXT FINANCIAL STEP</p><h2 id="entry-title">What’s on your mind?</h2></div><p>One shared picture of your money. Start with what matters today.</p></div>
-        <div class="money-path-grid">
-          <article><h3>Everyday money</h3><p>Make pay last, understand debt, and build room to breathe.</p><button type="button" class="btn" data-open-workspace="budget">Build my budget <span aria-hidden="true">↗</span></button></article>
-          <article><h3>Future money</h3><p>Understand your portfolio, retirement questions, and the tradeoffs ahead.</p><button type="button" class="btn" data-open-workspace="portfolio">Understand my portfolio <span aria-hidden="true">↗</span></button></article>
-        </div>
+      <section id="method" class="band journey-section" aria-labelledby="journey-title">
+        <div class="journey-intro"><p class="section-eyebrow">COACHING, ONE STEP AT A TIME</p><h2 id="journey-title">Your mentor leads the way.</h2><p>Start a conversation. Bring in a lesson or a tool when it helps you take the next step.</p></div>
+        <ol class="journey-steps"><li><h3>Meet your teacher</h3><p>Choose an available perspective and talk about what matters to you.</p></li><li><h3>Make it personal</h3><p>Share your goals, add your numbers, or import holdings when you are ready.</p></li><li><h3>Learn. Practice. Review.</h3><p>Use a relevant lesson or financial tool, then talk through what you learned.</p></li></ol>
       </section>
-
-      <section id="learn" class="band"><p class="section-eyebrow">LEARN AT YOUR PACE</p><h2>Build understanding along the way.</h2><p>Use a lesson when you want the foundations, or ask your teacher to explain the thinking behind your next step.</p><details class="specialist-group"><summary>Explore the learning modules</summary><div id="learning-modules"></div></details></section>
-      <section id="mentors" class="band">
-        <div class="band-head"><div><p class="section-eyebrow">YOUR AI TEACHERS</p><h2>Choose a teaching perspective.</h2></div><p>Ten mentor perspectives, one intended membership. Choose any available perspective; previews are clearly marked.</p></div>
-        <div id="personas" class="portraits"></div>
-      </section>
-
-      <section id="method" class="band compact-section"><details class="section-disclosure"><summary><span><strong>How we research each perspective</strong><small>Public teachings become traceable principles, not a claim to speak for the person.</small></span></summary><div class="method-band"><div class="method-intro"><p class="section-eyebrow">HOW WE BUILD MENTORS</p><h2>Public teachings. A distinct perspective.</h2></div><div class="method-list"><div><strong>Research the source</strong><p>Books, interviews, podcasts, and articles become curated research notes.</p></div><div><strong>Map the philosophy</strong><p>We organize principles, priorities, and tradeoffs into a mentor’s instructions.</p></div><div><strong>Test the perspective</strong><p>We check how the mentor explains options across different financial situations.</p></div></div></div></details></section>
-
-      <section id="specialists" class="band" hidden>
-        <div class="band-head"><div><p class="section-eyebrow">THE SPECIALIST LIBRARY</p><h2>Specialist help, one step at a time.</h2></div><p>Explore everyday money and future money tools. Additional specialties are grouped below; availability varies.</p></div>
-        <div id="agents" class="agent-groups"></div>
-      </section>
-
-      <section id="agent-method" class="band compact-section" hidden><details class="section-disclosure"><summary><span><strong>How specialist agents work</strong><small>Your context, defined tools, and calculations you can inspect.</small></span></summary><div class="method-band"><div class="method-intro"><p class="section-eyebrow">HOW WE BUILD AGENTS</p><h2>A focused job. Tools to do it.</h2></div><div class="method-list"><div><strong>Define the task</strong><p>Each specialist focuses on a money decision, from budgeting to company research.</p></div><div><strong>Connect the context</strong><p>Your numbers, documents, holdings, and available data feed the agent’s tools.</p></div><div><strong>Check the options</strong><p>Code calculates and validates. The mentor selects an option and explains why.</p></div></div></div></details></section>
-
-      <section id="live-data" class="band compact-data">
-        <div class="api-heading"><div><p class="section-eyebrow">DATA INTEGRATIONS</p><h2>Sources behind your workspace.</h2></div><p>Market prices, filings, and economic context.</p></div>
-        <details class="section-disclosure"><summary><span><strong>Explore sources &amp; availability</strong><small>Available integrations and planned connections, clearly separated.</small></span></summary><div id="data-sources"></div></details>
-
-      </section>
-
-      <section id="pricing" class="band">
-        <div class="band-head"><div><p class="section-eyebrow">ONE SIMPLE OFFER</p><h2>Every perspective. One membership.</h2></div><p>Everyday support and future planning belong together.</p></div>
-        <div class="plans single-offer"><div class="plan plus">
-          <div><span class="tag plus">Planned membership</span><h3>One month free</h3><p class="price">Then $2.99<span>/month</span></p><p>All mentor perspectives and features included as they become available. No separate teacher or tool tiers.</p></div>
-          <div><p class="fine">Explore the working demo now. Paid subscriptions and trial enrollment are not active; preview features are still in development.</p><div class="row plan-links"><button class="btn primary" data-unlock>Explore the demo</button><button id="start" class="btn">Add my money snapshot</button><button id="demo" class="btn text">See a sample plan</button></div></div>
-        </div></div>
-      </section>
-
-      <section class="band evidence-band compact-section" id="why-mentor-labs"><details class="section-disclosure"><summary><span><strong>What makes an answer useful?</strong><small>Confirmed context, checked calculations, and a perspective you can question.</small></span></summary><div class="evidence-grid"><article><h3>Your situation</h3><p>Income, bills, debt, holdings, and goals share one context. Review the inputs and correct assumptions before using a result.</p></article><article><h3>Visible reasoning</h3><p>Financial tools calculate from your inputs. Research notes explain a perspective’s principles; AI applies them to the conversation.</p></article><article><h3>Honest limits</h3><p>Inspect sources and calculations in chat. Automated checks do not guarantee accuracy or investment outcomes.</p></article></div></details></section>
-
-      <section id="your-context" class="band context-band"><div><p class="section-eyebrow">BRING YOUR CONTEXT</p><h2>Your documents and portfolio, in one place.</h2><p>Upload a document for chat context or import a holdings CSV for a portfolio summary. Saved portfolio links are references; they do not connect to your brokerage.</p></div><button class="btn primary" data-context>Open context hub</button></section>
-
-      <section class="band faq" aria-labelledby="faq-title">
-        <h2 id="faq-title">Common questions.</h2>
-<details><summary>How do chat, lessons and my workspace fit together?</summary><p>Your selected AI teacher explains ideas in one conversation. Lessons let you learn independently. Your budget and portfolio workspace uses the same saved inputs and your own review metrics. Calculation and research tools work behind the scenes.</p></details>
-<details><summary>Can I talk instead of type?</summary><p>Voice is available when the service is configured. You can also type your questions and follow-ups in the same conversation.</p></details>
-<details><summary>What can I try for free?</summary><p>The demo includes available mentor conversations and specialist tools without payment. The intended membership includes all perspectives and features: one month free, then $2.99/month. Trial enrollment is not active.</p></details>
-<details><summary>How are the numbers checked?</summary><p>Budget calculations run in code. Proposed options are checked against those calculations before the mentor selects one.</p></details>
-        <details><summary>What if my income changes every month?</summary><p>The plan uses your lowest reported month to check whether your essentials are covered. The calculation is available in chat.</p></details>
-        <details><summary>Can I switch mentors?</summary><p>Yes. Ramsey, Buffett, and Wood are available now. Buffett and Wood offer text mentorship with distinct research perspectives; live voice is available with Ramsey. Other mentors remain planned.</p></details>
-        <details><summary>Do I need to connect a bank account?</summary><p>No. You can enter your numbers yourself. A portfolio URL is saved as a reference only; a holdings CSV can be summarized in this demo.</p></details>
-      </section>
+      <section id="mentors" class="band"><div class="band-head"><div><p class="section-eyebrow">YOUR AI TEACHERS</p><h2>Find your starting perspective.</h2></div><p>Available teachers are together below. The rest of the collection is clearly marked as preview.</p></div><div id="personas" class="teacher-library"></div></section>
+      <section id="pricing" class="band"><div class="band-head"><div><p class="section-eyebrow">ONE SIMPLE OFFER</p><h2>One membership. Room to grow.</h2></div></div><div class="plans single-offer"><div class="plan plus"><div><span class="tag plus">Planned membership</span><h3>One month free</h3><p class="price">Then $2.99<span>/month</span></p><p>All perspectives and features as they become available.</p></div><div><p class="fine">Try the available demo now. Paid subscriptions and trial enrollment are not active.</p><button class="btn primary" data-start-need="question">Find my teacher</button></div></div></div></section>
+      <section class="band faq" aria-labelledby="faq-title"><h2 id="faq-title">A few things to know.</h2><details><summary>Do I need to connect a bank or brokerage?</summary><p>No. Enter your numbers or import a holdings CSV. Direct account connections are planned and are not active in this demo.</p></details><details><summary>What happens after I choose a teacher?</summary><p>You can add a short money snapshot or go straight to chat. Inside your space, your dashboard and learning guide each have their own tab.</p></details><details><summary>Are these the actual public figures?</summary><p>No. These are independent AI perspectives grounded in public teachings. The people shown do not participate in or endorse the conversations.</p></details></section>
+      <div hidden><div id="agents"></div><div id="data-sources"></div><button id="start" type="button">Add my money snapshot</button><button id="demo" type="button">See a sample plan</button></div>
     </section>
+
+    <section id="v-learning" class="view" hidden><section id="learn" class="learning-page"><p class="section-eyebrow">YOUR LEARNING GUIDE</p><h1>13 steps to financial literacy.</h1><p>Work through the guide in order, or revisit a topic when you need it. Your teacher is one tab away.</p><div id="learning-modules"></div></section></section>
 
     <!-- SIX QUESTIONS, ONE SCREEN -->
     <section id="v-quiz" class="view intake" hidden>
-      <p class="kicker">Your money snapshot</p>
+      <ol class="onboarding-steps" aria-label="Getting started"><li>1. Choose your teacher</li><li aria-current="step">2. Your money snapshot</li><li>3. Teacher chat</li></ol><p class="kicker" id="intake-teacher">Your money snapshot</p>
       <h2>Tell us where your money stands.</h2>
-      <p class="why">Enter at least one month of income. The rest is optional.</p>
+      <p class="why">Give your teacher some context. Enter at least one month of income to save a snapshot, or skip and add it later.</p>
       <form id="intake-form">
         <div class="intake-grid">
           <fieldset class="intake-card"><legend>What did you take home recently?</legend><p class="fine">Enter up to six months of take-home pay. One month is enough to start.</p><div id="income-months" class="money-grid"></div></fieldset>
@@ -125,13 +77,13 @@
           <fieldset class="intake-card"><legend>How do you feel about investment risk?</legend><select id="intake-risk" class="f"><option value="">Prefer not to say</option><option value="conservative">Protect what I have, even if it grows slowly</option><option value="moderate">Some ups and downs are OK</option><option value="aggressive">I can ride out big drops for more growth</option></select></fieldset>
           <fieldset class="intake-card"><legend>When might you need money you invest?</legend><select id="intake-horizon" class="f"><option value="">Not sure yet</option><option value="short">Within 3 years</option><option value="medium">In 3 to 10 years</option><option value="long">More than 10 years from now</option></select></fieldset>
         </div>
-        <div class="intake-uploads"><h3>Have more context?</h3><p class="fine">Optional. Add it now or later in chat. Documents can be PDF, TXT, CSV, or Markdown, under 2 MB. Remove account numbers before uploading.</p><div class="row"><button type="button" id="connect-portfolio" class="btn">Add portfolio reference</button><button type="button" id="upload-portfolio" class="btn">Upload portfolio CSV</button><button type="button" id="upload-document" class="btn">Upload financial document</button></div><p id="upload-status" class="fine" role="status"></p></div>
+        <details class="intake-uploads"><summary>Optional: portfolio, documents &amp; account connections</summary><p class="fine">Bank connection: planned, not connected. You can fill in the fields above or import a CSV now.</p><p class="fine">Optional. Add it now or later in chat. Documents can be PDF, TXT, CSV, or Markdown, under 2 MB. Remove account numbers before uploading.</p><div class="row"><button type="button" id="connect-portfolio" class="btn">Add portfolio reference</button><button type="button" id="upload-portfolio" class="btn">Upload portfolio CSV</button><button type="button" id="upload-document" class="btn">Upload financial document</button></div><p id="upload-status" class="fine" role="status"></p></details>
         <p id="q-error" class="error" role="alert"></p>
-        <button type="submit" class="btn primary">Start chatting</button>
+        <div class="row"><button type="submit" class="btn primary">Save &amp; meet my teacher</button><button type="button" class="btn text" id="intake-skip">Skip for now &mdash; go to chat</button></div>
       </form>
     </section>
 
-    <section id="v-workspace" class="view" hidden><div class="workspace-nav"><button type="button" class="btn" data-return-chat>Talk to my teacher</button><button type="button" class="btn" data-open-learning>Learning modules</button></div><div id="workspace-content"></div></section>
+    <section id="v-workspace" class="view" hidden><div id="workspace-content"></div></section>
 
     <!-- CHAT -->
     <section id="v-chat" class="view chat" hidden>
@@ -164,12 +116,12 @@
   <input id="portfolio-file" type="file" accept=".csv,text/csv" hidden>
   <input id="document-file" type="file" accept=".pdf,.txt,.csv,.md,application/pdf,text/plain,text/csv" hidden>
   <dialog id="start-choice" aria-labelledby="start-choice-title">
-    <div class="context-dialog-head"><div><p class="section-eyebrow">MAKE IT YOURS</p><h3 id="start-choice-title">Choose a perspective and a starting point.</h3></div><button id="start-choice-close" type="button" class="btn text" aria-label="Close start choices">Close</button></div>
-    <p class="fine">Start with a question. Add your numbers or documents whenever you’re ready.</p>
+    <div class="context-dialog-head"><div><p class="section-eyebrow">MAKE IT YOURS</p><h3 id="start-choice-title">First, choose your teacher.</h3></div><button id="start-choice-close" type="button" class="btn text" aria-label="Close start choices">Close</button></div>
+    <p class="fine">Next, add a short snapshot of your money or start with a conversation.</p>
     <form id="start-choice-form">
       <label class="f" for="start-personas">Mentor perspective<select id="start-personas" required><option value="">Choose a perspective</option></select></label>
       <label class="f" for="start-need">What would you like to explore?<select id="start-need"><option value="question">A simple money question</option><option value="everyday">Everyday money &amp; debt</option><option value="future">Investing &amp; portfolio questions</option><option value="retirement">Retirement questions</option></select></label>
-      <p id="start-choice-error" class="error" role="alert"></p><button type="submit" class="btn primary">Start a conversation</button>
+      <label class="f" for="start-step">Your next step<select id="start-step"><option value="snapshot">Add my money snapshot</option><option value="chat">Go straight to teacher chat</option></select></label><p id="start-choice-error" class="error" role="alert"></p><button type="submit" class="btn primary">Continue</button>
     </form>
   </dialog>
   <dialog id="unlock"><form method="dialog">
@@ -180,13 +132,18 @@
     <div class="row"><button id="unlock-go" class="btn primary" value="go">Explore demo</button><button class="btn">Not now</button></div>
   </form></dialog>
 
-  <dialog id="context-dialog"><div class="context-dialog-head"><div><p class="section-eyebrow">YOUR CONTEXT HUB</p><h3>Bring the details that matter.</h3></div><button id="context-close" type="button" class="btn text" aria-label="Close context hub">Close</button></div>
-    <div class="context-fields"><label class="context-field"><strong>Documents</strong><span>Upload a PDF, TXT, CSV, or Markdown file under 2 MB. Extracted text can inform chat; remove account numbers first.</span><input id="context-files" type="file" accept=".pdf,.txt,.csv,.md,application/pdf,text/plain,text/csv"><small id="context-file-status" role="status">Documents save automatically when selected.</small></label><div id="context-saved-documents" class="saved-documents" role="status"></div>
-    <details class="context-reference"><summary>Save a portfolio link (reference only)</summary>    <label class="context-field"><strong>Portfolio link</strong><span>Save a brokerage or portfolio URL as a reference. It will not connect to your account.</span><input id="portfolio-link" type="url" placeholder="https://your-brokerage.example/portfolio"><button id="portfolio-save" type="button" class="btn">Save portfolio link</button><small id="portfolio-link-status" role="status">No link saved.</small></label>
-</details>
-    <label class="context-field"><strong>Holdings CSV</strong><span>For a working demo, import a CSV with symbol, sector and market_value columns.</span><input id="context-csv" type="file" accept=".csv,text/csv"><small id="context-csv-status" role="status">No holdings imported.</small></label></div>
-    <div id="portfolio-guidelines"></div>
-    <div class="row"><button id="context-done" type="button" class="btn primary">Done — continue to chat</button><button id="context-sample" type="button" class="btn">Use sample holdings</button></div>
+  <dialog id="context-dialog" aria-labelledby="context-title" aria-describedby="context-description">
+    <header class="context-dialog-head"><div><p class="section-eyebrow">ADD CONTEXT</p><h3 id="context-title">Give your teacher the full picture.</h3><p id="context-description">Choose what to share. Uploads save automatically; you can add more later.</p></div><button id="context-close" type="button" class="btn text" aria-label="Close context hub">Close</button></header>
+    <div class="context-scroll">
+      <div class="context-fields">
+        <label class="context-field" for="context-files"><strong>Financial documents</strong><span>Add a PDF, TXT, CSV, or Markdown file under 2 MB. Remove account numbers first.</span><input id="context-files" type="file" accept=".pdf,.txt,.csv,.md,application/pdf,text/plain,text/csv"><small id="context-file-status" role="status">Extracted text is saved to your teacher conversation.</small></label>
+        <div id="context-saved-documents" class="saved-documents" role="status"></div>
+        <label class="context-field" for="context-csv"><strong>Portfolio holdings</strong><span>Import a CSV with symbol and market_value, or symbol, quantity and price. Sector and cost basis are optional.</span><input id="context-csv" type="file" accept=".csv,text/csv"><small id="context-csv-status" role="status">Imported holdings update your portfolio dashboard.</small></label>
+        <details class="context-reference"><summary>Optional: save a portfolio link</summary><label class="context-field" for="portfolio-link"><strong>Reference link</strong><span>A saved link is a reference only. It does not connect a brokerage or import holdings.</span><input id="portfolio-link" type="url" placeholder="https://your-brokerage.example/portfolio"><button id="portfolio-save" type="button" class="btn">Save reference link</button><small id="portfolio-link-status" role="status">No link saved.</small></label></details>
+      </div>
+      <div id="portfolio-guidelines"></div>
+    </div>
+    <footer class="context-footer"><p>Nothing else to add? You are ready to continue.</p><div class="context-footer-actions"><button id="context-sample" type="button" class="btn text">Try sample holdings</button><button id="context-done" type="button" class="btn primary">Done</button></div></footer>
   </dialog>
   <dialog id="feature-preview"><div class="context-dialog-head"><div><p class="section-eyebrow" id="feature-eyebrow">FEATURE PREVIEW</p><h3 id="feature-title"></h3></div><button id="feature-close" type="button" class="btn text">Close</button></div><p id="feature-text"></p><div id="feature-sources"></div><div class="row"><button type="button" class="btn primary" id="feature-try" hidden>Open agent</button><button type="button" class="btn primary" id="feature-plus">View membership</button></div></dialog>
   <footer class="site-foot"><strong class="footer-brand">Mentor Labs</strong>
@@ -194,7 +151,7 @@
     <p class="footer-note">Independent AI perspectives for education. No affiliation or endorsement. AI can make mistakes.</p>
     <p><a href="/terms.html">Terms</a> · <a href="/privacy.html">Privacy</a> · <a href="https://github.com/gituser1111221111/mentor-ai">Source</a> · © 2026 Mentor Labs</p>
   </footer>
-  <script type="module" src="/app.js?v=mentor-pivot-24"></script>
+  <script type="module" src="/app.js?v=teacher-flow-25"></script>
   <script type="module" src="/portfolio-guidelines.js"></script><script type="module" src="/learning.js"></script>
   <script type="module" src="/metric-help.js"></script><script type="module" src="/workspace.js"></script>
 </body>

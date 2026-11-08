@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Money Glossary | Mentor Labs</title>
+    <meta name="description" content="Plain-English definitions of 40+ money terms: Roth IRA, credit utilization, expense ratio, APR and more." />
+    <link rel="icon" type="image/webp" href="/img/mentor-logo-suede.webp" />
+    <link rel="stylesheet" href="styles.css?v=20261105v4" />
+    <style>
+      .gl-search { width: 100%; max-width: 520px; padding: 14px 16px; border-radius: 12px; border: 1px solid rgba(255,255,255,.2); background: rgba(255,255,255,.05); color: inherit; font: inherit; }
+      .gl-search:focus-visible { outline: 2px solid #7fbf9c; outline-offset: 2px; }
+      .gl-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; margin-top: 24px; }
+      .gl-card { padding: 18px; border: 1px solid rgba(255,255,255,.12); border-radius: 14px; background: rgba(255,255,255,.03); }
+      .gl-card h3 { margin: 0 0 6px; font-size: 1.1rem; }
+      .gl-card p { margin: 0 0 10px; color: rgba(255,255,255,.8); }
+      .gl-card a { color: #7fbf9c; font-size: .9rem; }
+      .gl-empty { margin-top: 24px; color: rgba(255,255,255,.7); }
+    </style>
+      <link rel="stylesheet" href="mentor-theme.css?v=2" />
+  </head>
+  <body class="subpage">
+    <div class="ambient-bg" aria-hidden="true"><span></span><span></span><span></span></div>
+    <header class="site-header is-scrolled">
+      <a class="brand" href="index.html#top"><img class="mentor-brand-logo" src="/img/mentor-logo-suede.webp" alt="" width="44" height="44"><span><strong>Mentor Labs</strong><small>Learning studio</small></span></a>
+      <nav class="site-nav subpage-nav">
+        <a href="index.html#chapters">Chapters</a>
+        <a href="index.html#tools">Tools</a>
+      </nav>
+    </header>
+    <main class="detail-page">
+      <section class="detail-hero">
+        <p class="eyebrow">Glossary</p>
+        <h1>Money terms, in plain English.</h1>
+        <p>Search 40+ terms. Each one links to the chapter that explains it in depth. Educational only, not financial advice.</p>
+        <label class="visually-hidden" for="gl-q" style="position:absolute;left:-9999px">Search terms</label>
+        <input id="gl-q" class="gl-search" type="search" placeholder="Search: Roth IRA, APR, deductible…" autocomplete="off" />
+      </section>
+      <section style="padding: 0 24px 60px; max-width: 1100px; margin: 0 auto;">
+        <p id="gl-count" aria-live="polite"></p>
+        <div class="gl-list" id="gl-list"></div>
+        <p class="gl-empty" id="gl-empty" hidden>No matches. Try a shorter word.</p>
+      </section>
+    </main>
+    <script src="tools-meta.js?v=20261105v4"></script>
+    <script src="content.js?v=20261105v4"></script>
+    <script src="glossary.js?v=20261105v4"></script>
+    <script>
+      (function () {
+        var list = document.getElementById("gl-list"), q = document.getElementById("gl-q"), count = document.getElementById("gl-count"), empty = document.getElementById("gl-empty");
+        var titles = {};
+        if (window.BIG_CONTENT && BIG_CONTENT.lessons) Object.keys(BIG_CONTENT.lessons).forEach(function (k) { titles[k] = BIG_CONTENT.lessons[k].title; });
+        function esc(s) { return s.replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+        function render(term) {
+          var t = term.trim().toLowerCase();
+          var rows = GLOSSARY.filter(function (g) { return !t || g[0].toLowerCase().indexOf(t) !== -1 || g[1].toLowerCase().indexOf(t) !== -1; });
+          list.innerHTML = rows.map(function (g) {
+            return '<article class="gl-card" id="t-' + esc(g[0].toLowerCase().replace(/[^a-z0-9]+/g, "-")) + '"><h3>' + esc(g[0]) + "</h3><p>" + esc(g[1]) + '</p><a href="lesson.html?topic=' + g[2] + '">Chapter: ' + esc(titles[g[2]] || g[2]) + " &rarr;</a></article>";
+          }).join("");
+          count.textContent = rows.length + " of " + GLOSSARY.length + " terms";
+          empty.hidden = rows.length > 0;
+        }
+        q.addEventListener("input", function () { render(q.value); });
+        render("");
+      })();
+    </script>
+      <script src="quick.js?v=20261105v4"></script>
+  </body>
+</html>

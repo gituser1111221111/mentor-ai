@@ -1,0 +1,10 @@
+/* Original Barone layout and charcoal surfaces; only gold accents become green. */
+:root{--gold:#7fbf9c;--gold-2:#b7dbc2}
+.mentor-brand-logo{display:block;width:44px;height:44px;object-fit:contain;border-radius:10px;flex:none}
+.module-main,.module-main>*,.lab-grid,.lab-grid>*,#tool-page-controls,#tool-page-controls label{min-width:0}
+#tool-page-controls input,#tool-page-controls select{min-width:0;max-width:100%;width:100%;box-sizing:border-box}
+#tool-page-controls select{white-space:normal}
+.app-copy,.app-copy>*{min-width:0;max-width:100%;overflow-wrap:anywhere}
+.app-copy small{white-space:normal}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--gold-2);outline-offset:3px}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
