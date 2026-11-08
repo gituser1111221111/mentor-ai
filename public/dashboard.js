@@ -92,7 +92,7 @@ function shell(body) {
     <div class="db-switch" role="group" aria-label="Dashboard"><button type="button" data-workspace-tab="portfolio" aria-pressed="${tab === 'portfolio'}">Investing</button><button type="button" data-workspace-tab="budget" aria-pressed="${tab === 'budget'}">Budget</button></div>
     <nav class="db-nav">${NAV[tab].map(([id, label]) => `<button type="button" data-view="${id}" ${id === view ? 'aria-current="page"' : ''}>${svg(NAV_ICON[id])}<span>${label}</span>${tab === 'portfolio' && id === 'risk' && flags ? `<span class="db-count">${flags}</span>` : ''}</button>`).join('')}</nav>
     <div class="db-side-foot"><button type="button" class="db-guide" data-learn><div class="db-guide-top">${svg('book')}<div><strong>Learning guide</strong><small>13-step program</small></div><span class="db-chev">›</span></div><div class="db-progress"><i style="width:${Math.round(step / 13 * 100)}%"></i></div><span class="db-step">Step ${step} of 13</span></button>
-    <div class="db-avail"><span class="db-dot"></span><div><b>Teacher available</b>Typically replies in minutes</div></div></div>
+    <button type="button" class="db-avail" data-teacher-open aria-label="Open your teacher"><span class="db-dot"></span><div><b>Teacher available</b>Typically replies in minutes</div></button></div>
   </aside><div class="db-main">${body}</div></div>`;
   root.dataset.sampleBudget = String(budget().sample); root.dataset.samplePortfolio = String(inv.sample);
 }
@@ -416,6 +416,7 @@ root.addEventListener('click', e => {
   const t = e.target.closest('button, a'); if (!t || !root.contains(t)) return;
   if (t.dataset.workspaceTab) { state.tab = t.dataset.workspaceTab; state.statusText = ''; render(); return; }
   if (t.dataset.view) { state.view[state.tab] = t.dataset.view; state.edit = null; state.statusText = ''; render(); return; }
+  if (t.hasAttribute('data-teacher-open')) { document.querySelector('#teacher-launcher')?.click(); return; }
   if (t.hasAttribute('data-learn')) { document.dispatchEvent(new CustomEvent('mentor:show-learning')); return; }
   if (t.dataset.range) { state.perfRange = Number(t.dataset.range); render(); return; }
   if (t.dataset.flow) { state.flowRange = Number(t.dataset.flow); render(); return; }
