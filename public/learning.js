@@ -30,8 +30,9 @@ if (root) {
     root.querySelector('#learning-next').onclick=()=>show(modules[modules.indexOf(selected)+1]?.id);
     root.addEventListener('click',e=>{const step=e.target.closest('[data-learning-step]');if(step)show(step.dataset.learningStep);const tab=e.target.closest('[data-learning-mode]');if(tab){if(tab.dataset.learningMode==='guide')show(selected.id);else showTool(toolSelect.value||'compound');}});
     check.addEventListener('change',()=>{completed=completed.filter(x=>x!==selected.id);if(check.checked)completed.push(selected.id);try{localStorage.setItem('mentor-learning-completed',JSON.stringify(completed));}catch{}progress();});
-    root.querySelector('#learning-teacher').onclick=()=>document.dispatchEvent(new CustomEvent('mentor:learn',{detail:{title:mode==='tools'?toolSelect.selectedOptions[0]?.textContent:selected.title}}));
+    root.querySelector('#learning-teacher').textContent='Ask your teacher';root.querySelector('#learning-teacher').onclick=()=>document.querySelector('#teacher-launcher')?.click();
     frame.addEventListener('load',()=>{
+      document.dispatchEvent(new CustomEvent('mentor:learning-page'));
       try{
         const w=frame.contentWindow,d=frame.contentDocument,page=new URL(w.location.href),lesson=page.pathname.endsWith('/lesson.html')&&modules.find(m=>m.id===page.searchParams.get('topic'));
         if(lesson){selected=lesson;select.value=lesson.id;changeMode('guide');frame.title=`${lesson.title} — interactive lesson`;progress();}

@@ -21,6 +21,7 @@ async function api(path, {method = 'GET', body} = {}) {
 const state = {config: null, tier: 'free', answers: {}, i: 0, profile: null, snapshot: null, personaId: null, agentId: 'budget', need: 'question', lastTurn: null};
 const views = ['v-landing', 'v-quiz', 'v-chat', 'v-workspace', 'v-learning'];
 function show(id) {
+  syncTeacherDock(id);
   if (id !== 'v-chat' && voice.active) endConversation();
   views.forEach(v => { $('#' + v).hidden = v !== id; });
   document.body.classList.toggle('chat-open', id === 'v-chat');
@@ -343,7 +344,7 @@ async function send(text, {spoken = false, voiceSession = null} = {}) {
   $('#msg').value = ''; const btn = $('#composer button[type="submit"]'); btn.disabled = true;
   const sk = skeleton();
   try {
-    const r = await api('/api/chat', {method: 'POST', body: {message: text, personaId: state.personaId, agentId: state.agentId}}); state.lastTurn = r.turnId;
+    const r = await api('/api/chat', {method: 'POST', body: {message: text, personaId: state.personaId, agentId: state.agentId, learningModuleId: teacherLessonContext()?.id, learningToolTitle: teacherLessonContext()?.id ? undefined : teacherLessonContext()?.title}}); state.lastTurn = r.turnId;
     const el = botMessage(r); refreshMemory();
     if (r.profileUpdated) el.insertAdjacentHTML('beforeend', '<p class="fine">Saved inputs updated from your message.</p>');
     if (voiceSession && voice.active && voice.session === voiceSession && canSpeak(r) && speechEpoch === voice.epoch) {
@@ -378,7 +379,7 @@ function startChat() {
   if (!usable(persona(state.personaId))) return openStartChoice();
   if (!usable(agent(state.agentId))) state.agentId = 'budget';
   rememberChoice();
-  state.lastTurn = null; renderChatChrome(); refreshMemory(); show('v-chat');
+  if (!$('#log .msg.user')) state.lastTurn = null; renderChatChrome(); refreshMemory(); show('v-chat');
   if ($('#log .msg.user')) { $('#msg').focus(); return; }
   $('#log').innerHTML = '';
   const p = persona(state.personaId), a = agent(state.agentId);
@@ -416,7 +417,7 @@ function renderSavedDocuments() {
 function setupContextHub() {
   const dialog = $('#context-dialog');
   document.querySelectorAll('[data-context]').forEach(b => b.onclick = async () => { dialog.showModal(); renderSavedDocuments(); try { const r = await api('/api/profile'); state.profile=r.profile; state.snapshot=r.snapshot; renderSavedDocuments(); } catch {} });
-  $('#context-done').onclick = () => { dialog.close(); if ($('#v-chat').hidden && $('#v-workspace').hidden) startChat(); };
+  $('#context-done').onclick = () => { dialog.close(); if ($('#v-chat').hidden && $('#v-workspace').hidden && $('#v-learning').hidden) startChat(); };
   $('#context-close').onclick = () => dialog.close();
   $('#feature-close').onclick = () => $('#feature-preview').close();
   $('#feature-plus').onclick = () => { $('#feature-preview').close(); openUnlock(); };
@@ -705,3 +706,40 @@ document.addEventListener('mentor:inputs-updated',async()=>{if(voice.active)endC
 document.addEventListener('mentor:workspace-question',e=>{learningQuestion=String(e.detail?.question||'').slice(0,2000);openStartChoice({need:/portfolio|holdings|earnings/.test(learningQuestion)?'future':'question'});});
 
 document.addEventListener('mentor:guidelines-updated',()=>{state.lastTurn=null;if(voice.active)endConversation('Your saved review guidelines changed.');});
+
+// One persistent conversation, available alongside lessons and financial tools.
+const teacherDockStyle=document.createElement('link');teacherDockStyle.rel='stylesheet';teacherDockStyle.href='/teacher-dock.css';document.head.append(teacherDockStyle);
+const teacherChatPane = document.querySelector('#v-chat .chat-main');
+const teacherChatAnchor = document.createComment('Teacher chat home');
+teacherChatPane.before(teacherChatAnchor);
+const teacherDock = document.createElement('aside');
+teacherDock.id = 'teacher-dock';teacherDock.hidden = true;
+teacherDock.setAttribute('aria-label','Ask your teacher');
+teacherDock.innerHTML = '<header class="teacher-dock-header"><div><strong>Ask your teacher</strong><small id="teacher-dock-context"></small></div><button type="button" class="btn text" id="teacher-dock-close" aria-label="Close teacher chat">Close</button></header><div id="teacher-dock-body"></div>';
+document.body.append(teacherDock);
+const teacherLauncher = document.createElement('button');
+teacherLauncher.id='teacher-launcher';teacherLauncher.type='button';teacherLauncher.className='btn primary';teacherLauncher.textContent='Ask your teacher';teacherLauncher.hidden=true;
+teacherLauncher.setAttribute('aria-controls','teacher-dock');teacherLauncher.setAttribute('aria-expanded','false');document.body.append(teacherLauncher);
+function teacherLessonContext(){
+  if(document.querySelector('#v-learning').hidden)return null;
+  try{const frame=document.querySelector('#learning-frame'),url=new URL(frame.src),title=frame.contentDocument.querySelector('#detail-title')?.textContent;return {id:url.pathname.endsWith('/lesson.html')?url.searchParams.get('topic'):null,title:title||'Learning guide'};}catch{return null;}
+}
+function closeTeacherDock(focus=false){
+  teacherChatAnchor.after(teacherChatPane);teacherDock.hidden=true;teacherLauncher.setAttribute('aria-expanded','false');document.body.classList.remove('teacher-docked');if(focus&&!teacherLauncher.hidden)teacherLauncher.focus();
+}
+function syncTeacherDock(id){
+  const eligible=['v-learning','v-workspace'].includes(id);
+  if(typeof teacherLauncher==='undefined')return;
+  teacherLauncher.hidden=!eligible;if(!eligible)closeTeacherDock();
+}
+function openTeacherDock(){
+  if(!usable(persona(state.personaId))){openStartChoice();return;}
+  const currentView=views.find(id=>!$('#'+id).hidden);
+  if(!$('#log').children.length){startChat();show(currentView);}
+  renderChatChrome();document.querySelector('#teacher-dock-body').append(teacherChatPane);
+  const context=teacherLessonContext();$('#teacher-dock-context').textContent=context?'Alongside '+context.title:'Your saved budget and portfolio';
+  teacherDock.hidden=false;teacherLauncher.setAttribute('aria-expanded','true');document.body.classList.add('teacher-docked');$('#msg').focus();
+}
+teacherLauncher.onclick=openTeacherDock;$('#teacher-dock-close').onclick=()=>closeTeacherDock(true);
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!teacherDock.hidden&&!document.querySelector('dialog[open]')){e.preventDefault();closeTeacherDock(true);}});
+document.addEventListener('mentor:learning-page',()=>{if(!teacherDock.hidden){const context=teacherLessonContext();$('#teacher-dock-context').textContent=context?'Alongside '+context.title:'Your teacher';}});

@@ -1,0 +1,36 @@
+/* A clear coaching journey and an upload dialog with persistent controls. */
+#v-landing #method.journey-section{background:var(--paper-2);background-image:none;padding:36px clamp(20px,4vw,48px);margin-top:24px;border:1px solid var(--rule);border-radius:16px;box-shadow:none;color:var(--ink);min-height:0}
+#method .journey-intro{max-width:700px}
+#v-landing #method h2{font-size:clamp(1.8rem,3vw,2.5rem);line-height:1.12;max-width:none;margin:0 0 12px;color:var(--ink)}
+#method .journey-intro>p:last-child{font-size:1rem;line-height:1.6;color:var(--ink-2);margin:0}
+#method .journey-steps{gap:24px;margin:26px 0 0}
+#method .journey-steps li{border-color:var(--rule);padding-top:16px}
+#method .journey-steps li>span{margin-bottom:12px}
+#method .journey-steps h3{font-size:1rem;margin:0 0 8px;color:var(--ink)}
+#method .journey-steps p{font-size:.9rem;line-height:1.6;margin:0;color:var(--ink-2)}
+#context-dialog{width:min(720px,calc(100% - 32px));max-width:720px;max-height:calc(100dvh - 40px);padding:0;overflow:hidden;border:1px solid var(--rule);border-radius:16px}
+#context-dialog[open]{display:flex;flex-direction:column}
+#context-dialog .context-dialog-head{flex:none;padding:22px 24px 18px;border-bottom:1px solid var(--rule);background:var(--card);gap:16px;align-items:flex-start}
+#context-dialog .context-dialog-head .section-eyebrow{margin:0 0 8px}
+#context-dialog .context-dialog-head h3{font-size:1.65rem;line-height:1.15;margin:0 0 9px}
+#context-description{margin:0;font-size:.85rem;line-height:1.5;color:var(--ink-2);max-width:47em}
+#context-dialog #context-close{flex:none;margin:-2px -4px 0 0;padding:8px}
+#context-dialog .context-scroll{min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:20px 24px;scrollbar-gutter:stable}
+#context-dialog .context-fields{gap:14px}
+#context-dialog .context-field{padding:16px;border-radius:10px;background:var(--card)}
+#context-dialog .context-field strong{font-size:.95rem}
+#context-dialog .context-field span,#context-dialog .context-field small{line-height:1.55}
+#context-dialog input[type=file]{font-size:.85rem;width:100%;min-width:0;padding:9px;border-color:var(--rule);background:var(--paper)}
+#context-dialog input[type=file]::file-selector-button{font:600 .8rem var(--sans);color:var(--ink);background:var(--card);border:1px solid var(--rule);border-radius:6px;padding:9px 12px;margin-right:10px;cursor:pointer}
+#context-dialog .saved-documents:empty{display:none}
+#context-dialog .saved-documents{padding:0 4px;font-size:.85rem;overflow-wrap:anywhere}
+#context-dialog .context-reference{margin:0;border-radius:10px}
+#context-dialog .context-reference summary{font-size:.85rem;padding:14px 0}
+#context-dialog .context-reference .context-field{padding:4px 0 14px;border:0}
+#context-dialog .context-reference .btn{justify-self:start;font-size:.8rem;padding:10px 12px}
+#context-dialog .context-footer{flex:none;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px 24px;border-top:1px solid var(--rule);background:var(--card)}
+#context-dialog .context-footer>p{font-size:.78rem;color:var(--muted);max-width:200px;margin:0}
+#context-dialog .context-footer-actions{display:flex;align-items:center;gap:14px;flex-shrink:0}
+#context-dialog .context-footer-actions .btn{font-size:.85rem}
+#context-dialog #context-done{min-width:90px}
+@media(max-width:650px){#v-landing #method.journey-section{padding:26px 20px}#method .journey-steps{gap:18px;margin-top:22px}#method .journey-steps li>span{margin:2px 0}#context-dialog{width:calc(100% - 20px);max-height:calc(100dvh - 20px);border-radius:12px}#context-dialog .context-dialog-head{padding:18px 16px 14px}#context-dialog .context-dialog-head h3{font-size:1.35rem}#context-dialog .context-scroll{padding:16px}#context-dialog .context-footer{padding:12px 16px}#context-dialog .context-footer>p{display:none}#context-dialog .context-footer-actions{width:100%;justify-content:space-between;gap:10px}#context-dialog .context-field{padding:13px}}

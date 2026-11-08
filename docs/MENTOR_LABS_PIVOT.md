@@ -38,3 +38,9 @@ Sentinel: dashboard layout adapted from `gituser1111221111/demo-`, revision `c50
 Evaluate both money paths against a neutral teacher: principle fidelity, source attribution, arithmetic, unknown/stale inputs, follow-up comprehension and user ability to explain the next step. Offline engineering tests do not prove model quality or financial outcomes.
 
 Monthly contribution per payer = $2.99 minus payment fees, model usage, voice minutes, data connections/refreshes, notifications, hosting/storage and variable support. Record quantity × contracted unit price per component for trial and paid cohorts; add conversion, refunds and acquisition separately. Inputs remain unmeasured. Do not promise unlimited usage or silently introduce new tiers.
+
+## Chat as the flagship
+
+The mentor conversation leads the program; lessons and financial tools support it. A persistent Ask your teacher drawer reuses the same composer and conversation on the Learning guide and Dashboard. Lesson questions include the current module title/summary for the model while displayed history keeps the original question. The context dialog keeps its header and Done action visible while only its contents scroll.
+
+Live configuration checked: Alpha Vantage and FRED keys are recognized, and FRED appeared in a successful market-context response. The tested equity quote used its labeled snapshot fallback. API configuration alone does not establish quote freshness or model accuracy.
