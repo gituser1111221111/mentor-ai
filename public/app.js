@@ -59,10 +59,10 @@ const agentSymbol = id => {
 
 // ---------- landing ----------
 function renderLanding() {
-  const portrait = p => `<article class="portrait">${art(p)}${badge(p)}<h3>${esc(p.name)}</h3><p class="portrait-source">${usable(p) ? (p.textOnly ? 'Text chat' : 'Voice & text chat') : 'Not available yet'}</p><p>${esc(p.philosophy)}.</p><button class="btn outline" type="button" data-chat-mentor="${esc(p.id)}">${usable(p) ? 'Choose teacher' : 'Explore preview'}</button></article>`;
+  const portrait = p => `<article class="portrait">${art(p)}${badge(p)}<h3>${esc(p.name)}</h3><p class="portrait-source">${usable(p) ? 'Membership required' : 'Preview'}</p><p>${esc(p.philosophy)}.</p><button class="btn outline" type="button" data-chat-mentor="${esc(p.id)}">${usable(p) ? 'View chat access' : 'Explore preview'}</button></article>`;
   const ready = personas().filter(usable), previews = personas().filter(p => !usable(p));
-  $('#personas').innerHTML = `<h3 class="teacher-group-label">Available now</h3><div class="available-portraits">${ready.map(portrait).join('')}</div><details class="teacher-previews"><summary>Explore ${previews.length} upcoming perspectives <span class="tag quiet">Preview</span></summary><div class="preview-portraits">${previews.map(portrait).join('')}</div></details>`;
-  $('#hero-perspectives').innerHTML = orderedPersonas().map(p => `<div class="collection-portrait">${p.image ? `<img src="${esc(p.image)}" alt="AI-generated portrait inspired by ${esc(p.inspiredBy)}" width="160" height="200" loading="eager">` : `<span>${esc(initials(p.name))}</span>`}<strong>${esc(p.inspiredBy || p.name)}</strong><small>${usable(p) ? 'Available' : 'Preview'}</small></div>`).join('');
+  $('#personas').innerHTML = `<h3 class="teacher-group-label">Membership perspectives</h3><div class="available-portraits">${ready.map(portrait).join('')}</div><details class="teacher-previews"><summary>Explore ${previews.length} upcoming perspectives <span class="tag quiet">Preview</span></summary><div class="preview-portraits">${previews.map(portrait).join('')}</div></details>`;
+  $('#hero-perspectives').innerHTML = orderedPersonas().map(p => `<div class="collection-portrait">${p.image ? `<img src="${esc(p.image)}" alt="AI-generated portrait inspired by ${esc(p.inspiredBy)}" width="160" height="200" loading="eager">` : `<span>${esc(initials(p.name))}</span>`}<strong>${esc(p.inspiredBy || p.name)}</strong><small>${usable(p) ? 'Membership' : 'Preview'}</small></div>`).join('');
   const groups = [...new Set(agents().map(a => a.category || 'Other specialties'))];
   $('#agents').innerHTML = groups.map(category => `<details class="specialist-group"><summary>${esc(category)} <span class="fine">${agents().filter(a => a.category === category).length} specialties</span></summary><div class="agent-grid">${agents().filter(a => (a.category || 'Other specialties') === category).map((a,i) => `<button type="button" class="agent-card tone-${i%4}" data-a="${esc(a.id)}">${agentSymbol(a.id)}<span class="agent-card-top"><strong>${esc(a.name)}</strong>${badge(a)}</span><span class="agent-card-job">${esc(a.job)}</span></button>`).join('')}</div></details>`).join('');
   document.querySelectorAll('#agents [data-a]').forEach(b => b.onclick = () => showAgent(agent(b.dataset.a)));
@@ -74,13 +74,7 @@ function renderLanding() {
 let pendingAgent = null;
 // Nov 7: entry buttons go straight to the chatbot. The teacher can be switched inside chat.
 function openStartChoice({personaId = state.personaId, need = state.need, agentId = null} = {}) {
-  let saved = null; try { saved = JSON.parse(localStorage.getItem('mentor-labs-choice') || 'null'); } catch {}
-  const pick = [personaId, saved?.personaId, 'debt-free-coach'].map(persona).find(p => p && usable(p)) || personas().find(usable);
-  if (!pick) { banner('No teacher is available right now. Please try again shortly.', true); return; }
-  state.personaId = pick.id; state.need = need || saved?.need || 'question';
-  state.agentId = agentId || (state.need === 'future' && usable(agent('investing')) ? 'investing' : (usable(agent(state.agentId)) ? state.agentId : 'budget'));
-  rememberChoice(); startChat();
-  try { if (learningQuestion) { $('#msg').value = learningQuestion; learningQuestion = ''; $('#msg').focus(); } } catch {}
+  show('v-chat');
 }
 function openStartChoiceDialog({personaId = state.personaId, need = state.need, agentId = null} = {}) {
   pendingAgent = agentId;
@@ -400,37 +394,24 @@ async function restoreChat(history) {
 }
 
 function startChat() {
-  if (!usable(persona(state.personaId))) return openStartChoice();
-  if (!usable(agent(state.agentId))) state.agentId = 'budget';
-  rememberChoice();
-  if (!$('#log .msg.user')) state.lastTurn = null; renderChatChrome(); refreshMemory(); show('v-chat');
-  if ($('#log .msg.user')) { $('#msg').focus(); return; }
-  $('#log').innerHTML = '';
-  const p = persona(state.personaId), a = agent(state.agentId);
-  if (['investing','equity'].includes(a.id)) {
-    note(state.profile?.portfolio ? `Your teacher can explore your saved holdings through ${p.name}'s researched perspective.` : 'Import your holdings to explore your portfolio with your teacher.');
-    if (!state.profile?.portfolio) { const el = document.createElement('div'); el.className = 'portfolio-start'; el.innerHTML = '<button class="btn primary" type="button" data-holdings>Upload holdings CSV</button><button class="btn text" type="button" data-context-open>Open context hub</button>'; el.querySelector('[data-holdings]').onclick = () => $('#portfolio-file').click(); el.querySelector('[data-context-open]').onclick = () => $('#context-dialog').showModal(); $('#log').append(el); }
-  } else note(p.textOnly ? `${p.name} is ready for text chat. Explore a perspective or bring a research question.` : state.profile?.incomeHistory?.length ? `${p.name} is ready to talk through your plan. Ask anything below.` : `Say hello, ask a question, or choose Talk live for a voice conversation.`);
-  if (state.need === 'retirement') note('Explore retirement questions here. A dedicated retirement scenario tool is still planned.');
-  showStarters();
-  $('#msg').focus();
+  show('v-chat');
 }
 
 // ---------- all-inclusive offer (billing is not active) ----------
 function openUnlock() {
-  $('#unlock-msg').textContent = 'The planned offer is one month free, then $2.99/month for all perspectives and features. Billing is not active in this demo.';
+  $('#unlock-msg').textContent = 'Chat requires a paid membership. Enrollment is not active yet, so chat is currently unavailable.';
   $('#unlock-test').hidden = true;
-  $('#unlock-go').textContent = 'Explore the demo';
+  $('#unlock-go').textContent = 'View chat access';
   $('#unlock').showModal();
 }
 $('#unlock-go').addEventListener('click', e => {
-  e.preventDefault(); $('#unlock').close(); openStartChoice();
+  e.preventDefault(); $('#unlock').close(); show('v-chat');
 });
 async function handleCheckoutReturn() {
   const q = new URLSearchParams(location.search);
   if (!q.has('checkout')) return;
   history.replaceState(null, '', location.pathname);
-  banner('Billing is not active in this demo. Available perspectives and tools need no checkout.');
+  banner('Billing is not active yet. Chat requires a paid membership and is currently unavailable.');
 }
 
 function renderSavedDocuments() {
@@ -662,7 +643,7 @@ async function boot() {
   try { state.tier = (await api('/api/me')).tier; } catch {}
   $('#tier').hidden = true;
   try { const saved = JSON.parse(localStorage.getItem('mentor-labs-choice') || 'null'); if (saved && usable(persona(saved.personaId))) { state.personaId=saved.personaId; state.agentId=usable(agent(saved.agentId)) ? saved.agentId : 'budget'; state.need=saved.need || 'question'; } } catch {}
-  $('#engine').textContent = state.config.engine === 'live' ? 'Live AI' : state.config.engine === 'mock' ? 'Local test mode' : 'AI unavailable';
+  $('#engine').textContent = 'Chat off';
   renderLanding();
   $('#home').onclick = e => { e.preventDefault(); show('v-landing'); };
   $('#start').onclick = () => openStartChoice();
@@ -689,7 +670,7 @@ async function boot() {
   $('#toggle-chat-sidebar').onclick = () => { const hidden = document.body.classList.toggle('chat-sidebar-hidden'); $('#toggle-chat-sidebar').setAttribute('aria-expanded', String(!hidden)); };
   $('#restart').onclick = async () => { if (!confirm('Start over? Your answers and chat will be cleared.')) return; await api('/api/session', {method: 'DELETE'}).catch(() => {}); location.href = '/'; };
   await handleCheckoutReturn();
-  try { const r = await api('/api/profile'); state.profile = r.profile; state.snapshot = r.snapshot; const {history} = await api('/api/history'); if (history.length) { await restoreChat(history); return; } if (r.profile?.incomeHistory?.length) { startChat(); return; } } catch {}
+  try { const r = await api('/api/profile'); state.profile = r.profile; state.snapshot = r.snapshot; } catch {}
   show('v-landing');
 }
 boot().then(() => {

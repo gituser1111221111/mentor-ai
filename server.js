@@ -19,6 +19,9 @@ export function createServer(){return http.createServer(async(req,res)=>{
   if(req.headers.origin&&new URL(req.headers.origin).host!==req.headers.host)return send(403,{error:'Cross-origin requests disabled'});
   const url=new URL(req.url,'http://localhost');const p=url.pathname;
   if(req.method==='GET'&&p==='/api/health')return send(200,{ok:true,mode:'backend-only',mentorConfigured:Boolean(process.env.MENTOR_API_KEY||process.env.ANTHROPIC_API_KEY),voiceConfigured:Boolean((process.env.ELEVENLABS_API_KEY||'').trim()),supabaseConfigured:Boolean(process.env.SUPABASE_URL&&process.env.SUPABASE_PUBLISHABLE_KEY),llamaParseConfigured:Boolean(process.env.LLAMA_CLOUD_API_KEY),note:'Configured does not mean connection verified.'});
+  // Chat is closed until paid membership and billing are available. Guard the API as well as the UI.
+  if(process.env.NODE_ENV!=='test'&&req.method==='POST'&&(['/api/chat','/api/repick','/api/compare','/api/expand'].includes(p)||p.startsWith('/api/voice/')))
+   return send(402,{error:'Chat requires a paid membership. Enrollment is not available yet.',code:'MEMBERSHIP_REQUIRED',billingActive:false});
   if(req.method==='GET'&&p==='/api/sample')return send(200,analyzeInvoices(parseCSV(await fs.readFile(new URL('./data/invoices.csv',import.meta.url),'utf8'))));
   if(req.method==='POST'&&p==='/api/analyze'){const b=await body(req);return send(200,analyzeInvoices(parseCSV(b.csv),{asOf:b.asOf||'2026-09-30'}));}
   if(req.method==='POST'&&p==='/api/runway')return send(200,runway(await body(req)));

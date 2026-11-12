@@ -4,15 +4,15 @@ AI teachers grounded in researched public perspectives help users learn while wo
 
 ## Current experience
 
-- One teacher chatbot, optional learning modules, and a shared Budget/Portfolio workspace. Specialist tools stay behind the scenes.
+- Teacher chat and voice are turned off. Visitors see a paid membership requirement; enrollment and checkout are not yet available. The learning guide and demo Budget/Portfolio workspace remain accessible.
 - Compact expandable sections using the existing visual design.
 - Thirteen optional Barone Investment Group learning modules: reading, outcomes, practice checklists, browser-local progress and a teacher-discussion handoff.
-- Implemented conversation paths and specialist tools are available in the demo; unbuilt capabilities remain previews.
+- Conversation paths and specialist tools are paused pending paid membership enrollment; unbuilt capabilities remain previews.
 - Monthly budget builder, cash-cushion goal, portfolio imports, user-approved review metrics, explanation pop-ups and isolated exact-cent what-if comparisons.
-- Dated holdings quotes and upcoming earnings cards, on-demand or optional foreground refresh, and a direct handoff to the same teacher for explanation. See [connection research](docs/CONNECTION_RESEARCH.md) for the read-only provider roadmap.
-- Documents remain conversational context until their facts are confirmed through structured input. Voice remains available where configured and supported.
+- Dated holdings quotes and upcoming earnings cards, on-demand or optional foreground refresh. See [connection research](docs/CONNECTION_RESEARCH.md) for the read-only provider roadmap.
+- Documents remain saved context until their facts are confirmed through structured input. Voice is paused with chat.
 
-Intended offer: **one month free, then $2.99/month, all perspectives and features included**. Checkout is disabled pending trial, consent and cancellation terms. Using this demo does not start a trial or charge a customer.
+Intended offer: **one month free, then $2.99/month, all perspectives and features included**. Chat requires a paid membership, but checkout is disabled pending trial, consent and cancellation terms. No one can pay or start a trial in this demo.
 
 ## Development
 
