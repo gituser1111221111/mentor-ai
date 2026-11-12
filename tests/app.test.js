@@ -145,7 +145,7 @@ test('all-inclusive demo access keeps previews unavailable and disables legacy c
     assert.equal((await post('/api/chat',{message:'Hello',personaId:'asset-builder'})).status,409);
     for(const path of ['/api/checkout','/api/checkout/demo','/api/checkout/confirm']) assert.equal((await post(path)).status,409);
     const me=await (await fetch(base+'/api/me',{headers})).json();assert.equal(me.tier,'included');assert.equal(me.billingActive,false);
-    const config=await (await fetch(base+'/api/config')).json();assert.equal(config.billing.plan.amountCents,299);assert.equal(config.billing.enabled,false);
+    const config=await (await fetch(base+'/api/config')).json();assert.equal(config.billing.plan.amountCents,499);assert.equal(config.billing.enabled,false);
   } finally {await new Promise(r=>server.close(r));}
 });
 
@@ -153,7 +153,7 @@ test('billing helpers cannot create or confirm subscriptions even when keys exis
   process.env.STRIPE_TEST_SECRET_KEY='sk_test_fake';
   const {createCheckout,confirmCheckout,stripeConfigured}=await import('../lib/billing.js');
   assert.equal(stripeConfigured(),false);
-  await assert.rejects(createCheckout(),/not active/);
+  await assert.rejects(createCheckout(),/not available/);
   assert.equal((await confirmCheckout()).ok,false);
   delete process.env.STRIPE_TEST_SECRET_KEY;
 });

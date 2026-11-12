@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 process.env.NODE_ENV = 'test';
 const {createServer} = await import('../server.js');
 
-test('production shows the membership message and blocks chat and voice', async () => {
+test('production keeps chat input, shows the payment dialog, and blocks chat and voice', async () => {
   const server = createServer();
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
   const base = `http://127.0.0.1:${server.address().port}`;
@@ -11,8 +11,9 @@ test('production shows the membership message and blocks chat and voice', async 
   process.env.NODE_ENV = 'production';
   try {
     const page = await (await fetch(base)).text();
-    assert.match(page, /Chat requires a paid membership/);
-    assert.match(page, /Subscriptions are not available yet/);
+    assert.match(page, /id="composer"/);
+    assert.match(page, /Chat payment is coming soon/);
+    assert.match(page, /Chat will be \$4\.99 per month/);
     for (const path of ['/api/chat','/api/repick','/api/compare','/api/expand','/api/voice/transcribe','/api/voice/speak']) {
       const response = await fetch(base + path, {method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});
       assert.equal(response.status, 402, path);
