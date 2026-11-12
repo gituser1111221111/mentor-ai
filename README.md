@@ -22,4 +22,4 @@ MENTOR_API_KEY (or ANTHROPIC_API_KEY) enables generation. Without a key, chat re
 
 The Node server serves vanilla HTML/CSS/JavaScript. Financial tools use exact cents; generated options pass numeric checks before a researched perspective explains them. Session data uses a single-process anonymous store, not authenticated cross-device persistence. Production needs durable storage, identity and reviewed service boundaries.
 
-See [the current pivot specification](docs/MENTOR_LABS_PIVOT.md) for provenance, capability gaps, cost measurement and release decisions. Older hackathon documents describe previous versions. The Render site tracks main; review feature branches before merging. This branch does not deploy or enable billing, account connections, trades or notifications.
+See [the current pivot specification](docs/MENTOR_LABS_PIVOT.md) for provenance, capability gaps, cost measurement and release decisions. Older hackathon documents describe previous versions. The Render site tracks main. This change does not enable billing, account connections, trades or notifications.
